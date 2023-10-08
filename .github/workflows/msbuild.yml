@@ -44,9 +44,8 @@ jobs:
         cd vcpkg
         ./bootstrap-vcpkg.sh
         vcpkg integrate install
-        vcpkg install
         cd ../
-        vcpkg/vcpkg
+        vcpkg install
 
     - name: Build
       working-directory: ${{env.GITHUB_WORKSPACE}}

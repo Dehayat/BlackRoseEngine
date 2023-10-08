@@ -1,7 +1,10 @@
 #pragma once
 #include <SDL2/SDL.h>
 #include <glm/glm.hpp>
+#include <entt/entt.hpp>
+
 #include "EventSystem/EventBus.h"
+#include "AssetStore.h"
 
 const int FPS = 60;
 const int FRAMETIME_MS = 1000 / FPS;
@@ -17,6 +20,8 @@ private:
 	SDL_Rect camera;
 	int windowWidth;
 	int windowHeight;
+	entt::registry registry;
+	std::unique_ptr<AssetStore> assetStore;
 
 public:
 

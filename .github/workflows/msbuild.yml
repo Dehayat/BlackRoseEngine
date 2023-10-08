@@ -39,12 +39,12 @@ jobs:
 
     - name: vcpkg
       run: |
-       cd GameEngine
-       git clone https://github.com/Microsoft/vcpkg.git
-       cd vcpkg
-       ./bootstrap-vcpkg.sh
-       ./vcpkg integrate install
-       ./vcpkg install
+        cd GameEngine
+        git clone https://github.com/Microsoft/vcpkg.git
+        cd vcpkg
+        ./bootstrap-vcpkg.sh
+        ./vcpkg integrate install
+        ./vcpkg install
 
     - name: Build
       working-directory: ${{env.GITHUB_WORKSPACE}}

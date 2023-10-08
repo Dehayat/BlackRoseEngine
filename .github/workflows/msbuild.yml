@@ -43,10 +43,10 @@ jobs:
         git clone https://github.com/Microsoft/vcpkg.git
         cd vcpkg
         ./bootstrap-vcpkg.sh
-        ./vcpkg.exe integrate install
-        ./vcpkg.exe install
+        vcpkg integrate install
+        vcpkg install
         cd ../
-        vcpkg/vcpkg.exe
+        vcpkg/vcpkg
 
     - name: Build
       working-directory: ${{env.GITHUB_WORKSPACE}}

@@ -4,6 +4,7 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
 #include <glm/glm.hpp>
+#include <box2d/b2_world_callbacks.h>
 
 #include "Events/KeyPressedEvent.h"
 #include "Game.h"
@@ -42,6 +43,12 @@ Game::Game() {
 	msLastFrame = 0;
 
 	isRunning = false;
+
+	b2Vec2 gravity(0.0f, -10.0f);
+	physicsWorld = std::make_unique<b2World>(gravity);
+	debugDrawer = new DebugDraw(renderer);
+	debugDrawer->SetFlags(15);
+	physicsWorld->SetDebugDraw(debugDrawer);
 }
 
 Game::~Game() {
@@ -49,6 +56,7 @@ Game::~Game() {
 	SDL_DestroyWindow(window);
 	SDL_Quit();
 	Logger::Log("Game Destructed");
+	delete debugDrawer;
 }
 
 struct Transform {
@@ -100,6 +108,13 @@ struct Camera {
 	}
 };
 
+struct PhysicsBody {
+	b2Body* body;
+	PhysicsBody(b2Body* body) {
+		this->body = body;
+	}
+};
+
 void Game::Setup()
 {
 	assetStore->AddTexture(renderer, "rose", "./assets/Rose.png");
@@ -108,20 +123,43 @@ void Game::Setup()
 
 
 	const auto hornet = registry.create();
-	registry.emplace<Transform>(hornet, glm::vec2(0, 0), glm::vec2(1, 1), 0);
-	registry.emplace<Sprite>(hornet, "hornet", 1);
+	registry.emplace<Transform>(hornet, glm::vec2(-3.5, 0), glm::vec2(1, 1), 0);
+	registry.emplace<Sprite>(hornet, "hornet", 1, SDL_Color{ 255,255,255,255 }, 128);
 	registry.emplace<Player>(hornet, 10);
 	player = hornet;
+
+	b2BodyDef bodyDef;
+	bodyDef.type = b2_dynamicBody;
+	bodyDef.position.Set(0.0f, 0.0f);
+	b2Body* body = physicsWorld->CreateBody(&bodyDef);
+	b2PolygonShape dynamicBox;
+	dynamicBox.SetAsBox(1.0f, 1.0f);
+	b2FixtureDef fixtureDef;
+	fixtureDef.shape = &dynamicBox;
+	fixtureDef.density = 1.0f;
+	fixtureDef.friction = 0.3f;
+	body->CreateFixture(&fixtureDef);
+	body->SetFixedRotation(true);
+	registry.emplace<PhysicsBody>(player, body);
+
 
 	const auto camera = registry.create();
 	registry.emplace<Transform>(camera, glm::vec2(0, 0), glm::vec2(1, 1), 0);
 	registry.emplace<Camera>(camera, 10);
 	this->camera = camera;
 
+
 	const auto ground = registry.create();
-	registry.emplace<Transform>(ground, glm::vec2(0, -3), glm::vec2(6, 1), 0);
+	registry.emplace<Transform>(ground, glm::vec2(0, -3), glm::vec2(20, 1), 0);
 	registry.emplace<Sprite>(ground, "block", 0, SDL_Color{ 255,255,255,255 }, 64);
 
+	b2BodyDef groundBodyDef;
+	groundBodyDef.position.Set(0.0f, -3.0f);
+	b2Body* groundBody = physicsWorld->CreateBody(&groundBodyDef);
+	b2PolygonShape groundBox;
+	groundBox.SetAsBox(10.0f, 0.5f);
+	groundBody->CreateFixture(&groundBox, 0.0f);
+	registry.emplace<PhysicsBody>(ground, groundBody);
 }
 
 void Game::Run()
@@ -164,6 +202,19 @@ void Game::ProcessEvents()
 				auto rose = registry.create();
 				registry.emplace<Transform>(rose, worldPos, glm::vec2(1, 1), 0);
 				registry.emplace<Sprite>(rose, "rose", 5, SDL_Color{ 255,255,255,255 }, 512);
+
+				b2BodyDef bodyDef;
+				bodyDef.type = b2_dynamicBody;
+				bodyDef.position.Set(worldPos.x, worldPos.y);
+				b2Body* body = physicsWorld->CreateBody(&bodyDef);
+				b2PolygonShape dynamicBox;
+				dynamicBox.SetAsBox(0.25f, 0.25f);
+				b2FixtureDef fixtureDef;
+				fixtureDef.shape = &dynamicBox;
+				fixtureDef.density = 1.0f;
+				fixtureDef.friction = 0.3f;
+				body->CreateFixture(&fixtureDef);
+				registry.emplace<PhysicsBody>(rose, body);
 			}
 			break;
 		case SDL_KEYDOWN:
@@ -212,6 +263,29 @@ float x, y;
 
 void Game::Update()
 {
+
+	float timeStep = 1.0f / 60.0f;
+	int velocityIterations = 6;
+	int positionIterations = 2;
+	auto phView = registry.view<PhysicsBody, Transform>();
+	for (auto entity : phView) {
+		const auto& pos = phView.get<Transform>(entity);
+		auto& body = phView.get<PhysicsBody>(entity);
+		auto rotation = body.body->GetAngle();
+		auto position = body.body->GetPosition();
+		position.x = pos.position.x;
+		position.y = pos.position.y;
+		body.body->SetTransform(position, rotation);
+		body.body->SetAwake(true);
+	}
+	physicsWorld->Step(timeStep, velocityIterations, positionIterations);
+	for (auto entity : phView) {
+		auto& pos = phView.get<Transform>(entity);
+		const auto& body = phView.get<PhysicsBody>(entity);
+		pos.position = glm::vec2(body.body->GetPosition().x, body.body->GetPosition().y);
+	}
+
+
 	if (SDL_GetKeyboardFocus() == window) {
 		UpdateInputSystem();
 	}
@@ -311,18 +385,20 @@ void Game::Render()
 
 		int spriteSizeX = scale.x * (texW / sp.ppu);
 		int spriteSizeY = scale.y * (texH / sp.ppu);
-		SDL_Rect player = SDL_Rect{
-			(int)(position.x - spriteSizeX / 2),
-			(int)(position.y - spriteSizeY / 2),
-			spriteSizeX,
-			spriteSizeY,
+		SDL_FRect player = SDL_FRect{
+			(position.x - spriteSizeX / 2),
+			(position.y - spriteSizeY / 2),
+			(float)spriteSizeX,
+			(float)spriteSizeY,
 		};
 		SDL_SetTextureColorMod(texture, sp.color.r, sp.color.g, sp.color.b);
 		SDL_SetTextureBlendMode(texture, SDL_BLENDMODE_BLEND);
 		SDL_SetTextureAlphaMod(texture, sp.color.a);
-		SDL_RenderCopyEx(renderer, texture, nullptr, &player, rotation, nullptr, SDL_FLIP_NONE);
+		SDL_RenderCopyExF(renderer, texture, nullptr, &player, rotation, nullptr, SDL_FLIP_NONE);
 	}
+
+	debugDrawer->SetMatrix(worldToScreen);
+	//physicsWorld->DebugDraw();
 
 	SDL_RenderPresent(renderer);
 }
-

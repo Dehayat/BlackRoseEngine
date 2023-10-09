@@ -4,12 +4,21 @@
 
 void Logger::Log(const std::string& message)
 {
+#ifdef DEBUG2
+
+
 	std::string msg = "LOG: " + message;
-	std::cerr << "\033[0m" << msg << "\033[0m" << std::endl;
+	std::clog << "\033[0m" << msg << "\033[0m" << std::endl;
+
+#endif // DEBUG
 }
 
 void Logger::Error(const std::string& message)
 {
+#ifdef DEBUG2
+
+
 	std::string msg = "ERR: " + message;
 	std::cerr << "\x1B[91m" << msg << "\033[0m" << std::endl;
+#endif // DEBUG
 }

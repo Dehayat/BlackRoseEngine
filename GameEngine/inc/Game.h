@@ -17,11 +17,13 @@ private:
 	unsigned int msLastFrame;
 	float dt;
 	std::unique_ptr<EventBus> eventBus;
-	SDL_Rect camera;
 	int windowWidth;
 	int windowHeight;
 	entt::registry registry;
 	std::unique_ptr<AssetStore> assetStore;
+	entt::entity player;
+	entt::entity camera;
+
 
 public:
 

@@ -24,14 +24,14 @@ Game::Game() {
 		SDL_WINDOWPOS_CENTERED,
 		windowWidth,
 		windowHeight,
-		SDL_WINDOW_SHOWN
+		SDL_WINDOW_SHOWN | SDL_WINDOW_ALLOW_HIGHDPI
 	);
 	SDL_assert(window != nullptr);
 
-	renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
+	renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
 	SDL_assert(renderer != nullptr);
 	SDL_RenderSetVSync(renderer, 1);
-	SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "1");
+	SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "2");
 
 	eventBus = std::make_unique<EventBus>();
 
@@ -88,10 +88,15 @@ struct Player {
 	}
 
 };
+
 struct Camera {
 	float height;
+	glm::mat3 camToScreen;
+	glm::mat3 worldToScreen;
 	Camera(float height = 10) {
 		this->height = height;
+		camToScreen = glm::mat3();
+		worldToScreen = glm::mat3();
 	}
 };
 
@@ -99,6 +104,7 @@ void Game::Setup()
 {
 	assetStore->AddTexture(renderer, "rose", "./assets/Rose.png");
 	assetStore->AddTexture(renderer, "hornet", "./assets/Hornet_Idle.png");
+	assetStore->AddTexture(renderer, "block", "./assets/Block.jpg");
 
 
 	const auto hornet = registry.create();
@@ -112,6 +118,10 @@ void Game::Setup()
 	registry.emplace<Camera>(camera, 10);
 	this->camera = camera;
 
+	const auto ground = registry.create();
+	registry.emplace<Transform>(ground, glm::vec2(0, -3), glm::vec2(6, 1), 0);
+	registry.emplace<Sprite>(ground, "block", 0, SDL_Color{ 255,255,255,255 }, 64);
+
 }
 
 void Game::Run()
@@ -122,7 +132,9 @@ void Game::Run()
 		ProcessEvents();
 		Update();
 		Render();
-		imgui.Render();
+		auto camM = registry.get<Camera>(camera);
+		auto camT = registry.get<Transform>(camera);
+		imgui.Render(camM.camToScreen, camM.worldToScreen, camT.matrix, camT.position);
 	}
 }
 
@@ -130,11 +142,29 @@ void Game::ProcessEvents()
 {
 	SDL_Event sdlEvent;
 	while (SDL_PollEvent(&sdlEvent)) {
-		imgui.HandleEvent(sdlEvent);
+		if (sdlEvent.window.windowID != SDL_GetWindowID(window)) {
+			imgui.HandleEvent(sdlEvent);
+			continue;
+		}
 		switch (sdlEvent.type)
 		{
 		case SDL_QUIT:
 			isRunning = false;
+			break;
+		case SDL_MOUSEBUTTONDOWN:
+			if (sdlEvent.button.button == 1) {
+				auto screenToCam = glm::inverse(registry.get<Camera>(camera).camToScreen);
+				auto screenToWorld = glm::inverse(registry.get<Camera>(camera).worldToScreen);
+				auto mousePos = glm::vec3(sdlEvent.button.x, sdlEvent.button.y, 1);
+				auto CamPos = mousePos * screenToCam;
+				auto worldPos = mousePos * screenToWorld;
+				Logger::Log("Clicked on pos " + std::to_string(sdlEvent.button.x) + "," + std::to_string(sdlEvent.button.y));
+				Logger::Log("Cam Pos " + std::to_string(CamPos[0]) + "," + std::to_string(CamPos[1]));
+				Logger::Log("World Pos " + std::to_string(worldPos[0]) + "," + std::to_string(worldPos[1]));
+				auto rose = registry.create();
+				registry.emplace<Transform>(rose, worldPos, glm::vec2(1, 1), 0);
+				registry.emplace<Sprite>(rose, "rose", 5, SDL_Color{ 255,255,255,255 }, 512);
+			}
 			break;
 		case SDL_KEYDOWN:
 			if (sdlEvent.key.keysym.sym == SDLK_ESCAPE) {
@@ -178,9 +208,15 @@ void Game::UpdateInputSystem() {
 	}
 }
 
+float x, y;
+
 void Game::Update()
 {
-	UpdateInputSystem();
+	if (SDL_GetKeyboardFocus() == window) {
+		UpdateInputSystem();
+	}
+
+	registry.get<Transform>(camera).position = glm::vec2(x, y);
 
 	auto view2 = registry.view<const Player, Transform>();
 
@@ -226,16 +262,18 @@ void Game::Render()
 	SDL_SetRenderDrawColor(renderer, 38, 77, 142, SDL_ALPHA_OPAQUE);
 	SDL_RenderClear(renderer);
 	registry.sort<Sprite>([](const auto& lhs, const auto& rhs) {
-		return lhs.layer > rhs.layer;
+		return lhs.layer < rhs.layer;
 		});
 
 	auto camPos = registry.get<Transform>(camera);
-	auto camHeight = registry.get<Camera>(camera).height;
+	auto& cam = registry.get<Camera>(camera);
+	auto camHeight = cam.height;
 	auto camMatrix = glm::mat3(
 		glm::cos(glm::radians(camPos.rotation)), -glm::sin(glm::radians(camPos.rotation)), camPos.position.x,
 		glm::sin(glm::radians(camPos.rotation)), glm::cos(glm::radians(camPos.rotation)), camPos.position.y,
 		0, 0, 1
 	);
+	//assume ok
 	auto invCamMatrix = glm::inverse(camMatrix);
 	float windowAspect = (float)windowWidth / windowHeight;
 	float camWidth = windowAspect * camHeight;
@@ -250,9 +288,11 @@ void Game::Render()
 		scaleX, 0, 0,
 		0, scaleY, 0,
 		0, 0, 1);
-
+	//assume ok
 	glm::mat3 camToScreen = tr * sc;
-	auto worldToScreen = camToScreen * invCamMatrix;
+	auto worldToScreen = invCamMatrix * camToScreen;
+	cam.camToScreen = camToScreen;
+	cam.worldToScreen = worldToScreen;
 
 
 

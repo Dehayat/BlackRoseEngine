@@ -2,10 +2,14 @@
 
 #include <imgui_impl_sdlrenderer2.h>
 #include <imgui_impl_sdl2.h>
+#include <string>
+#define GLM_ENABLE_EXPERIMENTAL
+#include <glm/ext.hpp>
+using namespace glm;
 
 ImguiSystem::ImguiSystem()
 {
-	window = SDL_CreateWindow("Imgui Window", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 1000, 900, SDL_WINDOW_SHOWN);
+	window = SDL_CreateWindow("Imgui Window", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 1000, 900, SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE);
 	renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
 	IMGUI_CHECKVERSION();
 	auto imguiContext = ImGui::CreateContext();
@@ -28,7 +32,7 @@ ImguiSystem::~ImguiSystem()
 }
 
 
-void ImguiSystem::Render()
+void ImguiSystem::Render(glm::mat3 view, glm::mat3 world, glm::mat3 cam, glm::vec2 pos)
 {
 
 	ImGuiIO& io = ImGui::GetIO();
@@ -43,6 +47,16 @@ void ImguiSystem::Render()
 
 	//// ImGui code here
 	ImGui::ShowDemoWindow();
+	ImGui::SliderFloat("CamX", &x, -10, 10);
+	ImGui::SliderFloat("CamY", &y, -10, 10);
+	std::string x = "view mat" + to_string(view);
+	std::string y = "world mat" + to_string(world);
+	std::string z = "cam mat" + to_string(cam);
+	std::string a = "cam vec" + to_string(pos);
+	ImGui::Text(x.c_str());
+	ImGui::Text(y.c_str());
+	ImGui::Text(z.c_str());
+	ImGui::Text(a.c_str());
 
 	ImGui::Render();
 	SDL_SetRenderTarget(renderer, nullptr);

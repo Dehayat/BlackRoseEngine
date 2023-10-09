@@ -9,6 +9,21 @@
 const int FPS = 60;
 const int FRAMETIME_MS = 1000 / FPS;
 
+struct KeyData {
+	bool justPressed;
+	bool justReleased;
+	bool isPressed;
+	KeyData() {
+		justPressed = false;
+		justReleased = false;
+		isPressed = false;
+	}
+};
+
+struct InputData {
+	KeyData keys[4];
+};
+
 class Game {
 private:
 	SDL_Window* window;
@@ -23,6 +38,7 @@ private:
 	std::unique_ptr<AssetStore> assetStore;
 	entt::entity player;
 	entt::entity camera;
+	InputData input;
 
 
 public:
@@ -34,4 +50,5 @@ public:
 	void ProcessInput();
 	void Update();
 	void Render();
+	void UpdateInputSystem();
 };

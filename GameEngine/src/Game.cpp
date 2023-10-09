@@ -17,18 +17,18 @@ Game::Game() {
 	SDL_DisplayMode displayMode;
 	SDL_GetCurrentDisplayMode(0, &displayMode);
 	windowWidth = 1200; //displayMode.w;
-	windowHeight =(float)windowWidth * 9 / 16;// displayMode.h;
+	windowHeight = (float)windowWidth * 9 / 16;// displayMode.h;
 	window = SDL_CreateWindow(
 		"Rose Engine",
 		SDL_WINDOWPOS_CENTERED,
 		SDL_WINDOWPOS_CENTERED,
 		windowWidth,
 		windowHeight,
-		0
+		SDL_WINDOW_SHOWN
 	);
 	SDL_assert(window != nullptr);
 
-	renderer = SDL_CreateRenderer(window, -1, 0);
+	renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
 	SDL_assert(renderer != nullptr);
 	SDL_RenderSetVSync(renderer, 1);
 	SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "1");
@@ -42,6 +42,8 @@ Game::Game() {
 	msLastFrame = 0;
 
 	isRunning = false;
+
+	input = InputData();
 }
 
 Game::~Game() {
@@ -104,7 +106,7 @@ void Game::Setup()
 	const auto hornet = registry.create();
 	registry.emplace<Transform>(hornet, glm::vec2(0, 0), glm::vec2(1, 1), 0);
 	registry.emplace<Sprite>(hornet, "hornet", 1);
-	//registry.emplace<Player>(hornet, 10);
+	registry.emplace<Player>(hornet, 10);
 	player = hornet;
 
 	const auto camera = registry.create();
@@ -138,29 +140,6 @@ void Game::ProcessInput()
 			if (sdlEvent.key.keysym.sym == SDLK_ESCAPE) {
 				isRunning = false;
 			}
-			else {
-				if (sdlEvent.key.keysym.sym == SDLK_LEFT) {
-					registry.get<Player>(player).input = -1;
-				}
-				else if (sdlEvent.key.keysym.sym == SDLK_RIGHT) {
-					registry.get<Player>(player).input = 1;
-				}
-				eventBus->EmitEvent<KeyPressedEvent>(sdlEvent.key.keysym.sym);
-			}
-			break;
-		case SDL_KEYUP:
-			if (sdlEvent.key.keysym.sym == SDLK_ESCAPE) {
-				isRunning = false;
-			}
-			else {
-				if (sdlEvent.key.keysym.sym == SDLK_LEFT) {
-					registry.get<Player>(player).input = 0;
-				}
-				else if (sdlEvent.key.keysym.sym == SDLK_RIGHT) {
-					registry.get<Player>(player).input = 0;
-				}
-				eventBus->EmitEvent<KeyPressedEvent>(sdlEvent.key.keysym.sym);
-			}
 			break;
 		default:
 			break;
@@ -169,14 +148,58 @@ void Game::ProcessInput()
 
 }
 
+static int keys[] = { SDL_SCANCODE_A,SDL_SCANCODE_D,SDL_SCANCODE_LEFT,SDL_SCANCODE_RIGHT };
+static int keyCount = 4;
+
+void Game::UpdateInputSystem() {
+	//int* keyboardState = nullptr;
+	auto keyArray = SDL_GetKeyboardState(nullptr);
+	for (int i = 0;i < keyCount;i++) {
+		if (keyArray[keys[i]] == 1) {
+			if (input.keys[i].isPressed) {
+				input.keys[i].justPressed = false;
+			}
+			else {
+				input.keys[i].isPressed = true;
+				input.keys[i].justPressed = true;
+				input.keys[i].justReleased = false;
+			}
+		}
+		else {
+			if (input.keys[i].isPressed) {
+				input.keys[i].isPressed = false;
+				input.keys[i].justReleased = true;
+				input.keys[i].justPressed = false;
+			}
+			else {
+				input.keys[i].justReleased = false;
+			}
+		}
+	}
+}
+
 void Game::Update()
 {
+	UpdateInputSystem();
+
 	auto view2 = registry.view<const Player, Transform>();
+
+	if (input.keys[0].isPressed || input.keys[2].isPressed) {
+		registry.get<Player>(player).input = -1;
+	}
+	else if (input.keys[1].isPressed || input.keys[3].isPressed) {
+		registry.get<Player>(player).input = 1;
+	}
+	else {
+		registry.get<Player>(player).input = 0;
+	}
+
 	for (auto entity : view2) {
 		auto& pos = view2.get<Transform>(entity);
 		const auto& player = view2.get<Player>(entity);
 		pos.position.x += player.speed * player.input * dt;
 	}
+
 	int waitTimeMs = FRAMETIME_MS - (SDL_GetTicks() - msLastFrame);
 	if (waitTimeMs > 0 && waitTimeMs < FRAMETIME_MS)
 		SDL_Delay(waitTimeMs);

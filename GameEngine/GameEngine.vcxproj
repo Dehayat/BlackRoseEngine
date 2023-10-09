@@ -94,6 +94,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="inc\ImguiSystem.h" />
     <ClInclude Include="inc\AssetStore.h" />
     <ClInclude Include="inc\EventSystem\Event.h" />
     <ClInclude Include="inc\EventSystem\EventBus.h" />
@@ -103,6 +104,7 @@
     <ClInclude Include="inc\Logger.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\ImguiSystem.cpp" />
     <ClCompile Include="src\AssetStore.cpp" />
     <ClCompile Include="src\Game.cpp" />
     <ClCompile Include="src\Logger.cpp" />

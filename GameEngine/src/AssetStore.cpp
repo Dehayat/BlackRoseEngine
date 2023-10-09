@@ -15,10 +15,12 @@ AssetStore::~AssetStore()
 
 void AssetStore::ClearAssets()
 {
-	for (auto texture : textures) {
-		SDL_DestroyTexture(texture.second);
+	if (SDL_WasInit(0) != 0) {
+		for (auto texture : textures) {
+			SDL_DestroyTexture(texture.second);
+		}
+		textures.clear();
 	}
-	textures.clear();
 }
 
 void AssetStore::AddTexture(SDL_Renderer* renderer, const std::string& assetId, const std::string& filePath)

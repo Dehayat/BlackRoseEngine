@@ -42,8 +42,6 @@ Game::Game() {
 	msLastFrame = 0;
 
 	isRunning = false;
-
-	input = InputData();
 }
 
 Game::~Game() {
@@ -121,16 +119,18 @@ void Game::Run()
 	Setup();
 	isRunning = true;
 	while (isRunning) {
-		ProcessInput();
+		ProcessEvents();
 		Update();
 		Render();
+		imgui.Render();
 	}
 }
 
-void Game::ProcessInput()
+void Game::ProcessEvents()
 {
 	SDL_Event sdlEvent;
 	while (SDL_PollEvent(&sdlEvent)) {
+		imgui.HandleEvent(sdlEvent);
 		switch (sdlEvent.type)
 		{
 		case SDL_QUIT:

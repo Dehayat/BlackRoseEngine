@@ -5,6 +5,7 @@
 
 #include "EventSystem/EventBus.h"
 #include "AssetStore.h"
+#include "ImguiSystem.h"
 
 const int FPS = 60;
 const int FRAMETIME_MS = 1000 / FPS;
@@ -39,6 +40,7 @@ private:
 	entt::entity player;
 	entt::entity camera;
 	InputData input;
+	ImguiSystem imgui;
 
 
 public:
@@ -47,7 +49,7 @@ public:
 	~Game();
 	void Setup();
 	void Run();
-	void ProcessInput();
+	void ProcessEvents();
 	void Update();
 	void Render();
 	void UpdateInputSystem();

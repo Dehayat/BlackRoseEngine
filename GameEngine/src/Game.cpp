@@ -1,30 +1,10 @@
 #include <SDL2/SDL.h>
 #include <glm/glm.hpp>
 #include <box2d/b2_world_callbacks.h>
+#include <imgui.h>
 #include "Events/KeyPressedEvent.h"
 #include "Game.h"
-
-Game::Game() {
-	Logger::Log("Game Constructed");
-
-	sdl = std::make_unique<SdlContainer>(1200, (float)1200 * 9 / 16);
-	assetStore = std::make_unique<AssetStore>();
-	physics = std::make_unique<Physics>(0, -10);
-	physics->InitDebugDrawer(sdl->GetRenderer());
-	renderer = std::make_unique<Renderer>(sdl->GetRenderer());
-	physics->EnableDebug(true);
-	transformSystem.InitDebugDrawer(sdl->GetRenderer());
-	transformSystem.EnableDebug(true);
-
-	dt = 0;
-	msLastFrame = 0;
-	isRunning = false;
-}
-
-Game::~Game() {
-	Logger::Log("Game Destructed");
-}
-
+#include "Logger.h"
 
 struct Player {
 	float speed;
@@ -36,7 +16,25 @@ struct Player {
 
 };
 
+Game::Game() {
+	Logger::Log("Game Constructed");
 
+	sdl = std::make_unique<SdlContainer>(1200, (float)1200 * 9 / 16);
+	assetStore = std::make_unique<AssetStore>();
+	physics = std::make_unique<Physics>(0, -10);
+	physics->InitDebugDrawer(sdl->GetRenderer());
+	renderer = std::make_unique<Renderer>(sdl->GetRenderer());
+	transformSystem.InitDebugDrawer(sdl->GetRenderer());
+	//physics->EnableDebug(true);
+	//transformSystem.EnableDebug(true);
+
+	dt = 0;
+	msLastFrame = 0;
+	isRunning = false;
+}
+Game::~Game() {
+	Logger::Log("Game Destructed");
+}
 void Game::Setup()
 {
 	assetStore->AddTexture(sdl->GetRenderer(), "rose", "./assets/Rose.png", 512);
@@ -62,107 +60,42 @@ void Game::Setup()
 	registry.emplace<StaticBody>(ground, *physics, glm::vec2(0, -3), glm::vec2(10, 0.4));
 
 }
-
 void Game::Run()
 {
 	Setup();
 	isRunning = true;
 	while (isRunning) {
-		ProcessEvents();
 		Update();
 		Render();
 	}
 }
 
-void Game::ProcessEvents()
-{
-	SDL_Event sdlEvent;
-	while (SDL_PollEvent(&sdlEvent)) {
-		if (sdlEvent.window.windowID != SDL_GetWindowID(sdl->GetWindow())) {
-			imgui.HandleEvent(sdlEvent);
-			continue;
-		}
-		switch (sdlEvent.type)
-		{
-		case SDL_QUIT:
-			isRunning = false;
-			break;
-		case SDL_MOUSEBUTTONDOWN:
-			if (sdlEvent.button.button == 1) {
-				auto screenToWorld = glm::inverse(renderer->GetWorldToScreenMatrix());
-				auto mousePos = glm::vec3(sdlEvent.button.x, sdlEvent.button.y, 1);
-				auto worldPos = mousePos * screenToWorld;
-				auto rose = registry.create();
-				registry.emplace<Transform>(rose, worldPos, glm::vec2(1, 1), 0);
-				registry.emplace<Sprite>(rose, "rose", 5);
-				registry.emplace<PhysicsBody>(rose, *physics, glm::vec2(worldPos.x, worldPos.y), glm::vec2(0.25, 0.25), true);
-
-			}
-			break;
-		case SDL_KEYDOWN:
-			if (sdlEvent.key.keysym.sym == SDLK_ESCAPE) {
-				isRunning = false;
-			}
-			break;
-		default:
-			break;
-		}
-	}
-
-}
-
-static int keys[] = { SDL_SCANCODE_A,SDL_SCANCODE_D,SDL_SCANCODE_LEFT,SDL_SCANCODE_RIGHT };
-static int keyCount = 4;
-
-void Game::UpdateInputSystem() {
-	//int* keyboardState = nullptr;
-	auto keyArray = SDL_GetKeyboardState(nullptr);
-	for (int i = 0;i < keyCount;i++) {
-		if (keyArray[keys[i]] == 1) {
-			if (input.keys[i].isPressed) {
-				input.keys[i].justPressed = false;
-			}
-			else {
-				input.keys[i].isPressed = true;
-				input.keys[i].justPressed = true;
-				input.keys[i].justReleased = false;
-			}
-		}
-		else {
-			if (input.keys[i].isPressed) {
-				input.keys[i].isPressed = false;
-				input.keys[i].justReleased = true;
-				input.keys[i].justPressed = false;
-			}
-			else {
-				input.keys[i].justReleased = false;
-			}
-		}
-	}
-}
-
-
 void Game::Update()
 {
-	physics->Update(registry);
-	transformSystem.Update(registry);
-
-	if (SDL_GetKeyboardFocus() == sdl->GetWindow()) {
-		UpdateInputSystem();
+	if (sdl->ProcessEvents(imgui)) {
+		isRunning = false;
 	}
+	input.Update(sdl->GetWindow());
+	transformSystem.Update(registry);
+	physics->Update(registry);
 
-	auto view2 = registry.view<const Player, Transform>();
-
-	if (input.keys[0].isPressed || input.keys[2].isPressed) {
+	if (input.GetKey(InputKey::LEFT).isPressed || input.GetKey(InputKey::A).isPressed) {
 		registry.get<Player>(player).input = -1;
 	}
-	else if (input.keys[1].isPressed || input.keys[3].isPressed) {
+	else if (input.GetKey(InputKey::RIGHT).isPressed || input.GetKey(InputKey::D).isPressed) {
 		registry.get<Player>(player).input = 1;
 	}
 	else {
 		registry.get<Player>(player).input = 0;
 	}
-
+	if (input.GetMouseButton(InputMouse::LEFT_BUTTON).justPressed) {
+		const auto ground = registry.create();
+		auto spawnPos = glm::vec3(input.GetMousePosition(), 1) * renderer->GetScreenToWorldMatrix();
+		registry.emplace<Transform>(ground, glm::vec2(spawnPos.x, spawnPos.y), glm::vec2(1, 1), 0);
+		registry.emplace<Sprite>(ground, "rose", 0, SDL_Color{ 255,255,255,255 });
+		registry.emplace<PhysicsBody>(ground, *physics, glm::vec2(spawnPos.x, spawnPos.y), glm::vec2(0.25, 0.25));
+	}
+	auto view2 = registry.view<const Player, Transform>();
 	for (auto entity : view2) {
 		auto& pos = view2.get<Transform>(entity);
 		const auto& player = view2.get<Player>(entity);
@@ -174,19 +107,14 @@ void Game::Update()
 		SDL_Delay(waitTimeMs);
 	dt = (SDL_GetTicks() - msLastFrame) / 1000.0f;
 	msLastFrame = SDL_GetTicks();
-
 }
-
-
 float camX, camY;
 void ImguiCam(Transform& tf) {
-	Logger::Log("Cam pos init in global vars");
 	ImGui::SliderFloat("CamX", &camX, -10, 10);
 	ImGui::SliderFloat("CamY", &camY, -10, 10);
 	tf.position.x = camX;
 	tf.position.y = camY;
 }
-
 void Game::Render()
 {
 
@@ -199,9 +127,7 @@ void Game::Render()
 	renderer->Present();
 
 	imgui.Render();
-
 	ImguiCam(registry.get<Transform>(renderer->GetCamera()));
-
 	imgui.Present();
 
 }

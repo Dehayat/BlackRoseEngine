@@ -1,8 +1,9 @@
 #include "ImguiSystem.h"
-
+#include <string>
+#include <imgui.h>
 #include <imgui_impl_sdlrenderer2.h>
 #include <imgui_impl_sdl2.h>
-#include <string>
+#include <glm/glm.hpp>
 #define GLM_ENABLE_EXPERIMENTAL
 #include <glm/ext.hpp>
 using namespace glm;

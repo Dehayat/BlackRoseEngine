@@ -1,7 +1,5 @@
 #pragma once
 #include <SDL2/SDL.h>
-#include <imgui.h>
-#include <glm/glm.hpp>
 
 class ImguiSystem
 {

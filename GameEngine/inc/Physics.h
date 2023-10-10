@@ -1,10 +1,8 @@
 #pragma once
 #include <memory>
 #include <box2d/box2d.h>
-#include <SDL2/SDL2_gfxPrimitives.h>
 #include <entt/entt.hpp>
 #include <glm/glm.hpp>
-#include "Logger.h"
 #include "SdlContainer.h"
 
 class Physics;

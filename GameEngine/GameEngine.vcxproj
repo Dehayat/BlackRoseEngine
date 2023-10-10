@@ -105,9 +105,11 @@
     <ClInclude Include="inc\Physics.h" />
     <ClInclude Include="inc\SdlContainer.h" />
     <ClInclude Include="inc\Renderer.h" />
+    <ClInclude Include="inc\InputSystem.h" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="inc\Transform.h" />
+    <ClCompile Include="src\InputSystem.cpp" />
     <ClCompile Include="src\Renderer.cpp" />
     <ClCompile Include="src\Physics.cpp" />
     <ClCompile Include="src\SdlContainer.cpp" />

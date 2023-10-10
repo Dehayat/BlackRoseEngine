@@ -1,6 +1,7 @@
 #pragma once
 #include <SDL2/SDL.h>
 #include <glm/glm.hpp>
+#include <ImguiSystem.h>
 
 class SdlContainer
 {
@@ -13,5 +14,6 @@ public:
 	SDL_Renderer* GetRenderer();
 	SDL_Window* GetWindow();
 	glm::ivec2 GetWindowSize();
+	bool ProcessEvents(ImguiSystem &imgui);
 };
 

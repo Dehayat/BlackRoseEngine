@@ -46,3 +46,39 @@ glm::ivec2 SdlContainer::GetWindowSize()
 	SDL_GetWindowSize(window, &x, &y);
 	return glm::ivec2(x, y);
 }
+bool SdlContainer::ProcessEvents(ImguiSystem& imgui)
+{
+	bool exit = false;
+	SDL_Event sdlEvent;
+	while (SDL_PollEvent(&sdlEvent)) {
+		if (sdlEvent.window.windowID != SDL_GetWindowID(GetWindow())) {
+			imgui.HandleEvent(sdlEvent);
+			continue;
+		}
+		switch (sdlEvent.type)
+		{
+		case SDL_QUIT:
+			exit = true;
+			break;
+		case SDL_MOUSEBUTTONDOWN:
+			//if (sdlEvent.button.button == 1) {
+			//	auto screenToWorld = glm::inverse(renderer->GetWorldToScreenMatrix());
+			//	auto mousePos = glm::vec3(sdlEvent.button.x, sdlEvent.button.y, 1);
+			//	auto worldPos = mousePos * screenToWorld;
+			//	auto rose = registry.create();
+			//	registry.emplace<Transform>(rose, worldPos, glm::vec2(1, 1), 0);
+			//	registry.emplace<Sprite>(rose, "rose", 5);
+			//	registry.emplace<PhysicsBody>(rose, *physics, glm::vec2(worldPos.x, worldPos.y), glm::vec2(0.25, 0.25), true);
+			//}
+			break;
+		case SDL_KEYDOWN:
+			if (sdlEvent.key.keysym.sym == SDLK_ESCAPE) {
+				exit = true;
+			}
+			break;
+		default:
+			break;
+		}
+	}
+	return exit;
+}

@@ -104,9 +104,11 @@
     <ClInclude Include="inc\Logger.h" />
     <ClInclude Include="inc\Physics.h" />
     <ClInclude Include="inc\SdlContainer.h" />
+    <ClInclude Include="inc\Renderer.h" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="inc\Transform.h" />
+    <ClCompile Include="src\Renderer.cpp" />
     <ClCompile Include="src\Physics.cpp" />
     <ClCompile Include="src\SdlContainer.cpp" />
     <ClCompile Include="src\ImguiSystem.cpp" />

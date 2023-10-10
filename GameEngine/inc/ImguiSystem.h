@@ -11,7 +11,7 @@ private:
 public:
 	ImguiSystem();
 	~ImguiSystem();
-	void Render(glm::mat3 view, glm::mat3 world, glm::mat3 cam, glm::vec2 pos);
+	void Render();
 	void HandleEvent(SDL_Event& event);
 };
 

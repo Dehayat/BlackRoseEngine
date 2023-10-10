@@ -32,7 +32,7 @@ ImguiSystem::~ImguiSystem()
 }
 
 
-void ImguiSystem::Render(glm::mat3 view, glm::mat3 world, glm::mat3 cam, glm::vec2 pos)
+void ImguiSystem::Render()
 {
 
 	ImGuiIO& io = ImGui::GetIO();
@@ -49,14 +49,6 @@ void ImguiSystem::Render(glm::mat3 view, glm::mat3 world, glm::mat3 cam, glm::ve
 	ImGui::ShowDemoWindow();
 	ImGui::SliderFloat("CamX", &x, -10, 10);
 	ImGui::SliderFloat("CamY", &y, -10, 10);
-	std::string x = "view mat" + to_string(view);
-	std::string y = "world mat" + to_string(world);
-	std::string z = "cam mat" + to_string(cam);
-	std::string a = "cam vec" + to_string(pos);
-	ImGui::Text(x.c_str());
-	ImGui::Text(y.c_str());
-	ImGui::Text(z.c_str());
-	ImGui::Text(a.c_str());
 
 	ImGui::Render();
 	SDL_SetRenderTarget(renderer, nullptr);

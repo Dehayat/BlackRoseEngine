@@ -8,6 +8,7 @@
 #include "ImguiSystem.h"
 #include "Transform.h"
 #include "Physics.h"
+#include "Renderer.h"
 
 const int FPS = 60;
 const int FRAMETIME_MS = 1000 / FPS;
@@ -34,14 +35,14 @@ private:
 	std::unique_ptr<SdlContainer> sdl;
 	std::unique_ptr<AssetStore> assetStore;
 	std::unique_ptr<Physics> physics;
+	std::unique_ptr<Renderer> renderer;
 	TransformSystem transformSystem;
 	bool isRunning;
 	unsigned int msLastFrame;
 	float dt;
 	entt::registry registry;
-	
+
 	entt::entity player;
-	entt::entity camera;
 	InputData input;
 	ImguiSystem imgui;
 

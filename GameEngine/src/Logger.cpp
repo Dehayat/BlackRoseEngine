@@ -4,7 +4,7 @@
 
 void Logger::Log(const std::string& message)
 {
-#ifdef DEBUG2
+#ifdef _DEBUG
 
 
 	std::string msg = "LOG: " + message;
@@ -15,7 +15,7 @@ void Logger::Log(const std::string& message)
 
 void Logger::Error(const std::string& message)
 {
-#ifdef DEBUG2
+#ifdef _DEBUG
 
 
 	std::string msg = "ERR: " + message;

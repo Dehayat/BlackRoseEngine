@@ -45,14 +45,14 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
-    <LibraryPath>C:\Users\dehay\Documents\GameProjects\GameEngine\GameEngine\libs\lua\x64;C:\SDL2\lib\x64;$(LibraryPath)</LibraryPath>
+    <LibraryPath>$(LibraryPath)</LibraryPath>
     <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath)</IncludePath>
     <SourcePath>include;src;$(SourcePath)</SourcePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
-    <LibraryPath>C:\Users\dehay\Documents\GameProjects\GameEngine\GameEngine\libs\lua\x64;C:\SDL2\lib\x64;$(LibraryPath)</LibraryPath>
-    <IncludePath>C:\SDL2\include;C:\Users\dehay\Documents\GameProjects\GameEngine\GameEngine\libs;$(VC_IncludePath);$(WindowsSDK_IncludePath)</IncludePath>
+    <LibraryPath>$(LibraryPath)</LibraryPath>
+    <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath)</IncludePath>
     <SourcePath>include;src;$(SourcePath)</SourcePath>
   </PropertyGroup>
   <PropertyGroup Label="Vcpkg">
@@ -90,7 +90,7 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>SDL2.lib;SDL2main.lib;SDL2_image.lib;SDL2_ttf.lib;SDL2_mixer.lib;liblua53.a;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -102,13 +102,19 @@
     <ClInclude Include="inc\Events\KeyPressedEvent.h" />
     <ClInclude Include="inc\Game.h" />
     <ClInclude Include="inc\Logger.h" />
+    <ClInclude Include="inc\Physics.h" />
+    <ClInclude Include="inc\SdlContainer.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="inc\Transform.h" />
+    <ClCompile Include="src\Physics.cpp" />
+    <ClCompile Include="src\SdlContainer.cpp" />
     <ClCompile Include="src\ImguiSystem.cpp" />
     <ClCompile Include="src\AssetStore.cpp" />
     <ClCompile Include="src\Game.cpp" />
     <ClCompile Include="src\Logger.cpp" />
     <ClCompile Include="src\Main.cpp" />
+    <ClCompile Include="src\Transform.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

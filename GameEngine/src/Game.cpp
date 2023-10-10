@@ -1,89 +1,37 @@
-#include <iostream>
-#include <fstream>
-
 #include <SDL2/SDL.h>
-#include <SDL2/SDL_image.h>
 #include <glm/glm.hpp>
 #include <box2d/b2_world_callbacks.h>
-
 #include "Events/KeyPressedEvent.h"
 #include "Game.h"
-#include "Logger.h"
 
 Game::Game() {
 	Logger::Log("Game Constructed");
-	auto res = SDL_Init(SDL_INIT_EVERYTHING);
-	SDL_assert(res == 0);
 
-	SDL_DisplayMode displayMode;
-	SDL_GetCurrentDisplayMode(0, &displayMode);
-	windowWidth = 1200; //displayMode.w;
-	windowHeight = (float)windowWidth * 9 / 16;// displayMode.h;
-	window = SDL_CreateWindow(
-		"Rose Engine",
-		SDL_WINDOWPOS_CENTERED,
-		SDL_WINDOWPOS_CENTERED,
-		windowWidth,
-		windowHeight,
-		SDL_WINDOW_SHOWN | SDL_WINDOW_ALLOW_HIGHDPI
-	);
-	SDL_assert(window != nullptr);
-
-	renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
-	SDL_assert(renderer != nullptr);
-	SDL_RenderSetVSync(renderer, 1);
-	SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "2");
-
-	eventBus = std::make_unique<EventBus>();
-
+	sdl = std::make_unique<SdlContainer>(1200, (float)1200 * 9 / 16);
 	assetStore = std::make_unique<AssetStore>();
+	physics = std::make_unique<Physics>(0, -10);
+	physics->InitDebugDrawer(sdl->GetRenderer());
+	physics->EnableDebug(true);
+	transformSystem.InitDebugDrawer(sdl->GetRenderer());
+	transformSystem.EnableDebug(true);
 
 	dt = 0;
-
 	msLastFrame = 0;
-
 	isRunning = false;
-
-	b2Vec2 gravity(0.0f, -10.0f);
-	physicsWorld = std::make_unique<b2World>(gravity);
-	debugDrawer = new DebugDraw(renderer);
-	debugDrawer->SetFlags(15);
-	physicsWorld->SetDebugDraw(debugDrawer);
 }
 
 Game::~Game() {
-	SDL_DestroyRenderer(renderer);
-	SDL_DestroyWindow(window);
-	SDL_Quit();
 	Logger::Log("Game Destructed");
-	delete debugDrawer;
 }
-
-struct Transform {
-	glm::vec2 position;
-	glm::vec2 scale;
-	float rotation;
-	glm::mat3 matrix;
-	Transform(glm::vec2 position = glm::vec2(0, 0), glm::vec2 scale = glm::vec2(1, 1), float rotation = 0) {
-		this->position = position;
-		this->scale = scale;
-		this->rotation = rotation;
-		this->matrix = glm::mat3(0);
-	}
-};
 
 struct Sprite {
 	std::string sprite;
 	int layer;
 	SDL_Color color;
-	float ppu;
-	glm::vec2 size;
-	Sprite(std::string sprite, int layer = 0, SDL_Color color = SDL_Color{ 255,255,255,255 }, float ppu = 100) {
+	Sprite(std::string sprite, int layer = 0, SDL_Color color = SDL_Color{ 255,255,255,255 }) {
 		this->sprite = sprite;
-		this->size = size;
 		this->layer = layer;
 		this->color = color;
-		this->ppu = ppu;
 	}
 };
 
@@ -108,58 +56,31 @@ struct Camera {
 	}
 };
 
-struct PhysicsBody {
-	b2Body* body;
-	PhysicsBody(b2Body* body) {
-		this->body = body;
-	}
-};
 
 void Game::Setup()
 {
-	assetStore->AddTexture(renderer, "rose", "./assets/Rose.png");
-	assetStore->AddTexture(renderer, "hornet", "./assets/Hornet_Idle.png");
-	assetStore->AddTexture(renderer, "block", "./assets/Block.jpg");
+	assetStore->AddTexture(sdl->GetRenderer(), "rose", "./assets/Rose.png", 512);
+	assetStore->AddTexture(sdl->GetRenderer(), "hornet", "./assets/Hornet_Idle.png", 128);
+	assetStore->AddTexture(sdl->GetRenderer(), "block", "./assets/Block.jpg", 64);
 
 
 	const auto hornet = registry.create();
 	registry.emplace<Transform>(hornet, glm::vec2(-3.5, 0), glm::vec2(1, 1), 0);
-	registry.emplace<Sprite>(hornet, "hornet", 1, SDL_Color{ 255,255,255,255 }, 128);
+	registry.emplace<Sprite>(hornet, "hornet", 1, SDL_Color{ 255,255,255,255 });
 	registry.emplace<Player>(hornet, 10);
+	registry.emplace<PhysicsBody>(hornet, *physics, glm::vec2(0, 0), glm::vec2(0.2, 0.8), true);
 	player = hornet;
-
-	b2BodyDef bodyDef;
-	bodyDef.type = b2_dynamicBody;
-	bodyDef.position.Set(0.0f, 0.0f);
-	b2Body* body = physicsWorld->CreateBody(&bodyDef);
-	b2PolygonShape dynamicBox;
-	dynamicBox.SetAsBox(1.0f, 1.0f);
-	b2FixtureDef fixtureDef;
-	fixtureDef.shape = &dynamicBox;
-	fixtureDef.density = 1.0f;
-	fixtureDef.friction = 0.3f;
-	body->CreateFixture(&fixtureDef);
-	body->SetFixedRotation(true);
-	registry.emplace<PhysicsBody>(player, body);
-
 
 	const auto camera = registry.create();
 	registry.emplace<Transform>(camera, glm::vec2(0, 0), glm::vec2(1, 1), 0);
 	registry.emplace<Camera>(camera, 10);
 	this->camera = camera;
 
-
 	const auto ground = registry.create();
 	registry.emplace<Transform>(ground, glm::vec2(0, -3), glm::vec2(20, 1), 0);
-	registry.emplace<Sprite>(ground, "block", 0, SDL_Color{ 255,255,255,255 }, 64);
+	registry.emplace<Sprite>(ground, "block", 0, SDL_Color{ 255,255,255,255 });
+	registry.emplace<StaticBody>(ground, *physics, glm::vec2(0, -3), glm::vec2(10, 0.4));
 
-	b2BodyDef groundBodyDef;
-	groundBodyDef.position.Set(0.0f, -3.0f);
-	b2Body* groundBody = physicsWorld->CreateBody(&groundBodyDef);
-	b2PolygonShape groundBox;
-	groundBox.SetAsBox(10.0f, 0.5f);
-	groundBody->CreateFixture(&groundBox, 0.0f);
-	registry.emplace<PhysicsBody>(ground, groundBody);
 }
 
 void Game::Run()
@@ -180,7 +101,7 @@ void Game::ProcessEvents()
 {
 	SDL_Event sdlEvent;
 	while (SDL_PollEvent(&sdlEvent)) {
-		if (sdlEvent.window.windowID != SDL_GetWindowID(window)) {
+		if (sdlEvent.window.windowID != SDL_GetWindowID(sdl->GetWindow())) {
 			imgui.HandleEvent(sdlEvent);
 			continue;
 		}
@@ -201,20 +122,9 @@ void Game::ProcessEvents()
 				Logger::Log("World Pos " + std::to_string(worldPos[0]) + "," + std::to_string(worldPos[1]));
 				auto rose = registry.create();
 				registry.emplace<Transform>(rose, worldPos, glm::vec2(1, 1), 0);
-				registry.emplace<Sprite>(rose, "rose", 5, SDL_Color{ 255,255,255,255 }, 512);
+				registry.emplace<Sprite>(rose, "rose", 5);
+				registry.emplace<PhysicsBody>(rose, *physics, glm::vec2(worldPos.x, worldPos.y), glm::vec2(0.25, 0.25), true);
 
-				b2BodyDef bodyDef;
-				bodyDef.type = b2_dynamicBody;
-				bodyDef.position.Set(worldPos.x, worldPos.y);
-				b2Body* body = physicsWorld->CreateBody(&bodyDef);
-				b2PolygonShape dynamicBox;
-				dynamicBox.SetAsBox(0.25f, 0.25f);
-				b2FixtureDef fixtureDef;
-				fixtureDef.shape = &dynamicBox;
-				fixtureDef.density = 1.0f;
-				fixtureDef.friction = 0.3f;
-				body->CreateFixture(&fixtureDef);
-				registry.emplace<PhysicsBody>(rose, body);
 			}
 			break;
 		case SDL_KEYDOWN:
@@ -263,30 +173,10 @@ float x, y;
 
 void Game::Update()
 {
+	physics->Update(registry);
+	transformSystem.Update(registry);
 
-	float timeStep = 1.0f / 60.0f;
-	int velocityIterations = 6;
-	int positionIterations = 2;
-	auto phView = registry.view<PhysicsBody, Transform>();
-	for (auto entity : phView) {
-		const auto& pos = phView.get<Transform>(entity);
-		auto& body = phView.get<PhysicsBody>(entity);
-		auto rotation = body.body->GetAngle();
-		auto position = body.body->GetPosition();
-		position.x = pos.position.x;
-		position.y = pos.position.y;
-		body.body->SetTransform(position, rotation);
-		body.body->SetAwake(true);
-	}
-	physicsWorld->Step(timeStep, velocityIterations, positionIterations);
-	for (auto entity : phView) {
-		auto& pos = phView.get<Transform>(entity);
-		const auto& body = phView.get<PhysicsBody>(entity);
-		pos.position = glm::vec2(body.body->GetPosition().x, body.body->GetPosition().y);
-	}
-
-
-	if (SDL_GetKeyboardFocus() == window) {
+	if (SDL_GetKeyboardFocus() == sdl->GetWindow()) {
 		UpdateInputSystem();
 	}
 
@@ -315,26 +205,14 @@ void Game::Update()
 		SDL_Delay(waitTimeMs);
 	dt = (SDL_GetTicks() - msLastFrame) / 1000.0f;
 	msLastFrame = SDL_GetTicks();
-	auto view3 = registry.view<Transform>();
-	for (auto entity : view3) {
-		auto& pos = view3.get<Transform>(entity);
-		//calc matrix
-		pos.matrix = glm::mat3(
-			glm::cos(glm::radians(pos.rotation)) * pos.scale.x, -glm::sin(glm::radians(pos.rotation)) * pos.scale.y, pos.position.x,
-			glm::sin(glm::radians(pos.rotation)) * pos.scale.x, glm::cos(glm::radians(pos.rotation)) * pos.scale.y, pos.position.y,
-			0, 0, 1
-		);
-	}
 
-
-	eventBus->Reset();
 }
 
 
 void Game::Render()
 {
-	SDL_SetRenderDrawColor(renderer, 38, 77, 142, SDL_ALPHA_OPAQUE);
-	SDL_RenderClear(renderer);
+	SDL_SetRenderDrawColor(sdl->GetRenderer(), 38, 77, 142, SDL_ALPHA_OPAQUE);
+	SDL_RenderClear(sdl->GetRenderer());
 	registry.sort<Sprite>([](const auto& lhs, const auto& rhs) {
 		return lhs.layer < rhs.layer;
 		});
@@ -349,10 +227,11 @@ void Game::Render()
 	);
 	//assume ok
 	auto invCamMatrix = glm::inverse(camMatrix);
-	float windowAspect = (float)windowWidth / windowHeight;
+	auto windowSize = sdl->GetWindowSize();
+	float windowAspect = (float)windowSize.x / windowSize.y;
 	float camWidth = windowAspect * camHeight;
-	float scaleX = windowWidth / (camWidth);
-	float scaleY = windowHeight / (camHeight);
+	float scaleX = windowSize.x / (camWidth);
+	float scaleY = windowSize.y / (camHeight);
 
 	auto tr = glm::mat3(
 		1, 0, camWidth / 2,
@@ -377,28 +256,31 @@ void Game::Render()
 		const auto& texture = assetStore->GetTexture(sp.sprite);
 		int texW;
 		int texH;
-		SDL_QueryTexture(texture, nullptr, nullptr, &texW, &texH);
+		SDL_QueryTexture(texture.texture, nullptr, nullptr, &texW, &texH);
 		auto viewMatrix = pos.matrix * worldToScreen;
 		auto position = glm::vec2(viewMatrix[0][2], viewMatrix[1][2]);
 		auto scale = glm::vec2(glm::sqrt(viewMatrix[0][0] * viewMatrix[0][0] + viewMatrix[1][0] * viewMatrix[1][0]), glm::sqrt(viewMatrix[0][1] * viewMatrix[0][1] + viewMatrix[1][1] * viewMatrix[1][1]));
 		auto rotation = glm::degrees(std::atan2f(viewMatrix[1][0], viewMatrix[0][0]));
 
-		int spriteSizeX = scale.x * (texW / sp.ppu);
-		int spriteSizeY = scale.y * (texH / sp.ppu);
+		int spriteSizeX = scale.x * ((float)texW / texture.ppu);
+		int spriteSizeY = scale.y * ((float)texH / texture.ppu);
 		SDL_FRect player = SDL_FRect{
 			(position.x - spriteSizeX / 2),
 			(position.y - spriteSizeY / 2),
 			(float)spriteSizeX,
 			(float)spriteSizeY,
 		};
-		SDL_SetTextureColorMod(texture, sp.color.r, sp.color.g, sp.color.b);
-		SDL_SetTextureBlendMode(texture, SDL_BLENDMODE_BLEND);
-		SDL_SetTextureAlphaMod(texture, sp.color.a);
-		SDL_RenderCopyExF(renderer, texture, nullptr, &player, rotation, nullptr, SDL_FLIP_NONE);
+		SDL_SetTextureColorMod(texture.texture, sp.color.r, sp.color.g, sp.color.b);
+		SDL_SetTextureBlendMode(texture.texture, SDL_BLENDMODE_BLEND);
+		SDL_SetTextureAlphaMod(texture.texture, sp.color.a);
+		SDL_RenderCopyExF(sdl->GetRenderer(), texture.texture, nullptr, &player, rotation, nullptr, SDL_FLIP_NONE);
 	}
 
-	debugDrawer->SetMatrix(worldToScreen);
-	//physicsWorld->DebugDraw();
+#define DEBUG_PHYSICS
+#ifdef DEBUG_PHYSICS
+	physics->DebugRender(worldToScreen);
+	transformSystem.DebugRender(worldToScreen, registry);
+#endif // DEBUG_PHYSICS
 
-	SDL_RenderPresent(renderer);
+	SDL_RenderPresent(sdl->GetRenderer());
 }

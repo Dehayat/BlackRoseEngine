@@ -71,7 +71,6 @@ void Game::Run()
 		ProcessEvents();
 		Update();
 		Render();
-		imgui.Render();
 	}
 }
 
@@ -142,7 +141,6 @@ void Game::UpdateInputSystem() {
 	}
 }
 
-float x, y;
 
 void Game::Update()
 {
@@ -152,8 +150,6 @@ void Game::Update()
 	if (SDL_GetKeyboardFocus() == sdl->GetWindow()) {
 		UpdateInputSystem();
 	}
-
-	registry.get<Transform>(renderer->GetCamera()).position = glm::vec2(x, y);
 
 	auto view2 = registry.view<const Player, Transform>();
 
@@ -182,6 +178,15 @@ void Game::Update()
 }
 
 
+float camX, camY;
+void ImguiCam(Transform& tf) {
+	Logger::Log("Cam pos init in global vars");
+	ImGui::SliderFloat("CamX", &camX, -10, 10);
+	ImGui::SliderFloat("CamY", &camY, -10, 10);
+	tf.position.x = camX;
+	tf.position.y = camY;
+}
+
 void Game::Render()
 {
 
@@ -192,5 +197,11 @@ void Game::Render()
 	transformSystem.DebugRender(renderer->GetWorldToScreenMatrix(), registry);
 #endif // DEBUG_PHYSICS
 	renderer->Present();
+
+	imgui.Render();
+
+	ImguiCam(registry.get<Transform>(renderer->GetCamera()));
+
+	imgui.Present();
 
 }

@@ -12,8 +12,6 @@ public:
 	ImguiSystem();
 	~ImguiSystem();
 	void Render();
+	void Present();
 	void HandleEvent(SDL_Event& event);
 };
-
-
-extern float x, y;

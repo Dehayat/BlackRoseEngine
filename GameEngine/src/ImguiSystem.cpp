@@ -47,9 +47,11 @@ void ImguiSystem::Render()
 
 	//// ImGui code here
 	ImGui::ShowDemoWindow();
-	ImGui::SliderFloat("CamX", &x, -10, 10);
-	ImGui::SliderFloat("CamY", &y, -10, 10);
+	//ImGui::SliderFloat("CamX", &x, -10, 10);
+	//ImGui::SliderFloat("CamY", &y, -10, 10);
 
+}
+void ImguiSystem::Present() {
 	ImGui::Render();
 	SDL_SetRenderTarget(renderer, nullptr);
 	SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);

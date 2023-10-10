@@ -4,6 +4,9 @@
 #include <entt/entt.hpp>
 
 struct Transform {
+	bool hasParent;
+	int level;
+	entt::entity parent;
 	glm::vec2 position;
 	glm::vec2 scale;
 	float rotation;
@@ -32,4 +35,5 @@ public:
 	void InitDebugDrawer(SDL_Renderer* sdl);
 	void EnableDebug(bool enable);
 	void DebugRender(glm::mat3 viewMatrix, entt::registry& registry);
+	void SetParent(entt::registry& registry,Transform& child, entt::entity parent);
 };

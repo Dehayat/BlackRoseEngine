@@ -11,20 +11,29 @@ TransformSystem::TransformSystem()
 TransformSystem::~TransformSystem()
 {
 	if (debugDrawer != nullptr) {
+
 		delete debugDrawer;
 	}
 }
 
 void TransformSystem::Update(entt::registry& registry)
 {
+	registry.sort<Transform>([](const auto& lhs, const auto& rhs) {
+		return lhs.level < rhs.level;
+		});
 	auto view3 = registry.view<Transform>();
 	for (auto entity : view3) {
-		auto& pos = view3.get<Transform>(entity);
-		pos.matrix = glm::mat3(
-			glm::cos(glm::radians(pos.rotation)) * pos.scale.x, -glm::sin(glm::radians(pos.rotation)) * pos.scale.y, pos.position.x,
-			glm::sin(glm::radians(pos.rotation)) * pos.scale.x, glm::cos(glm::radians(pos.rotation)) * pos.scale.y, pos.position.y,
+		auto& trx = view3.get<Transform>(entity);
+		trx.matrix = glm::mat3(
+			glm::cos(glm::radians(trx.rotation)) * trx.scale.x, -glm::sin(glm::radians(trx.rotation)) * trx.scale.y, trx.position.x,
+			glm::sin(glm::radians(trx.rotation)) * trx.scale.x, glm::cos(glm::radians(trx.rotation)) * trx.scale.y, trx.position.y,
 			0, 0, 1
 		);
+
+		if (trx.hasParent) {
+			auto& parentTrx = registry.get<Transform>(trx.parent);
+			trx.matrix = trx.matrix * parentTrx.matrix;
+		}
 	}
 }
 
@@ -55,6 +64,20 @@ void TransformSystem::DebugRender(glm::mat3 viewMatrix, entt::registry& registry
 	}
 }
 
+void TransformSystem::SetParent(entt::registry& registry, Transform& child, entt::entity parent)
+{
+	if (!registry.valid(parent)) {
+		child.parent = entt::entity(-1);
+		child.level = 0;
+		child.hasParent = false;
+		return;
+	}
+	auto& parentTrx = registry.get<Transform>(parent);
+	child.parent = parent;
+	child.level = parentTrx.level + 1;
+	child.hasParent = true;
+}
+
 DebugDrawTransform::DebugDrawTransform(SDL_Renderer* sdl) :matrix(1)
 {
 	this->renderer = sdl;
@@ -71,8 +94,9 @@ void DebugDrawTransform::DrawTransform(const Transform& t)
 	glm::vec3 dest = glm::vec3(0, 0.6f, 1);
 	orig = orig * t.matrix * matrix;
 	dest = dest * t.matrix * matrix;
-	filledCircleRGBA(renderer, orig.x, orig.y, 20, 0, 200, 50, 100);
-	thickLineRGBA(renderer, orig.x, orig.y, dest.x, dest.y, 10, 0, 200, 50, 100);
+	int b = (t.level) / 2.0 * 255;
+	filledCircleRGBA(renderer, orig.x, orig.y, 15, 0, 200, b, 150);
+	thickLineRGBA(renderer, orig.x, orig.y, dest.x, dest.y, 10, 0, 200, b, 150);
 }
 
 inline Transform::Transform(glm::vec2 position, glm::vec2 scale, float rotation) {
@@ -80,4 +104,7 @@ inline Transform::Transform(glm::vec2 position, glm::vec2 scale, float rotation)
 	this->scale = scale;
 	this->rotation = rotation;
 	this->matrix = glm::mat3(0);
+	this->hasParent = false;
+	this->parent = entt::entity(-1);
+	this->level = 0;
 }

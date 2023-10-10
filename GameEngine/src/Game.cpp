@@ -26,7 +26,7 @@ Game::Game() {
 	renderer = std::make_unique<Renderer>(sdl->GetRenderer());
 	transformSystem.InitDebugDrawer(sdl->GetRenderer());
 	//physics->EnableDebug(true);
-	//transformSystem.EnableDebug(true);
+	transformSystem.EnableDebug(true);
 
 	dt = 0;
 	msLastFrame = 0;
@@ -43,11 +43,16 @@ void Game::Setup()
 
 
 	const auto hornet = registry.create();
-	registry.emplace<Transform>(hornet, glm::vec2(-3.5, 0), glm::vec2(1, 1), 0);
+	registry.emplace<Transform>(hornet, glm::vec2(0, 0), glm::vec2(1, 1), 0);
 	registry.emplace<Sprite>(hornet, "hornet", 1, SDL_Color{ 255,255,255,255 });
 	registry.emplace<Player>(hornet, 10);
 	registry.emplace<PhysicsBody>(hornet, *physics, glm::vec2(0, 0), glm::vec2(0.2, 0.8), true);
 	player = hornet;
+
+	const auto hornetRose = registry.create();
+	auto& childTrx = registry.emplace<Transform>(hornetRose, glm::vec2(0.5f, 0), glm::vec2(1, 1), 0);
+	transformSystem.SetParent(registry, childTrx, hornet);
+	registry.emplace<Sprite>(hornetRose, "rose", 2);
 
 	const auto camera = registry.create();
 	registry.emplace<Transform>(camera, glm::vec2(0, 0), glm::vec2(1, 1), 0);
@@ -95,11 +100,13 @@ void Game::Update()
 		registry.emplace<Sprite>(ground, "rose", 0, SDL_Color{ 255,255,255,255 });
 		registry.emplace<PhysicsBody>(ground, *physics, glm::vec2(spawnPos.x, spawnPos.y), glm::vec2(0.25, 0.25));
 	}
-	auto view2 = registry.view<const Player, Transform>();
+	auto view2 = registry.view<const Player, const Transform, PhysicsBody>();
 	for (auto entity : view2) {
-		auto& pos = view2.get<Transform>(entity);
+		const auto& pos = view2.get<Transform>(entity);
+		auto& phys = view2.get<PhysicsBody>(entity);
 		const auto& player = view2.get<Player>(entity);
-		pos.position.x += player.speed * player.input * dt;
+		auto vel = b2Vec2(player.speed * player.input, phys.body->GetLinearVelocity().y);
+		phys.body->SetLinearVelocity(vel);
 	}
 
 	int waitTimeMs = FRAMETIME_MS - (SDL_GetTicks() - msLastFrame);

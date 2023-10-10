@@ -31,8 +31,8 @@ void Physics::Update(entt::registry& registry)
 	}
 
 	float timeStep = 1.0f / 60.0f;
-	int velocityIterations = 6;
-	int positionIterations = 2;
+	int velocityIterations = 10;
+	int positionIterations = 12;
 	physicsWorld->Step(timeStep, velocityIterations, positionIterations);
 
 	for (auto entity : phView) {

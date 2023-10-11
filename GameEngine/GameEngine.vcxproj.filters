@@ -60,6 +60,9 @@
     <ClInclude Include="inc\GUID.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="inc\Player.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Main.cpp">

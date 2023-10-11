@@ -6,18 +6,10 @@
 #include <ryml/ryml.hpp>
 #include "Events/KeyPressedEvent.h"
 #include "Game.h"
-#include "Logger.h"
 #include "GUID.h"
+#include "Player.h"
+#include "Logger.h"
 
-struct Player {
-	float speed;
-	int input = 0;
-	Player(float speed = 10) {
-		this->speed = speed;
-		input = 0;
-	}
-
-};
 
 Game::Game() :allEntities() {
 	Logger::Log("Game Constructed");
@@ -69,7 +61,6 @@ void Game::Run()
 		msLastFrame = SDL_GetTicks64();
 	}
 }
-
 void Game::Update()
 {
 	if (sdl->ProcessEvents(imgui)) {
@@ -79,15 +70,7 @@ void Game::Update()
 	transformSystem.Update(registry);
 	physics->Update(registry);
 
-	//if (input.GetKey(InputKey::LEFT).isPressed || input.GetKey(InputKey::A).isPressed) {
-	//	registry.get<Player>(player).input = -1;
-	//}
-	//else if (input.GetKey(InputKey::RIGHT).isPressed || input.GetKey(InputKey::D).isPressed) {
-	//	registry.get<Player>(player).input = 1;
-	//}
-	//else {
-	//	registry.get<Player>(player).input = 0;
-	//}
+
 	if (input.GetMouseButton(InputMouse::LEFT_BUTTON).justPressed) {
 		const auto ground = registry.create();
 		auto spawnPos = glm::vec3(input.GetMousePosition(), 1) * renderer->GetScreenToWorldMatrix();
@@ -95,11 +78,20 @@ void Game::Update()
 		registry.emplace<Sprite>(ground, "rose", 0, SDL_Color{ 255,255,255,255 });
 		registry.emplace<PhysicsBody>(ground, *physics, glm::vec2(spawnPos.x, spawnPos.y), glm::vec2(0.25, 0.25));
 	}
-	auto view2 = registry.view<const Player, const Transform, PhysicsBody>();
+	auto view2 = registry.view<Player, const Transform, PhysicsBody>();
 	for (auto entity : view2) {
 		const auto& pos = view2.get<Transform>(entity);
 		auto& phys = view2.get<PhysicsBody>(entity);
-		const auto& player = view2.get<Player>(entity);
+		auto& player = view2.get<Player>(entity);
+		if (input.GetKey(InputKey::LEFT).isPressed || input.GetKey(InputKey::A).isPressed) {
+			player.input = -1;
+		}
+		else if (input.GetKey(InputKey::RIGHT).isPressed || input.GetKey(InputKey::D).isPressed) {
+			player.input = 1;
+		}
+		else {
+			player.input = 0;
+		}
 		auto vel = b2Vec2(player.speed * player.input, phys.body->GetLinearVelocity().y);
 		phys.body->SetLinearVelocity(vel);
 	}

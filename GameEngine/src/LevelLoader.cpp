@@ -7,6 +7,7 @@
 #include "Physics.h"
 #include "Renderer.h"
 #include "GUID.h"
+#include "Player.h"
 #include "Logger.h"
 
 struct FileResource {
@@ -83,6 +84,10 @@ entt::entity LevelLoader::DeserializeEntity(entt::registry& registry, ryml::Node
 	if (node.has_child("Sprite")) {
 		auto n = node["Sprite"];
 		ComponentSer<Sprite>::Deserialize(registry, n, entity);
+	}
+	if (node.has_child("Player")) {
+		auto n = node["Player"];
+		ComponentSer<Player>::Deserialize(registry, n, entity);
 	}
 	return entity;
 }

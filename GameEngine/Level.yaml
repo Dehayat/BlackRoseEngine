@@ -13,6 +13,7 @@
     layer: 0
 - Type: Entity
   Guid: 5266576921330336830
+  Player:
   Transform:
     position:
       - 0

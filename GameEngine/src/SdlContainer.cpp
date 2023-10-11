@@ -24,7 +24,7 @@ SdlContainer::SdlContainer(int windowWidth, int windowHeight)
 	SDL_GL_GetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, &a);
 	Logger::Log(std::to_string(a));
 
-	renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
+	renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);// | SDL_RENDERER_PRESENTVSYNC);
 	SDL_GL_GetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, &a);
 	Logger::Log(std::to_string(a));
 	SDL_assert(renderer != nullptr);

@@ -27,8 +27,8 @@ Game::Game() {
 	physics->InitDebugDrawer(sdl->GetRenderer());
 	renderer = std::make_unique<Renderer>(sdl->GetRenderer());
 	transformSystem.InitDebugDrawer(sdl->GetRenderer());
-	physics->EnableDebug(true);
-	transformSystem.EnableDebug(true);
+	//physics->EnableDebug(true);
+	//transformSystem.EnableDebug(true);
 	auto x = SDL_GL_GetCurrentContext();
 
 	dt = 0;
@@ -81,12 +81,17 @@ void Game::Run()
 	while (isRunning) {
 		Update();
 		Render();
+
+		std::uint64_t waitTimeMs = SDL_GetTicks64() + FRAMETIME_MS - (SDL_GetTicks64() - msLastFrame);
+		//while (SDL_GetTicks64() < waitTimeMs);
+		dt = (SDL_GetTicks64() - msLastFrame) / 1000.0f;
+		msLastFrame = SDL_GetTicks64();
+		Logger::Log(std::to_string(dt));
 	}
 }
 
 void Game::Update()
 {
-
 	if (sdl->ProcessEvents(imgui)) {
 		isRunning = false;
 	}
@@ -118,12 +123,6 @@ void Game::Update()
 		auto vel = b2Vec2(player.speed * player.input, phys.body->GetLinearVelocity().y);
 		phys.body->SetLinearVelocity(vel);
 	}
-
-	int waitTimeMs = FRAMETIME_MS - (SDL_GetTicks() - msLastFrame);
-	if (waitTimeMs > 0 && waitTimeMs < FRAMETIME_MS)
-		SDL_Delay(waitTimeMs);
-	dt = (SDL_GetTicks() - msLastFrame) / 1000.0f;
-	msLastFrame = SDL_GetTicks();
 }
 float camX, camY;
 void ImguiCam(Transform& tf) {

@@ -47,6 +47,19 @@ b2World& Physics::GetWorld()
 	return *physicsWorld;
 }
 
+void Physics::InitLoaded(entt::registry& registry)
+{
+	auto phView = registry.view<PhysicsBody, Transform>();
+	for (auto entity : phView) {
+		const auto& pos = phView.get<Transform>(entity);
+		auto& body = phView.get<PhysicsBody>(entity);
+		if (body.isInit) {
+			continue;
+		}
+		body.Init(*this, pos);
+	}
+}
+
 PhysicsBody::PhysicsBody(Physics& physics, glm::vec2 pos, glm::vec2 size, bool keepAwake)
 {
 	b2BodyDef bodyDef;
@@ -63,6 +76,30 @@ PhysicsBody::PhysicsBody(Physics& physics, glm::vec2 pos, glm::vec2 size, bool k
 	//body->SetFixedRotation(true);
 	body->SetSleepingAllowed(!keepAwake);
 	this->body = body;
+	isInit = true;
+}
+
+PhysicsBody::PhysicsBody(ryml::NodeRef node)
+{
+	this->body = nullptr;
+	isInit = false;
+}
+
+void PhysicsBody::Init(Physics& physics, const Transform& trx)
+{
+	b2BodyDef bodyDef;
+	bodyDef.type = b2_dynamicBody;
+	bodyDef.position.Set(trx.position.x, trx.position.y);
+	b2Body* body = physics.GetWorld().CreateBody(&bodyDef);
+	b2PolygonShape dynamicBox;
+	dynamicBox.SetAsBox(0.5f, 0.5f);
+	b2FixtureDef fixtureDef;
+	fixtureDef.shape = &dynamicBox;
+	fixtureDef.density = 1.0f;
+	fixtureDef.friction = 0.3f;
+	body->CreateFixture(&fixtureDef);
+	this->body = body;
+	isInit = true;
 }
 
 StaticBody::StaticBody(Physics& physics, glm::vec2 pos, glm::vec2 size)

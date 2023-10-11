@@ -3,13 +3,18 @@
 #include <box2d/box2d.h>
 #include <entt/entt.hpp>
 #include <glm/glm.hpp>
+#include <ryml/ryml.hpp>
 #include "SdlContainer.h"
+#include "Transform.h"
 
 class Physics;
 
 struct PhysicsBody {
+	bool isInit;
 	b2Body* body;
 	PhysicsBody(Physics& physics, glm::vec2 pos = { 0.f,0.f }, glm::vec2 size = { 1.f,1.f }, bool keepAwake = false);
+	PhysicsBody(ryml::NodeRef node);
+	void Init(Physics& physics, const Transform& trx);
 };
 struct StaticBody {
 	b2Body* body;
@@ -42,6 +47,7 @@ public:
 	~Physics();
 	void Update(entt::registry& registry);
 	b2World& GetWorld();
+	void InitLoaded(entt::registry& registry);
 
 	void InitDebugDrawer(SDL_Renderer* sdl);
 	void EnableDebug(bool enable);

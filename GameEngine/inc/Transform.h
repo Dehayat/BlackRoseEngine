@@ -2,6 +2,7 @@
 #include <SDL2/SDL.h>
 #include <glm/glm.hpp>
 #include <entt/entt.hpp>
+#include <ryml/ryml.hpp>
 
 struct Transform {
 	bool hasParent;
@@ -12,6 +13,7 @@ struct Transform {
 	float rotation;
 	glm::mat3 matrix;
 	Transform(glm::vec2 position = glm::vec2(0, 0), glm::vec2 scale = glm::vec2(1, 1), float rotation = 0);
+	Transform(ryml::NodeRef node);
 };
 class DebugDrawTransform
 {

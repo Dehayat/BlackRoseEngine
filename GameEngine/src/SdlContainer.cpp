@@ -1,4 +1,5 @@
 #include "SdlContainer.h"
+#include "Logger.h"
 
 SdlContainer::SdlContainer(int windowWidth, int windowHeight)
 {
@@ -16,8 +17,16 @@ SdlContainer::SdlContainer(int windowWidth, int windowHeight)
 		SDL_WINDOW_SHOWN | SDL_WINDOW_ALLOW_HIGHDPI
 	);
 	SDL_assert(window != nullptr);
+	//auto context = SDL_GL_CreateContext(window);
+	int a;
+	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
+	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 3);
+	SDL_GL_GetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, &a);
+	Logger::Log(std::to_string(a));
 
 	renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
+	SDL_GL_GetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, &a);
+	Logger::Log(std::to_string(a));
 	SDL_assert(renderer != nullptr);
 	SDL_RenderSetVSync(renderer, 1);
 	SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "2");

@@ -106,9 +106,11 @@
     <ClInclude Include="inc\SdlContainer.h" />
     <ClInclude Include="inc\Renderer.h" />
     <ClInclude Include="inc\InputSystem.h" />
+    <ClInclude Include="inc\LevelLoader.h" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="inc\Transform.h" />
+    <ClCompile Include="src\LevelLoader.cpp" />
     <ClCompile Include="src\InputSystem.cpp" />
     <ClCompile Include="src\Renderer.cpp" />
     <ClCompile Include="src\Physics.cpp" />

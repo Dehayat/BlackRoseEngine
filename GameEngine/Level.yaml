@@ -1,0 +1,11 @@
+- Type: Entity
+  Transform:
+    position:
+      - 5
+      - 0
+  PhysicsBody:
+- Type: Entity
+  Transform:
+    position:
+      - -5
+      - 0

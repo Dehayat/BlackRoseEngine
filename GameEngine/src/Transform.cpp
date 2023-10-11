@@ -99,10 +99,24 @@ void DebugDrawTransform::DrawTransform(const Transform& t)
 	thickLineRGBA(renderer, orig.x, orig.y, dest.x, dest.y, 10, 0, 200, b, 150);
 }
 
-inline Transform::Transform(glm::vec2 position, glm::vec2 scale, float rotation) {
+Transform::Transform(glm::vec2 position, glm::vec2 scale, float rotation) {
 	this->position = position;
 	this->scale = scale;
 	this->rotation = rotation;
+	this->matrix = glm::mat3(0);
+	this->hasParent = false;
+	this->parent = entt::entity(-1);
+	this->level = 0;
+}
+Transform::Transform(ryml::NodeRef node) {
+
+	float x, y;
+	node["position"].first_child() >> x;
+	node["position"].first_child().next_sibling() >> y;
+
+	this->position = glm::vec2(x, y);
+	this->scale = glm::vec2(1, 1);
+	this->rotation = 0;
 	this->matrix = glm::mat3(0);
 	this->hasParent = false;
 	this->parent = entt::entity(-1);

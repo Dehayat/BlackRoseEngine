@@ -8,6 +8,7 @@
 #include "Physics.h"
 #include "Renderer.h"
 #include "InputSystem.h"
+#include "LevelLoader.h"
 
 const int FPS = 60;
 const int FRAMETIME_MS = 1000 / FPS;
@@ -21,6 +22,7 @@ private:
 	std::unique_ptr<Physics> physics;
 	std::unique_ptr<Renderer> renderer;
 	TransformSystem transformSystem;
+	LevelLoader levelLoader;
 	InputSystem input;
 	bool isRunning;
 	unsigned int msLastFrame;

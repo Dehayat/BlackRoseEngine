@@ -1,3 +1,4 @@
+#include <sstream>
 #include <SDL2/SDL.h>
 #include <glm/glm.hpp>
 #include <box2d/b2_world_callbacks.h>
@@ -5,6 +6,7 @@
 #include "Events/KeyPressedEvent.h"
 #include "Game.h"
 #include "Logger.h"
+#include "ryml/ryml.hpp"
 
 struct Player {
 	float speed;
@@ -25,8 +27,9 @@ Game::Game() {
 	physics->InitDebugDrawer(sdl->GetRenderer());
 	renderer = std::make_unique<Renderer>(sdl->GetRenderer());
 	transformSystem.InitDebugDrawer(sdl->GetRenderer());
-	//physics->EnableDebug(true);
+	physics->EnableDebug(true);
 	transformSystem.EnableDebug(true);
+	auto x = SDL_GL_GetCurrentContext();
 
 	dt = 0;
 	msLastFrame = 0;
@@ -37,9 +40,13 @@ Game::~Game() {
 }
 void Game::Setup()
 {
+
 	assetStore->AddTexture(sdl->GetRenderer(), "rose", "./assets/Rose.png", 512);
 	assetStore->AddTexture(sdl->GetRenderer(), "hornet", "./assets/Hornet_Idle.png", 128);
 	assetStore->AddTexture(sdl->GetRenderer(), "block", "./assets/Block.jpg", 64);
+	assetStore->AddTexture(sdl->GetRenderer(), "platform", "./assets/Ground.png", 128);
+	assetStore->AddTexture(sdl->GetRenderer(), "bg", "./assets/bg.jpg", 64);
+	assetStore->AddTexture(sdl->GetRenderer(), "drip", "./assets/Drip.png", 128);
 
 
 	const auto hornet = registry.create();
@@ -60,10 +67,12 @@ void Game::Setup()
 	renderer->SetCamera(camera);
 
 	const auto ground = registry.create();
-	registry.emplace<Transform>(ground, glm::vec2(0, -3), glm::vec2(20, 1), 0);
-	registry.emplace<Sprite>(ground, "block", 0, SDL_Color{ 255,255,255,255 });
-	registry.emplace<StaticBody>(ground, *physics, glm::vec2(0, -3), glm::vec2(10, 0.4));
+	registry.emplace<Transform>(ground, glm::vec2(0, -3), glm::vec2(1, 1), 0);
+	registry.emplace<Sprite>(ground, "platform", 0);
+	registry.emplace<StaticBody>(ground, *physics, glm::vec2(0, -3), glm::vec2(1.2, 0.25));
 
+	levelLoader.LoadLevel("level.yaml", registry);
+	physics->InitLoaded(registry);
 }
 void Game::Run()
 {
@@ -77,6 +86,7 @@ void Game::Run()
 
 void Game::Update()
 {
+
 	if (sdl->ProcessEvents(imgui)) {
 		isRunning = false;
 	}

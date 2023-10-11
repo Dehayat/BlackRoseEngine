@@ -12,4 +12,5 @@ public:
 	void Render();
 	void Present();
 	void HandleEvent(SDL_Event& event);
+	bool ProcessEvents();
 };

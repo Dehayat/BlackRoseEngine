@@ -17,7 +17,7 @@
   Transform:
     position:
       - 0
-      - -3
+      - 0
   PhysicsBody:
     size:
       - 0.2

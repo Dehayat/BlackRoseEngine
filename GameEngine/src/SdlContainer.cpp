@@ -55,15 +55,11 @@ glm::ivec2 SdlContainer::GetWindowSize()
 	SDL_GetWindowSize(window, &x, &y);
 	return glm::ivec2(x, y);
 }
-bool SdlContainer::ProcessEvents(ImguiSystem& imgui)
+bool SdlContainer::ProcessEvents()
 {
 	bool exit = false;
 	SDL_Event sdlEvent;
 	while (SDL_PollEvent(&sdlEvent)) {
-		if (sdlEvent.window.windowID != SDL_GetWindowID(GetWindow())) {
-			imgui.HandleEvent(sdlEvent);
-			continue;
-		}
 		switch (sdlEvent.type)
 		{
 		case SDL_QUIT:

@@ -2,13 +2,16 @@
 #include <SDL2/SDL.h>
 #include <glm/glm.hpp>
 #include <box2d/b2_world_callbacks.h>
-#include <imgui.h>
 #include <ryml/ryml.hpp>
-#include "Events/KeyPressedEvent.h"
 #include "Game.h"
 #include "GUID.h"
 #include "Player.h"
 #include "Logger.h"
+
+#ifdef _EDITOR
+#include <imgui.h>
+#endif // _EDITOR
+
 
 
 Game::Game() :allEntities() {
@@ -20,8 +23,11 @@ Game::Game() :allEntities() {
 	physics->InitDebugDrawer(sdl->GetRenderer());
 	renderer = std::make_unique<Renderer>(sdl->GetRenderer());
 	transformSystem.InitDebugDrawer(sdl->GetRenderer());
+#ifdef _DEBUG
 	physics->EnableDebug(true);
 	transformSystem.EnableDebug(true);
+#endif // !_DEBUG
+
 	auto x = SDL_GL_GetCurrentContext();
 
 	dt = 0;
@@ -63,13 +69,15 @@ void Game::Run()
 }
 void Game::Update()
 {
-	if (sdl->ProcessEvents(imgui)) {
+	if (sdl->ProcessEvents()) {
 		isRunning = false;
 	}
-	input.Update(sdl->GetWindow());
-	transformSystem.Update(registry);
-	physics->Update(registry);
 
+	transformSystem.Update(registry);
+
+#ifndef _EDITOR
+	input.Update(sdl->GetWindow());
+	physics->Update(registry);
 
 	if (input.GetMouseButton(InputMouse::LEFT_BUTTON).justPressed) {
 		const auto ground = registry.create();
@@ -95,28 +103,24 @@ void Game::Update()
 		auto vel = b2Vec2(player.speed * player.input, phys.body->GetLinearVelocity().y);
 		phys.body->SetLinearVelocity(vel);
 	}
+#endif // _EDITOR
 }
-float camX, camY;
-void ImguiCam(Transform& tf) {
-	ImGui::SliderFloat("CamX", &camX, -10, 10);
-	ImGui::SliderFloat("CamY", &camY, -10, 10);
-	tf.position.x = camX;
-	tf.position.y = camY;
-}
+
 void Game::Render()
 {
 
 	renderer->Render(&registry, *assetStore);
-#define DEBUG_PHYSICS
-#ifdef DEBUG_PHYSICS
+#ifdef _DEBUG
 	physics->DebugRender(renderer->GetWorldToScreenMatrix());
 	transformSystem.DebugRender(renderer->GetWorldToScreenMatrix(), registry);
-#endif // DEBUG_PHYSICS
+#endif // _DEBUG
 	renderer->Present();
 
+#ifdef _EDITOR
 	imgui.Render();
-	ImguiCam(registry.get<Transform>(renderer->GetCamera()));
+	//Imgui Code
 	imgui.Present();
+#endif // _EDITOR
 
 }
 

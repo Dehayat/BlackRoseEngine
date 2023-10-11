@@ -10,7 +10,7 @@ using namespace glm;
 
 ImguiSystem::ImguiSystem()
 {
-	window = SDL_CreateWindow("Imgui Window", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 1000, 900, SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE);
+	window = SDL_CreateWindow("Imgui Window", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 500, 200, SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE);
 	renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
 	IMGUI_CHECKVERSION();
 	auto imguiContext = ImGui::CreateContext();
@@ -47,7 +47,7 @@ void ImguiSystem::Render()
 	ImGui::NewFrame();
 
 	//// ImGui code here
-	ImGui::ShowDemoWindow();
+	//ImGui::ShowDemoWindow();
 	//ImGui::SliderFloat("CamX", &x, -10, 10);
 	//ImGui::SliderFloat("CamY", &y, -10, 10);
 
@@ -64,4 +64,13 @@ void ImguiSystem::Present() {
 void ImguiSystem::HandleEvent(SDL_Event& e)
 {
 	ImGui_ImplSDL2_ProcessEvent(&e);
+}
+
+bool ImguiSystem::ProcessEvents()
+{
+	SDL_Event sdlEvent;
+	while (SDL_PollEvent(&sdlEvent)) {
+		HandleEvent(sdlEvent);
+	}
+	return false;
 }

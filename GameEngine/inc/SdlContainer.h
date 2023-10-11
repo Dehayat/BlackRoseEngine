@@ -14,6 +14,6 @@ public:
 	SDL_Renderer* GetRenderer();
 	SDL_Window* GetWindow();
 	glm::ivec2 GetWindowSize();
-	bool ProcessEvents(ImguiSystem &imgui);
+	bool ProcessEvents();
 };
 

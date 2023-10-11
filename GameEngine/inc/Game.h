@@ -3,12 +3,16 @@
 #include <entt/entt.hpp>
 #include "SdlContainer.h"
 #include "AssetStore.h"
-#include "ImguiSystem.h"
 #include "Transform.h"
 #include "Physics.h"
 #include "Renderer.h"
 #include "InputSystem.h"
 #include "LevelLoader.h"
+
+#ifdef _EDITOR
+#include "ImguiSystem.h"
+#endif // _EDITOR
+
 
 const int FPS = 60;
 const int FRAMETIME_MS = 1000 / FPS;
@@ -31,7 +35,10 @@ private:
 	std::unordered_map < std::uint64_t, entt::entity> allEntities;
 
 	entt::entity player;
+#ifdef _EDITOR
 	ImguiSystem imgui;
+#endif // _EDITOR
+
 
 
 public:

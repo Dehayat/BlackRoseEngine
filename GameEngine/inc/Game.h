@@ -28,6 +28,7 @@ private:
 	unsigned int msLastFrame;
 	float dt;
 	entt::registry registry;
+	std::unordered_map < std::uint64_t, entt::entity> allEntities;
 
 	entt::entity player;
 	ImguiSystem imgui;
@@ -42,4 +43,5 @@ public:
 	void Update();
 	void Render();
 	void UpdateInputSystem();
+	void RegisterAllEntities();
 };

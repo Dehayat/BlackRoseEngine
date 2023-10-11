@@ -2,20 +2,16 @@
 #include <string>
 #include <ryml/ryml.hpp>
 #include <entt/entt.hpp>
-#include "Transform.h"
-#include "Physics.h"
 
 template<typename T> class ComponentSer {
 public:
-	virtual T Deserialize(entt::registry& registry, ryml::NodeRef node, entt::entity componentOwner) {
+	static T Deserialize(entt::registry& registry, ryml::NodeRef node, entt::entity componentOwner) {
 		return registry.emplace<T>(componentOwner, node);
 	}
 };
 
 class LevelLoader
 {
-	ComponentSer<Transform> transform;
-	ComponentSer<PhysicsBody> physicsBody;
 public:
 	LevelLoader();
 	~LevelLoader();

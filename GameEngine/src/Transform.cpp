@@ -2,12 +2,44 @@
 #include <SDL2/SDL2_gfxPrimitives.h>
 #include "Logger.h"
 
+Transform::Transform(glm::vec2 position, glm::vec2 scale, float rotation) {
+	this->position = position;
+	this->scale = scale;
+	this->rotation = rotation;
+	this->matrix = glm::mat3(0);
+	this->hasParent = false;
+	this->parent = entt::entity(-1);
+	this->level = 0;
+	this->parentGUID = -1;
+}
+Transform::Transform(ryml::NodeRef node) {
+	this->position = glm::vec2(0, 0);
+	this->scale = glm::vec2(1, 1);
+	this->rotation = 0;
+	this->matrix = glm::mat3(0);
+	this->hasParent = false;
+	this->parent = entt::entity(-1);
+	this->level = 0;
+	this->parentGUID = 0;
+
+	if (node.has_child("position")) {
+		node["position"][0] >> position.x;
+		node["position"][1] >> position.y;
+	}
+
+	if (node.has_child("parent")) {
+		hasParent = true;
+		node["parent"] >> parentGUID;
+		level = -1;
+	}
+}
+
+
 TransformSystem::TransformSystem()
 {
 	debugDrawer = nullptr;
 	drawDebug = false;
 }
-
 TransformSystem::~TransformSystem()
 {
 	if (debugDrawer != nullptr) {
@@ -15,7 +47,6 @@ TransformSystem::~TransformSystem()
 		delete debugDrawer;
 	}
 }
-
 void TransformSystem::Update(entt::registry& registry)
 {
 	registry.sort<Transform>([](const auto& lhs, const auto& rhs) {
@@ -36,12 +67,30 @@ void TransformSystem::Update(entt::registry& registry)
 		}
 	}
 }
+int InitParentRecursive(entt::registry& registry, std::unordered_map<std::uint64_t, entt::entity>& allEntities, entt::entity parent) {
+	auto& pos = registry.get<Transform>(parent);
+	if (pos.hasParent && pos.level == -1) {
+		pos.parent = allEntities[pos.parentGUID];
+		pos.level = InitParentRecursive(registry, allEntities, pos.parent) + 1;
+	}
+	return pos.level;
+}
+void TransformSystem::InitLoaded(entt::registry& registry, std::unordered_map<std::uint64_t, entt::entity>& allEntities)
+{
+	auto view = registry.view<Transform>();
+	for (auto entity : view) {
+		auto& pos = view.get<Transform>(entity);
+		if (pos.hasParent && pos.level == -1) {
+			pos.parent = allEntities[pos.parentGUID];
+			pos.level = InitParentRecursive(registry, allEntities, pos.parent) + 1;
+		}
+	}
+}
 
 void TransformSystem::InitDebugDrawer(SDL_Renderer* sdl)
 {
 	debugDrawer = new DebugDrawTransform(sdl);
 }
-
 void TransformSystem::EnableDebug(bool enable)
 {
 	if (debugDrawer == nullptr) {
@@ -51,7 +100,6 @@ void TransformSystem::EnableDebug(bool enable)
 		drawDebug = enable;
 	}
 }
-
 void TransformSystem::DebugRender(glm::mat3 viewMatrix, entt::registry& registry)
 {
 	debugDrawer->SetMatrix(viewMatrix);
@@ -63,7 +111,6 @@ void TransformSystem::DebugRender(glm::mat3 viewMatrix, entt::registry& registry
 		}
 	}
 }
-
 void TransformSystem::SetParent(entt::registry& registry, Transform& child, entt::entity parent)
 {
 	if (!registry.valid(parent)) {
@@ -82,43 +129,17 @@ DebugDrawTransform::DebugDrawTransform(SDL_Renderer* sdl) :matrix(1)
 {
 	this->renderer = sdl;
 }
-
 void DebugDrawTransform::SetMatrix(glm::mat3 worldToScreen)
 {
 	matrix = worldToScreen;
 }
-
 void DebugDrawTransform::DrawTransform(const Transform& t)
 {
+	float scale = (4.0 - t.level) / 4.0;
 	glm::vec3 orig = glm::vec3(0, 0, 1);
-	glm::vec3 dest = glm::vec3(0, 0.6f, 1);
+	glm::vec3 dest = glm::vec3(0, 0.6f * scale, 1);
 	orig = orig * t.matrix * matrix;
 	dest = dest * t.matrix * matrix;
-	int b = (t.level) / 2.0 * 255;
-	filledCircleRGBA(renderer, orig.x, orig.y, 15, 0, 200, b, 150);
-	thickLineRGBA(renderer, orig.x, orig.y, dest.x, dest.y, 10, 0, 200, b, 150);
-}
-
-Transform::Transform(glm::vec2 position, glm::vec2 scale, float rotation) {
-	this->position = position;
-	this->scale = scale;
-	this->rotation = rotation;
-	this->matrix = glm::mat3(0);
-	this->hasParent = false;
-	this->parent = entt::entity(-1);
-	this->level = 0;
-}
-Transform::Transform(ryml::NodeRef node) {
-
-	float x, y;
-	node["position"].first_child() >> x;
-	node["position"].first_child().next_sibling() >> y;
-
-	this->position = glm::vec2(x, y);
-	this->scale = glm::vec2(1, 1);
-	this->rotation = 0;
-	this->matrix = glm::mat3(0);
-	this->hasParent = false;
-	this->parent = entt::entity(-1);
-	this->level = 0;
+	filledCircleRGBA(renderer, orig.x, orig.y, 10 * scale, 20, 100, 30, 255);
+	thickLineRGBA(renderer, orig.x, orig.y, dest.x, dest.y, 3, 20, 100, 30, 255);
 }

@@ -2,6 +2,7 @@
 #include <SDL2/SDL.h>
 #include <entt/entt.hpp>
 #include <glm/glm.hpp>
+#include <ryml/ryml.hpp>
 #include "AssetStore.h"
 
 struct Sprite {
@@ -9,13 +10,16 @@ struct Sprite {
 	int layer;
 	SDL_Color color;
 	Sprite(std::string sprite, int layer = 0, SDL_Color color = SDL_Color{ 255,255,255,255 });
+	Sprite(ryml::NodeRef node);
 };
 
 struct Camera {
 	float height;
 	glm::mat3 camToScreen;
 	glm::mat3 worldToScreen;
+	bool startCamera;
 	Camera(float height = 10);
+	Camera(ryml::NodeRef node);
 };
 
 
@@ -33,5 +37,6 @@ public:
 	entt::entity GetCamera();
 	glm::mat3 GetWorldToScreenMatrix();
 	glm::mat3 GetScreenToWorldMatrix();
+	void InitLoaded(entt::registry& registry);
 };
 

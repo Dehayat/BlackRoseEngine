@@ -12,13 +12,20 @@ class Physics;
 struct PhysicsBody {
 	bool isInit;
 	b2Body* body;
+	b2PolygonShape shape;
+	b2FixtureDef fixture;
 	PhysicsBody(Physics& physics, glm::vec2 pos = { 0.f,0.f }, glm::vec2 size = { 1.f,1.f }, bool keepAwake = false);
 	PhysicsBody(ryml::NodeRef node);
 	void Init(Physics& physics, const Transform& trx);
 };
 struct StaticBody {
+	bool isInit;
 	b2Body* body;
+	b2PolygonShape shape;
+	b2FixtureDef fixture;
 	StaticBody(Physics& physics, glm::vec2 pos = { 0.f,0.f }, glm::vec2 size = { 1.f,1.f });
+	StaticBody(ryml::NodeRef node);
+	void Init(Physics& physics, const Transform& trx);
 };
 
 class DebugDraw : public b2Draw

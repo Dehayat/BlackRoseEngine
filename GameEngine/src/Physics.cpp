@@ -1,7 +1,87 @@
 #include "Physics.h"
 #include <SDL2/SDL2_gfxPrimitives.h>
-#include "Logger.h"
 #include "Transform.h"
+#include "Logger.h"
+
+PhysicsBody::PhysicsBody(Physics& physics, glm::vec2 pos, glm::vec2 size, bool keepAwake)
+{
+	b2BodyDef bodyDef;
+	bodyDef.type = b2_dynamicBody;
+	bodyDef.position.Set(pos.x, pos.y);
+	b2Body* body = physics.GetWorld().CreateBody(&bodyDef);
+	b2PolygonShape dynamicBox;
+	dynamicBox.SetAsBox(size.x, size.y);
+	b2FixtureDef fixtureDef;
+	fixtureDef.shape = &dynamicBox;
+	fixtureDef.density = 1.0f;
+	fixtureDef.friction = 0.3f;
+	body->CreateFixture(&fixtureDef);
+	//body->SetFixedRotation(true);
+	body->SetSleepingAllowed(!keepAwake);
+	this->body = body;
+	isInit = true;
+}
+PhysicsBody::PhysicsBody(ryml::NodeRef node)
+{
+	float x = 0.5, y = 0.5;
+	if (node.is_map() && node.has_child("size")) {
+		node["size"][0] >> x;
+		node["size"][1] >> y;
+	}
+	shape.SetAsBox(x, y);
+	fixture.shape = &shape;
+	fixture.density = 1.0f;
+	fixture.friction = 0.3f;
+
+	this->body = nullptr;
+	isInit = false;
+}
+void PhysicsBody::Init(Physics& physics, const Transform& trx)
+{
+	b2BodyDef bodyDef;
+	bodyDef.type = b2_dynamicBody;
+	bodyDef.position.Set(trx.position.x, trx.position.y);
+	b2Body* body = physics.GetWorld().CreateBody(&bodyDef);
+	body->CreateFixture(&fixture);
+	this->body = body;
+	isInit = true;
+}
+
+StaticBody::StaticBody(Physics& physics, glm::vec2 pos, glm::vec2 size)
+{
+
+	b2BodyDef staticBodyDef;
+	staticBodyDef.position.Set(pos.x, pos.y);
+	b2Body* staticBody = physics.GetWorld().CreateBody(&staticBodyDef);
+	b2PolygonShape groundBox;
+	groundBox.SetAsBox(size.x, size.y);
+	staticBody->CreateFixture(&groundBox, 0.0f);
+	this->body = staticBody;
+}
+StaticBody::StaticBody(ryml::NodeRef node)
+{
+	float x = 0.5, y = 0.5;
+	if (node.is_map() && node.has_child("size")) {
+		node["size"][0] >> x;
+		node["size"][1] >> y;
+	}
+	shape.SetAsBox(x, y);
+	fixture.shape = &shape;
+	fixture.density = 1.0f;
+	fixture.friction = 0.3f;
+
+	this->body = nullptr;
+	isInit = false;
+}
+void StaticBody::Init(Physics& physics, const Transform& trx)
+{
+	b2BodyDef bodyDef;
+	bodyDef.position.Set(trx.position.x, trx.position.y);
+	b2Body* body = physics.GetWorld().CreateBody(&bodyDef);
+	body->CreateFixture(&fixture);
+	this->body = body;
+	isInit = true;
+}
 
 Physics::Physics(float gravityX, float gravityY) {
 	b2Vec2 gravity(gravityX, gravityY);
@@ -46,7 +126,6 @@ b2World& Physics::GetWorld()
 {
 	return *physicsWorld;
 }
-
 void Physics::InitLoaded(entt::registry& registry)
 {
 	auto phView = registry.view<PhysicsBody, Transform>();
@@ -58,60 +137,15 @@ void Physics::InitLoaded(entt::registry& registry)
 		}
 		body.Init(*this, pos);
 	}
-}
-
-PhysicsBody::PhysicsBody(Physics& physics, glm::vec2 pos, glm::vec2 size, bool keepAwake)
-{
-	b2BodyDef bodyDef;
-	bodyDef.type = b2_dynamicBody;
-	bodyDef.position.Set(pos.x, pos.y);
-	b2Body* body = physics.GetWorld().CreateBody(&bodyDef);
-	b2PolygonShape dynamicBox;
-	dynamicBox.SetAsBox(size.x, size.y);
-	b2FixtureDef fixtureDef;
-	fixtureDef.shape = &dynamicBox;
-	fixtureDef.density = 1.0f;
-	fixtureDef.friction = 0.3f;
-	body->CreateFixture(&fixtureDef);
-	//body->SetFixedRotation(true);
-	body->SetSleepingAllowed(!keepAwake);
-	this->body = body;
-	isInit = true;
-}
-
-PhysicsBody::PhysicsBody(ryml::NodeRef node)
-{
-	this->body = nullptr;
-	isInit = false;
-}
-
-void PhysicsBody::Init(Physics& physics, const Transform& trx)
-{
-	b2BodyDef bodyDef;
-	bodyDef.type = b2_dynamicBody;
-	bodyDef.position.Set(trx.position.x, trx.position.y);
-	b2Body* body = physics.GetWorld().CreateBody(&bodyDef);
-	b2PolygonShape dynamicBox;
-	dynamicBox.SetAsBox(0.5f, 0.5f);
-	b2FixtureDef fixtureDef;
-	fixtureDef.shape = &dynamicBox;
-	fixtureDef.density = 1.0f;
-	fixtureDef.friction = 0.3f;
-	body->CreateFixture(&fixtureDef);
-	this->body = body;
-	isInit = true;
-}
-
-StaticBody::StaticBody(Physics& physics, glm::vec2 pos, glm::vec2 size)
-{
-
-	b2BodyDef staticBodyDef;
-	staticBodyDef.position.Set(pos.x, pos.y);
-	b2Body* staticBody = physics.GetWorld().CreateBody(&staticBodyDef);
-	b2PolygonShape groundBox;
-	groundBox.SetAsBox(size.x, size.y);
-	staticBody->CreateFixture(&groundBox, 0.0f);
-	this->body = staticBody;
+	auto phView2 = registry.view<StaticBody, Transform>();
+	for (auto entity : phView2) {
+		const auto& pos = phView2.get<Transform>(entity);
+		auto& body = phView2.get<StaticBody>(entity);
+		if (body.isInit) {
+			continue;
+		}
+		body.Init(*this, pos);
+	}
 }
 
 void Physics::InitDebugDrawer(SDL_Renderer* sdl) {

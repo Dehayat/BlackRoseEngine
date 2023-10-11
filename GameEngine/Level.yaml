@@ -1,11 +1,45 @@
 - Type: Entity
+  Guid: 7015025454105158843
   Transform:
     position:
-      - 5
       - 0
-  PhysicsBody:
+      - -3
+  StaticBody:
+    size:
+      - 1.2
+      - 0.25
+  Sprite:
+    sprite: "platform"
+    layer: 0
 - Type: Entity
+  Guid: 5266576921330336830
   Transform:
     position:
-      - -5
       - 0
+      - -3
+  PhysicsBody:
+    size:
+      - 0.2
+      - 0.8
+  Sprite:
+    sprite: "hornet"
+    layer: 1
+- Type: Entity
+  Guid: 9404588658664444746
+  Transform:
+    position:
+      - 0
+      - 0
+  Camera:
+    height: 10
+    startCamera: true
+- Type: Entity
+  Guid: 6404588655664443746
+  Transform:
+    position:
+      - 0.5
+      - 0
+    parent: 5266576921330336830
+  Sprite:
+    sprite: "rose"
+    layer: 2

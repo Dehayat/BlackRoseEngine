@@ -1,3 +1,4 @@
+#include <ryml/ryml_std.hpp>
 #include "Renderer.h"
 #include "Transform.h"
 #include "Logger.h"
@@ -7,15 +8,55 @@ Sprite::Sprite(std::string sprite, int layer, SDL_Color color) {
 	this->layer = layer;
 	this->color = color;
 }
+Sprite::Sprite(ryml::NodeRef node)
+{
+	this->sprite = "";
+	this->color = SDL_Color{ 255,255,255,255 };
+	this->layer = 0;
+	if (node.is_map()) {
+		if (node.has_child("sprite")) {
+			node["sprite"] >> this->sprite;
+		}
+		if (node.has_child("layer")) {
+			node["layer"] >> this->layer;
+		}
+		if (node.has_child("color")) {
+			auto c = SDL_Color{ 255,255,255,255 };
+			node["color"][0] >> c.r;
+			node["color"][1] >> c.g;
+			node["color"][2] >> c.b;
+			node["color"][3] >> c.a;
+			this->color = c;
+		}
+	}
+}
 Camera::Camera(float height) {
 	this->height = height;
 	camToScreen = glm::mat3();
 	worldToScreen = glm::mat3();
+	startCamera = false;
+}
+
+Camera::Camera(ryml::NodeRef node)
+{
+	height = 10;
+	camToScreen = glm::mat3();
+	worldToScreen = glm::mat3();
+	startCamera = false;
+	if (node.is_map()) {
+		if (node.has_child("height")) {
+			node["height"] >> this->height;
+		}
+		if (node.has_child("startCamera")) {
+			node["startCamera"] >> this->startCamera;
+		}
+	}
 }
 
 
 Renderer::Renderer(SDL_Renderer* sdl)
 {
+	camera = entt::entity(-1);
 	this->sdl = sdl;
 	this->worldToScreenMatrix = glm::mat3(1);
 }
@@ -102,17 +143,14 @@ void Renderer::Present()
 {
 	SDL_RenderPresent(sdl);
 }
-
 void Renderer::SetCamera(entt::entity cam)
 {
 	this->camera = cam;
 }
-
 entt::entity Renderer::GetCamera()
 {
 	return camera;
 }
-
 glm::mat3 Renderer::GetWorldToScreenMatrix()
 {
 	return worldToScreenMatrix;
@@ -120,4 +158,16 @@ glm::mat3 Renderer::GetWorldToScreenMatrix()
 glm::mat3 Renderer::GetScreenToWorldMatrix()
 {
 	return glm::inverse(worldToScreenMatrix);
+}
+void Renderer::InitLoaded(entt::registry& registry)
+{
+	auto view = registry.view<const Camera, const Transform>();
+	for (auto entity : view) {
+		const auto& pos = view.get<Transform>(entity);
+		const auto& body = view.get<Camera>(entity);
+		if (body.startCamera) {
+			SetCamera(entity);
+			break;
+		}
+	}
 }

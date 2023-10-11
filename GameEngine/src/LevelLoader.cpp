@@ -3,6 +3,10 @@
 #include <sstream>
 #include <ryml/ryml_std.hpp>
 #include <SDL2/SDL.h>
+#include "Transform.h"
+#include "Physics.h"
+#include "Renderer.h"
+#include "GUID.h"
 #include "Logger.h"
 
 struct FileResource {
@@ -54,14 +58,31 @@ void LevelLoader::DeserializeLevel(entt::registry& registry, ryml::NodeRef node)
 entt::entity LevelLoader::DeserializeEntity(entt::registry& registry, ryml::NodeRef node)
 {
 	auto entity = registry.create();
+	auto guid = GUID::Generate();
+	if (node.has_child("Guid")) {
+		node["Guid"] >> guid;
+	}
+	registry.emplace<GUID>(entity, guid);
 	Logger::Log("Entity created");
 	if (node.has_child("Transform")) {
 		auto trx = node["Transform"];
-		transform.Deserialize(registry, trx, entity);
+		ComponentSer<Transform>::Deserialize(registry, trx, entity);
 	}
 	if (node.has_child("PhysicsBody")) {
 		auto phy = node["PhysicsBody"];
-		physicsBody.Deserialize(registry, phy, entity);
+		ComponentSer<PhysicsBody>::Deserialize(registry, phy, entity);
+	}
+	if (node.has_child("StaticBody")) {
+		auto phy = node["StaticBody"];
+		ComponentSer<StaticBody>::Deserialize(registry, phy, entity);
+	}
+	if (node.has_child("Camera")) {
+		auto n = node["Camera"];
+		ComponentSer<Camera>::Deserialize(registry, n, entity);
+	}
+	if (node.has_child("Sprite")) {
+		auto n = node["Sprite"];
+		ComponentSer<Sprite>::Deserialize(registry, n, entity);
 	}
 	return entity;
 }

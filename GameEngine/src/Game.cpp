@@ -3,10 +3,11 @@
 #include <glm/glm.hpp>
 #include <box2d/b2_world_callbacks.h>
 #include <imgui.h>
+#include <ryml/ryml.hpp>
 #include "Events/KeyPressedEvent.h"
 #include "Game.h"
 #include "Logger.h"
-#include "ryml/ryml.hpp"
+#include "GUID.h"
 
 struct Player {
 	float speed;
@@ -18,7 +19,7 @@ struct Player {
 
 };
 
-Game::Game() {
+Game::Game() :allEntities() {
 	Logger::Log("Game Constructed");
 
 	sdl = std::make_unique<SdlContainer>(1200, (float)1200 * 9 / 16);
@@ -27,8 +28,8 @@ Game::Game() {
 	physics->InitDebugDrawer(sdl->GetRenderer());
 	renderer = std::make_unique<Renderer>(sdl->GetRenderer());
 	transformSystem.InitDebugDrawer(sdl->GetRenderer());
-	//physics->EnableDebug(true);
-	//transformSystem.EnableDebug(true);
+	physics->EnableDebug(true);
+	transformSystem.EnableDebug(true);
 	auto x = SDL_GL_GetCurrentContext();
 
 	dt = 0;
@@ -40,7 +41,6 @@ Game::~Game() {
 }
 void Game::Setup()
 {
-
 	assetStore->AddTexture(sdl->GetRenderer(), "rose", "./assets/Rose.png", 512);
 	assetStore->AddTexture(sdl->GetRenderer(), "hornet", "./assets/Hornet_Idle.png", 128);
 	assetStore->AddTexture(sdl->GetRenderer(), "block", "./assets/Block.jpg", 64);
@@ -48,31 +48,12 @@ void Game::Setup()
 	assetStore->AddTexture(sdl->GetRenderer(), "bg", "./assets/bg.jpg", 64);
 	assetStore->AddTexture(sdl->GetRenderer(), "drip", "./assets/Drip.png", 128);
 
-
-	const auto hornet = registry.create();
-	registry.emplace<Transform>(hornet, glm::vec2(0, 0), glm::vec2(1, 1), 0);
-	registry.emplace<Sprite>(hornet, "hornet", 1, SDL_Color{ 255,255,255,255 });
-	registry.emplace<Player>(hornet, 10);
-	registry.emplace<PhysicsBody>(hornet, *physics, glm::vec2(0, 0), glm::vec2(0.2, 0.8), true);
-	player = hornet;
-
-	const auto hornetRose = registry.create();
-	auto& childTrx = registry.emplace<Transform>(hornetRose, glm::vec2(0.5f, 0), glm::vec2(1, 1), 0);
-	transformSystem.SetParent(registry, childTrx, hornet);
-	registry.emplace<Sprite>(hornetRose, "rose", 2);
-
-	const auto camera = registry.create();
-	registry.emplace<Transform>(camera, glm::vec2(0, 0), glm::vec2(1, 1), 0);
-	registry.emplace<Camera>(camera, 10);
-	renderer->SetCamera(camera);
-
-	const auto ground = registry.create();
-	registry.emplace<Transform>(ground, glm::vec2(0, -3), glm::vec2(1, 1), 0);
-	registry.emplace<Sprite>(ground, "platform", 0);
-	registry.emplace<StaticBody>(ground, *physics, glm::vec2(0, -3), glm::vec2(1.2, 0.25));
-
 	levelLoader.LoadLevel("level.yaml", registry);
+
+	RegisterAllEntities();
+	transformSystem.InitLoaded(registry, allEntities);
 	physics->InitLoaded(registry);
+	renderer->InitLoaded(registry);
 }
 void Game::Run()
 {
@@ -86,7 +67,6 @@ void Game::Run()
 		//while (SDL_GetTicks64() < waitTimeMs);
 		dt = (SDL_GetTicks64() - msLastFrame) / 1000.0f;
 		msLastFrame = SDL_GetTicks64();
-		Logger::Log(std::to_string(dt));
 	}
 }
 
@@ -99,15 +79,15 @@ void Game::Update()
 	transformSystem.Update(registry);
 	physics->Update(registry);
 
-	if (input.GetKey(InputKey::LEFT).isPressed || input.GetKey(InputKey::A).isPressed) {
-		registry.get<Player>(player).input = -1;
-	}
-	else if (input.GetKey(InputKey::RIGHT).isPressed || input.GetKey(InputKey::D).isPressed) {
-		registry.get<Player>(player).input = 1;
-	}
-	else {
-		registry.get<Player>(player).input = 0;
-	}
+	//if (input.GetKey(InputKey::LEFT).isPressed || input.GetKey(InputKey::A).isPressed) {
+	//	registry.get<Player>(player).input = -1;
+	//}
+	//else if (input.GetKey(InputKey::RIGHT).isPressed || input.GetKey(InputKey::D).isPressed) {
+	//	registry.get<Player>(player).input = 1;
+	//}
+	//else {
+	//	registry.get<Player>(player).input = 0;
+	//}
 	if (input.GetMouseButton(InputMouse::LEFT_BUTTON).justPressed) {
 		const auto ground = registry.create();
 		auto spawnPos = glm::vec3(input.GetMousePosition(), 1) * renderer->GetScreenToWorldMatrix();
@@ -146,4 +126,14 @@ void Game::Render()
 	ImguiCam(registry.get<Transform>(renderer->GetCamera()));
 	imgui.Present();
 
+}
+
+void Game::RegisterAllEntities()
+{
+	allEntities.clear();
+	auto view = registry.view<const GUID>();
+	for (auto entity : view) {
+		const auto& guid = view.get<GUID>(entity);
+		allEntities.emplace(guid.id, entity);
+	}
 }

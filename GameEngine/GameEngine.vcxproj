@@ -94,6 +94,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="inc\GUID.h" />
     <ClInclude Include="inc\ImguiSystem.h" />
     <ClInclude Include="inc\AssetStore.h" />
     <ClInclude Include="inc\EventSystem\Event.h" />

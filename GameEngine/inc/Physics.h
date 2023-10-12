@@ -22,15 +22,26 @@ struct PhysicsBody {
 	PhysicsBody(Physics& physics, glm::vec2 pos = { 0.f,0.f }, glm::vec2 size = { 1.f,1.f }, bool isStatic = false, bool keepAwake = false);
 	PhysicsBody(ryml::NodeRef node);
 	void Init(Physics& physics, const Transform& trx);
-	float sizex, sizey;
 #ifdef _EDITOR
+	float sizex, sizey;
+	bool isStatic;
 	void DrawEditor(Transform trx) {
 		auto pos = b2Vec2(trx.position.x, trx.position.y);
 		body->SetTransform(pos, glm::radians(trx.rotation));
-		if (ImGui::DragFloat("size x", &sizex, 0.1f, 0.05f, 2000) || ImGui::DragFloat("size y", &sizey, 0.1f, 0.05f, 2000)) {
+		if (
+			ImGui::DragFloat("size x", &sizex, 0.1f, 0.05f, 2000)
+			|| ImGui::DragFloat("size y", &sizey, 0.1f, 0.05f, 2000)) {
 			body->DestroyFixture(&body->GetFixtureList()[0]);
 			shape.SetAsBox(sizex, sizey);
 			body->CreateFixture(&fixture);
+		}
+		if (ImGui::Checkbox("Static", &isStatic)) {
+			if (isStatic) {
+				body->SetType(b2BodyType::b2_staticBody);
+			}
+			else {
+				body->SetType(b2BodyType::b2_dynamicBody);
+			}
 		}
 	}
 #endif

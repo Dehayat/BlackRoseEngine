@@ -12,8 +12,8 @@
 
 struct FileResource {
 	SDL_RWops* file;
-	FileResource(const std::string& fileName) {
-		file = SDL_RWFromFile(fileName.c_str(), "r");
+	FileResource(const std::string& fileName, const std::string how = "r") {
+		file = SDL_RWFromFile(fileName.c_str(), how.c_str());
 	}
 	~FileResource() {
 		if (file != nullptr) {
@@ -86,4 +86,42 @@ entt::entity LevelLoader::DeserializeEntity(entt::registry& registry, ryml::Node
 		ComponentSer<Player>::Deserialize(registry, n, entity);
 	}
 	return entity;
+}
+
+void LevelLoader::SaveLevel(const std::string& fileName, entt::registry& registry)
+{
+	auto fileHandle = FileResource(fileName, "w+");
+	if (fileHandle.file == nullptr) {
+		Logger::Error("Couldnt create file " + fileName);
+		return;
+	}
+	auto tree = ryml::Tree();
+	auto root = tree.rootref();
+	SerializeLevel(registry, root);
+	std::string buffer = ryml::emitrs_yaml<std::string>(tree);
+	SDL_RWwrite(fileHandle.file, buffer.data(), 1, buffer.size());
+}
+
+void LevelLoader::SerializeLevel(entt::registry& registry, ryml::NodeRef node)
+{
+	node |= ryml::SEQ;
+	auto view = registry.view<GUID>();
+	for (auto entity : view) {
+		SerializeEntity(registry, node, entity);
+	}
+}
+
+void LevelLoader::SerializeEntity(entt::registry& registry, ryml::NodeRef parent, entt::entity entity)
+{
+	auto node = parent.append_child();
+	node |= ryml::MAP;
+	node["Type"] << "Entity";
+	node["Guid"] << registry.get<GUID>(entity).id;
+
+	Logger::Log("Entity created");
+	if (registry.any_of<Transform>(entity)) {
+		auto componentNode = node.append_child();
+		componentNode.set_key("Transform");
+		registry.get<Transform>(entity).Serialize(componentNode);
+	}
 }

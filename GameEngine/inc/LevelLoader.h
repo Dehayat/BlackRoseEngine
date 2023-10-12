@@ -10,6 +10,7 @@ public:
 	}
 };
 
+
 class LevelLoader
 {
 public:
@@ -18,5 +19,8 @@ public:
 	void LoadLevel(const std::string& fileName, entt::registry& registry);
 	void DeserializeLevel(entt::registry& registry, ryml::NodeRef node);
 	entt::entity DeserializeEntity(entt::registry& registry, ryml::NodeRef node);
+	void SaveLevel(const std::string& fileName, entt::registry& registry);
+	void SerializeLevel(entt::registry& registry, ryml::NodeRef node);
+	void SerializeEntity(entt::registry& registry, ryml::NodeRef node, entt::entity entity);
 };
 

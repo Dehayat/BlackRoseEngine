@@ -13,6 +13,24 @@ Transform::Transform(glm::vec2 position, glm::vec2 scale, float rotation) {
 	this->parentGUID = -1;
 }
 
+void Transform::Serialize(ryml::NodeRef node)
+{
+	node |= ryml::MAP;
+	auto posNode = node.append_child();
+	posNode.set_key("position");
+	posNode |= ryml::SEQ;
+	auto xNode = posNode.append_child();
+	xNode << position.x;
+	auto yNode = posNode.append_child();
+	yNode << position.y;
+	if (hasParent) {
+		auto parentNode = node.append_child();
+		parentNode.set_key("parent");
+		node["parent"] << parentGUID;
+	}
+
+}
+
 void Transform::SetParent(entt::entity newParent)
 {
 	parent = newParent;

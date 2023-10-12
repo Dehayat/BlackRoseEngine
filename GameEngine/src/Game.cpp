@@ -121,7 +121,7 @@ void Game::Update()
 entt::entity selected = entt::entity(-1);
 entt::entity created = entt::entity(-1);
 bool entityList[100];
-void Editor(entt::registry& registry, InputSystem& input, Renderer& renderer, LevelEditor::LevelTree& tree) {
+void Editor(entt::registry& registry, InputSystem& input, Renderer& renderer, LevelEditor::LevelTree& tree, LevelLoader& levelLoader) {
 	ImGui::SetNextWindowSize(ImVec2(200, 400));
 	ImGui::Begin("Tools");
 	const char* listbox_items[] = { "Create Entity","Move Entity" };
@@ -156,23 +156,9 @@ void Editor(entt::registry& registry, InputSystem& input, Renderer& renderer, Le
 	}
 	auto view = registry.view<const GUID, Transform>();
 	tree.Editor(registry, selected, entityList);
-	//for (auto entity : view) {
-	//	const auto& guid = view.get<GUID>(entity);
-	//	const auto& trx = view.get<Transform>(entity);
-	//	if (trx.level == 0) {
-	//		if (selected != entity) {
-	//			entityList[(int)entity] = false;
-	//		}
-	//		else {
-	//			entityList[(int)entity] = true;
-	//		}
-	//		if (ImGui::Selectable(std::to_string(guid.id).c_str(), &entityList[(int)entity]))
-	//		{
-	//			Logger::Log("Clicked an entity");
-	//			selected = entity;
-	//		}
-	//	}
-	//}
+	if (ImGui::Button("Save Level")) {
+		levelLoader.SaveLevel("SavedLevel.yaml", registry);
+	}
 	ImGui::End();
 
 
@@ -215,7 +201,7 @@ void Game::Render()
 #ifdef _EDITOR
 	imgui.Render();
 	//ImGui::ShowDemoWindow();
-	Editor(registry, input, *renderer, levelTree);
+	Editor(registry, input, *renderer, levelTree, levelLoader);
 	//Imgui Code
 	imgui.Present();
 #endif // _EDITOR

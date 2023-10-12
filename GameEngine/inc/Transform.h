@@ -19,6 +19,7 @@ struct Transform {
 	std::uint64_t parentGUID;
 	Transform(glm::vec2 position = glm::vec2(0, 0), glm::vec2 scale = glm::vec2(1, 1), float rotation = 0);
 	Transform(ryml::NodeRef node);
+	void Serialize(ryml::NodeRef node);
 #ifdef _EDITOR
 	void SetParent(entt::entity newParent);
 	void DrawEditor() {

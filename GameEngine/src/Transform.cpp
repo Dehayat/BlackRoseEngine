@@ -125,6 +125,14 @@ void TransformSystem::SetParent(entt::registry& registry, Transform& child, entt
 	child.hasParent = true;
 }
 
+
+#ifdef _EDITOR
+DebugDrawTransform& TransformSystem::GetDebugRenderer()
+{
+	return *debugDrawer;
+}
+#endif // _EDITOR
+
 DebugDrawTransform::DebugDrawTransform(SDL_Renderer* sdl) :matrix(1)
 {
 	this->renderer = sdl;

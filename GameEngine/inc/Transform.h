@@ -39,4 +39,7 @@ public:
 	void EnableDebug(bool enable);
 	void DebugRender(glm::mat3 viewMatrix, entt::registry& registry);
 	void SetParent(entt::registry& registry, Transform& child, entt::entity parent);
+#ifdef _EDITOR
+	DebugDrawTransform& GetDebugRenderer();
+#endif // _EDITOR
 };

@@ -17,6 +17,7 @@
 const int FPS = 60;
 const int FRAMETIME_MS = 1000 / FPS;
 
+typedef std::unordered_map < std::uint64_t, entt::entity> EntityMap;
 
 
 class Game {
@@ -32,7 +33,7 @@ private:
 	unsigned int msLastFrame;
 	float dt;
 	entt::registry registry;
-	std::unordered_map < std::uint64_t, entt::entity> allEntities;
+	EntityMap allEntities;
 
 	entt::entity player;
 #ifdef _EDITOR

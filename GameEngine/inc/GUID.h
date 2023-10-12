@@ -4,6 +4,9 @@
 
 struct GUID {
 	std::uint64_t id;
+	GUID() {
+		this->id = Generate();
+	}
 	GUID(std::uint64_t id) {
 		this->id = id;
 	}

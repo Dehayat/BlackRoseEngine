@@ -69,13 +69,18 @@ void Game::Run()
 }
 void Game::Update()
 {
-	if (sdl->ProcessEvents()) {
-		isRunning = false;
-	}
 
 	transformSystem.Update(registry);
 
-#ifndef _EDITOR
+#ifdef _EDITOR
+	if (imgui.ProcessEvents()) {
+		isRunning = false;
+	}
+	input.Update(sdl->GetWindow());
+#else
+	if (sdl->ProcessEvents()) {
+		isRunning = false;
+	}
 	input.Update(sdl->GetWindow());
 	physics->Update(registry);
 
@@ -106,18 +111,86 @@ void Game::Update()
 #endif // _EDITOR
 }
 
+#ifdef _EDITOR
+
+
+entt::entity selected = entt::entity(-1);
+entt::entity created = entt::entity(-1);
+bool entityList[100];
+void Editor(entt::registry& registry, InputSystem& input, Renderer& renderer) {
+	ImGui::SetNextWindowSize(ImVec2(200, 400));
+	//flags |= ImGuiWindowFlags_AlwaysAutoResize;
+	ImGui::Begin("Tools");
+	const char* listbox_items[] = { "Create Entity","Move Entity" };
+	static int listbox_item_current = 0;
+	ImGui::ListBox("Tool", &listbox_item_current, listbox_items, IM_ARRAYSIZE(listbox_items), 2);
+	if (listbox_item_current == 0) {
+		auto mousePos = glm::vec3(input.GetMousePosition(), 1) * renderer.GetScreenToWorldMatrix();
+		if (input.GetMouseButton(LEFT_BUTTON).justPressed) {
+			Logger::Log("create");
+			created = registry.create();
+			selected = created;
+			registry.emplace<GUID>(created);
+			registry.emplace<Transform>(created, glm::vec2(mousePos.x, mousePos.y), glm::vec2(1, 1), 0);
+		}
+		if (created != entt::entity(-1)) {
+			if (input.GetMouseButton(LEFT_BUTTON).justReleased) {
+				created = entt::entity(-1);
+			}
+			if (input.GetMouseButton(LEFT_BUTTON).isPressed) {
+				registry.get<Transform>(created).position = glm::vec2(mousePos.x, mousePos.y);
+			}
+		}
+	}
+	if (listbox_item_current == 1) {
+		auto mousePos = glm::vec3(input.GetMousePosition(), 1) * renderer.GetScreenToWorldMatrix();
+		if (selected != entt::entity(-1)) {
+			if (input.GetMouseButton(LEFT_BUTTON).isPressed) {
+				registry.get<Transform>(selected).position = glm::vec2(mousePos.x, mousePos.y);
+			}
+		}
+	}
+	auto view = registry.view<const GUID, Transform>();
+	for (auto entity : view) {
+		const auto& guid = view.get<GUID>(entity);
+		const auto& trx = view.get<Transform>(entity);
+		if (trx.level == 0) {
+			if (selected != entity) {
+				entityList[(int)entity] = false;
+			}
+			else {
+				entityList[(int)entity] = true;
+			}
+			if (ImGui::Selectable(std::to_string(guid.id).c_str(), &entityList[(int)entity]))
+			{
+				Logger::Log("Clicked an entity");
+				selected = entity;
+			}
+		}
+	}
+	ImGui::End();
+}
+
+#endif // _EDITOR
 void Game::Render()
 {
 
 	renderer->Render(&registry, *assetStore);
 #ifdef _DEBUG
 	physics->DebugRender(renderer->GetWorldToScreenMatrix());
-	transformSystem.DebugRender(renderer->GetWorldToScreenMatrix(), registry);
+	//transformSystem.DebugRender(renderer->GetWorldToScreenMatrix(), registry);
+	transformSystem.GetDebugRenderer().SetMatrix(renderer->GetWorldToScreenMatrix());
+	if (selected != entt::entity(-1)) {
+		transformSystem.GetDebugRenderer().DrawTransform(registry.get<Transform>(selected));
+	}
+
 #endif // _DEBUG
 	renderer->Present();
 
 #ifdef _EDITOR
 	imgui.Render();
+	//ImGui::ShowDemoWindow();
+	Editor(registry, input, *renderer);
 	//Imgui Code
 	imgui.Present();
 #endif // _EDITOR

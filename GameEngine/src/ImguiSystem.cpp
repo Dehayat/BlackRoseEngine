@@ -6,6 +6,7 @@
 #include <glm/glm.hpp>
 #define GLM_ENABLE_EXPERIMENTAL
 #include <glm/ext.hpp>
+#include "Logger.h"
 using namespace glm;
 
 ImguiSystem::ImguiSystem()
@@ -70,6 +71,18 @@ bool ImguiSystem::ProcessEvents()
 {
 	SDL_Event sdlEvent;
 	while (SDL_PollEvent(&sdlEvent)) {
+		if (SDL_GetKeyboardFocus() != window) {
+			return false;
+		}
+		Logger::Log(std::to_string(sdlEvent.type));
+		if (sdlEvent.type == SDL_QUIT) {
+			return true;
+		}
+		if (sdlEvent.type == SDL_WINDOWEVENT) {
+			if (sdlEvent.window.event == SDL_WINDOWEVENT_CLOSE) {
+				return true;
+			}
+		}
 		HandleEvent(sdlEvent);
 	}
 	return false;

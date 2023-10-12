@@ -28,7 +28,10 @@ SdlContainer::SdlContainer(int windowWidth, int windowHeight)
 	SDL_GL_GetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, &a);
 	Logger::Log(std::to_string(a));
 	SDL_assert(renderer != nullptr);
+#ifndef _EDITOR
 	SDL_RenderSetVSync(renderer, 1);
+#endif // !_EDITOR
+
 	SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "2");
 }
 

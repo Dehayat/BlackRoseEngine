@@ -181,10 +181,16 @@ void Editor(entt::registry& registry, InputSystem& input, Renderer& renderer, Le
 			ImGui::Begin("Transform component");
 			registry.get<Transform>(selected).DrawEditor();
 			ImGui::End();
-		}if (registry.any_of<PhysicsBody>(selected)) {
+		}
+		if (registry.any_of<PhysicsBody>(selected)) {
 			ImGui::Begin("PhysicsBody component");
 			auto trx = registry.get<Transform>(selected);
 			registry.get<PhysicsBody>(selected).DrawEditor(trx);
+			ImGui::End();
+		}
+		if (registry.any_of<Sprite>(selected)) {
+			ImGui::Begin("Sprite component");
+			registry.get<Sprite>(selected).DrawEditor();
 			ImGui::End();
 		}
 	}

@@ -19,6 +19,6 @@ public:
 
 	void ClearAssets();
 	void AddTexture(SDL_Renderer* renderer, const std::string& assetId, const std::string& filePath, int ppu = 100);
-	TextureAsset const& GetTexture(const std::string& assetId) const;
+	const TextureAsset* GetTexture(const std::string& assetId) const;
 
 };

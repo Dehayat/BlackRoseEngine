@@ -117,26 +117,29 @@ void Renderer::Render(entt::registry* registry, const AssetStore& assetStore)
 		const auto& pos = view2.get<Transform>(entity);
 		const auto& sp = view2.get<Sprite>(entity);
 		const auto& texture = assetStore.GetTexture(sp.sprite);
+		if (texture == nullptr) {
+			continue;
+		}
 		int texW;
 		int texH;
-		SDL_QueryTexture(texture.texture, nullptr, nullptr, &texW, &texH);
+		SDL_QueryTexture(texture->texture, nullptr, nullptr, &texW, &texH);
 		auto viewMatrix = pos.matrix * worldToScreen;
 		auto position = glm::vec2(viewMatrix[0][2], viewMatrix[1][2]);
 		auto scale = glm::vec2(glm::sqrt(viewMatrix[0][0] * viewMatrix[0][0] + viewMatrix[1][0] * viewMatrix[1][0]), glm::sqrt(viewMatrix[0][1] * viewMatrix[0][1] + viewMatrix[1][1] * viewMatrix[1][1]));
 		auto rotation = glm::degrees(std::atan2f(viewMatrix[1][0], viewMatrix[0][0]));
 
-		int spriteSizeX = scale.x * ((float)texW / texture.ppu);
-		int spriteSizeY = scale.y * ((float)texH / texture.ppu);
+		int spriteSizeX = scale.x * ((float)texW / texture->ppu);
+		int spriteSizeY = scale.y * ((float)texH / texture->ppu);
 		SDL_FRect player = SDL_FRect{
 			(position.x - spriteSizeX / 2),
 			(position.y - spriteSizeY / 2),
 			(float)spriteSizeX,
 			(float)spriteSizeY,
 		};
-		SDL_SetTextureColorMod(texture.texture, sp.color.r, sp.color.g, sp.color.b);
-		SDL_SetTextureBlendMode(texture.texture, SDL_BLENDMODE_BLEND);
-		SDL_SetTextureAlphaMod(texture.texture, sp.color.a);
-		SDL_RenderCopyExF(sdl, texture.texture, nullptr, &player, rotation, nullptr, SDL_FLIP_NONE);
+		SDL_SetTextureColorMod(texture->texture, sp.color.r, sp.color.g, sp.color.b);
+		SDL_SetTextureBlendMode(texture->texture, SDL_BLENDMODE_BLEND);
+		SDL_SetTextureAlphaMod(texture->texture, sp.color.a);
+		SDL_RenderCopyExF(sdl, texture->texture, nullptr, &player, rotation, nullptr, SDL_FLIP_NONE);
 	}
 }
 void Renderer::Present()

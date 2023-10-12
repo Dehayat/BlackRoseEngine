@@ -48,7 +48,8 @@ void Game::Setup()
 	assetStore->AddTexture(sdl->GetRenderer(), "bg", "./assets/bg.jpg", 64);
 	assetStore->AddTexture(sdl->GetRenderer(), "drip", "./assets/Drip.png", 128);
 
-	levelLoader.LoadLevel("level.yaml", registry);
+	//levelLoader.LoadLevel("Level.yaml", registry);
+	levelLoader.LoadLevel("SavedLevel.yaml", registry);
 
 	RegisterAllEntities();
 	transformSystem.InitLoaded(registry, allEntities);

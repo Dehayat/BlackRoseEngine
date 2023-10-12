@@ -30,6 +30,36 @@ Sprite::Sprite(ryml::NodeRef node)
 		}
 	}
 }
+void Sprite::Serialize(ryml::NodeRef node)
+{
+	node |= ryml::MAP;
+	auto spNode = node.append_child();
+	spNode.set_key("sprite");
+	node["sprite"] << sprite;
+	auto layerNode = node.append_child();
+	layerNode.set_key("layer");
+	node["layer"] << layer;
+	auto posNode = node.append_child();
+	posNode.set_key("color");
+	posNode |= ryml::SEQ;
+	{
+		auto xNode = posNode.append_child();
+		xNode << color.r;
+	}
+	{
+		auto xNode = posNode.append_child();
+		xNode << color.g;
+	}
+	{
+		auto xNode = posNode.append_child();
+		xNode << color.b;
+	}
+	{
+		auto xNode = posNode.append_child();
+		xNode << color.a;
+	}
+}
+
 Camera::Camera(float height) {
 	this->height = height;
 	camToScreen = glm::mat3();
@@ -52,6 +82,18 @@ Camera::Camera(ryml::NodeRef node)
 		}
 	}
 }
+void Camera::Serialize(ryml::NodeRef node)
+{
+	node |= ryml::MAP;
+	auto spNode = node.append_child();
+	spNode.set_key("height");
+	node["height"] << height;
+	if (startCamera) {
+		auto parentNode = node.append_child();
+		parentNode.set_key("startCamera");
+		node["startCamera"] << true;
+	}
+}
 
 
 Renderer::Renderer(SDL_Renderer* sdl)
@@ -70,12 +112,12 @@ void Renderer::Render(entt::registry* registry, const AssetStore& assetStore)
 	registry->sort<Sprite>([](const auto& lhs, const auto& rhs) {
 		return lhs.layer < rhs.layer;
 		});
-
-	auto camPos = registry->get<Transform>(camera);
+	Transform camPos;
 	float camHeight = 10;
 	if (registry->valid(camera)) {
 		auto& cam = registry->get<Camera>(camera);
-		auto camHeight = cam.height;
+		camHeight = cam.height;
+		camPos = registry->get<Transform>(camera);
 	}
 	else {
 		Logger::Error("No Camera Assigned to renderer");

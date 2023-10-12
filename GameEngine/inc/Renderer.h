@@ -28,6 +28,7 @@ struct Sprite {
 	SDL_Color color;
 	Sprite(std::string sprite, int layer = 0, SDL_Color color = SDL_Color{ 255,255,255,255 });
 	Sprite(ryml::NodeRef node);
+	void Serialize(ryml::NodeRef node);
 #ifdef _EDITOR
 	float colorFloat[4];
 	void DrawEditor() {
@@ -52,6 +53,7 @@ struct Camera {
 	bool startCamera;
 	Camera(float height = 10);
 	Camera(ryml::NodeRef node);
+	void Serialize(ryml::NodeRef node);
 };
 
 

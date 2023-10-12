@@ -122,7 +122,7 @@ namespace LevelEditor {
 			}
 			if (currentCommand.child != entt::entity(-1)) {
 				nodesMap[currentCommand.child]->SetParent(nodesMap[currentCommand.newParent]);
-				registry.get<Transform>(currentCommand.child).SetParent(currentCommand.newParent);
+				registry.get<Transform>(currentCommand.child).SetParent(currentCommand.newParent, registry.get<GUID>(currentCommand.newParent).id);
 				currentCommand.Reset();
 			}
 		}

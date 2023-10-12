@@ -21,6 +21,7 @@ struct PhysicsBody {
 	b2BodyDef bodyDef;
 	PhysicsBody(Physics& physics, glm::vec2 pos = { 0.f,0.f }, glm::vec2 size = { 1.f,1.f }, bool isStatic = false, bool keepAwake = false);
 	PhysicsBody(ryml::NodeRef node);
+	void Serialize(ryml::NodeRef node);
 	void Init(Physics& physics, const Transform& trx);
 #ifdef _EDITOR
 	float sizex, sizey;

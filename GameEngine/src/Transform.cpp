@@ -28,10 +28,9 @@ void Transform::Serialize(ryml::NodeRef node)
 		parentNode.set_key("parent");
 		node["parent"] << parentGUID;
 	}
-
 }
 
-void Transform::SetParent(entt::entity newParent)
+void Transform::SetParent(entt::entity newParent, std::uint64_t guid)
 {
 	parent = newParent;
 	if (newParent == entt::entity(-1)) {
@@ -40,9 +39,10 @@ void Transform::SetParent(entt::entity newParent)
 	}
 	else {
 		hasParent = true;
+		parentGUID = guid;
 		level = -1;
 	}
-	Logger::Log("Not updating parent guid or carrying over global transform");
+	Logger::Log("Not carrying over global transform");
 }
 
 

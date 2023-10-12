@@ -21,7 +21,7 @@ struct Transform {
 	Transform(ryml::NodeRef node);
 	void Serialize(ryml::NodeRef node);
 #ifdef _EDITOR
-	void SetParent(entt::entity newParent);
+	void SetParent(entt::entity newParent, std::uint64_t guid);
 	void DrawEditor() {
 		ImGui::DragFloat("Position X", &position.x, 0.2f);
 		ImGui::DragFloat("Position y", &position.y, 0.2f);

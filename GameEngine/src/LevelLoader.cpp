@@ -25,11 +25,9 @@ struct FileResource {
 LevelLoader::LevelLoader()
 {
 }
-
 LevelLoader::~LevelLoader()
 {
 }
-
 void LevelLoader::LoadLevel(const std::string& fileName, entt::registry& registry) {
 	auto fileHandle = FileResource(fileName);
 	if (fileHandle.file == nullptr) {
@@ -42,7 +40,6 @@ void LevelLoader::LoadLevel(const std::string& fileName, entt::registry& registr
 	auto root = tree.rootref();
 	DeserializeLevel(registry, root);
 }
-
 void LevelLoader::DeserializeLevel(entt::registry& registry, ryml::NodeRef node)
 {
 	auto child = node.first_child();
@@ -55,7 +52,6 @@ void LevelLoader::DeserializeLevel(entt::registry& registry, ryml::NodeRef node)
 		child = child.next_sibling();
 	}
 }
-
 entt::entity LevelLoader::DeserializeEntity(entt::registry& registry, ryml::NodeRef node)
 {
 	auto entity = registry.create();
@@ -87,7 +83,6 @@ entt::entity LevelLoader::DeserializeEntity(entt::registry& registry, ryml::Node
 	}
 	return entity;
 }
-
 void LevelLoader::SaveLevel(const std::string& fileName, entt::registry& registry)
 {
 	auto fileHandle = FileResource(fileName, "w+");
@@ -101,7 +96,6 @@ void LevelLoader::SaveLevel(const std::string& fileName, entt::registry& registr
 	std::string buffer = ryml::emitrs_yaml<std::string>(tree);
 	SDL_RWwrite(fileHandle.file, buffer.data(), 1, buffer.size());
 }
-
 void LevelLoader::SerializeLevel(entt::registry& registry, ryml::NodeRef node)
 {
 	node |= ryml::SEQ;
@@ -110,7 +104,6 @@ void LevelLoader::SerializeLevel(entt::registry& registry, ryml::NodeRef node)
 		SerializeEntity(registry, node, entity);
 	}
 }
-
 void LevelLoader::SerializeEntity(entt::registry& registry, ryml::NodeRef parent, entt::entity entity)
 {
 	auto node = parent.append_child();
@@ -123,5 +116,25 @@ void LevelLoader::SerializeEntity(entt::registry& registry, ryml::NodeRef parent
 		auto componentNode = node.append_child();
 		componentNode.set_key("Transform");
 		registry.get<Transform>(entity).Serialize(componentNode);
+	}
+	if (registry.any_of<Sprite>(entity)) {
+		auto componentNode = node.append_child();
+		componentNode.set_key("Sprite");
+		registry.get<Sprite>(entity).Serialize(componentNode);
+	}
+	if (registry.any_of<Camera>(entity)) {
+		auto componentNode = node.append_child();
+		componentNode.set_key("Camera");
+		registry.get<Camera>(entity).Serialize(componentNode);
+	}
+	if (registry.any_of<Player>(entity)) {
+		auto componentNode = node.append_child();
+		componentNode.set_key("Player");
+		registry.get<Player>(entity).Serialize(componentNode);
+	}
+	if (registry.any_of<PhysicsBody>(entity)) {
+		auto componentNode = node.append_child();
+		componentNode.set_key("PhysicsBody");
+		registry.get<PhysicsBody>(entity).Serialize(componentNode);
 	}
 }

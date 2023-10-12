@@ -21,11 +21,9 @@ PhysicsBody::PhysicsBody(Physics& physics, glm::vec2 pos, glm::vec2 size, bool i
 	body->SetSleepingAllowed(!keepAwake);
 	this->body = body;
 	isInit = true;
-#ifdef _EDITOR
 	sizex = size.x;
 	sizey = size.y;
 	this->isStatic = isStatic;
-#endif // _EDITOR
 }
 PhysicsBody::PhysicsBody(ryml::NodeRef node)
 {
@@ -49,11 +47,29 @@ PhysicsBody::PhysicsBody(ryml::NodeRef node)
 	this->body = nullptr;
 	isInit = false;
 
-#ifdef _EDITOR
 	sizex = x;
 	sizey = y;
 	this->isStatic = isStatic;
-#endif // _EDITOR
+}
+void PhysicsBody::Serialize(ryml::NodeRef node)
+{
+	node |= ryml::MAP;
+	auto posNode = node.append_child();
+	posNode.set_key("size");
+	posNode |= ryml::SEQ;
+	{
+		auto xNode = posNode.append_child();
+		xNode << sizex;
+	}
+	{
+		auto xNode = posNode.append_child();
+		xNode << sizey;
+	}
+	if (isStatic) {
+		auto layerNode = node.append_child();
+		layerNode.set_key("static");
+		node["static"] << isStatic;
+	}
 }
 void PhysicsBody::Init(Physics& physics, const Transform& trx)
 {

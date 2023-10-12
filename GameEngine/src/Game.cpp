@@ -119,7 +119,6 @@ entt::entity created = entt::entity(-1);
 bool entityList[100];
 void Editor(entt::registry& registry, InputSystem& input, Renderer& renderer) {
 	ImGui::SetNextWindowSize(ImVec2(200, 400));
-	//flags |= ImGuiWindowFlags_AlwaysAutoResize;
 	ImGui::Begin("Tools");
 	const char* listbox_items[] = { "Create Entity","Move Entity" };
 	static int listbox_item_current = 0;
@@ -169,6 +168,20 @@ void Editor(entt::registry& registry, InputSystem& input, Renderer& renderer) {
 		}
 	}
 	ImGui::End();
+
+
+	if (selected != entt::entity(-1)) {
+		if (registry.any_of<Transform>(selected)) {
+			ImGui::Begin("Transform component");
+			registry.get<Transform>(selected).DrawEditor();
+			ImGui::End();
+		}if (registry.any_of<PhysicsBody>(selected)) {
+			ImGui::Begin("PhysicsBody component");
+			auto trx = registry.get<Transform>(selected);
+			registry.get<PhysicsBody>(selected).DrawEditor(trx);
+			ImGui::End();
+		}
+	}
 }
 
 #endif // _EDITOR

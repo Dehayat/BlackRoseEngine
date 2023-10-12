@@ -20,6 +20,8 @@ PhysicsBody::PhysicsBody(Physics& physics, glm::vec2 pos, glm::vec2 size, bool k
 	body->SetSleepingAllowed(!keepAwake);
 	this->body = body;
 	isInit = true;
+	sizex = size.x;
+	sizey = size.y;
 }
 PhysicsBody::PhysicsBody(ryml::NodeRef node)
 {
@@ -35,6 +37,8 @@ PhysicsBody::PhysicsBody(ryml::NodeRef node)
 
 	this->body = nullptr;
 	isInit = false;
+	sizex = x;
+	sizey = y;
 }
 void PhysicsBody::Init(Physics& physics, const Transform& trx)
 {

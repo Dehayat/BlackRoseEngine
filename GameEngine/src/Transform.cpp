@@ -12,6 +12,8 @@ Transform::Transform(glm::vec2 position, glm::vec2 scale, float rotation) {
 	this->level = 0;
 	this->parentGUID = -1;
 }
+
+
 Transform::Transform(ryml::NodeRef node) {
 	this->position = glm::vec2(0, 0);
 	this->scale = glm::vec2(1, 1);

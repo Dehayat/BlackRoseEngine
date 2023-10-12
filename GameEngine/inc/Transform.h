@@ -4,6 +4,10 @@
 #include <entt/entt.hpp>
 #include <ryml/ryml.hpp>
 
+#ifdef _EDITOR
+#include <imgui.h>
+#endif
+
 struct Transform {
 	bool hasParent;
 	int level;
@@ -15,6 +19,15 @@ struct Transform {
 	std::uint64_t parentGUID;
 	Transform(glm::vec2 position = glm::vec2(0, 0), glm::vec2 scale = glm::vec2(1, 1), float rotation = 0);
 	Transform(ryml::NodeRef node);
+#ifdef _EDITOR
+	void DrawEditor() {
+		ImGui::DragFloat("Position X", &position.x,0.2f);
+		ImGui::DragFloat("Position y", &position.y,0.2f);
+		ImGui::DragFloat("Scale x", &scale.x,0.2f);
+		ImGui::DragFloat("Scale y", &scale.y,0.2f);
+		ImGui::DragFloat("Rotation", &rotation,5.f);
+	}
+#endif
 };
 class DebugDrawTransform
 {

@@ -73,10 +73,6 @@ entt::entity LevelLoader::DeserializeEntity(entt::registry& registry, ryml::Node
 		auto phy = node["PhysicsBody"];
 		ComponentSer<PhysicsBody>::Deserialize(registry, phy, entity);
 	}
-	if (node.has_child("StaticBody")) {
-		auto phy = node["StaticBody"];
-		ComponentSer<StaticBody>::Deserialize(registry, phy, entity);
-	}
 	if (node.has_child("Camera")) {
 		auto n = node["Camera"];
 		ComponentSer<Camera>::Deserialize(registry, n, entity);

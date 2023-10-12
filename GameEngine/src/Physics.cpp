@@ -3,10 +3,11 @@
 #include "Transform.h"
 #include "Logger.h"
 
-PhysicsBody::PhysicsBody(Physics& physics, glm::vec2 pos, glm::vec2 size, bool keepAwake)
+PhysicsBody::PhysicsBody(Physics& physics, glm::vec2 pos, glm::vec2 size, bool isStatic, bool keepAwake)
 {
-	b2BodyDef bodyDef;
-	bodyDef.type = b2_dynamicBody;
+	if (!isStatic) {
+		bodyDef.type = b2_dynamicBody;
+	}
 	bodyDef.position.Set(pos.x, pos.y);
 	b2Body* body = physics.GetWorld().CreateBody(&bodyDef);
 	b2PolygonShape dynamicBox;
@@ -26,9 +27,16 @@ PhysicsBody::PhysicsBody(Physics& physics, glm::vec2 pos, glm::vec2 size, bool k
 PhysicsBody::PhysicsBody(ryml::NodeRef node)
 {
 	float x = 0.5, y = 0.5;
+	bool isStatic = false;
 	if (node.is_map() && node.has_child("size")) {
 		node["size"][0] >> x;
 		node["size"][1] >> y;
+	}
+	if (node.is_map() && node.has_child("static")) {
+		isStatic = true;
+	}
+	if (!isStatic) {
+		bodyDef.type = b2_dynamicBody;
 	}
 	shape.SetAsBox(x, y);
 	fixture.shape = &shape;
@@ -42,44 +50,6 @@ PhysicsBody::PhysicsBody(ryml::NodeRef node)
 }
 void PhysicsBody::Init(Physics& physics, const Transform& trx)
 {
-	b2BodyDef bodyDef;
-	bodyDef.type = b2_dynamicBody;
-	bodyDef.position.Set(trx.position.x, trx.position.y);
-	b2Body* body = physics.GetWorld().CreateBody(&bodyDef);
-	body->CreateFixture(&fixture);
-	this->body = body;
-	isInit = true;
-}
-
-StaticBody::StaticBody(Physics& physics, glm::vec2 pos, glm::vec2 size)
-{
-
-	b2BodyDef staticBodyDef;
-	staticBodyDef.position.Set(pos.x, pos.y);
-	b2Body* staticBody = physics.GetWorld().CreateBody(&staticBodyDef);
-	b2PolygonShape groundBox;
-	groundBox.SetAsBox(size.x, size.y);
-	staticBody->CreateFixture(&groundBox, 0.0f);
-	this->body = staticBody;
-}
-StaticBody::StaticBody(ryml::NodeRef node)
-{
-	float x = 0.5, y = 0.5;
-	if (node.is_map() && node.has_child("size")) {
-		node["size"][0] >> x;
-		node["size"][1] >> y;
-	}
-	shape.SetAsBox(x, y);
-	fixture.shape = &shape;
-	fixture.density = 1.0f;
-	fixture.friction = 0.3f;
-
-	this->body = nullptr;
-	isInit = false;
-}
-void StaticBody::Init(Physics& physics, const Transform& trx)
-{
-	b2BodyDef bodyDef;
 	bodyDef.position.Set(trx.position.x, trx.position.y);
 	b2Body* body = physics.GetWorld().CreateBody(&bodyDef);
 	body->CreateFixture(&fixture);
@@ -136,15 +106,6 @@ void Physics::InitLoaded(entt::registry& registry)
 	for (auto entity : phView) {
 		const auto& pos = phView.get<Transform>(entity);
 		auto& body = phView.get<PhysicsBody>(entity);
-		if (body.isInit) {
-			continue;
-		}
-		body.Init(*this, pos);
-	}
-	auto phView2 = registry.view<StaticBody, Transform>();
-	for (auto entity : phView2) {
-		const auto& pos = phView2.get<Transform>(entity);
-		auto& body = phView2.get<StaticBody>(entity);
 		if (body.isInit) {
 			continue;
 		}

@@ -13,6 +13,20 @@ Transform::Transform(glm::vec2 position, glm::vec2 scale, float rotation) {
 	this->parentGUID = -1;
 }
 
+void Transform::SetParent(entt::entity newParent)
+{
+	parent = newParent;
+	if (newParent == entt::entity(-1)) {
+		hasParent = false;
+		level = 0;
+	}
+	else {
+		hasParent = true;
+		level = -1;
+	}
+	Logger::Log("Not updating parent guid or carrying over global transform");
+}
+
 
 Transform::Transform(ryml::NodeRef node) {
 	this->position = glm::vec2(0, 0);
@@ -51,10 +65,20 @@ TransformSystem::~TransformSystem()
 }
 void TransformSystem::Update(entt::registry& registry)
 {
+
+	auto view3 = registry.view<Transform>();
+#ifdef _EDITOR
+	for (auto entity : view3) {
+		auto& trx = view3.get<Transform>(entity);
+		if (trx.level == -1) {
+			SetParent(registry, trx, trx.parent);
+		}
+	}
+#endif // _EDITOR
+
 	registry.sort<Transform>([](const auto& lhs, const auto& rhs) {
 		return lhs.level < rhs.level;
 		});
-	auto view3 = registry.view<Transform>();
 	for (auto entity : view3) {
 		auto& trx = view3.get<Transform>(entity);
 		trx.matrix = glm::mat3(

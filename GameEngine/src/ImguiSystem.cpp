@@ -74,7 +74,6 @@ bool ImguiSystem::ProcessEvents()
 		if (SDL_GetKeyboardFocus() != window) {
 			return false;
 		}
-		Logger::Log(std::to_string(sdlEvent.type));
 		if (sdlEvent.type == SDL_QUIT) {
 			return true;
 		}

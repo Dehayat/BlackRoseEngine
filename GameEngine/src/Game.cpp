@@ -37,6 +37,8 @@ Game::Game() :allEntities() {
 Game::~Game() {
 	Logger::Log("Game Destructed");
 }
+
+
 void Game::Setup()
 {
 	assetStore->AddTexture(sdl->GetRenderer(), "rose", "./assets/Rose.png", 512);
@@ -52,6 +54,8 @@ void Game::Setup()
 	transformSystem.InitLoaded(registry, allEntities);
 	physics->InitLoaded(registry);
 	renderer->InitLoaded(registry);
+
+	levelTree.Init(registry);
 }
 void Game::Run()
 {
@@ -117,7 +121,7 @@ void Game::Update()
 entt::entity selected = entt::entity(-1);
 entt::entity created = entt::entity(-1);
 bool entityList[100];
-void Editor(entt::registry& registry, InputSystem& input, Renderer& renderer) {
+void Editor(entt::registry& registry, InputSystem& input, Renderer& renderer, LevelEditor::LevelTree& tree) {
 	ImGui::SetNextWindowSize(ImVec2(200, 400));
 	ImGui::Begin("Tools");
 	const char* listbox_items[] = { "Create Entity","Move Entity" };
@@ -128,6 +132,7 @@ void Editor(entt::registry& registry, InputSystem& input, Renderer& renderer) {
 		if (input.GetMouseButton(LEFT_BUTTON).justPressed) {
 			Logger::Log("create");
 			created = registry.create();
+			tree.AddEntity(created);
 			selected = created;
 			registry.emplace<GUID>(created);
 			registry.emplace<Transform>(created, glm::vec2(mousePos.x, mousePos.y), glm::vec2(1, 1), 0);
@@ -150,23 +155,24 @@ void Editor(entt::registry& registry, InputSystem& input, Renderer& renderer) {
 		}
 	}
 	auto view = registry.view<const GUID, Transform>();
-	for (auto entity : view) {
-		const auto& guid = view.get<GUID>(entity);
-		const auto& trx = view.get<Transform>(entity);
-		if (trx.level == 0) {
-			if (selected != entity) {
-				entityList[(int)entity] = false;
-			}
-			else {
-				entityList[(int)entity] = true;
-			}
-			if (ImGui::Selectable(std::to_string(guid.id).c_str(), &entityList[(int)entity]))
-			{
-				Logger::Log("Clicked an entity");
-				selected = entity;
-			}
-		}
-	}
+	tree.Editor(registry, selected, entityList);
+	//for (auto entity : view) {
+	//	const auto& guid = view.get<GUID>(entity);
+	//	const auto& trx = view.get<Transform>(entity);
+	//	if (trx.level == 0) {
+	//		if (selected != entity) {
+	//			entityList[(int)entity] = false;
+	//		}
+	//		else {
+	//			entityList[(int)entity] = true;
+	//		}
+	//		if (ImGui::Selectable(std::to_string(guid.id).c_str(), &entityList[(int)entity]))
+	//		{
+	//			Logger::Log("Clicked an entity");
+	//			selected = entity;
+	//		}
+	//	}
+	//}
 	ImGui::End();
 
 
@@ -203,7 +209,7 @@ void Game::Render()
 #ifdef _EDITOR
 	imgui.Render();
 	//ImGui::ShowDemoWindow();
-	Editor(registry, input, *renderer);
+	Editor(registry, input, *renderer, levelTree);
 	//Imgui Code
 	imgui.Present();
 #endif // _EDITOR

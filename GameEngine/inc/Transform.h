@@ -20,12 +20,13 @@ struct Transform {
 	Transform(glm::vec2 position = glm::vec2(0, 0), glm::vec2 scale = glm::vec2(1, 1), float rotation = 0);
 	Transform(ryml::NodeRef node);
 #ifdef _EDITOR
+	void SetParent(entt::entity newParent);
 	void DrawEditor() {
-		ImGui::DragFloat("Position X", &position.x,0.2f);
-		ImGui::DragFloat("Position y", &position.y,0.2f);
-		ImGui::DragFloat("Scale x", &scale.x,0.2f);
-		ImGui::DragFloat("Scale y", &scale.y,0.2f);
-		ImGui::DragFloat("Rotation", &rotation,5.f);
+		ImGui::DragFloat("Position X", &position.x, 0.2f);
+		ImGui::DragFloat("Position y", &position.y, 0.2f);
+		ImGui::DragFloat("Scale x", &scale.x, 0.2f);
+		ImGui::DragFloat("Scale y", &scale.y, 0.2f);
+		ImGui::DragFloat("Rotation", &rotation, 5.f);
 	}
 #endif
 };

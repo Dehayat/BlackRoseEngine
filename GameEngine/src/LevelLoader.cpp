@@ -5,6 +5,7 @@
 #include <SDL2/SDL.h>
 #include "Components/TransformComponent.h"
 #include "Components/PhysicsBodyComponent.h"
+#include "Components/SpriteComponent.h"
 #include "Renderer.h"
 #include "GUID.h"
 #include "Player.h"

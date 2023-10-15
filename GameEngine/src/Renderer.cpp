@@ -2,63 +2,7 @@
 #include "Renderer.h"
 #include "Transform.h"
 #include "Logger.h"
-
-Sprite::Sprite(std::string sprite, int layer, SDL_Color color) {
-	this->sprite = sprite;
-	this->layer = layer;
-	this->color = color;
-}
-Sprite::Sprite(ryml::NodeRef node)
-{
-	this->sprite = "";
-	this->color = SDL_Color{ 255,255,255,255 };
-	this->layer = 0;
-	if (node.is_map()) {
-		if (node.has_child("sprite")) {
-			node["sprite"] >> this->sprite;
-		}
-		if (node.has_child("layer")) {
-			node["layer"] >> this->layer;
-		}
-		if (node.has_child("color")) {
-			auto c = SDL_Color{ 255,255,255,255 };
-			node["color"][0] >> c.r;
-			node["color"][1] >> c.g;
-			node["color"][2] >> c.b;
-			node["color"][3] >> c.a;
-			this->color = c;
-		}
-	}
-}
-void Sprite::Serialize(ryml::NodeRef node)
-{
-	node |= ryml::MAP;
-	auto spNode = node.append_child();
-	spNode.set_key("sprite");
-	node["sprite"] << sprite;
-	auto layerNode = node.append_child();
-	layerNode.set_key("layer");
-	node["layer"] << layer;
-	auto posNode = node.append_child();
-	posNode.set_key("color");
-	posNode |= ryml::SEQ;
-	{
-		auto xNode = posNode.append_child();
-		xNode << color.r;
-	}
-	{
-		auto xNode = posNode.append_child();
-		xNode << color.g;
-	}
-	{
-		auto xNode = posNode.append_child();
-		xNode << color.b;
-	}
-	{
-		auto xNode = posNode.append_child();
-		xNode << color.a;
-	}
-}
+#include "Components/SpriteComponent.h"
 
 Camera::Camera(float height) {
 	this->height = height;
@@ -178,9 +122,9 @@ void Renderer::Render(entt::registry* registry, const AssetStore& assetStore)
 			(float)spriteSizeX,
 			(float)spriteSizeY,
 		};
-		SDL_SetTextureColorMod(texture->texture, sp.color.r, sp.color.g, sp.color.b);
+		SDL_SetTextureColorMod(texture->texture, sp.color.r*255, sp.color.g*255, sp.color.b*255);
 		SDL_SetTextureBlendMode(texture->texture, SDL_BLENDMODE_BLEND);
-		SDL_SetTextureAlphaMod(texture->texture, sp.color.a);
+		SDL_SetTextureAlphaMod(texture->texture, sp.color.a*255);
 		SDL_RenderCopyExF(sdl, texture->texture, nullptr, &player, rotation, nullptr, SDL_FLIP_NONE);
 	}
 }

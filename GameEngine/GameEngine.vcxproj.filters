@@ -81,6 +81,12 @@
     <ClInclude Include="inc\Editor\PhysicsEditor.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="inc\Components\SpriteComponent.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="inc\Editor\RenderEditor.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Main.cpp">

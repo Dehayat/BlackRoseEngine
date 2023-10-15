@@ -6,12 +6,14 @@
 #include "Game.h"
 #include "GUID.h"
 #include "Player.h"
+#include "Components/SpriteComponent.h"
 #include "Logger.h"
 
 #ifdef _EDITOR
 #include <imgui.h>
 #include "Editor/TransformEditor.h"
 #include "Editor/PhysicsEditor.h"
+#include "Editor/RenderEditor.h"
 #endif // _EDITOR
 
 
@@ -191,7 +193,7 @@ void Editor(entt::registry& registry, InputSystem& input, Renderer& renderer, Le
 		}
 		if (registry.any_of<Sprite>(selected)) {
 			ImGui::Begin("Sprite component");
-			registry.get<Sprite>(selected).DrawEditor();
+			SpriteEditor::DrawEditor(registry.get<Sprite>(selected));
 			ImGui::End();
 			if (ImGui::Button("Remove Sprite Component")) {
 				registry.remove<Sprite>(selected);

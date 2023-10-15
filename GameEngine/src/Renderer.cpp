@@ -3,42 +3,7 @@
 #include "Transform.h"
 #include "Logger.h"
 #include "Components/SpriteComponent.h"
-
-Camera::Camera(float height) {
-	this->height = height;
-	camToScreen = glm::mat3();
-	worldToScreen = glm::mat3();
-	startCamera = false;
-}
-
-Camera::Camera(ryml::NodeRef node)
-{
-	height = 10;
-	camToScreen = glm::mat3();
-	worldToScreen = glm::mat3();
-	startCamera = false;
-	if (node.is_map()) {
-		if (node.has_child("height")) {
-			node["height"] >> this->height;
-		}
-		if (node.has_child("startCamera")) {
-			node["startCamera"] >> this->startCamera;
-		}
-	}
-}
-void Camera::Serialize(ryml::NodeRef node)
-{
-	node |= ryml::MAP;
-	auto spNode = node.append_child();
-	spNode.set_key("height");
-	node["height"] << height;
-	if (startCamera) {
-		auto parentNode = node.append_child();
-		parentNode.set_key("startCamera");
-		node["startCamera"] << true;
-	}
-}
-
+#include "Components/CameraComponent.h"
 
 Renderer::Renderer(SDL_Renderer* sdl)
 {

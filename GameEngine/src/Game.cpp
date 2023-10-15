@@ -7,6 +7,7 @@
 #include "GUID.h"
 #include "Player.h"
 #include "Components/SpriteComponent.h"
+#include "Components/CameraComponent.h"
 #include "Logger.h"
 
 #ifdef _EDITOR
@@ -202,6 +203,19 @@ void Editor(entt::registry& registry, InputSystem& input, Renderer& renderer, Le
 		else {
 			if (ImGui::Button("Add Sprite Component")) {
 				registry.emplace<Sprite>(selected, "block");
+			}
+		}
+		if (registry.any_of<Camera>(selected)) {
+			ImGui::Begin("Camera component");
+			CameraEditor::DrawEditor(registry.get<Camera>(selected));
+			ImGui::End();
+			if (ImGui::Button("Remove Camera Component")) {
+				registry.remove<Camera>(selected);
+			}
+		}
+		else {
+			if (ImGui::Button("Add Camera Component")) {
+				registry.emplace<Camera>(selected);
 			}
 		}
 	}

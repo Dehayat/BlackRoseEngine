@@ -129,6 +129,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="inc\Components\CameraComponent.h" />
     <ClInclude Include="inc\Components\PhysicsBodyComponent.h" />
     <ClInclude Include="inc\Components\SpriteComponent.h" />
     <ClInclude Include="inc\Editor\LevelTree.h" />

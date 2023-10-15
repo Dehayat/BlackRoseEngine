@@ -6,7 +6,7 @@
 #include "Components/TransformComponent.h"
 #include "Components/PhysicsBodyComponent.h"
 #include "Components/SpriteComponent.h"
-#include "Renderer.h"
+#include "Components/CameraComponent.h"
 #include "GUID.h"
 #include "Player.h"
 #include "Logger.h"

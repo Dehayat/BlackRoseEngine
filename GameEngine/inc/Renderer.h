@@ -5,16 +5,6 @@
 #include <ryml/ryml.hpp>
 #include "AssetStore.h"
 
-struct Camera {
-	float height;
-	glm::mat3 camToScreen;
-	glm::mat3 worldToScreen;
-	bool startCamera;
-	Camera(float height = 10);
-	Camera(ryml::NodeRef node);
-	void Serialize(ryml::NodeRef node);
-};
-
 class Renderer
 {
 	SDL_Renderer* sdl;

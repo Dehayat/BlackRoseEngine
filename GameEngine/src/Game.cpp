@@ -52,12 +52,11 @@ void Game::Setup()
 	assetStore->AddTexture(sdl->GetRenderer(), "rose", "./assets/Rose.png", 512);
 	assetStore->AddTexture(sdl->GetRenderer(), "hornet", "./assets/Hornet_Idle.png", 128);
 	assetStore->AddTexture(sdl->GetRenderer(), "block", "./assets/Block.jpg", 64);
-	assetStore->AddTexture(sdl->GetRenderer(), "platform", "./assets/Ground.png", 128);
-	assetStore->AddTexture(sdl->GetRenderer(), "bg", "./assets/bg.jpg", 64);
-	assetStore->AddTexture(sdl->GetRenderer(), "drip", "./assets/Drip.png", 128);
+	assetStore->AddTexture(sdl->GetRenderer(), "big_ground", "./assets/BigGround.png", 128);
 
-	levelLoader.LoadLevel("Level.yaml", registry);
-	//levelLoader.LoadLevel("SavedLevel.yaml", registry);
+
+	//levelLoader.LoadLevel("Level.yaml", registry);
+	levelLoader.LoadLevel("SavedLevel.yaml", registry);
 
 	RegisterAllEntities();
 	transformSystem.InitLoaded(registry, allEntities);
@@ -83,7 +82,6 @@ void Game::Run()
 }
 void Game::Update()
 {
-
 	transformSystem.Update(registry);
 
 #ifdef _EDITOR
@@ -98,13 +96,13 @@ void Game::Update()
 	input.Update(sdl->GetWindow());
 	physics->Update(registry);
 
-	if (input.GetMouseButton(InputMouse::LEFT_BUTTON).justPressed) {
-		const auto ground = registry.create();
-		auto spawnPos = glm::vec3(input.GetMousePosition(), 1) * renderer->GetScreenToWorldMatrix();
-		registry.emplace<Transform>(ground, glm::vec2(spawnPos.x, spawnPos.y), glm::vec2(1, 1), 0);
-		registry.emplace<Sprite>(ground, "rose", 0, SDL_Color{ 255,255,255,255 });
-		registry.emplace<PhysicsBody>(ground, *physics, glm::vec2(spawnPos.x, spawnPos.y), glm::vec2(0.25, 0.25));
-	}
+	//if (input.GetMouseButton(InputMouse::LEFT_BUTTON).justPressed) {
+	//	const auto ground = registry.create();
+	//	auto spawnPos = glm::vec3(input.GetMousePosition(), 1) * renderer->GetScreenToWorldMatrix();
+	//	registry.emplace<Transform>(ground, glm::vec2(spawnPos.x, spawnPos.y), glm::vec2(1, 1), 0);
+	//	registry.emplace<Sprite>(ground, "rose", 0, SDL_Color{ 255,255,255,255 });
+	//	registry.emplace<PhysicsBody>(ground, glm::vec2(spawnPos.x, spawnPos.y), glm::vec2(0.25, 0.25));
+	//}
 	auto view2 = registry.view<Player, const Transform, PhysicsBody>();
 	for (auto entity : view2) {
 		const auto& pos = view2.get<Transform>(entity);
@@ -131,7 +129,22 @@ void Game::Update()
 entt::entity selected = entt::entity(-1);
 entt::entity created = entt::entity(-1);
 bool entityList[100];
+vec2 lastPos;
 void Editor(entt::registry& registry, InputSystem& input, Renderer& renderer, LevelEditor::LevelTree& tree, LevelLoader& levelLoader, Physics& physics) {
+
+	if (input.GetMouseButton(MIDDLE_BUTTON).justPressed) {
+		lastPos = input.GetMousePosition();
+	}
+	else if (input.GetMouseButton(MIDDLE_BUTTON).isPressed) {
+		auto curPos = input.GetMousePosition();
+		if (glm::distance(curPos, lastPos) > 3) {
+			glm::vec2 lastPosCam = glm::vec3(lastPos, 1) * renderer.GetScreenToWorldMatrix();
+			glm::vec2 curPosCam = glm::vec3(curPos, 1) * renderer.GetScreenToWorldMatrix();
+			renderer.GetEditorCamTrx().position += lastPosCam - curPosCam;
+			lastPos = curPos;
+		}
+	}
+
 	ImGui::SetNextWindowSize(ImVec2(200, 400));
 	ImGui::Begin("Tools");
 	const char* listbox_items[] = { "Create Entity","Move Entity" };
@@ -233,6 +246,11 @@ void Game::Render()
 
 #endif // _DEBUG
 #ifdef _EDITOR
+	auto camEntity = renderer->GetCamera();
+	auto cam = registry.get<Camera>(camEntity);
+	auto camTrx = registry.get<Transform>(camEntity);
+	CameraEditor::DrawGizmos(sdl->GetRenderer(),*renderer, cam, camTrx);
+
 	if (selected != entt::entity(-1)) {
 		transformSystem.GetDebugRenderer().DrawTransform(registry.get<Transform>(selected));
 	}

@@ -23,6 +23,10 @@ void Renderer::Render(entt::registry* registry, const AssetStore& assetStore)
 		});
 	Transform camPos;
 	float camHeight = 10;
+#ifdef _EDITOR
+	camPos = editorCamTrx;
+	camHeight = editorCam.height;
+#else
 	if (registry->valid(camera)) {
 		auto& cam = registry->get<Camera>(camera);
 		camHeight = cam.height;
@@ -31,12 +35,12 @@ void Renderer::Render(entt::registry* registry, const AssetStore& assetStore)
 	else {
 		Logger::Error("No Camera Assigned to renderer");
 	}
+#endif
 	auto camMatrix = glm::mat3(
 		glm::cos(glm::radians(camPos.rotation)), -glm::sin(glm::radians(camPos.rotation)), camPos.position.x,
 		glm::sin(glm::radians(camPos.rotation)), glm::cos(glm::radians(camPos.rotation)), camPos.position.y,
 		0, 0, 1
 	);
-	//assume ok
 	auto invCamMatrix = glm::inverse(camMatrix);
 	int sizeX, sizeY;
 	SDL_GetRendererOutputSize(sdl, &sizeX, &sizeY);
@@ -54,11 +58,8 @@ void Renderer::Render(entt::registry* registry, const AssetStore& assetStore)
 		scaleX, 0, 0,
 		0, scaleY, 0,
 		0, 0, 1);
-	//assume ok
 	glm::mat3 camToScreen = tr * sc;
 	auto worldToScreen = invCamMatrix * camToScreen;
-	//cam.camToScreen = camToScreen;
-	//cam.worldToScreen = worldToScreen;
 	this->worldToScreenMatrix = worldToScreen;
 
 
@@ -105,11 +106,11 @@ entt::entity Renderer::GetCamera()
 {
 	return camera;
 }
-glm::mat3 Renderer::GetWorldToScreenMatrix()
+const glm::mat3 Renderer::GetWorldToScreenMatrix()
 {
 	return worldToScreenMatrix;
 }
-glm::mat3 Renderer::GetScreenToWorldMatrix()
+const glm::mat3 Renderer::GetScreenToWorldMatrix()
 {
 	return glm::inverse(worldToScreenMatrix);
 }
@@ -121,6 +122,10 @@ void Renderer::InitLoaded(entt::registry& registry)
 		const auto& body = view.get<Camera>(entity);
 		if (body.startCamera) {
 			SetCamera(entity);
+#ifdef _EDITOR
+			editorCam = body;
+			editorCamTrx = pos;
+#endif
 			break;
 		}
 	}

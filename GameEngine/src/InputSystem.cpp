@@ -63,6 +63,27 @@ void InputSystem::Update(SDL_Window* window) {
 			input.mouse[0].justReleased = false;
 		}
 	}
+
+	if (buttonMask & SDL_BUTTON(2)) {
+		if (input.mouse[1].isPressed) {
+			input.mouse[1].justPressed = false;
+		}
+		else {
+			input.mouse[1].isPressed = true;
+			input.mouse[1].justPressed = true;
+			input.mouse[1].justReleased = false;
+		}
+	}
+	else {
+		if (input.mouse[1].isPressed) {
+			input.mouse[1].isPressed = false;
+			input.mouse[1].justReleased = true;
+			input.mouse[1].justPressed = false;
+		}
+		else {
+			input.mouse[1].justReleased = false;
+		}
+	}
 	input.mousePosition = mousePos;
 }
 

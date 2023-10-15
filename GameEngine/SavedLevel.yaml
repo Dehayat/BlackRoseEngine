@@ -1,34 +1,59 @@
 - Type: Entity
-  Guid: 6404588655664443746
+  Guid: 3129599052714922375
   Transform:
     position:
-      - 0.5
+      - -7.796
+      - 4.837
+    scale:
+      - 1
+      - 1
+    rotation: -90
+  Sprite:
+    sprite: big_ground
+    layer: 0
+    color:
+      - 1
+      - 1
+      - 1
+      - 1
+  PhysicsBody:
+    size:
+      - 7.987
+      - 0.65
+    isStatic: 1
+- Type: Entity
+  Guid: 16393138915709059706
+  Transform:
+    position:
+      - 6.962962
+      - 1.3111112
+    scale:
+      - 1
+      - 1
+    rotation: 0
+- Type: Entity
+  Guid: 7015025454105158843
+  Transform:
+    position:
       - 0
+      - -3
     scale:
       - 1
       - 1
     rotation: 0
   Sprite:
-    sprite: rose
-    layer: 2
+    sprite: big_ground
+    layer: 0
     color:
-      - 255
-      - 255
-      - 255
-      - 255
-- Type: Entity
-  Guid: 9404588658664444746
-  Transform:
-    position:
-      - 0
-      - 0
-    scale:
       - 1
       - 1
-    rotation: 0
-  Camera:
-    height: 10
-    startCamera: 1
+      - 1
+      - 1
+  PhysicsBody:
+    size:
+      - 8
+      - 0.55
+    isStatic: 1
 - Type: Entity
   Guid: 5266576921330336830
   Transform:
@@ -43,36 +68,45 @@
     sprite: hornet
     layer: 1
     color:
-      - 255
-      - 255
-      - 255
-      - 255
+      - 1
+      - 1
+      - 1
+      - 1
   Player:
-    speed: 10
+    speed: 3
   PhysicsBody:
     size:
       - 0.2
       - 0.8
 - Type: Entity
-  Guid: 7015025454105158843
+  Guid: 9404588658664444746
   Transform:
     position:
       - 0
-      - -3
+      - 0
     scale:
       - 1
       - 1
     rotation: 0
+  Camera:
+    height: 10
+    startCamera: 1
+- Type: Entity
+  Guid: 6404588655664443746
+  Transform:
+    position:
+      - 0.5
+      - 0
+    scale:
+      - 1
+      - 1
+    rotation: 0
+    parent: 5266576921330336830
   Sprite:
-    sprite: platform
-    layer: 0
+    sprite: rose
+    layer: 2
     color:
-      - 255
-      - 255
-      - 255
-      - 255
-  PhysicsBody:
-    size:
-      - 1.2
-      - 0.25
-    static: 1
+      - 1
+      - 1
+      - 1
+      - 1

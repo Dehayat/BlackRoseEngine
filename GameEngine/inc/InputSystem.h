@@ -10,6 +10,7 @@ enum InputKey {
 };
 enum InputMouse {
 	LEFT_BUTTON,
+	MIDDLE_BUTTON
 };
 
 struct KeyData {
@@ -20,13 +21,13 @@ struct KeyData {
 };
 struct InputData {
 	KeyData keys[4];
-	KeyData mouse[1];
+	KeyData mouse[2];
 	glm::vec2 mousePosition;
 };
 
 static int keys[] = { SDL_SCANCODE_A,SDL_SCANCODE_D,SDL_SCANCODE_LEFT,SDL_SCANCODE_RIGHT };
 static int keyCount = 4;
-static int mouseButtonCount = 1;
+static int mouseButtonCount = 2;
 
 class InputSystem
 {

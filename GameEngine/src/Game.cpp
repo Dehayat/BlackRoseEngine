@@ -10,6 +10,8 @@
 
 #ifdef _EDITOR
 #include <imgui.h>
+#include "Editor/TransformEditor.h"
+#include "Editor/PhysicsEditor.h"
 #endif // _EDITOR
 
 
@@ -24,6 +26,8 @@ Game::Game() :allEntities() {
 	renderer = std::make_unique<Renderer>(sdl->GetRenderer());
 	transformSystem.InitDebugDrawer(sdl->GetRenderer());
 	registry.on_construct<Transform>().connect<&TransformSystem::TransformCreated>(transformSystem);
+	registry.on_construct<PhysicsBody>().connect<&Physics::PhysicsBodyCreated>(physics.get());
+	registry.on_destroy<PhysicsBody>().connect<&Physics::PhysicsBodyDestroyed>(physics.get());
 #ifdef _DEBUG
 	physics->EnableDebug(true);
 	transformSystem.EnableDebug(true);
@@ -54,7 +58,6 @@ void Game::Setup()
 
 	RegisterAllEntities();
 	transformSystem.InitLoaded(registry, allEntities);
-	physics->InitLoaded(registry);
 	renderer->InitLoaded(registry);
 #ifdef _EDITOR
 	levelTree.Init(registry);
@@ -115,7 +118,7 @@ void Game::Update()
 		}
 		auto vel = b2Vec2(player.speed * player.input, phys.body->GetLinearVelocity().y);
 		phys.body->SetLinearVelocity(vel);
-}
+	}
 #endif // _EDITOR
 }
 
@@ -175,7 +178,7 @@ void Editor(entt::registry& registry, InputSystem& input, Renderer& renderer, Le
 		if (registry.any_of<PhysicsBody>(selected)) {
 			ImGui::Begin("PhysicsBody component");
 			auto trx = registry.get<Transform>(selected);
-			registry.get<PhysicsBody>(selected).DrawEditor(trx);
+			PhysicsEditor::DrawEditor(registry.get<PhysicsBody>(selected), trx);
 			ImGui::End();
 			if (ImGui::Button("Remove PhysicsBody Component")) {
 				registry.remove<PhysicsBody>(selected);
@@ -183,7 +186,7 @@ void Editor(entt::registry& registry, InputSystem& input, Renderer& renderer, Le
 		}
 		else {
 			if (ImGui::Button("Add PhysicsBody Component")) {
-				registry.emplace<PhysicsBody>(selected, physics);
+				registry.emplace<PhysicsBody>(selected);
 			}
 		}
 		if (registry.any_of<Sprite>(selected)) {

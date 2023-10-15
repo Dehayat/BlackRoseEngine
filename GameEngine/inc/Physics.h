@@ -5,50 +5,9 @@
 #include <glm/glm.hpp>
 #include <SDL2/SDL.h>
 #include <ryml/ryml.hpp>
-#include "Transform.h"
+#include "Components/PhysicsBodyComponent.h"
+#include "Components/TransformComponent.h"
 
-#ifdef _EDITOR
-#include <imgui.h>
-#endif
-
-class Physics;
-
-struct PhysicsBody {
-	bool isInit;
-	b2Body* body;
-	b2PolygonShape shape;
-	b2FixtureDef fixture;
-	b2BodyDef bodyDef;
-	PhysicsBody(Physics& physics, glm::vec2 pos = { 0.f,0.f }, glm::vec2 size = { 1.f,1.f }, bool isStatic = false, bool keepAwake = false);
-	PhysicsBody(ryml::NodeRef node);
-	~PhysicsBody();
-	void Serialize(ryml::NodeRef node);
-	void Init(Physics& physics, const Transform& trx);
-	float sizex, sizey;
-	bool isStatic;
-	Physics* physics;
-#ifdef _EDITOR
-	void DrawEditor(Transform trx) {
-		auto pos = b2Vec2(trx.position.x, trx.position.y);
-		body->SetTransform(pos, glm::radians(trx.rotation));
-		if (
-			ImGui::DragFloat("size x", &sizex, 0.1f, 0.05f, 2000)
-			|| ImGui::DragFloat("size y", &sizey, 0.1f, 0.05f, 2000)) {
-			body->DestroyFixture(&body->GetFixtureList()[0]);
-			shape.SetAsBox(sizex, sizey);
-			body->CreateFixture(&fixture);
-		}
-		if (ImGui::Checkbox("Static", &isStatic)) {
-			if (isStatic) {
-				body->SetType(b2BodyType::b2_staticBody);
-			}
-			else {
-				body->SetType(b2BodyType::b2_dynamicBody);
-			}
-		}
-	}
-#endif
-};
 class DebugDraw : public b2Draw
 {
 	SDL_Renderer* renderer;
@@ -73,9 +32,10 @@ class Physics
 public:
 	Physics(float gravityX, float gravityY);
 	~Physics();
+	void PhysicsBodyCreated(entt::registry& registry, entt::entity entity);
+	void PhysicsBodyDestroyed(entt::registry& registry, entt::entity entity);
 	void Update(entt::registry& registry);
 	b2World& GetWorld();
-	void InitLoaded(entt::registry& registry);
 
 	void InitDebugDrawer(SDL_Renderer* sdl);
 	void EnableDebug(bool enable);

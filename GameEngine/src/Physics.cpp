@@ -1,93 +1,6 @@
 #include "Physics.h"
 #include <SDL2/SDL2_gfxPrimitives.h>
-#include "Transform.h"
 #include "Logger.h"
-
-PhysicsBody::PhysicsBody(Physics& physics, glm::vec2 pos, glm::vec2 size, bool isStatic, bool keepAwake)
-{
-	if (!isStatic) {
-		bodyDef.type = b2_dynamicBody;
-	}
-	bodyDef.position.Set(pos.x, pos.y);
-	b2Body* body = physics.GetWorld().CreateBody(&bodyDef);
-	b2PolygonShape dynamicBox;
-	dynamicBox.SetAsBox(size.x, size.y);
-	b2FixtureDef fixtureDef;
-	fixtureDef.shape = &dynamicBox;
-	fixtureDef.density = 1.0f;
-	fixtureDef.friction = 0.3f;
-	body->CreateFixture(&fixtureDef);
-	//body->SetFixedRotation(true);
-	body->SetSleepingAllowed(!keepAwake);
-	this->body = body;
-	isInit = true;
-	sizex = size.x;
-	sizey = size.y;
-	this->isStatic = isStatic;
-	this->physics = &physics;
-}
-PhysicsBody::PhysicsBody(ryml::NodeRef node)
-{
-	float x = 0.5, y = 0.5;
-	bool isStatic = false;
-	if (node.is_map() && node.has_child("size")) {
-		node["size"][0] >> x;
-		node["size"][1] >> y;
-	}
-	if (node.is_map() && node.has_child("static")) {
-		isStatic = true;
-	}
-	if (!isStatic) {
-		bodyDef.type = b2_dynamicBody;
-	}
-	shape.SetAsBox(x, y);
-	fixture.shape = &shape;
-	fixture.density = 1.0f;
-	fixture.friction = 0.3f;
-
-	this->body = nullptr;
-	isInit = false;
-
-	sizex = x;
-	sizey = y;
-	this->isStatic = isStatic;
-	this->physics = nullptr;
-}
-PhysicsBody::~PhysicsBody()
-{
-	if (physics != nullptr) {
-		//physics->GetWorld().DestroyBody(body);
-	}
-}
-void PhysicsBody::Serialize(ryml::NodeRef node)
-{
-	node |= ryml::MAP;
-	auto posNode = node.append_child();
-	posNode.set_key("size");
-	posNode |= ryml::SEQ;
-	{
-		auto xNode = posNode.append_child();
-		xNode << sizex;
-	}
-	{
-		auto xNode = posNode.append_child();
-		xNode << sizey;
-	}
-	if (isStatic) {
-		auto layerNode = node.append_child();
-		layerNode.set_key("static");
-		node["static"] << isStatic;
-	}
-}
-void PhysicsBody::Init(Physics& physics, const Transform& trx)
-{
-	bodyDef.position.Set(trx.position.x, trx.position.y);
-	b2Body* body = physics.GetWorld().CreateBody(&bodyDef);
-	body->CreateFixture(&fixture);
-	this->body = body;
-	this->physics = &physics;
-	isInit = true;
-}
 
 Physics::Physics(float gravityX, float gravityY) {
 	b2Vec2 gravity(gravityX, gravityY);
@@ -101,6 +14,28 @@ Physics::~Physics()
 		delete debugDrawer;
 	}
 }
+void Physics::PhysicsBodyCreated(entt::registry& registry, entt::entity entity)
+{
+	auto& phys = registry.get<PhysicsBody>(entity);
+	auto& trx = registry.get<Transform>(entity);
+	if (!phys.isStatic) {
+		phys.bodyDef.type = b2_dynamicBody;
+	}
+	phys.bodyDef.position.Set(trx.position.x, trx.position.y);
+	b2Body* body = GetWorld().CreateBody(&phys.bodyDef);
+	phys.shape.SetAsBox(phys.size.x, phys.size.y);
+	phys.fixture.shape = &phys.shape;
+	phys.fixture.density = 1.0f;
+	phys.fixture.friction = 0.3f;
+	body->CreateFixture(&phys.fixture);
+	phys.body = body;
+}
+void Physics::PhysicsBodyDestroyed(entt::registry& registry, entt::entity entity)
+{
+	auto& phys = registry.get<PhysicsBody>(entity);
+	GetWorld().DestroyBody(phys.body);
+}
+
 void Physics::Update(entt::registry& registry)
 {
 	auto phView = registry.view<PhysicsBody, Transform>();
@@ -131,18 +66,6 @@ void Physics::Update(entt::registry& registry)
 b2World& Physics::GetWorld()
 {
 	return *physicsWorld;
-}
-void Physics::InitLoaded(entt::registry& registry)
-{
-	auto phView = registry.view<PhysicsBody, Transform>();
-	for (auto entity : phView) {
-		const auto& pos = phView.get<Transform>(entity);
-		auto& body = phView.get<PhysicsBody>(entity);
-		if (body.isInit) {
-			continue;
-		}
-		body.Init(*this, pos);
-	}
 }
 
 void Physics::InitDebugDrawer(SDL_Renderer* sdl) {

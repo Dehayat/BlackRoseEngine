@@ -1,7 +1,6 @@
 #pragma once
 #ifdef _EDITOR
 #include "Transform.h"
-#include "Components/TransformComponent.h"
 
 class TransformEditor {
 public:

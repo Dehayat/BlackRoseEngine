@@ -129,7 +129,9 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="inc\Components\PhysicsBodyComponent.h" />
     <ClInclude Include="inc\Editor\LevelTree.h" />
+    <ClInclude Include="inc\Editor\PhysicsEditor.h" />
     <ClInclude Include="inc\Editor\TransformEditor.h" />
     <ClInclude Include="inc\Entity.h" />
     <ClInclude Include="inc\GUID.h" />

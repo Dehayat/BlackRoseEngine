@@ -8,7 +8,7 @@
     size:
       - 1.2
       - 0.25
-    static: true
+    isStatic: true
   Sprite:
     sprite: "platform"
     layer: 0

@@ -3,8 +3,8 @@
 #include <sstream>
 #include <ryml/ryml_std.hpp>
 #include <SDL2/SDL.h>
-#include "Transform.h"
-#include "Physics.h"
+#include "Components/TransformComponent.h"
+#include "Components/PhysicsBodyComponent.h"
 #include "Renderer.h"
 #include "GUID.h"
 #include "Player.h"

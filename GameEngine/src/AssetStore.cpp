@@ -1,6 +1,6 @@
 #include "AssetStore.h"
-#include "Logger.h"
 #include <sdl2/SDL_image.h>
+#include "Logger.h"
 
 AssetStore::AssetStore()
 {

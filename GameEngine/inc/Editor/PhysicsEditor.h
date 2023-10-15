@@ -1,6 +1,7 @@
 #pragma once
 #ifdef _EDITOR
-#include "Physics.h"
+#include "Components/PhysicsBodyComponent.h"
+#include "Components/TransformComponent.h"
 class PhysicsEditor {
 public:
 	static void DrawEditor(PhysicsBody& phys, Transform& trx) {

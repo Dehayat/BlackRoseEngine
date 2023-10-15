@@ -2,7 +2,6 @@
 #include <SDL2/SDL.h>
 #include <entt/entt.hpp>
 #include <glm/glm.hpp>
-#include <ryml/ryml.hpp>
 #include "AssetStore.h"
 
 class Renderer

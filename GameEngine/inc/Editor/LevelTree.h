@@ -6,7 +6,6 @@
 #include <imgui.h>
 #include "Transform.h"
 #include "GUID.h"
-#include "Logger.h"
 #include "TransformEditor.h"
 
 

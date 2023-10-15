@@ -9,7 +9,6 @@
 #include "Components/CameraComponent.h"
 #include "GUID.h"
 #include "Player.h"
-#include "Logger.h"
 
 struct FileResource {
 	SDL_RWops* file;

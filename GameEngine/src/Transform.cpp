@@ -1,6 +1,5 @@
 #include "Transform.h"
 #include <SDL2/SDL2_gfxPrimitives.h>
-#include "Logger.h"
 
 TransformSystem::TransformSystem()
 {

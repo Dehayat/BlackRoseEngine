@@ -1,9 +1,9 @@
 #include <ryml/ryml_std.hpp>
 #include "Renderer.h"
-#include "Transform.h"
-#include "Logger.h"
+#include "Components/TransformComponent.h"
 #include "Components/SpriteComponent.h"
 #include "Components/CameraComponent.h"
+#include "Logger.h"
 
 Renderer::Renderer(SDL_Renderer* sdl)
 {

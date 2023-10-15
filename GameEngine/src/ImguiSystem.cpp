@@ -1,3 +1,4 @@
+#ifdef _EDITOR
 #include "ImguiSystem.h"
 #include <string>
 #include <imgui.h>
@@ -6,7 +7,6 @@
 #include <glm/glm.hpp>
 #define GLM_ENABLE_EXPERIMENTAL
 #include <glm/ext.hpp>
-#include "Logger.h"
 using namespace glm;
 
 ImguiSystem::ImguiSystem()
@@ -36,22 +36,14 @@ ImguiSystem::~ImguiSystem()
 
 void ImguiSystem::Render()
 {
-
 	ImGuiIO& io = ImGui::GetIO();
 	int w, h;
 	SDL_GetWindowSize(window, &w, &h);
 	io.DisplaySize = ImVec2((float)w, (float)h);
 
-	//// ImGui NewFrame and rendering for the second window
 	ImGui_ImplSDLRenderer2_NewFrame();
 	ImGui_ImplSDL2_NewFrame();
 	ImGui::NewFrame();
-
-	//// ImGui code here
-	//ImGui::ShowDemoWindow();
-	//ImGui::SliderFloat("CamX", &x, -10, 10);
-	//ImGui::SliderFloat("CamY", &y, -10, 10);
-
 }
 void ImguiSystem::Present() {
 	ImGui::Render();
@@ -86,3 +78,4 @@ bool ImguiSystem::ProcessEvents()
 	}
 	return false;
 }
+#endif // _EDITOR

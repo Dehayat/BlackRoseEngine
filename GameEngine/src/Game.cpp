@@ -55,8 +55,10 @@ void Game::Setup()
 	transformSystem.InitLoaded(registry, allEntities);
 	physics->InitLoaded(registry);
 	renderer->InitLoaded(registry);
-
+#ifdef _EDITOR
 	levelTree.Init(registry);
+#endif // _EDITOR
+
 }
 void Game::Run()
 {
@@ -122,7 +124,7 @@ void Game::Update()
 entt::entity selected = entt::entity(-1);
 entt::entity created = entt::entity(-1);
 bool entityList[100];
-void Editor(entt::registry& registry, InputSystem& input, Renderer& renderer, LevelEditor::LevelTree& tree, LevelLoader& levelLoader) {
+void Editor(entt::registry& registry, InputSystem& input, Renderer& renderer, LevelEditor::LevelTree& tree, LevelLoader& levelLoader,Physics& physics) {
 	ImGui::SetNextWindowSize(ImVec2(200, 400));
 	ImGui::Begin("Tools");
 	const char* listbox_items[] = { "Create Entity","Move Entity" };
@@ -174,11 +176,27 @@ void Editor(entt::registry& registry, InputSystem& input, Renderer& renderer, Le
 			auto trx = registry.get<Transform>(selected);
 			registry.get<PhysicsBody>(selected).DrawEditor(trx);
 			ImGui::End();
+			if (ImGui::Button("Remove PhysicsBody Component")) {
+				registry.remove<PhysicsBody>(selected);
+			}
+		}
+		else {
+			if (ImGui::Button("Add PhysicsBody Component")) {
+				registry.emplace<PhysicsBody>(selected,physics);
+			}
 		}
 		if (registry.any_of<Sprite>(selected)) {
 			ImGui::Begin("Sprite component");
 			registry.get<Sprite>(selected).DrawEditor();
 			ImGui::End();
+			if (ImGui::Button("Remove Sprite Component")) {
+				registry.remove<Sprite>(selected);
+			}
+		}
+		else {
+			if (ImGui::Button("Add Sprite Component")) {
+				registry.emplace<Sprite>(selected, "block");
+			}
 		}
 	}
 }
@@ -192,17 +210,19 @@ void Game::Render()
 	physics->DebugRender(renderer->GetWorldToScreenMatrix());
 	//transformSystem.DebugRender(renderer->GetWorldToScreenMatrix(), registry);
 	transformSystem.GetDebugRenderer().SetMatrix(renderer->GetWorldToScreenMatrix());
+
+#endif // _DEBUG
+#ifdef _EDITOR
 	if (selected != entt::entity(-1)) {
 		transformSystem.GetDebugRenderer().DrawTransform(registry.get<Transform>(selected));
 	}
-
-#endif // _DEBUG
+#endif
 	renderer->Present();
 
 #ifdef _EDITOR
 	imgui.Render();
 	//ImGui::ShowDemoWindow();
-	Editor(registry, input, *renderer, levelTree, levelLoader);
+	Editor(registry, input, *renderer, levelTree, levelLoader,*physics);
 	//Imgui Code
 	imgui.Present();
 #endif // _EDITOR

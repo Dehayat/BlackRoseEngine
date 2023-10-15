@@ -3,8 +3,8 @@
 #include <box2d/box2d.h>
 #include <entt/entt.hpp>
 #include <glm/glm.hpp>
+#include <SDL2/SDL.h>
 #include <ryml/ryml.hpp>
-#include "SdlContainer.h"
 #include "Transform.h"
 
 #ifdef _EDITOR
@@ -21,11 +21,13 @@ struct PhysicsBody {
 	b2BodyDef bodyDef;
 	PhysicsBody(Physics& physics, glm::vec2 pos = { 0.f,0.f }, glm::vec2 size = { 1.f,1.f }, bool isStatic = false, bool keepAwake = false);
 	PhysicsBody(ryml::NodeRef node);
+	~PhysicsBody();
 	void Serialize(ryml::NodeRef node);
 	void Init(Physics& physics, const Transform& trx);
-#ifdef _EDITOR
 	float sizex, sizey;
 	bool isStatic;
+	Physics* physics;
+#ifdef _EDITOR
 	void DrawEditor(Transform trx) {
 		auto pos = b2Vec2(trx.position.x, trx.position.y);
 		body->SetTransform(pos, glm::radians(trx.rotation));

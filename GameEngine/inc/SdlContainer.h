@@ -1,7 +1,6 @@
 #pragma once
 #include <SDL2/SDL.h>
 #include <glm/glm.hpp>
-#include <ImguiSystem.h>
 
 class SdlContainer
 {

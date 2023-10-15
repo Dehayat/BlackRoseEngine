@@ -170,12 +170,12 @@ void TransformSystem::SetParent(entt::registry& registry, Transform& child, entt
 }
 
 
-#ifdef _EDITOR
+#ifdef _DEBUG
 DebugDrawTransform& TransformSystem::GetDebugRenderer()
 {
 	return *debugDrawer;
 }
-#endif // _EDITOR
+#endif // _DEBUG
 
 DebugDrawTransform::DebugDrawTransform(SDL_Renderer* sdl) :matrix(1)
 {

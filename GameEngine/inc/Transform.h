@@ -20,8 +20,8 @@ struct Transform {
 	Transform(glm::vec2 position = glm::vec2(0, 0), glm::vec2 scale = glm::vec2(1, 1), float rotation = 0);
 	Transform(ryml::NodeRef node);
 	void Serialize(ryml::NodeRef node);
-#ifdef _EDITOR
 	void SetParent(entt::entity newParent, std::uint64_t guid);
+#ifdef _EDITOR
 	void DrawEditor() {
 		ImGui::DragFloat("Position X", &position.x, 0.2f);
 		ImGui::DragFloat("Position y", &position.y, 0.2f);
@@ -54,7 +54,7 @@ public:
 	void EnableDebug(bool enable);
 	void DebugRender(glm::mat3 viewMatrix, entt::registry& registry);
 	void SetParent(entt::registry& registry, Transform& child, entt::entity parent);
-#ifdef _EDITOR
+#ifdef _DEBUG
 	DebugDrawTransform& GetDebugRenderer();
-#endif // _EDITOR
+#endif // _DEBUG
 };

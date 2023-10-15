@@ -24,6 +24,7 @@ PhysicsBody::PhysicsBody(Physics& physics, glm::vec2 pos, glm::vec2 size, bool i
 	sizex = size.x;
 	sizey = size.y;
 	this->isStatic = isStatic;
+	this->physics = &physics;
 }
 PhysicsBody::PhysicsBody(ryml::NodeRef node)
 {
@@ -50,6 +51,13 @@ PhysicsBody::PhysicsBody(ryml::NodeRef node)
 	sizex = x;
 	sizey = y;
 	this->isStatic = isStatic;
+	this->physics = nullptr;
+}
+PhysicsBody::~PhysicsBody()
+{
+	if (physics != nullptr) {
+		//physics->GetWorld().DestroyBody(body);
+	}
 }
 void PhysicsBody::Serialize(ryml::NodeRef node)
 {
@@ -77,6 +85,7 @@ void PhysicsBody::Init(Physics& physics, const Transform& trx)
 	b2Body* body = physics.GetWorld().CreateBody(&bodyDef);
 	body->CreateFixture(&fixture);
 	this->body = body;
+	this->physics = &physics;
 	isInit = true;
 }
 

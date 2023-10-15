@@ -8,7 +8,7 @@
 #include "Components/SpriteComponent.h"
 #include "Components/CameraComponent.h"
 #include "Components/GUIDComponent.h"
-#include "Player.h"
+#include "Components/PlayerComponent.h"
 
 struct FileResource {
 	SDL_RWops* file;

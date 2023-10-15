@@ -5,7 +5,7 @@
 #include <ryml/ryml.hpp>
 #include "Game.h"
 #include "Components/GUIDComponent.h"
-#include "Player.h"
+#include "Components/PlayerComponent.h"
 #include "Components/SpriteComponent.h"
 #include "Components/CameraComponent.h"
 #include "Logger.h"

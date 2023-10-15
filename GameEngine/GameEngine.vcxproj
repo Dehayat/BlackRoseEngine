@@ -147,7 +147,7 @@
     <ClInclude Include="inc\Game.h" />
     <ClInclude Include="inc\Logger.h" />
     <ClInclude Include="inc\Physics.h" />
-    <ClInclude Include="inc\Player.h" />
+    <ClInclude Include="inc\Components\PlayerComponent.h" />
     <ClInclude Include="inc\SdlContainer.h" />
     <ClInclude Include="inc\Renderer.h" />
     <ClInclude Include="inc\InputSystem.h" />

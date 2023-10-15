@@ -4,7 +4,7 @@
 #include <box2d/b2_world_callbacks.h>
 #include <ryml/ryml.hpp>
 #include "Game.h"
-#include "GUID.h"
+#include "Components/GUIDComponent.h"
 #include "Player.h"
 #include "Components/SpriteComponent.h"
 #include "Components/CameraComponent.h"

@@ -57,7 +57,7 @@
     <ClInclude Include="inc\LevelLoader.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="inc\GUID.h">
+    <ClInclude Include="inc\Components\GUIDComponent.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="inc\Player.h">

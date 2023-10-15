@@ -7,7 +7,7 @@
 #include "Components/PhysicsBodyComponent.h"
 #include "Components/SpriteComponent.h"
 #include "Components/CameraComponent.h"
-#include "GUID.h"
+#include "Components/GUIDComponent.h"
 #include "Player.h"
 
 struct FileResource {

@@ -5,7 +5,7 @@
 #include <entt/entt.hpp>
 #include <imgui.h>
 #include "Transform.h"
-#include "GUID.h"
+#include "Components/GUIDComponent.h"
 #include "TransformEditor.h"
 
 

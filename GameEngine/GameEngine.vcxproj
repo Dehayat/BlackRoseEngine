@@ -137,7 +137,7 @@
     <ClInclude Include="inc\Editor\RenderEditor.h" />
     <ClInclude Include="inc\Editor\TransformEditor.h" />
     <ClInclude Include="inc\Entity.h" />
-    <ClInclude Include="inc\GUID.h" />
+    <ClInclude Include="inc\Components\GUIDComponent.h" />
     <ClInclude Include="inc\ImguiSystem.h" />
     <ClInclude Include="inc\AssetStore.h" />
     <ClInclude Include="inc\EventSystem\Event.h" />

@@ -130,6 +130,8 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="inc\Editor\LevelTree.h" />
+    <ClInclude Include="inc\Editor\TransformEditor.h" />
+    <ClInclude Include="inc\Entity.h" />
     <ClInclude Include="inc\GUID.h" />
     <ClInclude Include="inc\ImguiSystem.h" />
     <ClInclude Include="inc\AssetStore.h" />
@@ -145,6 +147,7 @@
     <ClInclude Include="inc\Renderer.h" />
     <ClInclude Include="inc\InputSystem.h" />
     <ClInclude Include="inc\LevelLoader.h" />
+    <ClInclude Include="inc\Components\TransformComponent.h" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="inc\Transform.h" />

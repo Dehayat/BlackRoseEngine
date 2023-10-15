@@ -66,6 +66,15 @@
     <ClInclude Include="inc\Editor\LevelTree.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="inc\Components\TransformComponent.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="inc\Entity.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="inc\Editor\TransformEditor.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Main.cpp">

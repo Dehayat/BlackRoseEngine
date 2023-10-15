@@ -23,6 +23,7 @@ Game::Game() :allEntities() {
 	physics->InitDebugDrawer(sdl->GetRenderer());
 	renderer = std::make_unique<Renderer>(sdl->GetRenderer());
 	transformSystem.InitDebugDrawer(sdl->GetRenderer());
+	registry.on_construct<Transform>().connect<&TransformSystem::TransformCreated>(transformSystem);
 #ifdef _DEBUG
 	physics->EnableDebug(true);
 	transformSystem.EnableDebug(true);
@@ -48,8 +49,8 @@ void Game::Setup()
 	assetStore->AddTexture(sdl->GetRenderer(), "bg", "./assets/bg.jpg", 64);
 	assetStore->AddTexture(sdl->GetRenderer(), "drip", "./assets/Drip.png", 128);
 
-	//levelLoader.LoadLevel("Level.yaml", registry);
-	levelLoader.LoadLevel("SavedLevel.yaml", registry);
+	levelLoader.LoadLevel("Level.yaml", registry);
+	//levelLoader.LoadLevel("SavedLevel.yaml", registry);
 
 	RegisterAllEntities();
 	transformSystem.InitLoaded(registry, allEntities);
@@ -114,7 +115,7 @@ void Game::Update()
 		}
 		auto vel = b2Vec2(player.speed * player.input, phys.body->GetLinearVelocity().y);
 		phys.body->SetLinearVelocity(vel);
-	}
+}
 #endif // _EDITOR
 }
 
@@ -124,7 +125,7 @@ void Game::Update()
 entt::entity selected = entt::entity(-1);
 entt::entity created = entt::entity(-1);
 bool entityList[100];
-void Editor(entt::registry& registry, InputSystem& input, Renderer& renderer, LevelEditor::LevelTree& tree, LevelLoader& levelLoader,Physics& physics) {
+void Editor(entt::registry& registry, InputSystem& input, Renderer& renderer, LevelEditor::LevelTree& tree, LevelLoader& levelLoader, Physics& physics) {
 	ImGui::SetNextWindowSize(ImVec2(200, 400));
 	ImGui::Begin("Tools");
 	const char* listbox_items[] = { "Create Entity","Move Entity" };
@@ -168,7 +169,7 @@ void Editor(entt::registry& registry, InputSystem& input, Renderer& renderer, Le
 	if (selected != entt::entity(-1)) {
 		if (registry.any_of<Transform>(selected)) {
 			ImGui::Begin("Transform component");
-			registry.get<Transform>(selected).DrawEditor();
+			TransformEditor::DrawEditor(registry.get<Transform>(selected));
 			ImGui::End();
 		}
 		if (registry.any_of<PhysicsBody>(selected)) {
@@ -182,7 +183,7 @@ void Editor(entt::registry& registry, InputSystem& input, Renderer& renderer, Le
 		}
 		else {
 			if (ImGui::Button("Add PhysicsBody Component")) {
-				registry.emplace<PhysicsBody>(selected,physics);
+				registry.emplace<PhysicsBody>(selected, physics);
 			}
 		}
 		if (registry.any_of<Sprite>(selected)) {
@@ -222,7 +223,7 @@ void Game::Render()
 #ifdef _EDITOR
 	imgui.Render();
 	//ImGui::ShowDemoWindow();
-	Editor(registry, input, *renderer, levelTree, levelLoader,*physics);
+	Editor(registry, input, *renderer, levelTree, levelLoader, *physics);
 	//Imgui Code
 	imgui.Present();
 #endif // _EDITOR

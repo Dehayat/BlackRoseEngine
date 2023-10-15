@@ -6,6 +6,7 @@
 #include "Transform.h"
 #include "GUID.h"
 #include "Logger.h"
+#include "TransformEditor.h"
 
 
 namespace LevelEditor {
@@ -122,7 +123,7 @@ namespace LevelEditor {
 			}
 			if (currentCommand.child != entt::entity(-1)) {
 				nodesMap[currentCommand.child]->SetParent(nodesMap[currentCommand.newParent]);
-				registry.get<Transform>(currentCommand.child).SetParent(currentCommand.newParent, registry.get<GUID>(currentCommand.newParent).id);
+				TransformEditor::SetParent(registry, registry.get<Transform>(currentCommand.child), currentCommand.newParent);
 				currentCommand.Reset();
 			}
 		}
@@ -130,9 +131,9 @@ namespace LevelEditor {
 		LevelNode* InitParentRecursive(entt::registry& registry, entt::entity entity) {
 			if (nodesMap.find(entity) == nodesMap.end()) {
 				auto& trx = registry.get<Transform>(entity);
-				if (trx.hasParent) {
+				if (trx.parent) {
 					auto node = new LevelNode(entity);
-					auto parentNode = InitParentRecursive(registry, trx.parent);
+					auto parentNode = InitParentRecursive(registry, trx.parent.value());
 					node->SetParent(parentNode);
 					nodesMap[entity] = node;
 				}

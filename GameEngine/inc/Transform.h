@@ -2,35 +2,8 @@
 #include <SDL2/SDL.h>
 #include <glm/glm.hpp>
 #include <entt/entt.hpp>
-#include <ryml/ryml.hpp>
+#include "Components/TransformComponent.h"
 
-#ifdef _EDITOR
-#include <imgui.h>
-#endif
-
-struct Transform {
-	bool hasParent;
-	int level;
-	entt::entity parent;
-	glm::vec2 position;
-	glm::vec2 scale;
-	float rotation;
-	glm::mat3 matrix;
-	std::uint64_t parentGUID;
-	Transform(glm::vec2 position = glm::vec2(0, 0), glm::vec2 scale = glm::vec2(1, 1), float rotation = 0);
-	Transform(ryml::NodeRef node);
-	void Serialize(ryml::NodeRef node);
-	void SetParent(entt::entity newParent, std::uint64_t guid);
-#ifdef _EDITOR
-	void DrawEditor() {
-		ImGui::DragFloat("Position X", &position.x, 0.2f);
-		ImGui::DragFloat("Position y", &position.y, 0.2f);
-		ImGui::DragFloat("Scale x", &scale.x, 0.2f);
-		ImGui::DragFloat("Scale y", &scale.y, 0.2f);
-		ImGui::DragFloat("Rotation", &rotation, 5.f);
-	}
-#endif
-};
 class DebugDrawTransform
 {
 	SDL_Renderer* renderer;
@@ -54,6 +27,8 @@ public:
 	void EnableDebug(bool enable);
 	void DebugRender(glm::mat3 viewMatrix, entt::registry& registry);
 	void SetParent(entt::registry& registry, Transform& child, entt::entity parent);
+	void TransformCreated(entt::registry& registry, entt::entity entity);
+	static glm::mat3 CalcMatrix(Transform& trx);
 #ifdef _DEBUG
 	DebugDrawTransform& GetDebugRenderer();
 #endif // _DEBUG

@@ -2,73 +2,6 @@
 #include <SDL2/SDL2_gfxPrimitives.h>
 #include "Logger.h"
 
-Transform::Transform(glm::vec2 position, glm::vec2 scale, float rotation) {
-	this->position = position;
-	this->scale = scale;
-	this->rotation = rotation;
-	this->matrix = glm::mat3(0);
-	this->hasParent = false;
-	this->parent = entt::entity(-1);
-	this->level = 0;
-	this->parentGUID = -1;
-}
-
-void Transform::Serialize(ryml::NodeRef node)
-{
-	node |= ryml::MAP;
-	auto posNode = node.append_child();
-	posNode.set_key("position");
-	posNode |= ryml::SEQ;
-	auto xNode = posNode.append_child();
-	xNode << position.x;
-	auto yNode = posNode.append_child();
-	yNode << position.y;
-	if (hasParent) {
-		auto parentNode = node.append_child();
-		parentNode.set_key("parent");
-		node["parent"] << parentGUID;
-	}
-}
-
-void Transform::SetParent(entt::entity newParent, std::uint64_t guid)
-{
-	parent = newParent;
-	if (newParent == entt::entity(-1)) {
-		hasParent = false;
-		level = 0;
-	}
-	else {
-		hasParent = true;
-		parentGUID = guid;
-		level = -1;
-	}
-	Logger::Log("Not carrying over global transform");
-}
-
-
-Transform::Transform(ryml::NodeRef node) {
-	this->position = glm::vec2(0, 0);
-	this->scale = glm::vec2(1, 1);
-	this->rotation = 0;
-	this->matrix = glm::mat3(0);
-	this->hasParent = false;
-	this->parent = entt::entity(-1);
-	this->level = 0;
-	this->parentGUID = 0;
-
-	if (node.has_child("position")) {
-		node["position"][0] >> position.x;
-		node["position"][1] >> position.y;
-	}
-
-	if (node.has_child("parent")) {
-		hasParent = true;
-		node["parent"] >> parentGUID;
-		level = -1;
-	}
-}
-
-
 TransformSystem::TransformSystem()
 {
 	debugDrawer = nullptr;
@@ -81,18 +14,27 @@ TransformSystem::~TransformSystem()
 		delete debugDrawer;
 	}
 }
+void TransformSystem::TransformCreated(entt::registry& registry, entt::entity entity)
+{
+	auto& trx = registry.get<Transform>(entity);
+	trx.matrix = CalcMatrix(trx);
+	if (trx.parent) {
+		if (registry.valid(trx.parent.value())) {
+			auto& parentTrx = registry.get<Transform>(trx.parent.value());
+			trx.parent = trx.parent.value();
+			trx.level = trx.level + 1;
+			trx.matrix = trx.matrix * parentTrx.matrix;
+		}
+		else {
+			trx.parent = std::nullopt;
+			trx.level = 0;
+		}
+	}
+}
 void TransformSystem::Update(entt::registry& registry)
 {
 
 	auto view3 = registry.view<Transform>();
-#ifdef _EDITOR
-	for (auto entity : view3) {
-		auto& trx = view3.get<Transform>(entity);
-		if (trx.level == -1) {
-			SetParent(registry, trx, trx.parent);
-		}
-	}
-#endif // _EDITOR
 
 	registry.sort<Transform>([](const auto& lhs, const auto& rhs) {
 		return lhs.level < rhs.level;
@@ -106,29 +48,49 @@ void TransformSystem::Update(entt::registry& registry)
 		);
 
 		if (trx.hasParent) {
-			auto& parentTrx = registry.get<Transform>(trx.parent);
+			auto& parentTrx = registry.get<Transform>(trx.parent.value());
 			trx.matrix = trx.matrix * parentTrx.matrix;
 		}
 	}
 }
 int InitParentRecursive(entt::registry& registry, std::unordered_map<std::uint64_t, entt::entity>& allEntities, entt::entity parent) {
-	auto& pos = registry.get<Transform>(parent);
-	if (pos.hasParent && pos.level == -1) {
-		pos.parent = allEntities[pos.parentGUID];
-		pos.level = InitParentRecursive(registry, allEntities, pos.parent) + 1;
+	auto& trx = registry.get<Transform>(parent);
+	if (trx.hasParent && trx.level == -1) {
+		if (allEntities.find(trx.parentGUID) != allEntities.end()) {
+			trx.parent = allEntities[trx.parentGUID];
+			trx.level = InitParentRecursive(registry, allEntities, trx.parent.value()) + 1;
+		}
+		else {
+			trx.hasParent = false;
+			trx.level = 0;
+		}
 	}
-	return pos.level;
+	return trx.level;
 }
 void TransformSystem::InitLoaded(entt::registry& registry, std::unordered_map<std::uint64_t, entt::entity>& allEntities)
 {
 	auto view = registry.view<Transform>();
 	for (auto entity : view) {
-		auto& pos = view.get<Transform>(entity);
-		if (pos.hasParent && pos.level == -1) {
-			pos.parent = allEntities[pos.parentGUID];
-			pos.level = InitParentRecursive(registry, allEntities, pos.parent) + 1;
+		auto& trx = view.get<Transform>(entity);
+		if (trx.hasParent && !trx.parent) {
+			if (allEntities.find(trx.parentGUID) != allEntities.end()) {
+				trx.parent = allEntities[trx.parentGUID];
+				trx.level = InitParentRecursive(registry, allEntities, trx.parent.value()) + 1;
+			}
+			else {
+				trx.hasParent = false;
+				trx.level = 0;
+			}
 		}
 	}
+}
+glm::mat3 TransformSystem::CalcMatrix(Transform& trx)
+{
+	return glm::mat3(
+		glm::cos(glm::radians(trx.rotation)) * trx.scale.x, -glm::sin(glm::radians(trx.rotation)) * trx.scale.y, trx.position.x,
+		glm::sin(glm::radians(trx.rotation)) * trx.scale.x, glm::cos(glm::radians(trx.rotation)) * trx.scale.y, trx.position.y,
+		0, 0, 1
+	);
 }
 
 void TransformSystem::InitDebugDrawer(SDL_Renderer* sdl)
@@ -168,6 +130,7 @@ void TransformSystem::SetParent(entt::registry& registry, Transform& child, entt
 	child.level = parentTrx.level + 1;
 	child.hasParent = true;
 }
+
 
 
 #ifdef _DEBUG

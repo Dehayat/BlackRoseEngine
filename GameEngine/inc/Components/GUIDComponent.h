@@ -1,20 +1,21 @@
 #pragma once
 #include <random>
+#include "Entity.h"
 
 
 struct GUIDComponent {
-	std::uint64_t id;
+	Guid id;
 	GUIDComponent() {
 		this->id = Generate();
 	}
-	GUIDComponent(std::uint64_t id) {
+	GUIDComponent(Guid id) {
 		this->id = id;
 	}
 
-	static std::uint64_t Generate() {
+	static Guid Generate() {
 		std::random_device rd;
 		std::mt19937_64 gen(rd());
-		std::uniform_int_distribution<uint64_t> dis;
+		std::uniform_int_distribution<Guid> dis;
 		return dis(gen);
 	}
 };

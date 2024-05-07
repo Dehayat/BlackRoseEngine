@@ -3,6 +3,7 @@
 #include <glm/glm.hpp>
 #include <entt/entity/entity.hpp>
 #include <ryml/ryml.hpp>
+#include "Entity.h"
 #include "Logger.h"
 
 using namespace glm;
@@ -12,7 +13,7 @@ struct TransformComponent {
 	vec2 scale;
 	float rotation;
 	bool hasParent;
-	std::uint64_t parentGUID;
+	Guid parentGUID;
 
 	int level;
 	std::optional<entity> parent;

@@ -156,6 +156,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="inc\Transform.h" />
+    <ClCompile Include="Entity.cpp" />
     <ClCompile Include="src\LevelLoader.cpp" />
     <ClCompile Include="src\InputSystem.cpp" />
     <ClCompile Include="src\Renderer.cpp" />

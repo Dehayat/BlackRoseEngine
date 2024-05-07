@@ -1,4 +1,5 @@
 #include "Transform.h"
+#include "Entity.h"
 #include <SDL2/SDL2_gfxPrimitives.h>
 
 TransformSystem::TransformSystem()
@@ -52,12 +53,14 @@ void TransformSystem::Update()
 		}
 	}
 }
-int InitParentRecursive(entt::registry& registry, std::unordered_map<std::uint64_t, entt::entity>& allEntities, entt::entity parent) {
+int InitParentRecursive(entt::entity parent) {
+	Entities& entities = entt::locator<Entities>::value();
+	entt::registry& registry = entt::locator<entt::registry>::value();
 	auto& trx = registry.get<TransformComponent>(parent);
 	if (trx.hasParent && trx.level == -1) {
-		if (allEntities.find(trx.parentGUID) != allEntities.end()) {
-			trx.parent = allEntities[trx.parentGUID];
-			trx.level = InitParentRecursive(registry, allEntities, trx.parent.value()) + 1;
+		if (entities.EntityExists(trx.parentGUID)) {
+			trx.parent = entities.GetEntity(trx.parentGUID);
+			trx.level = InitParentRecursive(trx.parent.value()) + 1;
 		}
 		else {
 			trx.hasParent = false;
@@ -66,16 +69,18 @@ int InitParentRecursive(entt::registry& registry, std::unordered_map<std::uint64
 	}
 	return trx.level;
 }
-void TransformSystem::InitLoaded(std::unordered_map<std::uint64_t, entt::entity>& allEntities)
+void TransformSystem::InitLoaded()
 {
+	Entities& entities = entt::locator<Entities>::value();
 	entt::registry& registry = entt::locator<entt::registry>::value();
+
 	auto view = registry.view<TransformComponent>();
 	for (auto entity : view) {
 		auto& trx = view.get<TransformComponent>(entity);
 		if (trx.hasParent && !trx.parent) {
-			if (allEntities.find(trx.parentGUID) != allEntities.end()) {
-				trx.parent = allEntities[trx.parentGUID];
-				trx.level = InitParentRecursive(registry, allEntities, trx.parent.value()) + 1;
+			if (entities.EntityExists(trx.parentGUID)) {
+				trx.parent = entities.GetEntity(trx.parentGUID);
+				trx.level = InitParentRecursive(trx.parent.value()) + 1;
 			}
 			else {
 				trx.hasParent = false;
@@ -118,8 +123,9 @@ void TransformSystem::DebugRender(glm::mat3 viewMatrix)
 		}
 	}
 }
-void TransformSystem::SetParent(entt::registry& registry, TransformComponent& child, entt::entity parent)
+void TransformSystem::SetParent(TransformComponent& child, entt::entity parent)
 {
+	entt::registry& registry = entt::locator<entt::registry>::value();
 	if (!registry.valid(parent)) {
 		child.parent = entt::entity(-1);
 		child.level = 0;

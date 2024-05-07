@@ -18,7 +18,7 @@
 #endif // _EDITOR
 
 
-Game::Game() :allEntities() {
+Game::Game() {
 	Logger::Log("Game Constructed");
 	SetupBaseSystems();
 }
@@ -31,7 +31,7 @@ void Game::SetupBaseSystems() {
 	SdlContainer& sdlContainer = entt::locator<SdlContainer>::emplace<SdlContainer>(1200, (float)1200 * 9 / 16);
 	entt::locator<AssetStore>::emplace<AssetStore>();
 	entt::registry& registry = entt::locator<entt::registry>::emplace<entt::registry>();
-
+	entt::locator<Entities>::emplace<Entities>();
 
 	physics = std::make_unique<PhysicsSystem>(0, -10);
 	physics->InitDebugDrawer(sdlContainer.GetRenderer());
@@ -65,7 +65,7 @@ void Game::Setup()
 	levelLoader.LoadLevel("SavedLevel.yaml");
 
 	RegisterAllEntities();
-	transformSystem.InitLoaded(allEntities);
+	transformSystem.InitLoaded();
 	renderer->InitLoaded();
 #ifdef _EDITOR
 	levelTree.Init(registry);
@@ -253,7 +253,7 @@ void Game::Render()
 
 	if (selected != entt::entity(-1)) {
 		transformSystem.GetDebugRenderer().DrawTransform(registry.get<Transform>(selected));
-}
+	}
 #endif
 	renderer->Present();
 
@@ -269,11 +269,12 @@ void Game::Render()
 
 void Game::RegisterAllEntities()
 {
-	allEntities.clear();
+	Entities& entities = entt::locator<Entities>::value();
+	entities.DeleteAllEntities();
 	entt::registry& registry = entt::locator<entt::registry>::value();
 	auto view = registry.view<const GUIDComponent>();
 	for (auto entity : view) {
 		const auto& guid = view.get<GUIDComponent>(entity);
-		allEntities.emplace(guid.id, entity);
+		entities.AddEntity(guid.id, entity);
 	}
 }

@@ -31,6 +31,7 @@ void Game::SetupBaseSystems() {
 	entt::locator<SdlContainer>::emplace<SdlContainer>(1200, (float)1200 * 9 / 16);
 	entt::locator<AssetStore>::emplace<AssetStore>();
 	entt::locator<Entities>::emplace<Entities>();
+	entt::locator<LevelLoader>::emplace<LevelLoader>();
 }
 
 void Game::SetupLowLevelSystems()
@@ -72,7 +73,7 @@ void Game::Setup()
 
 
 
-	//levelLoader.LoadLevel("Level.yaml", registry);
+	LevelLoader& levelLoader = entt::locator<LevelLoader>::value();
 	levelLoader.LoadLevel("SavedLevel.yaml");
 	RegisterAllEntities();
 

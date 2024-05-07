@@ -61,26 +61,28 @@ void Game::SetupLowLevelSystems()
 	isRunning = false;
 }
 
-
-void Game::Setup()
+void Game::LoadAssets()
 {
 	AssetStore& assetStore = entt::locator<AssetStore>::value();
-	Entities& entities = entt::locator<Entities>::value();
-	entt::registry& registry = entities.GetRegistry();
 	assetStore.AddTexture("rose", "./assets/Rose.png", 512);
 	assetStore.AddTexture("hornet", "./assets/Hornet_Idle.png", 128);
 	assetStore.AddTexture("block", "./assets/Block.jpg", 64);
 	assetStore.AddTexture("big_ground", "./assets/BigGround.png", 128);
+}
 
-
-
+void Game::LoadLevel()
+{
 	LevelLoader& levelLoader = entt::locator<LevelLoader>::value();
 	levelLoader.LoadLevel("SavedLevel.yaml");
 	RegisterAllEntities();
-
 	TransformSystem& transformSystem = entt::locator<TransformSystem>::value();
 	transformSystem.InitLoaded();
+}
 
+void Game::Setup()
+{
+	LoadAssets();
+	LoadLevel();
 	RendererSystem& renderer = entt::locator<RendererSystem>::value();
 	renderer.InitLoaded();
 
@@ -264,8 +266,8 @@ void Game::Render()
 	physics.DebugRender(renderer.GetWorldToScreenMatrix());
 
 	TransformSystem& transformSystem = entt::locator<TransformSystem>::value();
-	transformSystem.DebugRender(renderer.GetWorldToScreenMatrix());
 	transformSystem.GetDebugRenderer().SetMatrix(renderer.GetWorldToScreenMatrix());
+	transformSystem.DebugRender(renderer.GetWorldToScreenMatrix());
 #endif // _DEBUG
 
 #ifdef _EDITOR

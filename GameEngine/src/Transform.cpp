@@ -167,7 +167,7 @@ void DebugDrawTransform::SetMatrix(glm::mat3 worldToScreen)
 }
 void DebugDrawTransform::DrawTransform(const TransformComponent& t)
 {
-	float scale = (4.0 - t.level) / 4.0;
+	float scale = 1;
 	glm::vec3 orig = glm::vec3(0, 0, 1);
 	glm::vec3 dest = glm::vec3(0, 0.6f * scale, 1);
 	orig = orig * t.matrix * matrix;

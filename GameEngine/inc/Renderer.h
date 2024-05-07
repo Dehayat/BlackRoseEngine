@@ -20,13 +20,13 @@ class RendererSystem
 public:
 	RendererSystem(SDL_Renderer* sdl);
 	~RendererSystem();
-	void Render(entt::registry* registry);
+	void Render();
 	void Present();
 	void SetCamera(entt::entity cam);
 	entt::entity GetCamera();
 	const glm::mat3 GetWorldToScreenMatrix();
 	const glm::mat3 GetScreenToWorldMatrix();
-	void InitLoaded(entt::registry& registry);
+	void InitLoaded();
 #ifdef _EDITOR
 	Transform& GetEditorCamTrx() {
 		return editorCamTrx;

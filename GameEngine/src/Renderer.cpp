@@ -1,5 +1,6 @@
-#include <ryml/ryml_std.hpp>
 #include "Renderer.h"
+#include <ryml/ryml_std.hpp>
+#include <entt/entt.hpp>
 #include "Components/TransformComponent.h"
 #include "Components/SpriteComponent.h"
 #include "Components/CameraComponent.h"
@@ -14,12 +15,13 @@ RendererSystem::RendererSystem(SDL_Renderer* sdl)
 RendererSystem::~RendererSystem()
 {
 }
-void RendererSystem::Render(entt::registry* registry)
+void RendererSystem::Render()
 {
+	entt::registry& registry = entt::locator<entt::registry>::value();
 	AssetStore& assetStore = entt::locator<AssetStore>::value();
 	SDL_SetRenderDrawColor(sdl, 38, 77, 142, SDL_ALPHA_OPAQUE);
 	SDL_RenderClear(sdl);
-	registry->sort<SpriteComponent>([](const auto& lhs, const auto& rhs) {
+	registry.sort<SpriteComponent>([](const auto& lhs, const auto& rhs) {
 		return lhs.layer < rhs.layer;
 		});
 	TransformComponent camPos;
@@ -28,10 +30,10 @@ void RendererSystem::Render(entt::registry* registry)
 	camPos = editorCamTrx;
 	camHeight = editorCam.height;
 #else
-	if (registry->valid(camera)) {
-		auto& cam = registry->get<CameraComponent>(camera);
+	if (registry.valid(camera)) {
+		auto& cam = registry.get<CameraComponent>(camera);
 		camHeight = cam.height;
-		camPos = registry->get<TransformComponent>(camera);
+		camPos = registry.get<TransformComponent>(camera);
 	}
 	else {
 		Logger::Error("No Camera Assigned to renderer");
@@ -65,7 +67,7 @@ void RendererSystem::Render(entt::registry* registry)
 
 
 
-	auto view2 = registry->view<const SpriteComponent, const TransformComponent>();
+	auto view2 = registry.view<const SpriteComponent, const TransformComponent>();
 	for (auto entity : view2) {
 		const auto& pos = view2.get<TransformComponent>(entity);
 		const auto& sp = view2.get<SpriteComponent>(entity);
@@ -115,8 +117,9 @@ const glm::mat3 RendererSystem::GetScreenToWorldMatrix()
 {
 	return glm::inverse(worldToScreenMatrix);
 }
-void RendererSystem::InitLoaded(entt::registry& registry)
+void RendererSystem::InitLoaded()
 {
+	entt::registry& registry = entt::locator<entt::registry>::value();
 	auto view = registry.view<const CameraComponent, const TransformComponent>();
 	for (auto entity : view) {
 		const auto& pos = view.get<TransformComponent>(entity);

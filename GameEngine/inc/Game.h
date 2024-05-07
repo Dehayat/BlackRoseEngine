@@ -31,7 +31,6 @@ private:
 	bool isRunning;
 	unsigned int msLastFrame;
 	float dt;
-	entt::registry registry;
 	EntityMap allEntities;
 
 	entt::entity player;

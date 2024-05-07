@@ -30,9 +30,9 @@ void TransformSystem::TransformCreated(entt::registry& registry, entt::entity en
 		}
 	}
 }
-void TransformSystem::Update(entt::registry& registry)
+void TransformSystem::Update()
 {
-
+	entt::registry& registry = entt::locator<entt::registry>::value();
 	auto view3 = registry.view<TransformComponent>();
 
 	registry.sort<TransformComponent>([](const auto& lhs, const auto& rhs) {
@@ -66,8 +66,9 @@ int InitParentRecursive(entt::registry& registry, std::unordered_map<std::uint64
 	}
 	return trx.level;
 }
-void TransformSystem::InitLoaded(entt::registry& registry, std::unordered_map<std::uint64_t, entt::entity>& allEntities)
+void TransformSystem::InitLoaded(std::unordered_map<std::uint64_t, entt::entity>& allEntities)
 {
+	entt::registry& registry = entt::locator<entt::registry>::value();
 	auto view = registry.view<TransformComponent>();
 	for (auto entity : view) {
 		auto& trx = view.get<TransformComponent>(entity);
@@ -105,8 +106,9 @@ void TransformSystem::EnableDebug(bool enable)
 		drawDebug = enable;
 	}
 }
-void TransformSystem::DebugRender(glm::mat3 viewMatrix, entt::registry& registry)
+void TransformSystem::DebugRender(glm::mat3 viewMatrix)
 {
+	entt::registry& registry = entt::locator<entt::registry>::value();
 	debugDrawer->SetMatrix(viewMatrix);
 	if (drawDebug) {
 		auto view3 = registry.view<const TransformComponent>();

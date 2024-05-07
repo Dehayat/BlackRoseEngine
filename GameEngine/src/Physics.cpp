@@ -36,8 +36,9 @@ void PhysicsSystem::PhysicsBodyDestroyed(entt::registry& registry, entt::entity 
 	GetWorld().DestroyBody(phys.body);
 }
 
-void PhysicsSystem::Update(entt::registry& registry)
+void PhysicsSystem::Update()
 {
+	entt::registry& registry = entt::locator<entt::registry>::value();
 	auto phView = registry.view<PhysicsBodyComponent, TransformComponent>();
 	for (auto entity : phView) {
 		const auto& pos = phView.get<TransformComponent>(entity);
@@ -104,7 +105,7 @@ void DebugDraw::DrawPolygon(const b2Vec2* vertices, int32 vertexCount, const b2C
 	std::unique_ptr<Sint16[]> vx(new Sint16[vertexCount]);
 	std::unique_ptr<Sint16[]> vy(new Sint16[vertexCount]);
 
-	for (int i = 0;i < vertexCount;i++) {
+	for (int i = 0; i < vertexCount; i++) {
 		glm::vec3 pos = glm::vec3(vertices[i].x, vertices[i].y, 1);
 		pos = pos * matrix;
 		b2Vec2 nextVertex;
@@ -126,7 +127,7 @@ void DebugDraw::DrawSolidPolygon(const b2Vec2* vertices, int32 vertexCount, cons
 	std::unique_ptr<Sint16[]> vx(new Sint16[vertexCount]);
 	std::unique_ptr<Sint16[]> vy(new Sint16[vertexCount]);
 
-	for (int i = 0;i < vertexCount;i++) {
+	for (int i = 0; i < vertexCount; i++) {
 		glm::vec3 pos = glm::vec3(vertices[i].x, vertices[i].y, 1);
 		pos = pos * matrix;
 		b2Vec2 nextVertex;

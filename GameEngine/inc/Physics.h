@@ -34,7 +34,7 @@ public:
 	~PhysicsSystem();
 	void PhysicsBodyCreated(entt::registry& registry, entt::entity entity);
 	void PhysicsBodyDestroyed(entt::registry& registry, entt::entity entity);
-	void Update(entt::registry& registry);
+	void Update();
 	b2World& GetWorld();
 
 	void InitDebugDrawer(SDL_Renderer* sdl);

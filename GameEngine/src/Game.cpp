@@ -22,17 +22,21 @@ Game::Game() :allEntities() {
 	Logger::Log("Game Constructed");
 	SetupBaseSystems();
 }
+
 Game::~Game() {
 	Logger::Log("Game Destructed");
 }
 
 void Game::SetupBaseSystems() {
-	entt::locator<SdlContainer>::emplace<SdlContainer>(1200, (float)1200 * 9 / 16);
+	SdlContainer& sdlContainer = entt::locator<SdlContainer>::emplace<SdlContainer>(1200, (float)1200 * 9 / 16);
 	entt::locator<AssetStore>::emplace<AssetStore>();
+	entt::registry& registry = entt::locator<entt::registry>::emplace<entt::registry>();
+
+
 	physics = std::make_unique<PhysicsSystem>(0, -10);
-	physics->InitDebugDrawer(entt::locator<SdlContainer>::value().GetRenderer());
-	renderer = std::make_unique<RendererSystem>(entt::locator<SdlContainer>::value().GetRenderer());
-	transformSystem.InitDebugDrawer(entt::locator<SdlContainer>::value().GetRenderer());
+	physics->InitDebugDrawer(sdlContainer.GetRenderer());
+	renderer = std::make_unique<RendererSystem>(sdlContainer.GetRenderer());
+	transformSystem.InitDebugDrawer(sdlContainer.GetRenderer());
 	registry.on_construct<TransformComponent>().connect<&TransformSystem::TransformCreated>(transformSystem);
 	registry.on_construct<PhysicsBodyComponent>().connect<&PhysicsSystem::PhysicsBodyCreated>(physics.get());
 	registry.on_destroy<PhysicsBodyComponent>().connect<&PhysicsSystem::PhysicsBodyDestroyed>(physics.get());
@@ -50,6 +54,7 @@ void Game::SetupBaseSystems() {
 void Game::Setup()
 {
 	AssetStore& assetStore = entt::locator<AssetStore>::value();
+	entt::registry& registry = entt::locator<entt::registry>::value();
 	assetStore.AddTexture("rose", "./assets/Rose.png", 512);
 	assetStore.AddTexture("hornet", "./assets/Hornet_Idle.png", 128);
 	assetStore.AddTexture("block", "./assets/Block.jpg", 64);
@@ -57,11 +62,11 @@ void Game::Setup()
 
 
 	//levelLoader.LoadLevel("Level.yaml", registry);
-	levelLoader.LoadLevel("SavedLevel.yaml", registry);
+	levelLoader.LoadLevel("SavedLevel.yaml");
 
 	RegisterAllEntities();
-	transformSystem.InitLoaded(registry, allEntities);
-	renderer->InitLoaded(registry);
+	transformSystem.InitLoaded(allEntities);
+	renderer->InitLoaded();
 #ifdef _EDITOR
 	levelTree.Init(registry);
 #endif // _EDITOR
@@ -83,7 +88,7 @@ void Game::Run()
 }
 void Game::Update()
 {
-	transformSystem.Update(registry);
+	transformSystem.Update();
 
 #ifdef _EDITOR
 	if (imgui.ProcessEvents()) {
@@ -95,8 +100,9 @@ void Game::Update()
 		isRunning = false;
 	}
 	input.Update(entt::locator<SdlContainer>::value().GetWindow());
-	physics->Update(registry);
+	physics->Update();
 
+	entt::registry& registry = entt::locator<entt::registry>::value();
 	auto view2 = registry.view<PlayerComponent, const TransformComponent, PhysicsBodyComponent>();
 	for (auto entity : view2) {
 		const auto& pos = view2.get<TransformComponent>(entity);
@@ -232,7 +238,7 @@ void Editor(entt::registry& registry, InputSystem& input, Renderer& renderer, Le
 void Game::Render()
 {
 
-	renderer->Render(&registry);
+	renderer->Render();
 #ifdef _DEBUG
 	physics->DebugRender(renderer->GetWorldToScreenMatrix());
 	//transformSystem.DebugRender(renderer->GetWorldToScreenMatrix(), registry);
@@ -247,7 +253,7 @@ void Game::Render()
 
 	if (selected != entt::entity(-1)) {
 		transformSystem.GetDebugRenderer().DrawTransform(registry.get<Transform>(selected));
-	}
+}
 #endif
 	renderer->Present();
 
@@ -264,6 +270,7 @@ void Game::Render()
 void Game::RegisterAllEntities()
 {
 	allEntities.clear();
+	entt::registry& registry = entt::locator<entt::registry>::value();
 	auto view = registry.view<const GUIDComponent>();
 	for (auto entity : view) {
 		const auto& guid = view.get<GUIDComponent>(entity);

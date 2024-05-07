@@ -21,13 +21,13 @@ class TransformSystem
 public:
 	TransformSystem();
 	~TransformSystem();
-	void Update(entt::registry& registry);
-	void InitLoaded(entt::registry& registry, std::unordered_map < std::uint64_t, entt::entity>& allEntities);
+	void Update();
+	void InitLoaded(std::unordered_map < std::uint64_t, entt::entity>& allEntities);
 	void InitDebugDrawer(SDL_Renderer* sdl);
 	void EnableDebug(bool enable);
-	void DebugRender(glm::mat3 viewMatrix, entt::registry& registry);
+	void DebugRender(glm::mat3 viewMatrix);
 	void SetParent(entt::registry& registry, TransformComponent& child, entt::entity parent);
-	void TransformCreated(entt::registry& registry, entt::entity entity);
+	void TransformCreated(entt::registry&, entt::entity);
 	static glm::mat3 CalcMatrix(TransformComponent& trx);
 #ifdef _DEBUG
 	DebugDrawTransform& GetDebugRenderer();

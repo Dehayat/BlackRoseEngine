@@ -28,7 +28,9 @@ LevelLoader::LevelLoader()
 LevelLoader::~LevelLoader()
 {
 }
-void LevelLoader::LoadLevel(const std::string& fileName, entt::registry& registry) {
+void LevelLoader::LoadLevel(const std::string& fileName)
+{
+	entt::registry& registry = entt::locator<entt::registry>::value();
 	auto fileHandle = FileResource(fileName);
 	if (fileHandle.file == nullptr) {
 		Logger::Error("File" + fileName + " not found");
@@ -43,7 +45,7 @@ void LevelLoader::LoadLevel(const std::string& fileName, entt::registry& registr
 void LevelLoader::DeserializeLevel(entt::registry& registry, ryml::NodeRef node)
 {
 	auto child = node.first_child();
-	for (int i = 0;i < node.num_children();i++) {
+	for (int i = 0; i < node.num_children(); i++) {
 		if (child.is_map() && child.has_child("Type")) {
 			if (child["Type"] == "Entity") {
 				DeserializeEntity(registry, child);
@@ -83,8 +85,9 @@ entt::entity LevelLoader::DeserializeEntity(entt::registry& registry, ryml::Node
 	}
 	return entity;
 }
-void LevelLoader::SaveLevel(const std::string& fileName, entt::registry& registry)
+void LevelLoader::SaveLevel(const std::string& fileName)
 {
+	entt::registry& registry = entt::locator<entt::registry>::value();
 	auto fileHandle = FileResource(fileName, "w+");
 	if (fileHandle.file == nullptr) {
 		Logger::Error("Couldnt create file " + fileName);

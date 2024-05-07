@@ -155,8 +155,10 @@
     <ClInclude Include="inc\Components\TransformComponent.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\TimeSystem.cpp" />
+    <ClInclude Include="inc\TimeSystem.h" />
     <ClInclude Include="inc\Transform.h" />
-    <ClCompile Include="Entity.cpp" />
+    <ClCompile Include="src\Entity.cpp" />
     <ClCompile Include="src\LevelLoader.cpp" />
     <ClCompile Include="src\InputSystem.cpp" />
     <ClCompile Include="src\Renderer.cpp" />

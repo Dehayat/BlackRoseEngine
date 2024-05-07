@@ -1,8 +1,17 @@
+#include "Game.h"
 #include <sstream>
 #include <SDL2/SDL.h>
+#include <entt/entt.hpp>
 #include <glm/glm.hpp>
 #include <ryml/ryml.hpp>
-#include "Game.h"
+#include "SdlContainer.h"
+#include "AssetStore.h"
+#include "Transform.h"
+#include "Physics.h"
+#include "Renderer.h"
+#include "InputSystem.h"
+#include "LevelLoader.h"
+#include "TimeSystem.h"
 #include "Components/GUIDComponent.h"
 #include "Components/PlayerComponent.h"
 #include "Components/SpriteComponent.h"
@@ -51,14 +60,12 @@ void Game::SetupLowLevelSystems()
 	RendererSystem& render = entt::locator<RendererSystem>::emplace<RendererSystem>();
 
 	entt::locator<InputSystem>::emplace<InputSystem>();
+	entt::locator<InputSystem>::emplace<InputSystem>();
 
 #ifdef _DEBUG
 	physics.EnableDebug(true);
 	transformSystem.EnableDebug(true);
 #endif // !_DEBUG
-
-	dt = 0;
-	msLastFrame = 0;
 	isRunning = false;
 }
 
@@ -97,15 +104,12 @@ void Game::Run()
 	while (isRunning) {
 		Update();
 		Render();
-
-		std::uint64_t waitTimeMs = SDL_GetTicks64() + FRAMETIME_MS - (SDL_GetTicks64() - msLastFrame);
-		//while (SDL_GetTicks64() < waitTimeMs);
-		dt = (SDL_GetTicks64() - msLastFrame) / 1000.0f;
-		msLastFrame = SDL_GetTicks64();
 	}
 }
 void Game::Update()
 {
+	TimeSystem& timeSystem = entt::locator<TimeSystem>::value();
+	timeSystem.Update();
 	TransformSystem& transformSystem = entt::locator<TransformSystem>::value();
 	transformSystem.Update();
 
@@ -280,7 +284,7 @@ void Game::Render()
 
 	if (selected != entt::entity(-1)) {
 		transformSystem.GetDebugRenderer().DrawTransform(registry.get<Transform>(selected));
-	}
+}
 #endif
 	renderer.Present();
 

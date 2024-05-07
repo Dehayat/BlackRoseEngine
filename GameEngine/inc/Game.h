@@ -21,7 +21,6 @@ const int FRAMETIME_MS = 1000 / FPS;
 
 class Game {
 private:
-	InputSystem input;
 	bool isRunning;
 	unsigned int msLastFrame;
 	float dt;

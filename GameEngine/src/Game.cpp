@@ -50,6 +50,8 @@ void Game::SetupLowLevelSystems()
 
 	RendererSystem& render = entt::locator<RendererSystem>::emplace<RendererSystem>();
 
+	entt::locator<InputSystem>::emplace<InputSystem>();
+
 #ifdef _DEBUG
 	physics.EnableDebug(true);
 	transformSystem.EnableDebug(true);
@@ -110,12 +112,13 @@ void Game::Update()
 #ifdef _EDITOR
 	if (imgui.ProcessEvents()) {
 		isRunning = false;
-	}
+}
 	input.Update(sdl->GetWindow());
 #else
 	if (entt::locator<SdlContainer>::value().ProcessEvents()) {
 		isRunning = false;
 	}
+	InputSystem& input = entt::locator<InputSystem>::value();
 	input.Update(entt::locator<SdlContainer>::value().GetWindow());
 
 	PhysicsSystem& physics = entt::locator<PhysicsSystem>::value();

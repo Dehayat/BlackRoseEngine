@@ -27,13 +27,13 @@ Game::~Game() {
 }
 
 void Game::SetupBaseSystems() {
-
-	sdl = std::make_unique<SdlContainer>(1200, (float)1200 * 9 / 16);
+	entt::locator<SdlContainer>::emplace<SdlContainer>(1200, (float)1200 * 9 / 16);
+	//sdl = std::make_unique<SdlContainer>();
 	assetStore = std::make_unique<AssetStore>();
 	physics = std::make_unique<PhysicsSystem>(0, -10);
-	physics->InitDebugDrawer(sdl->GetRenderer());
-	renderer = std::make_unique<RendererSystem>(sdl->GetRenderer());
-	transformSystem.InitDebugDrawer(sdl->GetRenderer());
+	physics->InitDebugDrawer(entt::locator<SdlContainer>::value().GetRenderer());
+	renderer = std::make_unique<RendererSystem>(entt::locator<SdlContainer>::value().GetRenderer());
+	transformSystem.InitDebugDrawer(entt::locator<SdlContainer>::value().GetRenderer());
 	registry.on_construct<TransformComponent>().connect<&TransformSystem::TransformCreated>(transformSystem);
 	registry.on_construct<PhysicsBodyComponent>().connect<&PhysicsSystem::PhysicsBodyCreated>(physics.get());
 	registry.on_destroy<PhysicsBodyComponent>().connect<&PhysicsSystem::PhysicsBodyDestroyed>(physics.get());
@@ -50,10 +50,10 @@ void Game::SetupBaseSystems() {
 
 void Game::Setup()
 {
-	assetStore->AddTexture(sdl->GetRenderer(), "rose", "./assets/Rose.png", 512);
-	assetStore->AddTexture(sdl->GetRenderer(), "hornet", "./assets/Hornet_Idle.png", 128);
-	assetStore->AddTexture(sdl->GetRenderer(), "block", "./assets/Block.jpg", 64);
-	assetStore->AddTexture(sdl->GetRenderer(), "big_ground", "./assets/BigGround.png", 128);
+	assetStore->AddTexture(entt::locator<SdlContainer>::value().GetRenderer(), "rose", "./assets/Rose.png", 512);
+	assetStore->AddTexture(entt::locator<SdlContainer>::value().GetRenderer(), "hornet", "./assets/Hornet_Idle.png", 128);
+	assetStore->AddTexture(entt::locator<SdlContainer>::value().GetRenderer(), "block", "./assets/Block.jpg", 64);
+	assetStore->AddTexture(entt::locator<SdlContainer>::value().GetRenderer(), "big_ground", "./assets/BigGround.png", 128);
 
 
 	//levelLoader.LoadLevel("Level.yaml", registry);
@@ -91,10 +91,10 @@ void Game::Update()
 	}
 	input.Update(sdl->GetWindow());
 #else
-	if (sdl->ProcessEvents()) {
+	if (entt::locator<SdlContainer>::value().ProcessEvents()) {
 		isRunning = false;
 	}
-	input.Update(sdl->GetWindow());
+	input.Update(entt::locator<SdlContainer>::value().GetWindow());
 	physics->Update(registry);
 
 	auto view2 = registry.view<PlayerComponent, const TransformComponent, PhysicsBodyComponent>();

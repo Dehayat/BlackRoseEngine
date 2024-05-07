@@ -21,8 +21,7 @@ const int FRAMETIME_MS = 1000 / FPS;
 
 class Game {
 private:
-	std::unique_ptr<PhysicsSystem> physics;
-	std::unique_ptr<RendererSystem> renderer;
+	//std::unique_ptr<RendererSystem> renderer;
 	LevelLoader levelLoader;
 	InputSystem input;
 	bool isRunning;

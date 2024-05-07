@@ -42,14 +42,15 @@ void Game::SetupLowLevelSystems()
 	transformSystem.InitDebugDrawer();
 	registry.on_construct<TransformComponent>().connect<&TransformSystem::TransformCreated>(transformSystem);
 
-	physics = std::make_unique<PhysicsSystem>(0, -10);
-	physics->InitDebugDrawer();
-	renderer = std::make_unique<RendererSystem>();
-	registry.on_construct<PhysicsBodyComponent>().connect<&PhysicsSystem::PhysicsBodyCreated>(physics.get());
-	registry.on_destroy<PhysicsBodyComponent>().connect<&PhysicsSystem::PhysicsBodyDestroyed>(physics.get());
+	PhysicsSystem& physics = entt::locator<PhysicsSystem>::emplace<PhysicsSystem>(0, -10);
+	physics.InitDebugDrawer();
+	registry.on_construct<PhysicsBodyComponent>().connect<&PhysicsSystem::PhysicsBodyCreated>(physics);
+	registry.on_destroy<PhysicsBodyComponent>().connect<&PhysicsSystem::PhysicsBodyDestroyed>(physics);
+
+	RendererSystem& render = entt::locator<RendererSystem>::emplace<RendererSystem>();
 
 #ifdef _DEBUG
-	physics->EnableDebug(true);
+	physics.EnableDebug(true);
 	transformSystem.EnableDebug(true);
 #endif // !_DEBUG
 
@@ -70,14 +71,17 @@ void Game::Setup()
 	assetStore.AddTexture("big_ground", "./assets/BigGround.png", 128);
 
 
-	TransformSystem& transformSystem = entt::locator<TransformSystem>::value();
 
 	//levelLoader.LoadLevel("Level.yaml", registry);
 	levelLoader.LoadLevel("SavedLevel.yaml");
-
 	RegisterAllEntities();
+
+	TransformSystem& transformSystem = entt::locator<TransformSystem>::value();
 	transformSystem.InitLoaded();
-	renderer->InitLoaded();
+
+	RendererSystem& renderer = entt::locator<RendererSystem>::value();
+	renderer.InitLoaded();
+
 #ifdef _EDITOR
 	levelTree.Init(registry);
 #endif // _EDITOR
@@ -112,7 +116,9 @@ void Game::Update()
 		isRunning = false;
 	}
 	input.Update(entt::locator<SdlContainer>::value().GetWindow());
-	physics->Update();
+
+	PhysicsSystem& physics = entt::locator<PhysicsSystem>::value();
+	physics.Update();
 
 	Entities& entities = entt::locator<Entities>::value();
 	entt::registry& registry = entities.GetRegistry();
@@ -251,15 +257,17 @@ void Editor(entt::registry& registry, InputSystem& input, Renderer& renderer, Le
 void Game::Render()
 {
 
-	renderer->Render();
+	RendererSystem& renderer = entt::locator<RendererSystem>::value();
+	renderer.Render();
 #ifdef _DEBUG
-	physics->DebugRender(renderer->GetWorldToScreenMatrix());
+	PhysicsSystem& physics = entt::locator<PhysicsSystem>::value();
+	physics.DebugRender(renderer.GetWorldToScreenMatrix());
 
 	TransformSystem& transformSystem = entt::locator<TransformSystem>::value();
-	transformSystem.DebugRender(renderer->GetWorldToScreenMatrix());
-	transformSystem.GetDebugRenderer().SetMatrix(renderer->GetWorldToScreenMatrix());
-
+	transformSystem.DebugRender(renderer.GetWorldToScreenMatrix());
+	transformSystem.GetDebugRenderer().SetMatrix(renderer.GetWorldToScreenMatrix());
 #endif // _DEBUG
+
 #ifdef _EDITOR
 	auto camEntity = renderer->GetCamera();
 	auto cam = registry.get<Camera>(camEntity);
@@ -270,7 +278,7 @@ void Game::Render()
 		transformSystem.GetDebugRenderer().DrawTransform(registry.get<Transform>(selected));
 	}
 #endif
-	renderer->Present();
+	renderer.Present();
 
 #ifdef _EDITOR
 	imgui.Render();

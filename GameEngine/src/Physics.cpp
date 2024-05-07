@@ -38,7 +38,8 @@ void PhysicsSystem::PhysicsBodyDestroyed(entt::registry& registry, entt::entity 
 
 void PhysicsSystem::Update()
 {
-	entt::registry& registry = entt::locator<entt::registry>::value();
+	Entities& entities = entt::locator<Entities>::value();
+	entt::registry& registry = entities.GetRegistry();
 	auto phView = registry.view<PhysicsBodyComponent, TransformComponent>();
 	for (auto entity : phView) {
 		const auto& pos = phView.get<TransformComponent>(entity);

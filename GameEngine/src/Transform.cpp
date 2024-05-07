@@ -33,7 +33,8 @@ void TransformSystem::TransformCreated(entt::registry& registry, entt::entity en
 }
 void TransformSystem::Update()
 {
-	entt::registry& registry = entt::locator<entt::registry>::value();
+	Entities& entities = entt::locator<Entities>::value();
+	entt::registry& registry = entities.GetRegistry();
 	auto view3 = registry.view<TransformComponent>();
 
 	registry.sort<TransformComponent>([](const auto& lhs, const auto& rhs) {
@@ -55,7 +56,7 @@ void TransformSystem::Update()
 }
 int InitParentRecursive(entt::entity parent) {
 	Entities& entities = entt::locator<Entities>::value();
-	entt::registry& registry = entt::locator<entt::registry>::value();
+	entt::registry& registry = entities.GetRegistry();
 	auto& trx = registry.get<TransformComponent>(parent);
 	if (trx.hasParent && trx.level == -1) {
 		if (entities.EntityExists(trx.parentGUID)) {
@@ -72,7 +73,7 @@ int InitParentRecursive(entt::entity parent) {
 void TransformSystem::InitLoaded()
 {
 	Entities& entities = entt::locator<Entities>::value();
-	entt::registry& registry = entt::locator<entt::registry>::value();
+	entt::registry& registry = entities.GetRegistry();
 
 	auto view = registry.view<TransformComponent>();
 	for (auto entity : view) {
@@ -113,7 +114,8 @@ void TransformSystem::EnableDebug(bool enable)
 }
 void TransformSystem::DebugRender(glm::mat3 viewMatrix)
 {
-	entt::registry& registry = entt::locator<entt::registry>::value();
+	Entities& entities = entt::locator<Entities>::value();
+	entt::registry& registry = entities.GetRegistry();
 	debugDrawer->SetMatrix(viewMatrix);
 	if (drawDebug) {
 		auto view3 = registry.view<const TransformComponent>();
@@ -125,7 +127,8 @@ void TransformSystem::DebugRender(glm::mat3 viewMatrix)
 }
 void TransformSystem::SetParent(TransformComponent& child, entt::entity parent)
 {
-	entt::registry& registry = entt::locator<entt::registry>::value();
+	Entities& entities = entt::locator<Entities>::value();
+	entt::registry& registry = entities.GetRegistry();
 	if (!registry.valid(parent)) {
 		child.parent = entt::entity(-1);
 		child.level = 0;

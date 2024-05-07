@@ -30,8 +30,8 @@ Game::~Game() {
 void Game::SetupBaseSystems() {
 	SdlContainer& sdlContainer = entt::locator<SdlContainer>::emplace<SdlContainer>(1200, (float)1200 * 9 / 16);
 	entt::locator<AssetStore>::emplace<AssetStore>();
-	entt::registry& registry = entt::locator<entt::registry>::emplace<entt::registry>();
-	entt::locator<Entities>::emplace<Entities>();
+	Entities& entities = entt::locator<Entities>::emplace<Entities>();
+	entt::registry& registry = entities.GetRegistry();
 
 	physics = std::make_unique<PhysicsSystem>(0, -10);
 	physics->InitDebugDrawer(sdlContainer.GetRenderer());
@@ -54,7 +54,8 @@ void Game::SetupBaseSystems() {
 void Game::Setup()
 {
 	AssetStore& assetStore = entt::locator<AssetStore>::value();
-	entt::registry& registry = entt::locator<entt::registry>::value();
+	Entities& entities = entt::locator<Entities>::value();
+	entt::registry& registry = entities.GetRegistry();
 	assetStore.AddTexture("rose", "./assets/Rose.png", 512);
 	assetStore.AddTexture("hornet", "./assets/Hornet_Idle.png", 128);
 	assetStore.AddTexture("block", "./assets/Block.jpg", 64);
@@ -102,7 +103,8 @@ void Game::Update()
 	input.Update(entt::locator<SdlContainer>::value().GetWindow());
 	physics->Update();
 
-	entt::registry& registry = entt::locator<entt::registry>::value();
+	Entities& entities = entt::locator<Entities>::value();
+	entt::registry& registry = entities.GetRegistry();
 	auto view2 = registry.view<PlayerComponent, const TransformComponent, PhysicsBodyComponent>();
 	for (auto entity : view2) {
 		const auto& pos = view2.get<TransformComponent>(entity);
@@ -270,8 +272,8 @@ void Game::Render()
 void Game::RegisterAllEntities()
 {
 	Entities& entities = entt::locator<Entities>::value();
+	entt::registry& registry = entities.GetRegistry();
 	entities.DeleteAllEntities();
-	entt::registry& registry = entt::locator<entt::registry>::value();
 	auto view = registry.view<const GUIDComponent>();
 	for (auto entity : view) {
 		const auto& guid = view.get<GUIDComponent>(entity);

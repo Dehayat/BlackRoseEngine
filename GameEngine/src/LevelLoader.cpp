@@ -30,7 +30,8 @@ LevelLoader::~LevelLoader()
 }
 void LevelLoader::LoadLevel(const std::string& fileName)
 {
-	entt::registry& registry = entt::locator<entt::registry>::value();
+	Entities& entities = entt::locator<Entities>::value();
+	entt::registry& registry = entities.GetRegistry();
 	auto fileHandle = FileResource(fileName);
 	if (fileHandle.file == nullptr) {
 		Logger::Error("File" + fileName + " not found");
@@ -87,7 +88,8 @@ entt::entity LevelLoader::DeserializeEntity(entt::registry& registry, ryml::Node
 }
 void LevelLoader::SaveLevel(const std::string& fileName)
 {
-	entt::registry& registry = entt::locator<entt::registry>::value();
+	Entities& entities = entt::locator<Entities>::value();
+	entt::registry& registry = entities.GetRegistry();
 	auto fileHandle = FileResource(fileName, "w+");
 	if (fileHandle.file == nullptr) {
 		Logger::Error("Couldnt create file " + fileName);

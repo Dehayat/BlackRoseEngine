@@ -17,7 +17,8 @@ RendererSystem::~RendererSystem()
 }
 void RendererSystem::Render()
 {
-	entt::registry& registry = entt::locator<entt::registry>::value();
+	Entities& entities = entt::locator<Entities>::value();
+	entt::registry& registry = entities.GetRegistry();
 	AssetStore& assetStore = entt::locator<AssetStore>::value();
 	SDL_SetRenderDrawColor(sdl, 38, 77, 142, SDL_ALPHA_OPAQUE);
 	SDL_RenderClear(sdl);
@@ -119,7 +120,8 @@ const glm::mat3 RendererSystem::GetScreenToWorldMatrix()
 }
 void RendererSystem::InitLoaded()
 {
-	entt::registry& registry = entt::locator<entt::registry>::value();
+	Entities& entities = entt::locator<Entities>::value();
+	entt::registry& registry = entities.GetRegistry();
 	auto view = registry.view<const CameraComponent, const TransformComponent>();
 	for (auto entity : view) {
 		const auto& pos = view.get<TransformComponent>(entity);
@@ -131,6 +133,6 @@ void RendererSystem::InitLoaded()
 			editorCamTrx = pos;
 #endif
 			break;
-		}
 	}
+}
 }

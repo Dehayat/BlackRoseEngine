@@ -1,6 +1,11 @@
 #include "Entity.h"
 #include <entt/entt.hpp>
 
+Entities::Entities()
+{
+	entt::locator<entt::registry>::emplace<entt::registry>();
+}
+
 entt::registry& Entities::GetRegistry()
 {
 	entt::registry& registry = entt::locator<entt::registry>::value();

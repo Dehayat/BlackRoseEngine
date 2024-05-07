@@ -14,6 +14,7 @@ private:
 	EntityMap allEntities;
 
 public:
+	Entities();
 	entt::registry& GetRegistry();
 	entt::entity GetEntity(Guid guid);
 	bool EntityExists(Guid guid);

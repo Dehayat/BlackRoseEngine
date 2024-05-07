@@ -13,7 +13,7 @@ class DebugDraw : public b2Draw
 	SDL_Renderer* renderer;
 	glm::mat3 matrix;
 public:
-	DebugDraw(SDL_Renderer* sdl);
+	DebugDraw();
 	void SetMatrix(glm::mat3 worldToScreen);
 	void DrawPolygon(const b2Vec2* vertices, int32 vertexCount, const b2Color& color);
 	void DrawSolidPolygon(const b2Vec2* vertices, int32 vertexCount, const b2Color& color);
@@ -37,7 +37,7 @@ public:
 	void Update();
 	b2World& GetWorld();
 
-	void InitDebugDrawer(SDL_Renderer* sdl);
+	void InitDebugDrawer();
 	void EnableDebug(bool enable);
 	DebugDraw* GetDebug();
 	void DebugRender(glm::mat3 viewMatrix);

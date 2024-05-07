@@ -5,11 +5,13 @@
 #include "Components/SpriteComponent.h"
 #include "Components/CameraComponent.h"
 #include "Logger.h"
+#include "SdlContainer.h"
 
-RendererSystem::RendererSystem(SDL_Renderer* sdl)
+RendererSystem::RendererSystem()
 {
+	SdlContainer& sdl = entt::locator<SdlContainer>::value();
+	this->sdl = sdl.GetRenderer();
 	camera = entt::entity(-1);
-	this->sdl = sdl;
 	this->worldToScreenMatrix = glm::mat3(1);
 }
 RendererSystem::~RendererSystem()
@@ -133,6 +135,6 @@ void RendererSystem::InitLoaded()
 			editorCamTrx = pos;
 #endif
 			break;
+		}
 	}
-}
 }

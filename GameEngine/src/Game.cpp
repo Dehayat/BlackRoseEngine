@@ -1,7 +1,6 @@
 #include <sstream>
 #include <SDL2/SDL.h>
 #include <glm/glm.hpp>
-#include <box2d/b2_world_callbacks.h>
 #include <ryml/ryml.hpp>
 #include "Game.h"
 #include "Components/GUIDComponent.h"
@@ -21,6 +20,7 @@
 Game::Game() {
 	Logger::Log("Game Constructed");
 	SetupBaseSystems();
+	SetupLowLevelSystems();
 }
 
 Game::~Game() {
@@ -33,10 +33,16 @@ void Game::SetupBaseSystems() {
 	Entities& entities = entt::locator<Entities>::emplace<Entities>();
 	entt::registry& registry = entities.GetRegistry();
 
+}
+
+void Game::SetupLowLevelSystems()
+{
+	Entities& entities = entt::locator<Entities>::value();
+	entt::registry& registry = entities.GetRegistry();
 	physics = std::make_unique<PhysicsSystem>(0, -10);
-	physics->InitDebugDrawer(sdlContainer.GetRenderer());
-	renderer = std::make_unique<RendererSystem>(sdlContainer.GetRenderer());
-	transformSystem.InitDebugDrawer(sdlContainer.GetRenderer());
+	physics->InitDebugDrawer();
+	renderer = std::make_unique<RendererSystem>();
+	transformSystem.InitDebugDrawer();
 	registry.on_construct<TransformComponent>().connect<&TransformSystem::TransformCreated>(transformSystem);
 	registry.on_construct<PhysicsBodyComponent>().connect<&PhysicsSystem::PhysicsBodyCreated>(physics.get());
 	registry.on_destroy<PhysicsBodyComponent>().connect<&PhysicsSystem::PhysicsBodyDestroyed>(physics.get());

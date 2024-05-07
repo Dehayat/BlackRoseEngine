@@ -9,7 +9,7 @@ class DebugDrawTransform
 	SDL_Renderer* renderer;
 	glm::mat3 matrix;
 public:
-	DebugDrawTransform(SDL_Renderer* sdl);
+	DebugDrawTransform();
 	void SetMatrix(glm::mat3 worldToScreen);
 	void DrawTransform(const TransformComponent& t);
 };
@@ -23,7 +23,7 @@ public:
 	~TransformSystem();
 	void Update();
 	void InitLoaded();
-	void InitDebugDrawer(SDL_Renderer* sdl);
+	void InitDebugDrawer();
 	void EnableDebug(bool enable);
 	void DebugRender(glm::mat3 viewMatrix);
 	void SetParent(TransformComponent& child, entt::entity parent);

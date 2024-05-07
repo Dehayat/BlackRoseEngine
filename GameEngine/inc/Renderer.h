@@ -18,7 +18,7 @@ class RendererSystem
 	Transform editorCamTrx;
 #endif
 public:
-	RendererSystem(SDL_Renderer* sdl);
+	RendererSystem();
 	~RendererSystem();
 	void Render();
 	void Present();

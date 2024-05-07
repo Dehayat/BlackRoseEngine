@@ -42,6 +42,7 @@ public:
 	Game();
 	~Game();
 	void SetupBaseSystems();
+	void SetupLowLevelSystems();
 	void Setup();
 	void Run();
 	void Update();

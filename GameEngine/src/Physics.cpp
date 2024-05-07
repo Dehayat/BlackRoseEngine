@@ -1,6 +1,7 @@
 #include "Physics.h"
 #include <SDL2/SDL2_gfxPrimitives.h>
 #include "Logger.h"
+#include "SdlContainer.h"
 
 PhysicsSystem::PhysicsSystem(float gravityX, float gravityY) {
 	b2Vec2 gravity(gravityX, gravityY);
@@ -70,8 +71,8 @@ b2World& PhysicsSystem::GetWorld()
 	return *physicsWorld;
 }
 
-void PhysicsSystem::InitDebugDrawer(SDL_Renderer* sdl) {
-	debugDrawer = new DebugDraw(sdl);
+void PhysicsSystem::InitDebugDrawer() {
+	debugDrawer = new DebugDraw();
 	physicsWorld->SetDebugDraw(debugDrawer);
 }
 void PhysicsSystem::EnableDebug(bool enable) {
@@ -94,8 +95,9 @@ void PhysicsSystem::DebugRender(glm::mat3 viewMatrix)
 	}
 }
 
-DebugDraw::DebugDraw(SDL_Renderer* sdl) :matrix(1) {
-	this->renderer = sdl;
+DebugDraw::DebugDraw() :matrix(1) {
+	SdlContainer& sdl = entt::locator<SdlContainer>::value();
+	this->renderer = sdl.GetRenderer();
 	SetFlags(15);
 }
 void DebugDraw::SetMatrix(glm::mat3 worldToScreen) {

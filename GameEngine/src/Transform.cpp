@@ -1,6 +1,7 @@
 #include "Transform.h"
-#include "Entity.h"
 #include <SDL2/SDL2_gfxPrimitives.h>
+#include "Entity.h"
+#include "SdlContainer.h"
 
 TransformSystem::TransformSystem()
 {
@@ -99,9 +100,10 @@ glm::mat3 TransformSystem::CalcMatrix(TransformComponent& trx)
 	);
 }
 
-void TransformSystem::InitDebugDrawer(SDL_Renderer* sdl)
+void TransformSystem::InitDebugDrawer()
 {
-	debugDrawer = new DebugDrawTransform(sdl);
+	SdlContainer& sdl = entt::locator<SdlContainer>::value();
+	debugDrawer = new DebugDrawTransform();
 }
 void TransformSystem::EnableDebug(bool enable)
 {
@@ -150,9 +152,10 @@ DebugDrawTransform& TransformSystem::GetDebugRenderer()
 }
 #endif // _DEBUG
 
-DebugDrawTransform::DebugDrawTransform(SDL_Renderer* sdl) :matrix(1)
+DebugDrawTransform::DebugDrawTransform() :matrix(1)
 {
-	this->renderer = sdl;
+	SdlContainer& sdl = entt::locator<SdlContainer>::value();
+	this->renderer = sdl.GetRenderer();
 }
 void DebugDrawTransform::SetMatrix(glm::mat3 worldToScreen)
 {

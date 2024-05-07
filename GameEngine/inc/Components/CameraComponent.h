@@ -4,20 +4,20 @@
 #include <glm/glm.hpp>
 using namespace glm;
 
-struct Camera {
+struct CameraComponent {
 	float height;
 	bool startCamera;
 
 	glm::mat3 worldToScreen;
 	glm::mat3 camToScreen;
 
-	Camera(float height = 10) {
+	CameraComponent(float height = 10) {
 		this->height = height;
 		camToScreen = glm::mat3();
 		worldToScreen = glm::mat3();
 		startCamera = false;
 	}
-	Camera(ryml::NodeRef node)
+	CameraComponent(ryml::NodeRef node)
 	{
 		height = 10;
 		startCamera = false;

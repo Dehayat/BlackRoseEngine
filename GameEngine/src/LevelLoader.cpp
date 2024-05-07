@@ -55,31 +55,31 @@ void LevelLoader::DeserializeLevel(entt::registry& registry, ryml::NodeRef node)
 entt::entity LevelLoader::DeserializeEntity(entt::registry& registry, ryml::NodeRef node)
 {
 	auto entity = registry.create();
-	auto guid = GUID::Generate();
+	auto guid = GUIDComponent::Generate();
 	if (node.has_child("Guid")) {
 		node["Guid"] >> guid;
 	}
-	registry.emplace<GUID>(entity, guid);
+	registry.emplace<GUIDComponent>(entity, guid);
 	Logger::Log("Entity created");
 	if (node.has_child("Transform")) {
 		auto trx = node["Transform"];
-		ComponentSer<Transform>::Deserialize(registry, trx, entity);
+		ComponentSer<TransformComponent>::Deserialize(registry, trx, entity);
 	}
 	if (node.has_child("PhysicsBody")) {
 		auto phy = node["PhysicsBody"];
-		ComponentSer<PhysicsBody>::Deserialize(registry, phy, entity);
+		ComponentSer<PhysicsBodyComponent>::Deserialize(registry, phy, entity);
 	}
 	if (node.has_child("Camera")) {
 		auto n = node["Camera"];
-		ComponentSer<Camera>::Deserialize(registry, n, entity);
+		ComponentSer<CameraComponent>::Deserialize(registry, n, entity);
 	}
 	if (node.has_child("Sprite")) {
 		auto n = node["Sprite"];
-		ComponentSer<Sprite>::Deserialize(registry, n, entity);
+		ComponentSer<SpriteComponent>::Deserialize(registry, n, entity);
 	}
 	if (node.has_child("Player")) {
 		auto n = node["Player"];
-		ComponentSer<Player>::Deserialize(registry, n, entity);
+		ComponentSer<PlayerComponent>::Deserialize(registry, n, entity);
 	}
 	return entity;
 }
@@ -99,7 +99,7 @@ void LevelLoader::SaveLevel(const std::string& fileName, entt::registry& registr
 void LevelLoader::SerializeLevel(entt::registry& registry, ryml::NodeRef node)
 {
 	node |= ryml::SEQ;
-	auto view = registry.view<GUID>();
+	auto view = registry.view<GUIDComponent>();
 	for (auto entity : view) {
 		SerializeEntity(registry, node, entity);
 	}
@@ -109,32 +109,32 @@ void LevelLoader::SerializeEntity(entt::registry& registry, ryml::NodeRef parent
 	auto node = parent.append_child();
 	node |= ryml::MAP;
 	node["Type"] << "Entity";
-	node["Guid"] << registry.get<GUID>(entity).id;
+	node["Guid"] << registry.get<GUIDComponent>(entity).id;
 
 	Logger::Log("Entity created");
-	if (registry.any_of<Transform>(entity)) {
+	if (registry.any_of<TransformComponent>(entity)) {
 		auto componentNode = node.append_child();
 		componentNode.set_key("Transform");
-		registry.get<Transform>(entity).Serialize(componentNode);
+		registry.get<TransformComponent>(entity).Serialize(componentNode);
 	}
-	if (registry.any_of<Sprite>(entity)) {
+	if (registry.any_of<SpriteComponent>(entity)) {
 		auto componentNode = node.append_child();
 		componentNode.set_key("Sprite");
-		registry.get<Sprite>(entity).Serialize(componentNode);
+		registry.get<SpriteComponent>(entity).Serialize(componentNode);
 	}
-	if (registry.any_of<Camera>(entity)) {
+	if (registry.any_of<CameraComponent>(entity)) {
 		auto componentNode = node.append_child();
 		componentNode.set_key("Camera");
-		registry.get<Camera>(entity).Serialize(componentNode);
+		registry.get<CameraComponent>(entity).Serialize(componentNode);
 	}
-	if (registry.any_of<Player>(entity)) {
+	if (registry.any_of<PlayerComponent>(entity)) {
 		auto componentNode = node.append_child();
 		componentNode.set_key("Player");
-		registry.get<Player>(entity).Serialize(componentNode);
+		registry.get<PlayerComponent>(entity).Serialize(componentNode);
 	}
-	if (registry.any_of<PhysicsBody>(entity)) {
+	if (registry.any_of<PhysicsBodyComponent>(entity)) {
 		auto componentNode = node.append_child();
 		componentNode.set_key("PhysicsBody");
-		registry.get<PhysicsBody>(entity).Serialize(componentNode);
+		registry.get<PhysicsBodyComponent>(entity).Serialize(componentNode);
 	}
 }

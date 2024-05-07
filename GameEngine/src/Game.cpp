@@ -18,32 +18,33 @@
 #endif // _EDITOR
 
 
-
 Game::Game() :allEntities() {
 	Logger::Log("Game Constructed");
+	SetupBaseSystems();
+}
+Game::~Game() {
+	Logger::Log("Game Destructed");
+}
+
+void Game::SetupBaseSystems() {
 
 	sdl = std::make_unique<SdlContainer>(1200, (float)1200 * 9 / 16);
 	assetStore = std::make_unique<AssetStore>();
-	physics = std::make_unique<Physics>(0, -10);
+	physics = std::make_unique<PhysicsSystem>(0, -10);
 	physics->InitDebugDrawer(sdl->GetRenderer());
-	renderer = std::make_unique<Renderer>(sdl->GetRenderer());
+	renderer = std::make_unique<RendererSystem>(sdl->GetRenderer());
 	transformSystem.InitDebugDrawer(sdl->GetRenderer());
-	registry.on_construct<Transform>().connect<&TransformSystem::TransformCreated>(transformSystem);
-	registry.on_construct<PhysicsBody>().connect<&Physics::PhysicsBodyCreated>(physics.get());
-	registry.on_destroy<PhysicsBody>().connect<&Physics::PhysicsBodyDestroyed>(physics.get());
+	registry.on_construct<TransformComponent>().connect<&TransformSystem::TransformCreated>(transformSystem);
+	registry.on_construct<PhysicsBodyComponent>().connect<&PhysicsSystem::PhysicsBodyCreated>(physics.get());
+	registry.on_destroy<PhysicsBodyComponent>().connect<&PhysicsSystem::PhysicsBodyDestroyed>(physics.get());
 #ifdef _DEBUG
 	physics->EnableDebug(true);
 	transformSystem.EnableDebug(true);
 #endif // !_DEBUG
 
-	auto x = SDL_GL_GetCurrentContext();
-
 	dt = 0;
 	msLastFrame = 0;
 	isRunning = false;
-}
-Game::~Game() {
-	Logger::Log("Game Destructed");
 }
 
 
@@ -96,18 +97,11 @@ void Game::Update()
 	input.Update(sdl->GetWindow());
 	physics->Update(registry);
 
-	//if (input.GetMouseButton(InputMouse::LEFT_BUTTON).justPressed) {
-	//	const auto ground = registry.create();
-	//	auto spawnPos = glm::vec3(input.GetMousePosition(), 1) * renderer->GetScreenToWorldMatrix();
-	//	registry.emplace<Transform>(ground, glm::vec2(spawnPos.x, spawnPos.y), glm::vec2(1, 1), 0);
-	//	registry.emplace<Sprite>(ground, "rose", 0, SDL_Color{ 255,255,255,255 });
-	//	registry.emplace<PhysicsBody>(ground, glm::vec2(spawnPos.x, spawnPos.y), glm::vec2(0.25, 0.25));
-	//}
-	auto view2 = registry.view<Player, const Transform, PhysicsBody>();
+	auto view2 = registry.view<PlayerComponent, const TransformComponent, PhysicsBodyComponent>();
 	for (auto entity : view2) {
-		const auto& pos = view2.get<Transform>(entity);
-		auto& phys = view2.get<PhysicsBody>(entity);
-		auto& player = view2.get<Player>(entity);
+		const auto& pos = view2.get<TransformComponent>(entity);
+		auto& phys = view2.get<PhysicsBodyComponent>(entity);
+		auto& player = view2.get<PlayerComponent>(entity);
 		if (input.GetKey(InputKey::LEFT).isPressed || input.GetKey(InputKey::A).isPressed) {
 			player.input = -1;
 		}
@@ -249,7 +243,7 @@ void Game::Render()
 	auto camEntity = renderer->GetCamera();
 	auto cam = registry.get<Camera>(camEntity);
 	auto camTrx = registry.get<Transform>(camEntity);
-	CameraEditor::DrawGizmos(sdl->GetRenderer(),*renderer, cam, camTrx);
+	CameraEditor::DrawGizmos(sdl->GetRenderer(), *renderer, cam, camTrx);
 
 	if (selected != entt::entity(-1)) {
 		transformSystem.GetDebugRenderer().DrawTransform(registry.get<Transform>(selected));
@@ -270,9 +264,9 @@ void Game::Render()
 void Game::RegisterAllEntities()
 {
 	allEntities.clear();
-	auto view = registry.view<const GUID>();
+	auto view = registry.view<const GUIDComponent>();
 	for (auto entity : view) {
-		const auto& guid = view.get<GUID>(entity);
+		const auto& guid = view.get<GUIDComponent>(entity);
 		allEntities.emplace(guid.id, entity);
 	}
 }

@@ -4,17 +4,17 @@
 #include <glm/glm.hpp>
 using namespace glm;
 
-struct Sprite {
+struct SpriteComponent {
 	std::string sprite;
 	int layer;
 	glm::vec4 color;
-	Sprite(std::string sprite, int layer = 0, vec4 color = vec4(1, 1, 1, 1)) {
+	SpriteComponent(std::string sprite, int layer = 0, vec4 color = vec4(1, 1, 1, 1)) {
 		this->sprite = sprite;
 		this->layer = layer;
 		this->color = color;
 
 	}
-	Sprite(ryml::NodeRef node)
+	SpriteComponent(ryml::NodeRef node)
 	{
 		this->sprite = "";
 		this->color = vec4(1, 1, 1, 1);

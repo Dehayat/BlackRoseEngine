@@ -1,14 +1,14 @@
 #pragma once
 #include <ryml/ryml.hpp>
 
-struct Player {
+struct PlayerComponent {
 	float speed;
 	int input = 0;
-	Player(float speed = 10) {
+	PlayerComponent(float speed = 10) {
 		this->speed = speed;
 		input = 0;
 	}
-	Player(ryml::NodeRef node) {
+	PlayerComponent(ryml::NodeRef node) {
 		speed = 10;
 		if (node.is_map() && node.has_child("speed")) {
 			node["speed"] >> speed;

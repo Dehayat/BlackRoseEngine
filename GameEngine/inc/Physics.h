@@ -24,14 +24,14 @@ public:
 	void DrawPoint(const b2Vec2& p, float size, const b2Color& color);
 };
 
-class Physics
+class PhysicsSystem
 {
 	DebugDraw* debugDrawer;
 	bool drawDebug;
 	std::unique_ptr<b2World> physicsWorld;
 public:
-	Physics(float gravityX, float gravityY);
-	~Physics();
+	PhysicsSystem(float gravityX, float gravityY);
+	~PhysicsSystem();
 	void PhysicsBodyCreated(entt::registry& registry, entt::entity entity);
 	void PhysicsBodyDestroyed(entt::registry& registry, entt::entity entity);
 	void Update(entt::registry& registry);

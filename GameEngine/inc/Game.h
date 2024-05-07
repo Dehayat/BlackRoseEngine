@@ -25,8 +25,8 @@ class Game {
 private:
 	std::unique_ptr<SdlContainer> sdl;
 	std::unique_ptr<AssetStore> assetStore;
-	std::unique_ptr<Physics> physics;
-	std::unique_ptr<Renderer> renderer;
+	std::unique_ptr<PhysicsSystem> physics;
+	std::unique_ptr<RendererSystem> renderer;
 	TransformSystem transformSystem;
 	LevelLoader levelLoader;
 	InputSystem input;
@@ -45,9 +45,9 @@ private:
 
 
 public:
-
 	Game();
 	~Game();
+	void SetupBaseSystems();
 	void Setup();
 	void Run();
 	void Update();

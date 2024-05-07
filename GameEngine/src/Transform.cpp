@@ -15,11 +15,11 @@ TransformSystem::~TransformSystem()
 }
 void TransformSystem::TransformCreated(entt::registry& registry, entt::entity entity)
 {
-	auto& trx = registry.get<Transform>(entity);
+	auto& trx = registry.get<TransformComponent>(entity);
 	trx.matrix = CalcMatrix(trx);
 	if (trx.parent) {
 		if (registry.valid(trx.parent.value())) {
-			auto& parentTrx = registry.get<Transform>(trx.parent.value());
+			auto& parentTrx = registry.get<TransformComponent>(trx.parent.value());
 			trx.parent = trx.parent.value();
 			trx.level = trx.level + 1;
 			trx.matrix = trx.matrix * parentTrx.matrix;
@@ -33,13 +33,13 @@ void TransformSystem::TransformCreated(entt::registry& registry, entt::entity en
 void TransformSystem::Update(entt::registry& registry)
 {
 
-	auto view3 = registry.view<Transform>();
+	auto view3 = registry.view<TransformComponent>();
 
-	registry.sort<Transform>([](const auto& lhs, const auto& rhs) {
+	registry.sort<TransformComponent>([](const auto& lhs, const auto& rhs) {
 		return lhs.level < rhs.level;
 		});
 	for (auto entity : view3) {
-		auto& trx = view3.get<Transform>(entity);
+		auto& trx = view3.get<TransformComponent>(entity);
 		trx.matrix = glm::mat3(
 			glm::cos(glm::radians(trx.rotation)) * trx.scale.x, -glm::sin(glm::radians(trx.rotation)) * trx.scale.y, trx.position.x,
 			glm::sin(glm::radians(trx.rotation)) * trx.scale.x, glm::cos(glm::radians(trx.rotation)) * trx.scale.y, trx.position.y,
@@ -47,13 +47,13 @@ void TransformSystem::Update(entt::registry& registry)
 		);
 
 		if (trx.hasParent) {
-			auto& parentTrx = registry.get<Transform>(trx.parent.value());
+			auto& parentTrx = registry.get<TransformComponent>(trx.parent.value());
 			trx.matrix = trx.matrix * parentTrx.matrix;
 		}
 	}
 }
 int InitParentRecursive(entt::registry& registry, std::unordered_map<std::uint64_t, entt::entity>& allEntities, entt::entity parent) {
-	auto& trx = registry.get<Transform>(parent);
+	auto& trx = registry.get<TransformComponent>(parent);
 	if (trx.hasParent && trx.level == -1) {
 		if (allEntities.find(trx.parentGUID) != allEntities.end()) {
 			trx.parent = allEntities[trx.parentGUID];
@@ -68,9 +68,9 @@ int InitParentRecursive(entt::registry& registry, std::unordered_map<std::uint64
 }
 void TransformSystem::InitLoaded(entt::registry& registry, std::unordered_map<std::uint64_t, entt::entity>& allEntities)
 {
-	auto view = registry.view<Transform>();
+	auto view = registry.view<TransformComponent>();
 	for (auto entity : view) {
-		auto& trx = view.get<Transform>(entity);
+		auto& trx = view.get<TransformComponent>(entity);
 		if (trx.hasParent && !trx.parent) {
 			if (allEntities.find(trx.parentGUID) != allEntities.end()) {
 				trx.parent = allEntities[trx.parentGUID];
@@ -83,7 +83,7 @@ void TransformSystem::InitLoaded(entt::registry& registry, std::unordered_map<st
 		}
 	}
 }
-glm::mat3 TransformSystem::CalcMatrix(Transform& trx)
+glm::mat3 TransformSystem::CalcMatrix(TransformComponent& trx)
 {
 	return glm::mat3(
 		glm::cos(glm::radians(trx.rotation)) * trx.scale.x, -glm::sin(glm::radians(trx.rotation)) * trx.scale.y, trx.position.x,
@@ -109,14 +109,14 @@ void TransformSystem::DebugRender(glm::mat3 viewMatrix, entt::registry& registry
 {
 	debugDrawer->SetMatrix(viewMatrix);
 	if (drawDebug) {
-		auto view3 = registry.view<const Transform>();
+		auto view3 = registry.view<const TransformComponent>();
 		for (auto entity : view3) {
-			const auto& pos = view3.get<Transform>(entity);
+			const auto& pos = view3.get<TransformComponent>(entity);
 			debugDrawer->DrawTransform(pos);
 		}
 	}
 }
-void TransformSystem::SetParent(entt::registry& registry, Transform& child, entt::entity parent)
+void TransformSystem::SetParent(entt::registry& registry, TransformComponent& child, entt::entity parent)
 {
 	if (!registry.valid(parent)) {
 		child.parent = entt::entity(-1);
@@ -124,7 +124,7 @@ void TransformSystem::SetParent(entt::registry& registry, Transform& child, entt
 		child.hasParent = false;
 		return;
 	}
-	auto& parentTrx = registry.get<Transform>(parent);
+	auto& parentTrx = registry.get<TransformComponent>(parent);
 	child.parent = parent;
 	child.level = parentTrx.level + 1;
 	child.hasParent = true;
@@ -147,7 +147,7 @@ void DebugDrawTransform::SetMatrix(glm::mat3 worldToScreen)
 {
 	matrix = worldToScreen;
 }
-void DebugDrawTransform::DrawTransform(const Transform& t)
+void DebugDrawTransform::DrawTransform(const TransformComponent& t)
 {
 	float scale = (4.0 - t.level) / 4.0;
 	glm::vec3 orig = glm::vec3(0, 0, 1);

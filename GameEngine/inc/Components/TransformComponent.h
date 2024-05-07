@@ -7,7 +7,7 @@
 
 using namespace glm;
 using namespace entt;
-struct Transform {
+struct TransformComponent {
 	vec2 position;
 	vec2 scale;
 	float rotation;
@@ -18,7 +18,7 @@ struct Transform {
 	std::optional<entity> parent;
 	mat3 matrix;
 
-	Transform(vec2 position = vec2(0, 0), vec2 scale = vec2(1, 1), float rotation = 0, std::optional<entity> parent = std::nullopt) {
+	TransformComponent(vec2 position = vec2(0, 0), vec2 scale = vec2(1, 1), float rotation = 0, std::optional<entity> parent = std::nullopt) {
 		this->position = position;
 		this->scale = scale;
 		this->rotation = rotation;
@@ -30,7 +30,7 @@ struct Transform {
 		this->hasParent = false;
 		this->parentGUID = -1;
 	}
-	Transform(ryml::NodeRef node) {
+	TransformComponent(ryml::NodeRef node) {
 		this->position = vec2(0, 0);
 		this->scale = vec2(1, 1);
 		this->rotation = 0;

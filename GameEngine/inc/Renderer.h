@@ -8,7 +8,7 @@
 #include "Components/TransformComponent.h"
 #endif
 
-class Renderer
+class RendererSystem
 {
 	SDL_Renderer* sdl;
 	entt::entity camera;
@@ -18,8 +18,8 @@ class Renderer
 	Transform editorCamTrx;
 #endif
 public:
-	Renderer(SDL_Renderer* sdl);
-	~Renderer();
+	RendererSystem(SDL_Renderer* sdl);
+	~RendererSystem();
 	void Render(entt::registry* registry, const AssetStore& assetStore);
 	void Present();
 	void SetCamera(entt::entity cam);

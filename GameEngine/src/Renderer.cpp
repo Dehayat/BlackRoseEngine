@@ -5,32 +5,32 @@
 #include "Components/CameraComponent.h"
 #include "Logger.h"
 
-Renderer::Renderer(SDL_Renderer* sdl)
+RendererSystem::RendererSystem(SDL_Renderer* sdl)
 {
 	camera = entt::entity(-1);
 	this->sdl = sdl;
 	this->worldToScreenMatrix = glm::mat3(1);
 }
-Renderer::~Renderer()
+RendererSystem::~RendererSystem()
 {
 }
-void Renderer::Render(entt::registry* registry, const AssetStore& assetStore)
+void RendererSystem::Render(entt::registry* registry, const AssetStore& assetStore)
 {
 	SDL_SetRenderDrawColor(sdl, 38, 77, 142, SDL_ALPHA_OPAQUE);
 	SDL_RenderClear(sdl);
-	registry->sort<Sprite>([](const auto& lhs, const auto& rhs) {
+	registry->sort<SpriteComponent>([](const auto& lhs, const auto& rhs) {
 		return lhs.layer < rhs.layer;
 		});
-	Transform camPos;
+	TransformComponent camPos;
 	float camHeight = 10;
 #ifdef _EDITOR
 	camPos = editorCamTrx;
 	camHeight = editorCam.height;
 #else
 	if (registry->valid(camera)) {
-		auto& cam = registry->get<Camera>(camera);
+		auto& cam = registry->get<CameraComponent>(camera);
 		camHeight = cam.height;
-		camPos = registry->get<Transform>(camera);
+		camPos = registry->get<TransformComponent>(camera);
 	}
 	else {
 		Logger::Error("No Camera Assigned to renderer");
@@ -64,10 +64,10 @@ void Renderer::Render(entt::registry* registry, const AssetStore& assetStore)
 
 
 
-	auto view2 = registry->view<const Sprite, const Transform>();
+	auto view2 = registry->view<const SpriteComponent, const TransformComponent>();
 	for (auto entity : view2) {
-		const auto& pos = view2.get<Transform>(entity);
-		const auto& sp = view2.get<Sprite>(entity);
+		const auto& pos = view2.get<TransformComponent>(entity);
+		const auto& sp = view2.get<SpriteComponent>(entity);
 		const auto& texture = assetStore.GetTexture(sp.sprite);
 		if (texture == nullptr) {
 			continue;
@@ -94,32 +94,32 @@ void Renderer::Render(entt::registry* registry, const AssetStore& assetStore)
 		SDL_RenderCopyExF(sdl, texture->texture, nullptr, &player, rotation, nullptr, SDL_FLIP_NONE);
 	}
 }
-void Renderer::Present()
+void RendererSystem::Present()
 {
 	SDL_RenderPresent(sdl);
 }
-void Renderer::SetCamera(entt::entity cam)
+void RendererSystem::SetCamera(entt::entity cam)
 {
 	this->camera = cam;
 }
-entt::entity Renderer::GetCamera()
+entt::entity RendererSystem::GetCamera()
 {
 	return camera;
 }
-const glm::mat3 Renderer::GetWorldToScreenMatrix()
+const glm::mat3 RendererSystem::GetWorldToScreenMatrix()
 {
 	return worldToScreenMatrix;
 }
-const glm::mat3 Renderer::GetScreenToWorldMatrix()
+const glm::mat3 RendererSystem::GetScreenToWorldMatrix()
 {
 	return glm::inverse(worldToScreenMatrix);
 }
-void Renderer::InitLoaded(entt::registry& registry)
+void RendererSystem::InitLoaded(entt::registry& registry)
 {
-	auto view = registry.view<const Camera, const Transform>();
+	auto view = registry.view<const CameraComponent, const TransformComponent>();
 	for (auto entity : view) {
-		const auto& pos = view.get<Transform>(entity);
-		const auto& body = view.get<Camera>(entity);
+		const auto& pos = view.get<TransformComponent>(entity);
+		const auto& body = view.get<CameraComponent>(entity);
 		if (body.startCamera) {
 			SetCamera(entity);
 #ifdef _EDITOR

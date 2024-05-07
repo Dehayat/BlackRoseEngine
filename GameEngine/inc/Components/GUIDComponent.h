@@ -2,12 +2,12 @@
 #include <random>
 
 
-struct GUID {
+struct GUIDComponent {
 	std::uint64_t id;
-	GUID() {
+	GUIDComponent() {
 		this->id = Generate();
 	}
-	GUID(std::uint64_t id) {
+	GUIDComponent(std::uint64_t id) {
 		this->id = id;
 	}
 

@@ -2,22 +2,22 @@
 #include <SDL2/SDL2_gfxPrimitives.h>
 #include "Logger.h"
 
-Physics::Physics(float gravityX, float gravityY) {
+PhysicsSystem::PhysicsSystem(float gravityX, float gravityY) {
 	b2Vec2 gravity(gravityX, gravityY);
 	physicsWorld = std::make_unique<b2World>(gravity);
 	drawDebug = false;
 	debugDrawer = nullptr;
 }
-Physics::~Physics()
+PhysicsSystem::~PhysicsSystem()
 {
 	if (debugDrawer != nullptr) {
 		delete debugDrawer;
 	}
 }
-void Physics::PhysicsBodyCreated(entt::registry& registry, entt::entity entity)
+void PhysicsSystem::PhysicsBodyCreated(entt::registry& registry, entt::entity entity)
 {
-	auto& phys = registry.get<PhysicsBody>(entity);
-	auto& trx = registry.get<Transform>(entity);
+	auto& phys = registry.get<PhysicsBodyComponent>(entity);
+	auto& trx = registry.get<TransformComponent>(entity);
 	if (!phys.isStatic) {
 		phys.bodyDef.type = b2_dynamicBody;
 	}
@@ -30,18 +30,18 @@ void Physics::PhysicsBodyCreated(entt::registry& registry, entt::entity entity)
 	body->CreateFixture(&phys.fixture);
 	phys.body = body;
 }
-void Physics::PhysicsBodyDestroyed(entt::registry& registry, entt::entity entity)
+void PhysicsSystem::PhysicsBodyDestroyed(entt::registry& registry, entt::entity entity)
 {
-	auto& phys = registry.get<PhysicsBody>(entity);
+	auto& phys = registry.get<PhysicsBodyComponent>(entity);
 	GetWorld().DestroyBody(phys.body);
 }
 
-void Physics::Update(entt::registry& registry)
+void PhysicsSystem::Update(entt::registry& registry)
 {
-	auto phView = registry.view<PhysicsBody, Transform>();
+	auto phView = registry.view<PhysicsBodyComponent, TransformComponent>();
 	for (auto entity : phView) {
-		const auto& pos = phView.get<Transform>(entity);
-		auto& body = phView.get<PhysicsBody>(entity);
+		const auto& pos = phView.get<TransformComponent>(entity);
+		auto& body = phView.get<PhysicsBodyComponent>(entity);
 		auto rotation = body.body->GetAngle();
 		auto position = body.body->GetPosition();
 		position.x = pos.position.x;
@@ -57,22 +57,22 @@ void Physics::Update(entt::registry& registry)
 	physicsWorld->Step(timeStep, velocityIterations, positionIterations);
 
 	for (auto entity : phView) {
-		auto& pos = phView.get<Transform>(entity);
-		const auto& body = phView.get<PhysicsBody>(entity);
+		auto& pos = phView.get<TransformComponent>(entity);
+		const auto& body = phView.get<PhysicsBodyComponent>(entity);
 		pos.position = glm::vec2(body.body->GetPosition().x, body.body->GetPosition().y);
 		pos.rotation = glm::degrees(body.body->GetAngle());
 	}
 }
-b2World& Physics::GetWorld()
+b2World& PhysicsSystem::GetWorld()
 {
 	return *physicsWorld;
 }
 
-void Physics::InitDebugDrawer(SDL_Renderer* sdl) {
+void PhysicsSystem::InitDebugDrawer(SDL_Renderer* sdl) {
 	debugDrawer = new DebugDraw(sdl);
 	physicsWorld->SetDebugDraw(debugDrawer);
 }
-void Physics::EnableDebug(bool enable) {
+void PhysicsSystem::EnableDebug(bool enable) {
 	if (debugDrawer == nullptr) {
 		Logger::Error("No Physics Debug Drawer attached");
 	}
@@ -80,11 +80,11 @@ void Physics::EnableDebug(bool enable) {
 		drawDebug = enable;
 	}
 }
-DebugDraw* Physics::GetDebug()
+DebugDraw* PhysicsSystem::GetDebug()
 {
 	return debugDrawer;
 }
-void Physics::DebugRender(glm::mat3 viewMatrix)
+void PhysicsSystem::DebugRender(glm::mat3 viewMatrix)
 {
 	debugDrawer->SetMatrix(viewMatrix);
 	if (drawDebug) {

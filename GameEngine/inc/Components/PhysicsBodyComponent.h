@@ -6,7 +6,7 @@
 
 using namespace glm;
 
-struct PhysicsBody {
+struct PhysicsBodyComponent {
 	vec2 size;
 	bool isStatic;
 
@@ -15,13 +15,13 @@ struct PhysicsBody {
 	b2FixtureDef fixture;
 	b2BodyDef bodyDef;
 
-	PhysicsBody(vec2 size = vec2(1.f, 1.f), bool isStatic = false) {
+	PhysicsBodyComponent(vec2 size = vec2(1.f, 1.f), bool isStatic = false) {
 		this->size = size;
 		this->isStatic = isStatic;
 
 		this->body = nullptr;
 	}
-	PhysicsBody(ryml::NodeRef node)
+	PhysicsBodyComponent(ryml::NodeRef node)
 	{
 		size = { 1.f,1.f };
 		this->isStatic = false;

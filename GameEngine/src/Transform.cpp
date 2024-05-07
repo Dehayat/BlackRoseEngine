@@ -7,6 +7,10 @@ TransformSystem::TransformSystem()
 {
 	debugDrawer = nullptr;
 	drawDebug = false;
+
+	Entities& entities = entt::locator<Entities>::value();
+	entt::registry& registry = entities.GetRegistry();
+	registry.on_construct<TransformComponent>().connect<&TransformSystem::TransformCreated>(this);
 }
 TransformSystem::~TransformSystem()
 {

@@ -45,27 +45,19 @@ void Game::SetupBaseSystems() {
 
 void Game::SetupLowLevelSystems()
 {
-	Entities& entities = entt::locator<Entities>::value();
-	entt::registry& registry = entities.GetRegistry();
-
 	TransformSystem& transformSystem = entt::locator<TransformSystem>::emplace<TransformSystem>();
 	transformSystem.InitDebugDrawer();
-	registry.on_construct<TransformComponent>().connect<&TransformSystem::TransformCreated>(transformSystem);
-
 	PhysicsSystem& physics = entt::locator<PhysicsSystem>::emplace<PhysicsSystem>(0, -10);
 	physics.InitDebugDrawer();
-	registry.on_construct<PhysicsBodyComponent>().connect<&PhysicsSystem::PhysicsBodyCreated>(physics);
-	registry.on_destroy<PhysicsBodyComponent>().connect<&PhysicsSystem::PhysicsBodyDestroyed>(physics);
-
-	RendererSystem& render = entt::locator<RendererSystem>::emplace<RendererSystem>();
-
+	entt::locator<RendererSystem>::emplace<RendererSystem>();
 	entt::locator<InputSystem>::emplace<InputSystem>();
-	entt::locator<InputSystem>::emplace<InputSystem>();
+	entt::locator<TimeSystem>::emplace<TimeSystem>();
 
 #ifdef _DEBUG
 	physics.EnableDebug(true);
 	transformSystem.EnableDebug(true);
 #endif // !_DEBUG
+
 	isRunning = false;
 }
 
@@ -116,7 +108,7 @@ void Game::Update()
 #ifdef _EDITOR
 	if (imgui.ProcessEvents()) {
 		isRunning = false;
-}
+	}
 	input.Update(sdl->GetWindow());
 #else
 	if (entt::locator<SdlContainer>::value().ProcessEvents()) {
@@ -284,7 +276,7 @@ void Game::Render()
 
 	if (selected != entt::entity(-1)) {
 		transformSystem.GetDebugRenderer().DrawTransform(registry.get<Transform>(selected));
-}
+	}
 #endif
 	renderer.Present();
 

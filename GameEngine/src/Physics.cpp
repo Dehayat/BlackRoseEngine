@@ -8,6 +8,10 @@ PhysicsSystem::PhysicsSystem(float gravityX, float gravityY) {
 	physicsWorld = std::make_unique<b2World>(gravity);
 	drawDebug = false;
 	debugDrawer = nullptr;
+	Entities& entities = entt::locator<Entities>::value();
+	entt::registry& registry = entities.GetRegistry();
+	registry.on_construct<PhysicsBodyComponent>().connect<&PhysicsSystem::PhysicsBodyCreated>(this);
+	registry.on_destroy<PhysicsBodyComponent>().connect<&PhysicsSystem::PhysicsBodyDestroyed>(this);
 }
 PhysicsSystem::~PhysicsSystem()
 {

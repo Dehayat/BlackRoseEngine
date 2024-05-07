@@ -20,7 +20,7 @@ class RendererSystem
 public:
 	RendererSystem(SDL_Renderer* sdl);
 	~RendererSystem();
-	void Render(entt::registry* registry, const AssetStore& assetStore);
+	void Render(entt::registry* registry);
 	void Present();
 	void SetCamera(entt::entity cam);
 	entt::entity GetCamera();

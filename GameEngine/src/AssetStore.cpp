@@ -1,6 +1,8 @@
 #include "AssetStore.h"
 #include <sdl2/SDL_image.h>
+#include <entt/entt.hpp>
 #include "Logger.h"
+#include "SdlContainer.h"
 
 AssetStore::AssetStore()
 {
@@ -23,8 +25,9 @@ void AssetStore::ClearAssets()
 	}
 }
 
-void AssetStore::AddTexture(SDL_Renderer* renderer, const std::string& assetId, const std::string& filePath, int ppu)
+void AssetStore::AddTexture(const std::string& assetId, const std::string& filePath, int ppu)
 {
+	SDL_Renderer* renderer = entt::locator<SdlContainer>::value().GetRenderer();
 	SDL_Surface* surface = IMG_Load(filePath.c_str());
 	SDL_Texture* texture = SDL_CreateTextureFromSurface(renderer, surface);
 	SDL_FreeSurface(surface);

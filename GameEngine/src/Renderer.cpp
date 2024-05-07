@@ -14,8 +14,9 @@ RendererSystem::RendererSystem(SDL_Renderer* sdl)
 RendererSystem::~RendererSystem()
 {
 }
-void RendererSystem::Render(entt::registry* registry, const AssetStore& assetStore)
+void RendererSystem::Render(entt::registry* registry)
 {
+	AssetStore& assetStore = entt::locator<AssetStore>::value();
 	SDL_SetRenderDrawColor(sdl, 38, 77, 142, SDL_ALPHA_OPAQUE);
 	SDL_RenderClear(sdl);
 	registry->sort<SpriteComponent>([](const auto& lhs, const auto& rhs) {
@@ -88,9 +89,9 @@ void RendererSystem::Render(entt::registry* registry, const AssetStore& assetSto
 			(float)spriteSizeX,
 			(float)spriteSizeY,
 		};
-		SDL_SetTextureColorMod(texture->texture, sp.color.r*255, sp.color.g*255, sp.color.b*255);
+		SDL_SetTextureColorMod(texture->texture, sp.color.r * 255, sp.color.g * 255, sp.color.b * 255);
 		SDL_SetTextureBlendMode(texture->texture, SDL_BLENDMODE_BLEND);
-		SDL_SetTextureAlphaMod(texture->texture, sp.color.a*255);
+		SDL_SetTextureAlphaMod(texture->texture, sp.color.a * 255);
 		SDL_RenderCopyExF(sdl, texture->texture, nullptr, &player, rotation, nullptr, SDL_FLIP_NONE);
 	}
 }

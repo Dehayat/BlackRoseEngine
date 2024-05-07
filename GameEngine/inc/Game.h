@@ -23,7 +23,6 @@ typedef std::unordered_map < std::uint64_t, entt::entity> EntityMap;
 
 class Game {
 private:
-	std::unique_ptr<AssetStore> assetStore;
 	std::unique_ptr<PhysicsSystem> physics;
 	std::unique_ptr<RendererSystem> renderer;
 	TransformSystem transformSystem;

@@ -23,7 +23,6 @@ class Game {
 private:
 	std::unique_ptr<PhysicsSystem> physics;
 	std::unique_ptr<RendererSystem> renderer;
-	TransformSystem transformSystem;
 	LevelLoader levelLoader;
 	InputSystem input;
 	bool isRunning;

@@ -28,24 +28,26 @@ Game::~Game() {
 }
 
 void Game::SetupBaseSystems() {
-	SdlContainer& sdlContainer = entt::locator<SdlContainer>::emplace<SdlContainer>(1200, (float)1200 * 9 / 16);
+	entt::locator<SdlContainer>::emplace<SdlContainer>(1200, (float)1200 * 9 / 16);
 	entt::locator<AssetStore>::emplace<AssetStore>();
-	Entities& entities = entt::locator<Entities>::emplace<Entities>();
-	entt::registry& registry = entities.GetRegistry();
-
+	entt::locator<Entities>::emplace<Entities>();
 }
 
 void Game::SetupLowLevelSystems()
 {
 	Entities& entities = entt::locator<Entities>::value();
 	entt::registry& registry = entities.GetRegistry();
+
+	TransformSystem& transformSystem = entt::locator<TransformSystem>::emplace<TransformSystem>();
+	transformSystem.InitDebugDrawer();
+	registry.on_construct<TransformComponent>().connect<&TransformSystem::TransformCreated>(transformSystem);
+
 	physics = std::make_unique<PhysicsSystem>(0, -10);
 	physics->InitDebugDrawer();
 	renderer = std::make_unique<RendererSystem>();
-	transformSystem.InitDebugDrawer();
-	registry.on_construct<TransformComponent>().connect<&TransformSystem::TransformCreated>(transformSystem);
 	registry.on_construct<PhysicsBodyComponent>().connect<&PhysicsSystem::PhysicsBodyCreated>(physics.get());
 	registry.on_destroy<PhysicsBodyComponent>().connect<&PhysicsSystem::PhysicsBodyDestroyed>(physics.get());
+
 #ifdef _DEBUG
 	physics->EnableDebug(true);
 	transformSystem.EnableDebug(true);
@@ -67,6 +69,8 @@ void Game::Setup()
 	assetStore.AddTexture("block", "./assets/Block.jpg", 64);
 	assetStore.AddTexture("big_ground", "./assets/BigGround.png", 128);
 
+
+	TransformSystem& transformSystem = entt::locator<TransformSystem>::value();
 
 	//levelLoader.LoadLevel("Level.yaml", registry);
 	levelLoader.LoadLevel("SavedLevel.yaml");
@@ -95,6 +99,7 @@ void Game::Run()
 }
 void Game::Update()
 {
+	TransformSystem& transformSystem = entt::locator<TransformSystem>::value();
 	transformSystem.Update();
 
 #ifdef _EDITOR
@@ -249,7 +254,9 @@ void Game::Render()
 	renderer->Render();
 #ifdef _DEBUG
 	physics->DebugRender(renderer->GetWorldToScreenMatrix());
-	//transformSystem.DebugRender(renderer->GetWorldToScreenMatrix(), registry);
+
+	TransformSystem& transformSystem = entt::locator<TransformSystem>::value();
+	transformSystem.DebugRender(renderer->GetWorldToScreenMatrix());
 	transformSystem.GetDebugRenderer().SetMatrix(renderer->GetWorldToScreenMatrix());
 
 #endif // _DEBUG

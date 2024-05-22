@@ -32,7 +32,7 @@ void PhysicsSystem::PhysicsBodyCreated(entt::registry& registry, entt::entity en
 	}
 	phys.bodyDef.position.Set(trx.position.x, trx.position.y);
 	b2Body* body = GetWorld().CreateBody(&phys.bodyDef);
-	phys.shape.SetAsBox(phys.size.x, phys.size.y);
+	phys.shape.SetAsBox(phys.size.x / 2.0, phys.size.y / 2.0);
 	phys.fixture.shape = &phys.shape;
 	phys.fixture.density = 1.0f;
 	phys.fixture.friction = 0.3f;

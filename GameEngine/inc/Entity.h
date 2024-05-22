@@ -18,6 +18,8 @@ public:
 	entt::registry& GetRegistry();
 	entt::entity GetEntity(Guid guid);
 	bool EntityExists(Guid guid);
-	void DeleteAllEntities();
+	void DestroyAllEntities();
 	void AddEntity(Guid guid, entt::entity entity);
+	entt::entity CreateEntity();
+	void DestroyEntity(entt::entity entity);
 };

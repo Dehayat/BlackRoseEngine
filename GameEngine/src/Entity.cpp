@@ -1,15 +1,18 @@
 #include "Entity.h"
+#include "Components/GUIDComponent.h"
+
 #include <entt/entt.hpp>
+
+#include "Systems.h"
 
 Entities::Entities()
 {
-	entt::locator<entt::registry>::emplace<entt::registry>();
+	CREATESYSTEM(entt::registry);
 }
 
 entt::registry& Entities::GetRegistry()
 {
-	entt::registry& registry = entt::locator<entt::registry>::value();
-	return registry;
+	return GETSYSTEM(entt::registry);
 }
 
 entt::entity Entities::GetEntity(Guid guid)
@@ -23,16 +26,52 @@ bool Entities::EntityExists(Guid guid)
 		return false;
 	}
 	else {
-		return true;
+		auto& regsitry = GetRegistry();
+		if (regsitry.valid(allEntities[guid])) {
+			return true;
+		}
+		else {
+			return false;
+		}
 	}
 }
 
-void Entities::DeleteAllEntities()
+void Entities::DestroyAllEntities()
 {
+	auto& registry = GetRegistry();
+	for (auto& it : allEntities)
+	{
+		if (registry.valid(it.second)) {
+			registry.destroy(it.second);
+		}
+	}
 	allEntities.clear();
 }
 
 void Entities::AddEntity(Guid guid, entt::entity entity)
 {
 	allEntities.emplace(guid, entity);
+}
+
+entt::entity Entities::CreateEntity()
+{
+	auto& registry = GetRegistry();
+	auto entity = registry.create();
+	auto guid = GUIDComponent::Generate();
+	registry.emplace<GUIDComponent>(entity, guid);
+	AddEntity(guid, entity);
+	return entity;
+}
+
+void Entities::DestroyEntity(entt::entity entity)
+{
+	auto& registry = GetRegistry();
+	Guid guid = -1;
+	if (registry.valid(entity)) {
+		registry.destroy(entity);
+		guid = registry.get<GUIDComponent>(entity).id;
+	}
+	if (guid != -1 && allEntities.find(guid) != allEntities.end()) {
+		allEntities.erase(guid);
+	}
 }

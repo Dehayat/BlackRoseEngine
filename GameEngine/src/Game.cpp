@@ -150,7 +150,7 @@ void Game::RegisterAllEntities()
 {
 	Entities& entities = entt::locator<Entities>::value();
 	entt::registry& registry = entities.GetRegistry();
-	entities.DeleteAllEntities();
+	entities.DestroyAllEntities();
 	auto view = registry.view<const GUIDComponent>();
 	for (auto entity : view) {
 		const auto& guid = view.get<GUIDComponent>(entity);

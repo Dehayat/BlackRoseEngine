@@ -15,7 +15,7 @@ class SpriteEditor {
 		return 0;
 	}
 public:
-	static void DrawEditor(Sprite& sprite) {
+	static void DrawEditor(SpriteComponent& sprite) {
 		ImGui::ColorEdit4("Color", (float*)(&sprite.color), ImGuiColorEditFlags_AlphaBar | ImGuiColorEditFlags_Float);
 		if (sprite.sprite.capacity() < 20) {
 			sprite.sprite.reserve(20);
@@ -26,11 +26,11 @@ public:
 
 class CameraEditor {
 public:
-	static void DrawEditor(Camera& camera) {
+	static void DrawEditor(CameraComponent& camera) {
 		ImGui::DragFloat("Camera Heigh", &camera.height, 0.2f, 0.1f, 100.f);
 		ImGui::Checkbox("start Camera", &camera.startCamera);
 	}
-	static void DrawGizmos(SDL_Renderer* sdl, Renderer& renderer, const Camera& camera, const Transform& trx) {
+	static void DrawGizmos(SDL_Renderer* sdl, RendererSystem& renderer, const CameraComponent& camera, const TransformComponent& trx) {
 		int sizeX, sizeY;
 		SDL_GetRendererOutputSize(sdl, &sizeX, &sizeY);
 		auto windowSize = glm::vec2(sizeX, sizeY);

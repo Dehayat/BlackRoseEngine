@@ -14,8 +14,8 @@ class RendererSystem
 	entt::entity camera;
 	glm::mat3 worldToScreenMatrix;
 #ifdef _EDITOR
-	Camera editorCam;
-	Transform editorCamTrx;
+	CameraComponent editorCam;
+	TransformComponent editorCamTrx;
 #endif
 public:
 	RendererSystem();
@@ -28,7 +28,7 @@ public:
 	const glm::mat3 GetScreenToWorldMatrix();
 	void InitLoaded();
 #ifdef _EDITOR
-	Transform& GetEditorCamTrx() {
+	TransformComponent& GetEditorCamTrx() {
 		return editorCamTrx;
 	}
 #endif

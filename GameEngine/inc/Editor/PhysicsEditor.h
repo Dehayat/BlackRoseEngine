@@ -4,7 +4,7 @@
 #include "Components/TransformComponent.h"
 class PhysicsEditor {
 public:
-	static void DrawEditor(PhysicsBody& phys, Transform& trx) {
+	static void DrawEditor(PhysicsBodyComponent& phys, TransformComponent& trx) {
 		auto pos = b2Vec2(trx.position.x, trx.position.y);
 		phys.body->SetTransform(pos, radians(trx.rotation));
 		bool changeSize = ImGui::DragFloat("size x", &phys.size.x, 0.1f, 0.05f, 2000);

@@ -54,8 +54,8 @@ namespace LevelEditor {
 			return node;
 		}
 		void EditorChildren(entt::registry& registry, entt::entity& selected, bool* entityList, LevelNode* node) {
-			const auto& guid = registry.get<GUID>(node->entity);
-			const auto& trx = registry.get<Transform>(node->entity);
+			const auto& guid = registry.get<GUIDComponent>(node->entity);
+			const auto& trx = registry.get<TransformComponent>(node->entity);
 			if (selected != node->entity) {
 				entityList[(int)node->entity] = false;
 			}
@@ -123,14 +123,14 @@ namespace LevelEditor {
 			}
 			if (currentCommand.child != entt::entity(-1)) {
 				nodesMap[currentCommand.child]->SetParent(nodesMap[currentCommand.newParent]);
-				TransformEditor::SetParent(registry, registry.get<Transform>(currentCommand.child), currentCommand.newParent);
+				TransformEditor::SetParent(registry, registry.get<TransformComponent>(currentCommand.child), currentCommand.newParent);
 				currentCommand.Reset();
 			}
 		}
 
 		LevelNode* InitParentRecursive(entt::registry& registry, entt::entity entity) {
 			if (nodesMap.find(entity) == nodesMap.end()) {
-				auto& trx = registry.get<Transform>(entity);
+				auto& trx = registry.get<TransformComponent>(entity);
 				if (trx.parent) {
 					auto node = new LevelNode(entity);
 					auto parentNode = InitParentRecursive(registry, trx.parent.value());
@@ -147,12 +147,12 @@ namespace LevelEditor {
 			nodesMap[entt::entity(-1)] = &root;
 
 
-			auto view = registry.view<const Transform>();
+			auto view = registry.view<const TransformComponent>();
 			for (auto entity : view) {
 				if (nodesMap.find(entity) != nodesMap.end()) {
 					continue;
 				}
-				const auto trx = view.get<Transform>(entity);
+				const auto trx = view.get<TransformComponent>(entity);
 				if (trx.level == 0) {
 					AddEntity(entity);
 				}

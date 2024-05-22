@@ -16,5 +16,4 @@ public:
 	void Run();
 	void Update();
 	void Render();
-	void RegisterAllEntities();
 };

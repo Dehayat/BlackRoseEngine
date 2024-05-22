@@ -61,12 +61,15 @@ void LevelLoader::DeserializeLevel(entt::registry& registry, ryml::NodeRef node)
 }
 entt::entity LevelLoader::DeserializeEntity(entt::registry& registry, ryml::NodeRef node)
 {
-	auto entity = registry.create();
+	entt::entity entity;
 	auto guid = GUIDComponent::Generate();
 	if (node.has_child("Guid")) {
 		node["Guid"] >> guid;
+		entity = GETSYSTEM(Entities).CreateEntity(guid);
 	}
-	registry.emplace<GUIDComponent>(entity, guid);
+	else {
+		entity = GETSYSTEM(Entities).CreateEntity();
+	}
 	Logger::Log("Entity created");
 	if (node.has_child("Transform")) {
 		auto trx = node["Transform"];

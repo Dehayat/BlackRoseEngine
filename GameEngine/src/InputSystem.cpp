@@ -1,5 +1,8 @@
 #include "InputSystem.h"
 
+#include "Systems.h"
+#include "SdlContainer.h"
+
 KeyData::KeyData() {
 	justPressed = false;
 	justReleased = false;
@@ -14,7 +17,8 @@ InputSystem::~InputSystem()
 {
 }
 
-void InputSystem::Update(SDL_Window* window) {
+void InputSystem::Update() {
+	SDL_Window*  window = GETSYSTEM(SdlContainer).GetWindow();
 	if (SDL_GetKeyboardFocus() != window) {
 		return;
 	}

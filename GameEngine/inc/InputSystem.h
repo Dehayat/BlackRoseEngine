@@ -35,7 +35,7 @@ class InputSystem
 public:
 	InputSystem();
 	~InputSystem();
-	void Update(SDL_Window* window);
+	void Update();
 	KeyData GetKey(InputKey key);
 	KeyData GetMouseButton(InputMouse mouse);
 	glm::vec2 GetMousePosition();

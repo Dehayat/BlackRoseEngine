@@ -21,5 +21,6 @@ public:
 	void DestroyAllEntities();
 	void AddEntity(Guid guid, entt::entity entity);
 	entt::entity CreateEntity();
+	entt::entity CreateEntity(Guid guid);
 	void DestroyEntity(entt::entity entity);
 };

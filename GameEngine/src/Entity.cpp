@@ -55,13 +55,18 @@ void Entities::AddEntity(Guid guid, entt::entity entity)
 
 entt::entity Entities::CreateEntity()
 {
+	auto guid = GUIDComponent::Generate();
+	return CreateEntity(guid);
+}
+entt::entity Entities::CreateEntity(Guid guid)
+{
 	auto& registry = GetRegistry();
 	auto entity = registry.create();
-	auto guid = GUIDComponent::Generate();
 	registry.emplace<GUIDComponent>(entity, guid);
 	AddEntity(guid, entity);
 	return entity;
 }
+
 
 void Entities::DestroyEntity(entt::entity entity)
 {

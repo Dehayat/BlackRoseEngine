@@ -1,8 +1,13 @@
 #include "LevelLoader.h"
+
 #include <ios>
 #include <sstream>
 #include <ryml/ryml_std.hpp>
 #include <SDL2/SDL.h>
+#include <entt/entt.hpp>
+
+#include "Systems.h"
+
 #include "Components/TransformComponent.h"
 #include "Components/PhysicsBodyComponent.h"
 #include "Components/SpriteComponent.h"
@@ -30,8 +35,7 @@ LevelLoader::~LevelLoader()
 }
 void LevelLoader::LoadLevel(const std::string& fileName)
 {
-	Entities& entities = entt::locator<Entities>::value();
-	entt::registry& registry = entities.GetRegistry();
+	auto& registry = GETSYSTEM(Entities).GetRegistry();
 	auto fileHandle = FileResource(fileName);
 	if (fileHandle.file == nullptr) {
 		Logger::Error("File" + fileName + " not found");

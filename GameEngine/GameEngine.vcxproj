@@ -156,6 +156,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\TimeSystem.cpp" />
+    <ClInclude Include="inc\Systems.h" />
     <ClInclude Include="inc\TimeSystem.h" />
     <ClInclude Include="inc\Transform.h" />
     <ClCompile Include="src\Entity.cpp" />

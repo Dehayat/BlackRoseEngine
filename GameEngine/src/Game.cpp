@@ -2,7 +2,9 @@
 
 #include <entt/entt.hpp>
 
+#include "Systems.h"
 #include "Logger.h"
+
 #include "SdlContainer.h"
 #include "AssetStore.h"
 #include "Entity.h"
@@ -18,9 +20,6 @@
 #include "Components/PlayerComponent.h"
 #include "Components/SpriteComponent.h"
 #include "Components/CameraComponent.h"
-
-#define CREATESYSTEM(SYSTEM,...) entt::locator<SYSTEM>::emplace<SYSTEM>(__VA_ARGS__)
-#define GETSYSTEM(SYSTEM) entt::locator<SYSTEM>::value()
 
 
 Game::Game() {

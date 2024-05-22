@@ -17,7 +17,6 @@ void TimeSystem::Update()
 		SDL_Delay(waitTimeMs);
 	}
 	dt = (SDL_GetTicks64() - msLastFrame) / 1000.0f;
-	Logger::Log("dt= " + std::to_string(dt));
 	msLastFrame = SDL_GetTicks64();
 }
 

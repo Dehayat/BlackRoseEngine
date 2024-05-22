@@ -1,22 +1,26 @@
 #include "Game.h"
-#include <sstream>
-#include <SDL2/SDL.h>
+
 #include <entt/entt.hpp>
-#include <glm/glm.hpp>
-#include <ryml/ryml.hpp>
+
+#include "Logger.h"
 #include "SdlContainer.h"
 #include "AssetStore.h"
+#include "Entity.h"
+#include "LevelLoader.h"
+
 #include "Transform.h"
 #include "Physics.h"
 #include "Renderer.h"
 #include "InputSystem.h"
-#include "LevelLoader.h"
 #include "TimeSystem.h"
+
 #include "Components/GUIDComponent.h"
 #include "Components/PlayerComponent.h"
 #include "Components/SpriteComponent.h"
 #include "Components/CameraComponent.h"
-#include "Logger.h"
+
+#define CREATESYSTEM(SYSTEM,...) entt::locator<SYSTEM>::emplace<SYSTEM>(__VA_ARGS__)
+#define GETSYSTEM(SYSTEM) entt::locator<SYSTEM>::value()
 
 
 Game::Game() {
@@ -30,21 +34,21 @@ Game::~Game() {
 }
 
 void Game::SetupBaseSystems() {
-	entt::locator<SdlContainer>::emplace<SdlContainer>(1200, (float)1200 * 9 / 16);
-	entt::locator<AssetStore>::emplace<AssetStore>();
-	entt::locator<Entities>::emplace<Entities>();
-	entt::locator<LevelLoader>::emplace<LevelLoader>();
+	CREATESYSTEM(SdlContainer, 1200, (float)1200 * 9 / 16);
+	CREATESYSTEM(LevelLoader);
+	CREATESYSTEM(Entities);
+	CREATESYSTEM(AssetStore);
 }
 
 void Game::SetupLowLevelSystems()
 {
-	TransformSystem& transformSystem = entt::locator<TransformSystem>::emplace<TransformSystem>();
+	CREATESYSTEM(TimeSystem);
+	CREATESYSTEM(InputSystem);
+	CREATESYSTEM(RendererSystem);
+	TransformSystem& transformSystem = CREATESYSTEM(TransformSystem);
 	transformSystem.InitDebugDrawer();
-	PhysicsSystem& physics = entt::locator<PhysicsSystem>::emplace<PhysicsSystem>(0, -10);
+	PhysicsSystem& physics = CREATESYSTEM(PhysicsSystem, 0, -10);
 	physics.InitDebugDrawer();
-	entt::locator<RendererSystem>::emplace<RendererSystem>();
-	entt::locator<InputSystem>::emplace<InputSystem>();
-	entt::locator<TimeSystem>::emplace<TimeSystem>();
 
 #ifdef _DEBUG
 	physics.EnableDebug(true);
@@ -56,7 +60,7 @@ void Game::SetupLowLevelSystems()
 
 void Game::LoadAssets()
 {
-	AssetStore& assetStore = entt::locator<AssetStore>::value();
+	AssetStore& assetStore = GETSYSTEM(AssetStore);
 	assetStore.AddTexture("rose", "./assets/Rose.png", 512);
 	assetStore.AddTexture("hornet", "./assets/Hornet_Idle.png", 128);
 	assetStore.AddTexture("block", "./assets/Block.jpg", 64);
@@ -65,10 +69,10 @@ void Game::LoadAssets()
 
 void Game::LoadLevel()
 {
-	LevelLoader& levelLoader = entt::locator<LevelLoader>::value();
+	LevelLoader& levelLoader = GETSYSTEM(LevelLoader);
 	levelLoader.LoadLevel("SavedLevel.yaml");
 	RegisterAllEntities();
-	TransformSystem& transformSystem = entt::locator<TransformSystem>::value();
+	TransformSystem& transformSystem = GETSYSTEM(TransformSystem);
 	transformSystem.InitLoaded();
 }
 
@@ -76,7 +80,7 @@ void Game::Setup()
 {
 	LoadAssets();
 	LoadLevel();
-	RendererSystem& renderer = entt::locator<RendererSystem>::value();
+	RendererSystem& renderer = GETSYSTEM(RendererSystem);
 	renderer.InitLoaded();
 
 

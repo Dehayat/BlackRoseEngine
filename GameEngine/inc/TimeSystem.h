@@ -7,8 +7,10 @@ class TimeSystem {
 private:
 	unsigned int msLastFrame;
 	float dt;
+	bool capFrameRate;
 
 public:
 	TimeSystem();
 	void Update();
+	float GetdeltaTime();
 };

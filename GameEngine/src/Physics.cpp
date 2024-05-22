@@ -1,7 +1,11 @@
 #include "Physics.h"
+
 #include <SDL2/SDL2_gfxPrimitives.h>
-#include "Logger.h"
+
 #include "SdlContainer.h"
+#include "TimeSystem.h"
+
+#include "Logger.h"
 
 PhysicsSystem::PhysicsSystem(float gravityX, float gravityY) {
 	b2Vec2 gravity(gravityX, gravityY);
@@ -58,7 +62,8 @@ void PhysicsSystem::Update()
 		body.body->SetAwake(true);
 	}
 
-	float timeStep = 1.0f / 60.0f;
+	TimeSystem& timeSystem = entt::locator<TimeSystem>::value();
+	float timeStep = timeSystem.GetdeltaTime();
 	int velocityIterations = 10;
 	int positionIterations = 12;
 	physicsWorld->Step(timeStep, velocityIterations, positionIterations);

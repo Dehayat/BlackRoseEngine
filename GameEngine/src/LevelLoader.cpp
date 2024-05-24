@@ -7,6 +7,7 @@
 #include <entt/entt.hpp>
 
 #include "Systems.h"
+#include "FileResource.h"
 
 #include "Components/TransformComponent.h"
 #include "Components/PhysicsBodyComponent.h"
@@ -14,18 +15,8 @@
 #include "Components/CameraComponent.h"
 #include "Components/GUIDComponent.h"
 #include "Components/PlayerComponent.h"
+#include "Components/AnimationComponent.h"
 
-struct FileResource {
-	SDL_RWops* file;
-	FileResource(const std::string& fileName, const std::string how = "r") {
-		file = SDL_RWFromFile(fileName.c_str(), how.c_str());
-	}
-	~FileResource() {
-		if (file != nullptr) {
-			file->close(file);
-		}
-	}
-};
 
 LevelLoader::LevelLoader()
 {
@@ -91,6 +82,10 @@ entt::entity LevelLoader::DeserializeEntity(entt::registry& registry, ryml::Node
 		auto n = node["Player"];
 		ComponentSer<PlayerComponent>::Deserialize(registry, n, entity);
 	}
+	if (node.has_child("Animation")) {
+		auto n = node["Animation"];
+		ComponentSer<AnimationComponent>::Deserialize(registry, n, entity);
+	}
 	return entity;
 }
 void LevelLoader::SaveLevel(const std::string& fileName)
@@ -148,5 +143,10 @@ void LevelLoader::SerializeEntity(entt::registry& registry, ryml::NodeRef parent
 		auto componentNode = node.append_child();
 		componentNode.set_key("PhysicsBody");
 		registry.get<PhysicsBodyComponent>(entity).Serialize(componentNode);
+	}
+	if (registry.any_of<AnimationComponent>(entity)) {
+		auto componentNode = node.append_child();
+		componentNode.set_key("Animation");
+		registry.get<AnimationComponent>(entity).Serialize(componentNode);
 	}
 }

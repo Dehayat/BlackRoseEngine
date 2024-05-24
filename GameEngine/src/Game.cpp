@@ -15,6 +15,7 @@
 #include "Renderer.h"
 #include "InputSystem.h"
 #include "TimeSystem.h"
+#include "Animation/AnimationSystem.h"
 
 Game::Game() {
 	Logger::Log("Game Constructed");
@@ -38,6 +39,7 @@ void Game::SetupLowLevelSystems()
 	CREATESYSTEM(TimeSystem);
 	CREATESYSTEM(InputSystem);
 	CREATESYSTEM(RendererSystem);
+	CREATESYSTEM(AnimationPlayer);
 	TransformSystem& transformSystem = CREATESYSTEM(TransformSystem);
 	transformSystem.InitDebugDrawer();
 	PhysicsSystem& physics = CREATESYSTEM(PhysicsSystem, 0, -10);
@@ -77,6 +79,8 @@ void Game::LoadAssets()
 	assetStore.AddTexture("block", "./assets/Block.jpg", 64);
 	assetStore.AddTexture("big_ground", "./assets/BigGround.png", 128);
 	assetStore.AddTexture("ground", "./assets/Ground.png", 128);
+	assetStore.AddTexture("sekiroIdle", "./assets/Sekiro_Idle.png", 32);
+	assetStore.LoadAnimation("sekiroIdleAnim", "./assets/AnimationData/Sekiro_Idle.anim");
 }
 
 void Game::LoadLevel()
@@ -98,6 +102,7 @@ void Game::Update()
 	GETSYSTEM(TransformSystem).Update();
 	GETSYSTEM(InputSystem).Update();
 	GETSYSTEM(PhysicsSystem).Update();
+	GETSYSTEM(AnimationPlayer).Update();
 }
 
 void Game::Render()

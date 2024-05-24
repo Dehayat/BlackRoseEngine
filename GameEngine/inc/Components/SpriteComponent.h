@@ -1,5 +1,10 @@
 #pragma once
+
 #include <string>
+#include <memory>
+#include<optional>
+
+#include <SDL2/SDL_rect.h>
 #include <ryml/ryml.hpp>
 #include <glm/glm.hpp>
 using namespace glm;
@@ -8,17 +13,21 @@ struct SpriteComponent {
 	std::string sprite;
 	int layer;
 	glm::vec4 color;
+
+	SDL_Rect* sourceRect;
+
 	SpriteComponent(std::string sprite, int layer = 0, vec4 color = vec4(1, 1, 1, 1)) {
 		this->sprite = sprite;
 		this->layer = layer;
 		this->color = color;
-
+		sourceRect = nullptr;
 	}
 	SpriteComponent(ryml::NodeRef node)
 	{
 		this->sprite = "";
 		this->color = vec4(1, 1, 1, 1);
 		this->layer = 0;
+		sourceRect = nullptr;
 		if (node.is_map()) {
 			if (node.has_child("sprite")) {
 				node["sprite"] >> this->sprite;

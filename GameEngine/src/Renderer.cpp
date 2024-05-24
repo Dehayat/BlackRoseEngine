@@ -72,15 +72,22 @@ void RendererSystem::Render()
 
 	auto view2 = registry.view<const SpriteComponent, const TransformComponent>();
 	for (auto entity : view2) {
+		int x = view2.size_hint();
 		const auto& pos = view2.get<TransformComponent>(entity);
 		const auto& sp = view2.get<SpriteComponent>(entity);
 		const auto& texture = assetStore.GetTexture(sp.sprite);
 		if (texture == nullptr) {
 			continue;
 		}
-		int texW;
-		int texH;
-		SDL_QueryTexture(texture->texture, nullptr, nullptr, &texW, &texH);
+		int texW, texH;
+		SDL_Rect* sourceRect = sp.sourceRect;
+		if (sourceRect != nullptr) {
+			texH = sourceRect->h;
+			texW = sourceRect->w;
+		}
+		else {
+			SDL_QueryTexture(texture->texture, nullptr, nullptr, &texW, &texH);
+		}
 		auto viewMatrix = pos.matrix * worldToScreenMatrix;
 		auto position = glm::vec2(viewMatrix[0][2], viewMatrix[1][2]);
 		auto scale = glm::vec2(glm::sqrt(viewMatrix[0][0] * viewMatrix[0][0] + viewMatrix[1][0] * viewMatrix[1][0]), glm::sqrt(viewMatrix[0][1] * viewMatrix[0][1] + viewMatrix[1][1] * viewMatrix[1][1]));
@@ -96,7 +103,7 @@ void RendererSystem::Render()
 		SDL_SetTextureColorMod(texture->texture, sp.color.r * 255, sp.color.g * 255, sp.color.b * 255);
 		SDL_SetTextureBlendMode(texture->texture, SDL_BLENDMODE_BLEND);
 		SDL_SetTextureAlphaMod(texture->texture, sp.color.a * 255);
-		SDL_RenderCopyExF(sdlRenderer, texture->texture, nullptr, &player, rotation, nullptr, SDL_FLIP_NONE);
+		SDL_RenderCopyExF(sdlRenderer, texture->texture, sourceRect, &player, rotation, nullptr, SDL_FLIP_NONE);
 	}
 }
 void RendererSystem::Present()

@@ -1,8 +1,13 @@
 #include "AssetStore.h"
+
 #include <sdl2/SDL_image.h>
 #include <entt/entt.hpp>
-#include "Logger.h"
+
 #include "SdlContainer.h"
+#include "Animation/AnimationImporter.h"
+
+#include "Logger.h"
+
 
 AssetStore::AssetStore()
 {
@@ -23,6 +28,10 @@ void AssetStore::ClearAssets()
 		}
 		textures.clear();
 	}
+	for (auto animation : animations) {
+		delete animation.second;
+	}
+	animations.clear();
 }
 
 void AssetStore::AddTexture(const std::string& assetId, const std::string& filePath, int ppu)
@@ -42,4 +51,17 @@ const TextureAsset* AssetStore::GetTexture(const std::string& assetId) const
 		return nullptr;
 	}
 	return &(textures.at(assetId));
+}
+
+void AssetStore::LoadAnimation(const std::string& assetId, const std::string& filePath)
+{
+	animations.emplace(assetId, AnimationImporter::LoadAnimation(filePath));
+}
+
+Animation* AssetStore::GetAnimation(const std::string& assetId) const
+{
+	if (animations.find(assetId) == animations.end()) {
+		return nullptr;
+	}
+	return animations.at(assetId);
 }

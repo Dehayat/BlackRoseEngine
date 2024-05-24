@@ -129,6 +129,10 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="inc\Animation\AnimationAsset.h" />
+    <ClInclude Include="inc\Animation\AnimationImporter.h" />
+    <ClInclude Include="inc\Animation\AnimationSystem.h" />
+    <ClInclude Include="inc\Components\AnimationComponent.h" />
     <ClInclude Include="inc\Components\CameraComponent.h" />
     <ClInclude Include="inc\Components\PhysicsBodyComponent.h" />
     <ClInclude Include="inc\Components\SpriteComponent.h" />
@@ -138,6 +142,8 @@
     <ClInclude Include="inc\Editor\TransformEditor.h" />
     <ClInclude Include="inc\Entity.h" />
     <ClInclude Include="inc\Components\GUIDComponent.h" />
+    <ClInclude Include="inc\Events\AnimationEvent.h" />
+    <ClInclude Include="inc\FileResource.h" />
     <ClInclude Include="inc\ImguiSystem.h" />
     <ClInclude Include="inc\AssetStore.h" />
     <ClInclude Include="inc\EventSystem\Event.h" />
@@ -155,6 +161,9 @@
     <ClInclude Include="inc\Components\TransformComponent.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\AnimationAsset.cpp" />
+    <ClCompile Include="src\AnimationImporter.cpp" />
+    <ClCompile Include="src\AnimationSystem.cpp" />
     <ClCompile Include="src\TimeSystem.cpp" />
     <ClInclude Include="inc\Systems.h" />
     <ClInclude Include="inc\TimeSystem.h" />

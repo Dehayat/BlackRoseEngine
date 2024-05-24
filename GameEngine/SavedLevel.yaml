@@ -9,7 +9,7 @@
       - 1
     rotation: 0
   Camera:
-    height: 10
+    height: 5
     startCamera: 1
 - Type: Entity
   Guid: 5266576921330336830
@@ -20,9 +20,28 @@
     scale:
       - 1
       - 1
-    rotation: 90
+    rotation: 0
   Sprite:
-    sprite: hornet
+    sprite: sekiroIdle
+    layer: 2
+    color:
+      - 1
+      - 1
+      - 1
+      - 1
+  Animation:
+    animation: sekiroIdleAnim
+- Type: Entity
+  Transform:
+    position:
+      - 0
+      - 0
+    scale:
+      - 1
+      - 1
+    rotation: 0
+  Sprite:
+    sprite: block
     layer: 1
     color:
       - 1

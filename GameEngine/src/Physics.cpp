@@ -105,8 +105,8 @@ void PhysicsSystem::DebugRender(glm::mat3 viewMatrix)
 }
 
 DebugDraw::DebugDraw() :matrix(1) {
-	SdlContainer& sdl = entt::locator<SdlContainer>::value();
-	this->renderer = sdl.GetRenderer();
+	SdlContainer& sdlRenderer = entt::locator<SdlContainer>::value();
+	this->renderer = sdlRenderer.GetRenderer();
 	SetFlags(15);
 }
 void DebugDraw::SetMatrix(glm::mat3 worldToScreen) {

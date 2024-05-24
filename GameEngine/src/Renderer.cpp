@@ -9,8 +9,8 @@
 
 RendererSystem::RendererSystem()
 {
-	SdlContainer& sdl = entt::locator<SdlContainer>::value();
-	this->sdl = sdl.GetRenderer();
+	SdlContainer& sdlRenderer = entt::locator<SdlContainer>::value();
+	this->sdlRenderer = sdlRenderer.GetRenderer();
 	camera = entt::entity(-1);
 	this->worldToScreenMatrix = glm::mat3(1);
 }
@@ -22,8 +22,8 @@ void RendererSystem::Render()
 	Entities& entities = entt::locator<Entities>::value();
 	entt::registry& registry = entities.GetRegistry();
 	AssetStore& assetStore = entt::locator<AssetStore>::value();
-	SDL_SetRenderDrawColor(sdl, 38, 77, 142, SDL_ALPHA_OPAQUE);
-	SDL_RenderClear(sdl);
+	SDL_SetRenderDrawColor(sdlRenderer, 94, 35, 35, SDL_ALPHA_OPAQUE);
+	SDL_RenderClear(sdlRenderer);
 	registry.sort<SpriteComponent>([](const auto& lhs, const auto& rhs) {
 		return lhs.layer < rhs.layer;
 		});
@@ -42,31 +42,31 @@ void RendererSystem::Render()
 		Logger::Error("No Camera Assigned to renderer");
 	}
 #endif
-	auto camMatrix = glm::mat3(
+	auto camToWorldMatrix = glm::mat3(
 		glm::cos(glm::radians(camPos.rotation)), -glm::sin(glm::radians(camPos.rotation)), camPos.position.x,
 		glm::sin(glm::radians(camPos.rotation)), glm::cos(glm::radians(camPos.rotation)), camPos.position.y,
 		0, 0, 1
 	);
-	auto invCamMatrix = glm::inverse(camMatrix);
-	int sizeX, sizeY;
-	SDL_GetRendererOutputSize(sdl, &sizeX, &sizeY);
-	auto windowSize = glm::vec2(sizeX, sizeY);
-	float windowAspect = windowSize.x / windowSize.y;
-	float camWidth = windowAspect * camHeight;
-	float scaleX = windowSize.x / (camWidth);
-	float scaleY = windowSize.y / (camHeight);
+	auto worldToCamMatrix = glm::inverse(camToWorldMatrix);
+	int windowSizeX, windowSizeY;
+	SDL_GetRendererOutputSize(sdlRenderer, &windowSizeX, &windowSizeY);
+	auto windowSize = glm::vec2(windowSizeX, windowSizeY);
+	float windowAspectRatio = windowSize.x / windowSize.y;
+	float camWidth = windowAspectRatio * camHeight;
+	float camToScreenScaleX = windowSize.x / (camWidth);
+	float camToScreenScaleY = windowSize.y / (camHeight);
 
-	auto tr = glm::mat3(
+	auto camToScreenTranslationMatrix = glm::mat3(
 		1, 0, camWidth / 2,
 		0, -1, camHeight / 2,
 		0, 0, 1);
-	auto sc = glm::mat3(
-		scaleX, 0, 0,
-		0, scaleY, 0,
+	auto camToScreenScaleMatrix = glm::mat3(
+		camToScreenScaleX, 0, 0,
+		0, camToScreenScaleY, 0,
 		0, 0, 1);
-	glm::mat3 camToScreen = tr * sc;
-	auto worldToScreen = invCamMatrix * camToScreen;
-	this->worldToScreenMatrix = worldToScreen;
+	glm::mat3 camToScreenMatrix = camToScreenTranslationMatrix * camToScreenScaleMatrix;
+	auto worldToScreenMatrix = worldToCamMatrix * camToScreenMatrix;
+	this->worldToScreenMatrix = worldToScreenMatrix;
 
 
 
@@ -81,11 +81,10 @@ void RendererSystem::Render()
 		int texW;
 		int texH;
 		SDL_QueryTexture(texture->texture, nullptr, nullptr, &texW, &texH);
-		auto viewMatrix = pos.matrix * worldToScreen;
+		auto viewMatrix = pos.matrix * worldToScreenMatrix;
 		auto position = glm::vec2(viewMatrix[0][2], viewMatrix[1][2]);
 		auto scale = glm::vec2(glm::sqrt(viewMatrix[0][0] * viewMatrix[0][0] + viewMatrix[1][0] * viewMatrix[1][0]), glm::sqrt(viewMatrix[0][1] * viewMatrix[0][1] + viewMatrix[1][1] * viewMatrix[1][1]));
 		auto rotation = glm::degrees(std::atan2f(viewMatrix[1][0], viewMatrix[0][0]));
-
 		int spriteSizeX = scale.x * ((float)texW / texture->ppu);
 		int spriteSizeY = scale.y * ((float)texH / texture->ppu);
 		SDL_FRect player = SDL_FRect{
@@ -97,12 +96,12 @@ void RendererSystem::Render()
 		SDL_SetTextureColorMod(texture->texture, sp.color.r * 255, sp.color.g * 255, sp.color.b * 255);
 		SDL_SetTextureBlendMode(texture->texture, SDL_BLENDMODE_BLEND);
 		SDL_SetTextureAlphaMod(texture->texture, sp.color.a * 255);
-		SDL_RenderCopyExF(sdl, texture->texture, nullptr, &player, rotation, nullptr, SDL_FLIP_NONE);
+		SDL_RenderCopyExF(sdlRenderer, texture->texture, nullptr, &player, rotation, nullptr, SDL_FLIP_NONE);
 	}
 }
 void RendererSystem::Present()
 {
-	SDL_RenderPresent(sdl);
+	SDL_RenderPresent(sdlRenderer);
 }
 void RendererSystem::SetCamera(entt::entity cam)
 {

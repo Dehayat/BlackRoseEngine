@@ -1,0 +1,124 @@
+- Type: Entity
+  Guid: 15966386452830160388
+  Transform:
+    position:
+      - -5.956
+      - 3.763
+    scale:
+      - 1
+      - 1
+    rotation: 0
+  Sprite:
+    sprite: rose
+    layer: 0
+    color:
+      - 1
+      - 1
+      - 1
+      - 1
+  PhysicsBody:
+    size:
+      - 1
+      - 1
+- Type: Entity
+  Guid: 6404588655664443746
+  Transform:
+    position:
+      - 0.9
+      - 0
+    scale:
+      - 1
+      - 1
+    rotation: 0
+    parent: 5266576921330336830
+  Sprite:
+    sprite: rose
+    layer: 2
+    color:
+      - 1
+      - 1
+      - 1
+      - 1
+- Type: Entity
+  Guid: 9404588658664444746
+  Transform:
+    position:
+      - 0
+      - 0
+    scale:
+      - 1
+      - 1
+    rotation: 0
+  Camera:
+    height: 10
+    startCamera: 1
+- Type: Entity
+  Guid: 5266576921330336830
+  Transform:
+    position:
+      - -1
+      - 3
+    scale:
+      - 1
+      - 2
+    rotation: 0
+  Sprite:
+    sprite: hornet
+    layer: 1
+    color:
+      - 1
+      - 1
+      - 1
+      - 1
+  Player:
+    speed: 3
+  PhysicsBody:
+    size:
+      - 1.7
+      - 1.7
+- Type: Entity
+  Guid: 7015025454105158843
+  Transform:
+    position:
+      - -2.8
+      - -2.6
+    scale:
+      - 3
+      - 1.4
+    rotation: 0
+  Sprite:
+    sprite: big_ground
+    layer: 0
+    color:
+      - 1
+      - 1
+      - 1
+      - 1
+  PhysicsBody:
+    size:
+      - 30
+      - 2.2
+    isStatic: 1
+- Type: Entity
+  Guid: 3129599052714922375
+  Transform:
+    position:
+      - -7.796
+      - 4.837
+    scale:
+      - 1
+      - 1
+    rotation: -90
+  Sprite:
+    sprite: big_ground
+    layer: 0
+    color:
+      - 1
+      - 1
+      - 1
+      - 1
+  PhysicsBody:
+    size:
+      - 12.987
+      - 1.4
+    isStatic: 1

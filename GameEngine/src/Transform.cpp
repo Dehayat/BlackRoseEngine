@@ -106,7 +106,7 @@ glm::mat3 TransformSystem::CalcMatrix(TransformComponent& trx)
 
 void TransformSystem::InitDebugDrawer()
 {
-	SdlContainer& sdl = entt::locator<SdlContainer>::value();
+	SdlContainer& sdlRenderer = entt::locator<SdlContainer>::value();
 	debugDrawer = new DebugDrawTransform();
 }
 void TransformSystem::EnableDebug(bool enable)
@@ -158,8 +158,8 @@ DebugDrawTransform& TransformSystem::GetDebugRenderer()
 
 DebugDrawTransform::DebugDrawTransform() :matrix(1)
 {
-	SdlContainer& sdl = entt::locator<SdlContainer>::value();
-	this->renderer = sdl.GetRenderer();
+	SdlContainer& sdlRenderer = entt::locator<SdlContainer>::value();
+	this->renderer = sdlRenderer.GetRenderer();
 }
 void DebugDrawTransform::SetMatrix(glm::mat3 worldToScreen)
 {

@@ -10,7 +10,7 @@
 
 class RendererSystem
 {
-	SDL_Renderer* sdl;
+	SDL_Renderer* sdlRenderer;
 	entt::entity camera;
 	glm::mat3 worldToScreenMatrix;
 #ifdef _EDITOR

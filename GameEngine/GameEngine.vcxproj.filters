@@ -129,6 +129,9 @@
     <ClInclude Include="inc\ScriptSystem\ScriptSystem.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="inc\Scripts\SpawnerScript.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Main.cpp">
@@ -182,7 +185,7 @@
     <ClCompile Include="src\EntityEventSystem.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="inc\ScriptSystem\ScriptSystem.cpp">
+    <ClCompile Include="src\ScriptSystem.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

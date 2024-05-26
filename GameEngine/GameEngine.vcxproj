@@ -164,9 +164,10 @@
     <ClInclude Include="inc\InputSystem.h" />
     <ClInclude Include="inc\LevelLoader.h" />
     <ClInclude Include="inc\Components\TransformComponent.h" />
+    <ClInclude Include="inc\Scripts\SpawnerScript.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="inc\ScriptSystem\ScriptSystem.cpp" />
+    <ClCompile Include="src\ScriptSystem.cpp" />
     <ClCompile Include="src\EntityEventSystem.cpp" />
     <ClCompile Include="src\AnimationAsset.cpp" />
     <ClCompile Include="src\AnimationImporter.cpp" />

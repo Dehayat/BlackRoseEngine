@@ -135,6 +135,7 @@
     <ClInclude Include="inc\Components\AnimationComponent.h" />
     <ClInclude Include="inc\Components\CameraComponent.h" />
     <ClInclude Include="inc\Components\PhysicsBodyComponent.h" />
+    <ClInclude Include="inc\Components\ScriptComponent.h" />
     <ClInclude Include="inc\Components\SpriteComponent.h" />
     <ClInclude Include="inc\Editor\LevelTree.h" />
     <ClInclude Include="inc\Editor\PhysicsEditor.h" />
@@ -156,6 +157,8 @@
     <ClInclude Include="inc\Logger.h" />
     <ClInclude Include="inc\Physics.h" />
     <ClInclude Include="inc\Components\PlayerComponent.h" />
+    <ClInclude Include="inc\ScriptSystem\Script.h" />
+    <ClInclude Include="inc\ScriptSystem\ScriptSystem.h" />
     <ClInclude Include="inc\SdlContainer.h" />
     <ClInclude Include="inc\Renderer.h" />
     <ClInclude Include="inc\InputSystem.h" />
@@ -163,6 +166,7 @@
     <ClInclude Include="inc\Components\TransformComponent.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="inc\ScriptSystem\ScriptSystem.cpp" />
     <ClCompile Include="src\EntityEventSystem.cpp" />
     <ClCompile Include="src\AnimationAsset.cpp" />
     <ClCompile Include="src\AnimationImporter.cpp" />

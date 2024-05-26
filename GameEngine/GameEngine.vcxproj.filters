@@ -120,6 +120,15 @@
     <ClInclude Include="inc\Events\EntityEvent.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="inc\Components\ScriptComponent.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="inc\ScriptSystem\Script.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="inc\ScriptSystem\ScriptSystem.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Main.cpp">
@@ -171,6 +180,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\EntityEventSystem.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="inc\ScriptSystem\ScriptSystem.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

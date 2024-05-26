@@ -16,6 +16,7 @@
 #include "Components/GUIDComponent.h"
 #include "Components/PlayerComponent.h"
 #include "Components/AnimationComponent.h"
+#include "Components/ScriptComponent.h"
 
 
 LevelLoader::LevelLoader()
@@ -85,6 +86,10 @@ entt::entity LevelLoader::DeserializeEntity(entt::registry& registry, ryml::Node
 	if (node.has_child("Animation")) {
 		auto n = node["Animation"];
 		ComponentSer<AnimationComponent>::Deserialize(registry, n, entity);
+	}
+	if (node.has_child("Script")) {
+		auto n = node["Script"];
+		ComponentSer<ScriptComponent>::Deserialize(registry, n, entity);
 	}
 	return entity;
 }

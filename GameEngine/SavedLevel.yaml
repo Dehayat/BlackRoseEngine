@@ -67,3 +67,4 @@
       - 1
   Animation:
     animation: sekiroIdleAnim
+  Script:

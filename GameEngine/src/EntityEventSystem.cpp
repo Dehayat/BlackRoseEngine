@@ -1,13 +1,26 @@
 #include "EventSystem/EntityEventSystem.h"
 
+#include <entt/entt.hpp>
+
+#include "Entity.h"
+
+#include "Systems.h"
+
+#include "Components/ScriptComponent.h"
+
 #include "Logger.h"
 
 void EntityEventSystem::Update()
 {
+	auto& registry = GETSYSTEM(Entities).GetRegistry();
+
 	while (!eventQueue.empty()) {
-		auto &entityEvent = eventQueue.front();
-		Logger::Log(entityEvent.name);
-		//TODO: notify things about entity events (scripts,etc..)
+		auto& entityEvent = eventQueue.front();
+		auto scriptComponent = registry.try_get<ScriptComponent>(entityEvent.entity);
+		if (scriptComponent != nullptr) {
+			scriptComponent->script->OnEvent(entityEvent);
+
+		}
 		eventQueue.pop();
 	}
 }

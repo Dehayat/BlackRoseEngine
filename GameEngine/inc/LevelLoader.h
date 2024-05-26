@@ -5,8 +5,8 @@
 
 template<typename T> class ComponentSer {
 public:
-	static T Deserialize(entt::registry& registry, ryml::NodeRef node, entt::entity componentOwner) {
-		return registry.emplace<T>(componentOwner, node);
+	static void Deserialize(entt::registry& registry, ryml::NodeRef node, entt::entity componentOwner) {
+		registry.emplace<T>(componentOwner, node);
 	}
 };
 

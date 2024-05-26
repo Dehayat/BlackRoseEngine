@@ -1,12 +1,9 @@
 #pragma once
-#include "EventSystem/Event.h"
+#include "Events/EntityEvent.h"
 
 #include <string>
 
-class AnimationEvent :public Event {
+class AnimationEvent :public EntityEvent {
 public:
-	std::string name;
-	AnimationEvent(const std::string& name) {
-		this->name = name;
-	}
+	AnimationEvent(entt::entity entity, const std::string& eventName) :EntityEvent(entity,eventName){}
 };

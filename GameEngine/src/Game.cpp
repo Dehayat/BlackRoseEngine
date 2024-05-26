@@ -16,6 +16,7 @@
 #include "InputSystem.h"
 #include "TimeSystem.h"
 #include "Animation/AnimationSystem.h"
+#include "EventSystem/EntityEventSystem.h"
 
 Game::Game() {
 	Logger::Log("Game Constructed");
@@ -44,6 +45,7 @@ void Game::SetupLowLevelSystems()
 	transformSystem.InitDebugDrawer();
 	PhysicsSystem& physics = CREATESYSTEM(PhysicsSystem, 0, -10);
 	physics.InitDebugDrawer();
+	CREATESYSTEM(EntityEventSystem);
 
 #ifdef _DEBUG
 	physics.EnableDebug(true);
@@ -103,6 +105,7 @@ void Game::Update()
 	GETSYSTEM(InputSystem).Update();
 	GETSYSTEM(PhysicsSystem).Update();
 	GETSYSTEM(AnimationPlayer).Update();
+	GETSYSTEM(EntityEventSystem).Update();
 }
 
 void Game::Render()

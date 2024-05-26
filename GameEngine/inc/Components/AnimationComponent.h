@@ -87,11 +87,11 @@ struct AnimationComponent {
 		}
 	}
 
-	bool JustFinished() {
+	bool JustFinished() const {
 		return justFinished;
 	}
 
-	bool IsEventQueued() {
+	bool IsEventQueued() const {
 		return !eventQueue.empty();
 	}
 

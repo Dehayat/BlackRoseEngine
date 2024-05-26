@@ -23,12 +23,12 @@ AssetStore::~AssetStore()
 void AssetStore::ClearAssets()
 {
 	if (SDL_WasInit(0) != 0) {
-		for (auto texture : textures) {
+		for (auto& texture : textures) {
 			SDL_DestroyTexture(texture.second.texture);
 		}
 		textures.clear();
 	}
-	for (auto animation : animations) {
+	for (auto &animation : animations) {
 		delete animation.second;
 	}
 	animations.clear();

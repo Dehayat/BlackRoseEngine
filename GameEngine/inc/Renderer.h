@@ -23,9 +23,9 @@ public:
 	void Render();
 	void Present();
 	void SetCamera(entt::entity cam);
-	entt::entity GetCamera();
-	const glm::mat3 GetWorldToScreenMatrix();
-	const glm::mat3 GetScreenToWorldMatrix();
+	entt::entity GetCamera() const;
+	const glm::mat3 GetWorldToScreenMatrix() const;
+	const glm::mat3 GetScreenToWorldMatrix() const;
 	void InitLoaded();
 #ifdef _EDITOR
 	TransformComponent& GetEditorCamTrx() {

@@ -11,11 +11,7 @@
 
 class AnimationPlayer {
 
-private:
-	EventBus* eventBus;
-
 public:
 	AnimationPlayer();
-	void SetEventBus(EventBus* eventBus);
 	void Update();
 };

@@ -142,7 +142,9 @@
     <ClInclude Include="inc\Editor\TransformEditor.h" />
     <ClInclude Include="inc\Entity.h" />
     <ClInclude Include="inc\Components\GUIDComponent.h" />
+    <ClInclude Include="inc\EventSystem\EntityEventSystem.h" />
     <ClInclude Include="inc\Events\AnimationEvent.h" />
+    <ClInclude Include="inc\Events\EntityEvent.h" />
     <ClInclude Include="inc\FileResource.h" />
     <ClInclude Include="inc\ImguiSystem.h" />
     <ClInclude Include="inc\AssetStore.h" />
@@ -161,6 +163,7 @@
     <ClInclude Include="inc\Components\TransformComponent.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\EntityEventSystem.cpp" />
     <ClCompile Include="src\AnimationAsset.cpp" />
     <ClCompile Include="src\AnimationImporter.cpp" />
     <ClCompile Include="src\AnimationSystem.cpp" />

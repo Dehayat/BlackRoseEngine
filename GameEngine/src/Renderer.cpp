@@ -114,15 +114,15 @@ void RendererSystem::SetCamera(entt::entity cam)
 {
 	this->camera = cam;
 }
-entt::entity RendererSystem::GetCamera()
+entt::entity RendererSystem::GetCamera() const
 {
 	return camera;
 }
-const glm::mat3 RendererSystem::GetWorldToScreenMatrix()
+const glm::mat3 RendererSystem::GetWorldToScreenMatrix() const
 {
 	return worldToScreenMatrix;
 }
-const glm::mat3 RendererSystem::GetScreenToWorldMatrix()
+const glm::mat3 RendererSystem::GetScreenToWorldMatrix() const
 {
 	return glm::inverse(worldToScreenMatrix);
 }

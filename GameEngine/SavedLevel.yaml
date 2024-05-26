@@ -48,3 +48,22 @@
       - 1
       - 1
       - 1
+- Type: Entity
+  Transform:
+    position:
+      - 2
+      - 0
+    scale:
+      - 1
+      - 1
+    rotation: 0
+  Sprite:
+    sprite: sekiroIdle
+    layer: 2
+    color:
+      - 1
+      - 1
+      - 1
+      - 1
+  Animation:
+    animation: sekiroIdleAnim

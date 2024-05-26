@@ -63,6 +63,5 @@ Animation* AnimationImporter::LoadAnimation(const std::string& fileName) {
 		animation->AddEvent(new AnimationEventData{ eventTime,eventName });
 		eventPos = fileString.find("Event", eventPos + 1);
 	}
-	animation->Reset();
 	return animation;
 }

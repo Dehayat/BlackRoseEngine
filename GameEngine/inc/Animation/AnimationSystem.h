@@ -7,10 +7,11 @@
 #include "EventSystem/EventBus.h"
 #include "Animation/AnimationAsset.h"
 
+#include "Components/AnimationComponent.h"
+
 class AnimationPlayer {
 
 private:
-	Animation* currentAnimation;
 	EventBus* eventBus;
 
 public:

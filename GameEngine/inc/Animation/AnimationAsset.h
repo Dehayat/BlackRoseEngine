@@ -22,31 +22,18 @@ public:
 class Animation {
 
 private:
-	float currentFrameTime;
 	int spriteFrameWidth;
 	int spriteFrameHeight;
-	std::vector<Frame*> frames;
-	std::vector<AnimationEventData*> animationEvents;
-	std::queue<std::string> eventQueue;
-	int currentFrame;
-	bool justFinished;
-	bool isOver;
-	int nextEventIndex;
-	float currentAnimationTime;
 
-	bool AllEventsDone();
 
 public:
 	std::string texture;
 	bool isLooping;
+	std::vector<Frame*> frames;
+	std::vector<AnimationEventData*> animationEvents;
 
 	Animation(int spriteWidth, int spriteHeight, std::string spriteTexture, bool isLooping = false);
-	SDL_Rect GetSourceRect();
-	void Update(float dt);
-	void Reset();
+	SDL_Rect GetSourceRect(int frame);
 	void AddFrame(Frame* frame);
 	void AddEvent(AnimationEventData* animationEvent);
-	bool JustFinished();
-	bool IsEventQueued();
-	std::string PopEvent();
 };

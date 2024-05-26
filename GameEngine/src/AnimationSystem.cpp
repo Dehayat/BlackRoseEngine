@@ -14,7 +14,6 @@
 #include "Components/SpriteComponent.h"
 
 AnimationPlayer::AnimationPlayer() {
-	currentAnimation = nullptr;
 	eventBus = nullptr;
 }
 
@@ -31,18 +30,18 @@ void AnimationPlayer::Update() {
 	for (auto entity : view) {
 		auto& animationComponent = view.get<AnimationComponent>(entity);
 		auto& spriteComponent = view.get<SpriteComponent>(entity);
+		animationComponent.Update(dt);
 		auto animation = assetStore.GetAnimation(animationComponent.animation);
-		animation->Update(dt);
 		spriteComponent.sprite = animation->texture;
 		if (spriteComponent.sourceRect != nullptr) {
 			delete spriteComponent.sourceRect;
 		}
-		spriteComponent.sourceRect = new SDL_Rect(animation->GetSourceRect());
-		while (animation->IsEventQueued()) {
-			std::string eventName = animation->PopEvent();
+		spriteComponent.sourceRect = new SDL_Rect(animation->GetSourceRect(animationComponent.currentFrame));
+		while (animationComponent.IsEventQueued()) {
+			std::string eventName = animationComponent.PopEvent();
 			eventBus->EmitEvent<AnimationEvent>(eventName);
 		}
-		if (animation->JustFinished() && eventBus != nullptr) {
+		if (animationComponent.JustFinished() && eventBus != nullptr) {
 			eventBus->EmitEvent<AnimationEvent>("AnimationFinished");
 		}
 	}

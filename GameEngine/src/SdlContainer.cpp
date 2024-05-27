@@ -2,10 +2,7 @@
 
 SdlContainer::SdlContainer(int windowWidth, int windowHeight)
 {
-	auto res = SDL_Init(SDL_INIT_EVERYTHING);
-
-	SDL_DisplayMode displayMode;
-	SDL_GetCurrentDisplayMode(0, &displayMode);
+	SDL_Init(SDL_INIT_EVERYTHING);
 	window = SDL_CreateWindow(
 		"Rose Engine",
 		SDL_WINDOWPOS_CENTERED,

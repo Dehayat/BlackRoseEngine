@@ -5,6 +5,7 @@
 #include "SdlContainer.h"
 #include "TimeSystem.h"
 
+#include "Systems.h"
 #include "Logger.h"
 
 PhysicsSystem::PhysicsSystem(float gravityX, float gravityY) {
@@ -12,8 +13,7 @@ PhysicsSystem::PhysicsSystem(float gravityX, float gravityY) {
 	physicsWorld = std::make_unique<b2World>(gravity);
 	drawDebug = false;
 	debugDrawer = nullptr;
-	Entities& entities = entt::locator<Entities>::value();
-	entt::registry& registry = entities.GetRegistry();
+	entt::registry& registry = GETSYSTEM(Entities).GetRegistry();
 	registry.on_construct<PhysicsBodyComponent>().connect<&PhysicsSystem::PhysicsBodyCreated>(this);
 	registry.on_destroy<PhysicsBodyComponent>().connect<&PhysicsSystem::PhysicsBodyDestroyed>(this);
 }
@@ -62,7 +62,7 @@ void PhysicsSystem::Update()
 		body.body->SetAwake(true);
 	}
 
-	TimeSystem& timeSystem = entt::locator<TimeSystem>::value();
+	TimeSystem& timeSystem = GETSYSTEM(TimeSystem);
 	float timeStep = timeSystem.GetdeltaTime();
 	int velocityIterations = 10;
 	int positionIterations = 12;

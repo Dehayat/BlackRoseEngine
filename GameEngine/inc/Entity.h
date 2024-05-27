@@ -1,5 +1,7 @@
 #pragma once
 #include <unordered_map>
+#include <random>
+
 #include <entt/entity/entity.hpp>
 
 typedef std::uint64_t Guid;
@@ -12,6 +14,9 @@ inline static entt::entity NoEntity() {
 class Entities {
 private:
 	EntityMap allEntities;
+	std::random_device rd;
+	std::mt19937_64 gen;
+	std::uniform_int_distribution<Guid> dis;
 
 public:
 	Entities();
@@ -23,4 +28,7 @@ public:
 	entt::entity CreateEntity();
 	entt::entity CreateEntity(Guid guid);
 	void DestroyEntity(entt::entity entity);
+	Guid GenerateGuid() {
+		return dis(gen);
+	}
 };

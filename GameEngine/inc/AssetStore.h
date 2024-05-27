@@ -14,7 +14,7 @@ struct TextureAsset {
 
 class AssetStore {
 private:
-	std::map<std::string, TextureAsset> textures;
+	std::map<std::string, TextureAsset*> textures;
 	std::map<std::string, Animation*> animations;
 
 public:

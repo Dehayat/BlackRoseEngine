@@ -1,15 +1,18 @@
 #include "Transform.h"
 #include <SDL2/SDL2_gfxPrimitives.h>
-#include "Entity.h"
+
 #include "SdlContainer.h"
+
+#include "Entity.h"
+
+#include "Systems.h"
 
 TransformSystem::TransformSystem()
 {
 	debugDrawer = nullptr;
 	drawDebug = false;
 
-	Entities& entities = entt::locator<Entities>::value();
-	entt::registry& registry = entities.GetRegistry();
+	entt::registry& registry = GETSYSTEM(Entities).GetRegistry();
 	registry.on_construct<TransformComponent>().connect<&TransformSystem::TransformCreated>(this);
 }
 TransformSystem::~TransformSystem()
@@ -38,8 +41,7 @@ void TransformSystem::TransformCreated(entt::registry& registry, entt::entity en
 }
 void TransformSystem::Update()
 {
-	Entities& entities = entt::locator<Entities>::value();
-	entt::registry& registry = entities.GetRegistry();
+	entt::registry& registry = GETSYSTEM(Entities).GetRegistry();
 	auto view3 = registry.view<TransformComponent>();
 
 	registry.sort<TransformComponent>([](const auto& lhs, const auto& rhs) {

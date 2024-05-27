@@ -31,7 +31,7 @@ struct TransformComponent {
 		this->hasParent = false;
 		this->parentGUID = -1;
 	}
-	TransformComponent(ryml::NodeRef node) {
+	TransformComponent(ryml::NodeRef &node) {
 		this->position = vec2(0, 0);
 		this->scale = vec2(1, 1);
 		this->rotation = 0;

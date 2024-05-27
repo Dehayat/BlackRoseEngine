@@ -39,7 +39,7 @@ void LevelLoader::LoadLevel(const std::string& fileName)
 	auto root = tree.rootref();
 	DeserializeLevel(registry, root);
 }
-void LevelLoader::DeserializeLevel(entt::registry& registry, ryml::NodeRef node)
+void LevelLoader::DeserializeLevel(entt::registry& registry, ryml::NodeRef& node)
 {
 	auto child = node.first_child();
 	for (int i = 0; i < node.num_children(); i++) {
@@ -51,16 +51,17 @@ void LevelLoader::DeserializeLevel(entt::registry& registry, ryml::NodeRef node)
 		child = child.next_sibling();
 	}
 }
-entt::entity LevelLoader::DeserializeEntity(entt::registry& registry, ryml::NodeRef node)
+entt::entity LevelLoader::DeserializeEntity(entt::registry& registry,ryml::NodeRef& node)
 {
 	entt::entity entity;
-	auto guid = GUIDComponent::Generate();
+	auto& entities = GETSYSTEM(Entities);
+	auto guid = entities.GenerateGuid();
 	if (node.has_child("Guid")) {
 		node["Guid"] >> guid;
-		entity = GETSYSTEM(Entities).CreateEntity(guid);
+		entity = entities.CreateEntity(guid);
 	}
 	else {
-		entity = GETSYSTEM(Entities).CreateEntity();
+		entity = entities.CreateEntity();
 	}
 	Logger::Log("Entity created");
 	if (node.has_child("Transform")) {
@@ -108,7 +109,7 @@ void LevelLoader::SaveLevel(const std::string& fileName)
 	std::string buffer = ryml::emitrs_yaml<std::string>(tree);
 	SDL_RWwrite(fileHandle.file, buffer.data(), 1, buffer.size());
 }
-void LevelLoader::SerializeLevel(entt::registry& registry, ryml::NodeRef node)
+void LevelLoader::SerializeLevel(entt::registry& registry, ryml::NodeRef& node)
 {
 	node |= ryml::SEQ;
 	auto view = registry.view<GUIDComponent>();
@@ -116,7 +117,7 @@ void LevelLoader::SerializeLevel(entt::registry& registry, ryml::NodeRef node)
 		SerializeEntity(registry, node, entity);
 	}
 }
-void LevelLoader::SerializeEntity(entt::registry& registry, ryml::NodeRef parent, entt::entity entity)
+void LevelLoader::SerializeEntity(entt::registry& registry, ryml::NodeRef& parent, entt::entity entity)
 {
 	auto node = parent.append_child();
 	node |= ryml::MAP;

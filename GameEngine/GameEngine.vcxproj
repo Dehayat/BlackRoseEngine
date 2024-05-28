@@ -137,6 +137,7 @@
     <ClInclude Include="inc\Components\PhysicsBodyComponent.h" />
     <ClInclude Include="inc\Components\ScriptComponent.h" />
     <ClInclude Include="inc\Components\SpriteComponent.h" />
+    <ClInclude Include="inc\Editor\Editor.h" />
     <ClInclude Include="inc\Editor\LevelTree.h" />
     <ClInclude Include="inc\Editor\PhysicsEditor.h" />
     <ClInclude Include="inc\Editor\RenderEditor.h" />
@@ -167,6 +168,7 @@
     <ClInclude Include="inc\Scripts\SpawnerScript.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\Editor.cpp" />
     <ClCompile Include="src\ScriptSystem.cpp" />
     <ClCompile Include="src\EntityEventSystem.cpp" />
     <ClCompile Include="src\AnimationAsset.cpp" />

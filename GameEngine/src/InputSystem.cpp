@@ -19,9 +19,6 @@ InputSystem::~InputSystem()
 
 void InputSystem::Update() {
 	SDL_Window*  window = GETSYSTEM(SdlContainer).GetWindow();
-	if (SDL_GetKeyboardFocus() != window) {
-		return;
-	}
 	auto keyArray = SDL_GetKeyboardState(nullptr);
 	for (int i = 0;i < keyCount;i++) {
 		if (keyArray[keys[i]] == 1) {

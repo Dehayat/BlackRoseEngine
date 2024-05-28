@@ -19,10 +19,17 @@
 #include "EventSystem/EntityEventSystem.h"
 #include "ScriptSystem/ScriptSystem.h"
 
+#ifdef _EDITOR
+#include "Editor/Editor.h"
+#endif
+
 Game::Game() {
 	Logger::Log("Game Constructed");
 	SetupBaseSystems();
 	SetupLowLevelSystems();
+#ifdef _EDITOR
+	CREATESYSTEM(Editor);
+#endif
 }
 
 Game::~Game() {
@@ -71,8 +78,10 @@ void Game::Setup()
 {
 	LoadAssets();
 	LoadLevel();
-	RendererSystem& renderer = GETSYSTEM(RendererSystem);
-	renderer.InitLoaded();
+	GETSYSTEM(RendererSystem).InitLoaded();
+#ifdef _EDITOR
+	GETSYSTEM(Editor).Reset();
+#endif
 }
 
 void Game::LoadAssets()
@@ -101,7 +110,13 @@ void Game::Update()
 	if (exitGame) {
 		isRunning = false;
 	}
-
+#ifdef _EDITOR
+	GETSYSTEM(TransformSystem).Update();
+	GETSYSTEM(InputSystem).Update();
+	GETSYSTEM(AnimationPlayer).Update();
+	GETSYSTEM(EntityEventSystem).Update();
+	GETSYSTEM(Editor).Update();
+#else
 	GETSYSTEM(TimeSystem).Update();
 	GETSYSTEM(TransformSystem).Update();
 	GETSYSTEM(InputSystem).Update();
@@ -109,6 +124,7 @@ void Game::Update()
 	GETSYSTEM(AnimationPlayer).Update();
 	GETSYSTEM(EntityEventSystem).Update();
 	GETSYSTEM(ScriptSystem).Update();
+#endif
 }
 
 void Game::Render()
@@ -123,5 +139,13 @@ void Game::Render()
 	transformSystem.GetDebugRenderer().SetMatrix(renderer.GetWorldToScreenMatrix());
 	transformSystem.DebugRender(renderer.GetWorldToScreenMatrix());
 #endif // _DEBUG
+
+#ifdef _EDITOR
+	GETSYSTEM(Editor).RenderGizmos();
+#endif
 	renderer.Present();
+
+#ifdef _EDITOR
+	GETSYSTEM(Editor).RenderEditor();
+#endif
 }

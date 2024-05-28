@@ -4,7 +4,6 @@ class Game {
 private:
 	bool isRunning;
 
-
 public:
 	Game();
 	~Game();

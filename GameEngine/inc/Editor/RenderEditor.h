@@ -2,8 +2,12 @@
 #ifdef _EDITOR
 #include <imgui.h>
 #include <SDL2/SDL2_gfxPrimitives.h>
+
+#include "Renderer.h"
+
 #include "Components/SpriteComponent.h"
 #include "Components/CameraComponent.h"
+
 class SpriteEditor {
 	static int ResizeStringCallback(ImGuiInputTextCallbackData* data)
 	{

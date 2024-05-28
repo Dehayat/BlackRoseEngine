@@ -40,6 +40,9 @@ glm::ivec2 SdlContainer::GetWindowSize()
 }
 bool SdlContainer::ProcessEvents()
 {
+	if (SDL_GetKeyboardFocus() != window) {
+		return false;
+	}
 	bool exit = false;
 	SDL_Event sdlEvent;
 	while (SDL_PollEvent(&sdlEvent)) {

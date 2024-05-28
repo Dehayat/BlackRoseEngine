@@ -1,5 +1,4 @@
 #pragma once
-#ifdef _EDITOR
 #include <imgui.h>
 #include <SDL2/SDL2_gfxPrimitives.h>
 
@@ -74,4 +73,3 @@ public:
 		}
 	}
 };
-#endif

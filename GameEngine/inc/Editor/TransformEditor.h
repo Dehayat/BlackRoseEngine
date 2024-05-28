@@ -1,5 +1,4 @@
 #pragma once
-#ifdef _EDITOR
 #include "Transform.h"
 
 class TransformEditor {
@@ -26,4 +25,3 @@ public:
 		ImGui::DragFloat("Rotation", &trx.rotation, 5.f);
 	}
 };
-#endif

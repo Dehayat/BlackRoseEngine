@@ -1,5 +1,4 @@
 #pragma once
-#ifdef _EDITOR
 #include "Components/PhysicsBodyComponent.h"
 #include "Components/TransformComponent.h"
 class PhysicsEditor {
@@ -24,4 +23,3 @@ public:
 		}
 	}
 };
-#endif

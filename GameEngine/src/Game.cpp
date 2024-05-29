@@ -106,7 +106,11 @@ void Game::LoadLevel()
 
 void Game::Update()
 {
+#ifdef _EDITOR
+	bool exitGame = GETSYSTEM(Editor).ProcessEvents();
+#else
 	bool exitGame = GETSYSTEM(SdlContainer).ProcessEvents();
+#endif
 	if (exitGame) {
 		isRunning = false;
 	}
@@ -142,10 +146,7 @@ void Game::Render()
 
 #ifdef _EDITOR
 	GETSYSTEM(Editor).RenderGizmos();
-#endif
-	renderer.Present();
-
-#ifdef _EDITOR
 	GETSYSTEM(Editor).RenderEditor();
 #endif
+	renderer.Present();
 }

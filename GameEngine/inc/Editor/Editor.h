@@ -8,6 +8,8 @@ class Editor {
 	SDL_Renderer* renderer;
 	LevelEditor::LevelTree levelTree;
 	entt::entity selectedEntity;
+	entt::entity createdEntity;
+	int selectedTool;
 	void SetupImgui();
 	void CloseImgui();
 	void PresentImGui();
@@ -17,6 +19,7 @@ public:
 	~Editor();
 	void Reset();
 	void Update();
+	bool ProcessEvents();
 	void RenderGizmos();
 	void RenderEditor();
 };

@@ -6,6 +6,10 @@
 #include <glm/glm.hpp>
 
 #include "SdlContainer.h"
+#include "LevelLoader.h"
+
+#include "InputSystem.h"
+#include "Renderer.h"
 
 #include "Systems.h"
 
@@ -30,8 +34,10 @@ void Editor::SetupImgui()
 	auto& sdl = GETSYSTEM(SdlContainer);
 	SDL_RenderSetVSync(sdl.GetRenderer(), 1);
 
-	window = SDL_CreateWindow("Imgui Window", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 500, 500, SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE);
-	renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_PRESENTVSYNC | SDL_RENDERER_ACCELERATED);
+	//window = SDL_CreateWindow("Imgui Window", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 500, 500, SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE);
+	//renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_PRESENTVSYNC | SDL_RENDERER_ACCELERATED);
+	window = sdl.GetWindow();
+	renderer = sdl.GetRenderer();
 	SDL_SetHint(SDL_HINT_IME_SHOW_UI, "1");
 	IMGUI_CHECKVERSION();
 	auto imguiContext = ImGui::CreateContext();
@@ -49,6 +55,8 @@ Editor::~Editor()
 
 void Editor::Reset()
 {
+	selectedEntity = entt::entity(-1);
+	createdEntity = entt::entity(-1);
 	levelTree.Init();
 }
 
@@ -65,13 +73,60 @@ void Editor::CloseImgui()
 
 void Editor::Update()
 {
-	SDL_Event sdlEvent;
-	if (SDL_GetKeyboardFocus() != window) {
-		return;
+	auto& entities = GETSYSTEM(Entities);
+	auto& registry = entities.GetRegistry();
+	auto& input = GETSYSTEM(InputSystem);
+	auto& gameRenderer = GETSYSTEM(RendererSystem);
+
+	if (selectedTool == 0) {
+		auto mousePos = glm::vec3(input.GetMousePosition(), 1) * gameRenderer.GetScreenToWorldMatrix();
+		if (input.GetMouseButton(LEFT_BUTTON).justPressed) {
+			Logger::Log("entity created");
+			createdEntity = entities.CreateEntity();
+			levelTree.AddEntity(createdEntity);
+			selectedEntity = createdEntity;
+			registry.emplace<TransformComponent>(createdEntity, glm::vec2(mousePos.x, mousePos.y), glm::vec2(1, 1), 0);
+		}
+		if (createdEntity != entt::entity(-1)) {
+			if (input.GetMouseButton(LEFT_BUTTON).justReleased) {
+				createdEntity = entt::entity(-1);
+			}
+			if (input.GetMouseButton(LEFT_BUTTON).isPressed) {
+				registry.get<TransformComponent>(createdEntity).position = glm::vec2(mousePos.x, mousePos.y);
+			}
+		}
 	}
+	if (selectedTool == 1) {
+		auto mousePos = glm::vec3(input.GetMousePosition(), 1) * gameRenderer.GetScreenToWorldMatrix();
+		if (selectedEntity != entt::entity(-1)) {
+			if (input.GetMouseButton(LEFT_BUTTON).isPressed) {
+				registry.get<TransformComponent>(selectedEntity).position = glm::vec2(mousePos.x, mousePos.y);
+			}
+		}
+	}
+}
+
+bool Editor::ProcessEvents()
+{
+	bool exit = false;
+	SDL_Event sdlEvent;
 	while (SDL_PollEvent(&sdlEvent)) {
+		switch (sdlEvent.type)
+		{
+		case SDL_QUIT:
+			exit = true;
+			break;
+		case SDL_KEYDOWN:
+			if (sdlEvent.key.keysym.sym == SDLK_ESCAPE) {
+				exit = true;
+			}
+			break;
+		default:
+			break;
+		}
 		ImGui_ImplSDL2_ProcessEvent(&sdlEvent);
 	}
+	return exit;
 }
 
 void Editor::RenderGizmos()
@@ -83,8 +138,24 @@ void Editor::RenderEditor()
 {
 	RenderImgui();
 
+	auto& entities = GETSYSTEM(Entities);
+	auto& registry = entities.GetRegistry();
+	auto& input = GETSYSTEM(InputSystem);
+	auto& gameRenderer = GETSYSTEM(RendererSystem);
+	auto& levelLoader = GETSYSTEM(LevelLoader);
+
+	ImGui::SetNextWindowSize(ImVec2(200, 400));
+	ImGui::Begin("Tools");
+	const char* listbox_items[] = { "Create Entity","Move Entity" };
+	ImGui::ListBox("Tool", &selectedTool, listbox_items, IM_ARRAYSIZE(listbox_items), 2);
+
+	auto view = registry.view<const GUIDComponent, TransformComponent>();
+	if (ImGui::Button("Save Level")) {
+		levelLoader.SaveLevel("SavedLevel.yaml");
+	}
+	ImGui::End();
+
 	//ImGui::ShowDemoWindow(nullptr);
-	auto& registry = GETSYSTEM(Entities).GetRegistry();
 	if (selectedEntity != entt::entity(-1)) {
 		if (registry.any_of<TransformComponent>(selectedEntity)) {
 			ImGui::Begin("Transform component");
@@ -133,7 +204,7 @@ void Editor::RenderEditor()
 		}
 	}
 
-	levelTree.Editor(selectedEntity,entityList);
+	levelTree.Editor(selectedEntity, entityList);
 
 	PresentImGui();
 }
@@ -141,11 +212,11 @@ void Editor::RenderEditor()
 void Editor::PresentImGui()
 {
 	ImGui::Render();
-	SDL_SetRenderTarget(renderer, nullptr);
-	SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
-	SDL_RenderClear(renderer);
+	//SDL_SetRenderTarget(renderer, nullptr);
+	//SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
+	//SDL_RenderClear(renderer);
 	ImGui_ImplSDLRenderer2_RenderDrawData(ImGui::GetDrawData());
-	SDL_RenderPresent(renderer);
+	//SDL_RenderPresent(renderer);
 }
 
 void Editor::RenderImgui()

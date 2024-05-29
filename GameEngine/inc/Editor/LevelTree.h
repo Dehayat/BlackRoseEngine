@@ -59,12 +59,6 @@ namespace LevelEditor {
 		std::unordered_map<entt::entity, LevelNode*> nodesMap;
 		ChildCommand currentCommand;
 
-		LevelNode* AddEntity(entt::entity entity) {
-			auto node = new LevelNode(entity, root);
-			root->children.insert(node);
-			nodesMap[entity] = node;
-			return node;
-		}
 		LevelNode* InitParentRecursive(entt::registry& registry, entt::entity entity) {
 			if (nodesMap.find(entity) == nodesMap.end()) {
 				auto& trx = registry.get<TransformComponent>(entity);
@@ -142,6 +136,13 @@ namespace LevelEditor {
 		}
 
 	public:
+
+		LevelNode* AddEntity(entt::entity entity) {
+			auto node = new LevelNode(entity, root);
+			root->children.insert(node);
+			nodesMap[entity] = node;
+			return node;
+		}
 		LevelTree() {
 			root = new LevelNode();
 		}

@@ -73,11 +73,17 @@ void Editor::CloseImgui()
 
 void Editor::Update()
 {
+	if (mouseInViewport) {
+		UpdateViewportControls();
+	}
+}
+
+void Editor::UpdateViewportControls()
+{
 	auto& entities = GETSYSTEM(Entities);
 	auto& registry = entities.GetRegistry();
 	auto& input = GETSYSTEM(InputSystem);
 	auto& gameRenderer = GETSYSTEM(RendererSystem);
-
 	if (selectedTool == 0) {
 		auto mousePos = glm::vec3(input.GetMousePosition(), 1) * gameRenderer.GetScreenToWorldMatrix();
 		if (input.GetMouseButton(LEFT_BUTTON).justPressed) {
@@ -138,6 +144,19 @@ void Editor::RenderEditor()
 {
 	RenderImgui();
 
+	ImGui::Begin("Editor");
+	Logger::Log(std::to_string(mouseInViewport));
+
+	RenderTools();
+	levelTree.Editor(selectedEntity, entityList);
+
+	ImGui::End();
+
+	PresentImGui();
+}
+
+void Editor::RenderTools()
+{
 	auto& entities = GETSYSTEM(Entities);
 	auto& registry = entities.GetRegistry();
 	auto& input = GETSYSTEM(InputSystem);
@@ -145,7 +164,7 @@ void Editor::RenderEditor()
 	auto& levelLoader = GETSYSTEM(LevelLoader);
 
 	ImGui::SetNextWindowSize(ImVec2(200, 400));
-	ImGui::Begin("Tools");
+	ImGui::BeginChild("Tools");
 	const char* listbox_items[] = { "Create Entity","Move Entity" };
 	ImGui::ListBox("Tool", &selectedTool, listbox_items, IM_ARRAYSIZE(listbox_items), 2);
 
@@ -153,20 +172,19 @@ void Editor::RenderEditor()
 	if (ImGui::Button("Save Level")) {
 		levelLoader.SaveLevel("SavedLevel.yaml");
 	}
-	ImGui::End();
+	ImGui::EndChild();
 
-	//ImGui::ShowDemoWindow(nullptr);
 	if (selectedEntity != entt::entity(-1)) {
 		if (registry.any_of<TransformComponent>(selectedEntity)) {
-			ImGui::Begin("Transform component");
+			ImGui::BeginChild("Transform component");
 			TransformEditor::DrawEditor(registry.get<TransformComponent>(selectedEntity));
-			ImGui::End();
+			ImGui::EndChild();
 		}
 		if (registry.any_of<PhysicsBodyComponent>(selectedEntity)) {
-			ImGui::Begin("PhysicsBody component");
+			ImGui::BeginChild("PhysicsBody component");
 			auto trx = registry.get<TransformComponent>(selectedEntity);
 			PhysicsEditor::DrawEditor(registry.get<PhysicsBodyComponent>(selectedEntity), trx);
-			ImGui::End();
+			ImGui::EndChild();
 			if (ImGui::Button("Remove PhysicsBody Component")) {
 				registry.remove<PhysicsBodyComponent>(selectedEntity);
 			}
@@ -177,9 +195,9 @@ void Editor::RenderEditor()
 			}
 		}
 		if (registry.any_of<SpriteComponent>(selectedEntity)) {
-			ImGui::Begin("Sprite component");
+			ImGui::BeginChild("Sprite component");
 			SpriteEditor::DrawEditor(registry.get<SpriteComponent>(selectedEntity));
-			ImGui::End();
+			ImGui::EndChild();
 			if (ImGui::Button("Remove Sprite Component")) {
 				registry.remove<SpriteComponent>(selectedEntity);
 			}
@@ -190,9 +208,9 @@ void Editor::RenderEditor()
 			}
 		}
 		if (registry.any_of<CameraComponent>(selectedEntity)) {
-			ImGui::Begin("Camera component");
+			ImGui::BeginChild("Camera component");
 			CameraEditor::DrawEditor(registry.get<CameraComponent>(selectedEntity));
-			ImGui::End();
+			ImGui::EndChild();
 			if (ImGui::Button("Remove Camera Component")) {
 				registry.remove<CameraComponent>(selectedEntity);
 			}
@@ -203,10 +221,6 @@ void Editor::RenderEditor()
 			}
 		}
 	}
-
-	levelTree.Editor(selectedEntity, entityList);
-
-	PresentImGui();
 }
 
 void Editor::PresentImGui()
@@ -222,6 +236,7 @@ void Editor::PresentImGui()
 void Editor::RenderImgui()
 {
 	ImGuiIO& io = ImGui::GetIO();
+	mouseInViewport = !io.WantCaptureMouse;
 	int w, h;
 	SDL_GetWindowSize(window, &w, &h);
 	io.DisplaySize = ImVec2((float)w, (float)h);

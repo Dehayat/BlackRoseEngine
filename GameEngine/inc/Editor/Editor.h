@@ -9,11 +9,14 @@ class Editor {
 	LevelEditor::LevelTree levelTree;
 	entt::entity selectedEntity;
 	entt::entity createdEntity;
+	bool mouseInViewport;
 	int selectedTool;
 	void SetupImgui();
 	void CloseImgui();
 	void PresentImGui();
 	void RenderImgui();
+	void RenderTools();
+	void UpdateViewportControls();
 public:
 	Editor();
 	~Editor();

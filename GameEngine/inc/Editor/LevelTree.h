@@ -150,6 +150,11 @@ namespace LevelEditor {
 			delete root;
 		}
 
+		void Clear() {
+			root->DeleteChildren();
+			nodesMap.clear();
+		}
+
 		void Init() {
 			root->DeleteChildren();
 			nodesMap.clear();

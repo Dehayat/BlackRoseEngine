@@ -1,7 +1,8 @@
 #include "Editor/Editor.h"
 
 #include <imgui.h>
-#include <imgui_impl_sdlrenderer2.h>
+#include <imgui_impl_sdlrenderer2.h>h
+
 #include <imgui_impl_sdl2.h>
 #include <glm/glm.hpp>
 
@@ -84,7 +85,7 @@ void Editor::UpdateViewportControls()
 	auto& registry = entities.GetRegistry();
 	auto& input = GETSYSTEM(InputSystem);
 	auto& gameRenderer = GETSYSTEM(RendererSystem);
-	if (selectedTool == 0) {
+	if (selectedTool == Tools::CreateEntity) {
 		auto mousePos = glm::vec3(input.GetMousePosition(), 1) * gameRenderer.GetScreenToWorldMatrix();
 		if (input.GetMouseButton(LEFT_BUTTON).justPressed) {
 			Logger::Log("entity created");
@@ -102,7 +103,7 @@ void Editor::UpdateViewportControls()
 			}
 		}
 	}
-	if (selectedTool == 1) {
+	if (selectedTool == Tools::MoveEntity) {
 		auto mousePos = glm::vec3(input.GetMousePosition(), 1) * gameRenderer.GetScreenToWorldMatrix();
 		if (selectedEntity != entt::entity(-1)) {
 			if (input.GetMouseButton(LEFT_BUTTON).isPressed) {
@@ -144,8 +145,12 @@ void Editor::RenderEditor()
 {
 	RenderImgui();
 
-	ImGui::Begin("Editor");
-	Logger::Log(std::to_string(mouseInViewport));
+	ImGuiWindowFlags windowFlags = ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoTitleBar;
+	ImGui::Begin("ToolBar", nullptr, windowFlags);
+	int w, h;
+	SDL_GetWindowSize(window, &w, &h);
+	ImGui::SetWindowSize(ImVec2(w, 90));
+	ImGui::SetWindowPos(ImVec2(0, 0));
 
 	RenderTools();
 	levelTree.Editor(selectedEntity, entityList);
@@ -163,16 +168,34 @@ void Editor::RenderTools()
 	auto& gameRenderer = GETSYSTEM(RendererSystem);
 	auto& levelLoader = GETSYSTEM(LevelLoader);
 
-	ImGui::SetNextWindowSize(ImVec2(200, 400));
-	ImGui::BeginChild("Tools");
-	const char* listbox_items[] = { "Create Entity","Move Entity" };
-	ImGui::ListBox("Tool", &selectedTool, listbox_items, IM_ARRAYSIZE(listbox_items), 2);
+	ImGui::BeginTable("Tools", 3);
+	ImGui::TableNextColumn();
+	if (ImGui::Button("Create Entity")) {
+		selectedTool = Tools::CreateEntity;
+	}
+	if (ImGui::Button("Move Entity")) {
+		selectedTool = Tools::CreateEntity;
+	}
+	if (ImGui::Button("Delete Entity")) {
+		selectedTool = Tools::DeleteEntity;
+	}
 
+	ImGui::TableNextColumn();
 	auto view = registry.view<const GUIDComponent, TransformComponent>();
+	if (ImGui::Button("Load Level")) {
+		levelLoader.UnloadLevel();
+		levelTree.Clear();
+		selectedEntity = NoEntity();
+		createdEntity = NoEntity();
+		levelLoader.LoadLevel("SavedLevel.yaml");
+	}
 	if (ImGui::Button("Save Level")) {
 		levelLoader.SaveLevel("SavedLevel.yaml");
 	}
-	ImGui::EndChild();
+	if (ImGui::Button("Save Level As")) {
+		levelLoader.SaveLevel("SavedLevel.yaml");
+	}
+	ImGui::EndTable();
 
 	if (selectedEntity != entt::entity(-1)) {
 		if (registry.any_of<TransformComponent>(selectedEntity)) {

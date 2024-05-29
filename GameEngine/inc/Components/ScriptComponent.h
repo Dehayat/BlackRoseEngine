@@ -15,10 +15,28 @@ struct ScriptComponent {
 			delete script;
 		}
 	}
+	ScriptComponent(const ScriptComponent&) = delete;
+	ScriptComponent& operator=(const ScriptComponent&) = delete;
 
 	ScriptComponent(ryml::NodeRef node)
 	{
 		//script = new Script();
 		script = new SpawnerScript();
+		Logger::Log("deser");
 	}
+	ScriptComponent(ScriptComponent&& other) {
+		script = other.script;
+		other.script = nullptr;
+	}
+
+	ScriptComponent& operator=(ScriptComponent&& other) {
+		Script* temp = other.script;
+		other.script = nullptr;
+		if (script != nullptr) {
+			delete script;
+		}
+		script = temp;
+		return *this;
+	}
+
 };

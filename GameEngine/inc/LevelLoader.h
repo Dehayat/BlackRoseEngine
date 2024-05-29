@@ -18,6 +18,7 @@ public:
 	~LevelLoader();
 	void LoadLevel(const std::string& fileName);
 	void SaveLevel(const std::string& fileName);
+	void UnloadLevel();
 private:
 	void DeserializeLevel(entt::registry& registry, ryml::NodeRef& node);
 	entt::entity DeserializeEntity(entt::registry& registry, ryml::NodeRef& node);

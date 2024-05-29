@@ -5,6 +5,8 @@
 
 #include "Systems.h"
 
+#include "Logger.h"
+
 Entities::Entities()
 {
 	CREATESYSTEM(entt::registry);

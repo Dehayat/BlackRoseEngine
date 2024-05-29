@@ -109,6 +109,11 @@ void LevelLoader::SaveLevel(const std::string& fileName)
 	std::string buffer = ryml::emitrs_yaml<std::string>(tree);
 	SDL_RWwrite(fileHandle.file, buffer.data(), 1, buffer.size());
 }
+void LevelLoader::UnloadLevel()
+{
+	Entities& entities = entt::locator<Entities>::value();
+	entities.DestroyAllEntities();
+}
 void LevelLoader::SerializeLevel(entt::registry& registry, ryml::NodeRef& node)
 {
 	node |= ryml::SEQ;

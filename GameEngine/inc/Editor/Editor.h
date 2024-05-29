@@ -3,6 +3,13 @@
 
 #include "Editor/LevelTree.h"
 
+enum Tools {
+	//Entity Tools
+	CreateEntity,
+	MoveEntity,
+	DeleteEntity,
+};
+
 class Editor {
 	SDL_Window* window;
 	SDL_Renderer* renderer;
@@ -10,7 +17,7 @@ class Editor {
 	entt::entity selectedEntity;
 	entt::entity createdEntity;
 	bool mouseInViewport;
-	int selectedTool;
+	Tools selectedTool;
 	void SetupImgui();
 	void CloseImgui();
 	void PresentImGui();

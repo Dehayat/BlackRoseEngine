@@ -175,6 +175,7 @@
     <ClCompile Include="src\AnimationImporter.cpp" />
     <ClCompile Include="src\AnimationSystem.cpp" />
     <ClCompile Include="src\TimeSystem.cpp" />
+    <ClInclude Include="inc\Structures\Tree.h" />
     <ClInclude Include="inc\Systems.h" />
     <ClInclude Include="inc\TimeSystem.h" />
     <ClInclude Include="inc\Transform.h" />

@@ -174,7 +174,7 @@ void Editor::RenderTools()
 		selectedTool = Tools::CreateEntity;
 	}
 	if (ImGui::Button("Move Entity")) {
-		selectedTool = Tools::CreateEntity;
+		selectedTool = Tools::MoveEntity;
 	}
 	if (ImGui::Button("Delete Entity")) {
 		selectedTool = Tools::DeleteEntity;
@@ -188,10 +188,8 @@ void Editor::RenderTools()
 		static char fileName[20] = "Level.yaml";
 		if (ImGui::Button("Load Level")) {
 			levelLoader.UnloadLevel();
-			levelTree.Clear();
-			selectedEntity = NoEntity();
-			createdEntity = NoEntity();
 			levelLoader.LoadLevel(fileName);
+			levelTree.Init();
 		}
 		ImGui::TableNextColumn();
 		ImGui::InputText(" ", fileName, 20);

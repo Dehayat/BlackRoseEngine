@@ -5,6 +5,8 @@
 #include <entt/entt.hpp>
 #include <imgui.h>
 
+#include "Structures/Tree.h"
+
 #include "Entity.h"
 
 #include "Components/GUIDComponent.h"
@@ -16,32 +18,6 @@
 
 
 namespace LevelEditor {
-
-	struct LevelNode {
-		LevelNode* parent;
-		entt::entity entity;
-		std::unordered_set<LevelNode*> children;
-		LevelNode(entt::entity entity = entt::entity(-1), LevelNode* parent = nullptr) {
-			this->entity = entity;
-			this->parent = parent;
-		}
-		void SetParent(LevelNode* parent) {
-			if (this->parent != nullptr) {
-				this->parent->children.erase(this);
-			}
-			this->parent = parent;
-			this->parent->children.insert(this);
-		}
-		void DeleteChildren() {
-			for (auto p : children) {
-				delete p;
-			}
-			children.clear();
-		}
-		~LevelNode() {
-			DeleteChildren();
-		}
-	};
 
 	struct ChildCommand {
 		entt::entity child;
@@ -55,15 +31,15 @@ namespace LevelEditor {
 	};
 
 	class LevelTree {
-		LevelNode* root;
-		std::unordered_map<entt::entity, LevelNode*> nodesMap;
+		Node<entt::entity>* root;
+		std::unordered_map<entt::entity, Node<entt::entity>*> nodesMap;
 		ChildCommand currentCommand;
 
-		LevelNode* InitParentRecursive(entt::registry& registry, entt::entity entity) {
+		Node<entt::entity>* InitParentRecursive(entt::registry& registry, entt::entity entity) {
 			if (nodesMap.find(entity) == nodesMap.end()) {
 				auto& trx = registry.get<TransformComponent>(entity);
 				if (trx.parent) {
-					auto node = new LevelNode(entity);
+					auto node = new Node<entt::entity>(entity);
 					auto parentNode = InitParentRecursive(registry, trx.parent.value());
 					node->SetParent(parentNode);
 					nodesMap[entity] = node;
@@ -74,39 +50,39 @@ namespace LevelEditor {
 			}
 			return nodesMap[entity];
 		}
-		void EditorChildren(entt::registry& registry, entt::entity& selected, bool* entityList, LevelNode* node) {
-			const auto& guid = registry.get<GUIDComponent>(node->entity);
-			const auto& trx = registry.get<TransformComponent>(node->entity);
-			if (selected != node->entity) {
-				entityList[(int)node->entity] = false;
+		void EditorChildren(entt::registry& registry, entt::entity& selected, bool* entityList, Node<entt::entity>* node) {
+			const auto& guid = registry.get<GUIDComponent>(node->element);
+			const auto& trx = registry.get<TransformComponent>(node->element);
+			if (selected != node->element) {
+				entityList[(int)node->element] = false;
 			}
 			else {
-				entityList[(int)node->entity] = true;
+				entityList[(int)node->element] = true;
 			}
 			ImGuiTreeNodeFlags flags = ImGuiTreeNodeFlags_OpenOnArrow
 				| ImGuiTreeNodeFlags_OpenOnDoubleClick
-				| (entityList[(int)node->entity] ? ImGuiTreeNodeFlags_Selected : 0)
+				| (entityList[(int)node->element] ? ImGuiTreeNodeFlags_Selected : 0)
 				| (node->children.size() == 0 ? ImGuiTreeNodeFlags_Leaf : 0);
 			auto open = ImGui::TreeNodeEx(std::to_string(guid.id).c_str(), flags);
 			if (ImGui::BeginDragDropSource())
 			{
-				ImGui::SetDragDropPayload("LevelNode", &(node->entity), sizeof(node->entity));
+				ImGui::SetDragDropPayload("Node<entt::entity>", &(node->element), sizeof(node->element));
 				ImGui::Text(std::to_string(guid.id).c_str());
 				ImGui::EndDragDropSource();
 			}
 			if (ImGui::BeginDragDropTarget())
 			{
-				if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("LevelNode"))
+				if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("Node<entt::entity>"))
 				{
 					auto entity = (entt::entity*)(payload->Data);
 					currentCommand.child = *entity;
-					currentCommand.newParent = node->entity;
+					currentCommand.newParent = node->element;
 				}
 				ImGui::EndDragDropTarget();
 			}
 
 			if (ImGui::IsItemClicked()) {
-				selected = node->entity;
+				selected = node->element;
 			}
 			if (open)
 			{
@@ -117,11 +93,11 @@ namespace LevelEditor {
 			}
 		}
 
-		void ShowLevelNode(entt::registry& registry, entt::entity& selected) {
+		void ShowEntity(entt::registry& registry, entt::entity& selected) {
 			ImGui::Text("Level");
 			if (ImGui::BeginDragDropTarget())
 			{
-				if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("LevelNode"))
+				if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("Node<entt::entity>"))
 				{
 					auto entity = (entt::entity*)(payload->Data);
 					currentCommand.child = *entity;
@@ -137,14 +113,14 @@ namespace LevelEditor {
 
 	public:
 
-		LevelNode* AddEntity(entt::entity entity) {
-			auto node = new LevelNode(entity, root);
+		Node<entt::entity>* AddEntity(entt::entity entity) {
+			auto node = new Node<entt::entity>(entity, root);
 			root->children.insert(node);
 			nodesMap[entity] = node;
 			return node;
 		}
 		LevelTree() {
-			root = new LevelNode();
+			root = new Node<entt::entity>(NoEntity());
 		}
 		~LevelTree() {
 			delete root;
@@ -179,7 +155,7 @@ namespace LevelEditor {
 		void Editor(entt::entity& selected, bool* entityList) {
 
 			auto& registry = GETSYSTEM(Entities).GetRegistry();
-			ShowLevelNode(registry, selected);
+			ShowEntity(registry, selected);
 			for (auto node : root->children) {
 				EditorChildren(registry, selected, entityList, node);
 			}

@@ -182,18 +182,36 @@ void Editor::RenderTools()
 
 	ImGui::TableNextColumn();
 	auto view = registry.view<const GUIDComponent, TransformComponent>();
-	if (ImGui::Button("Load Level")) {
-		levelLoader.UnloadLevel();
-		levelTree.Clear();
-		selectedEntity = NoEntity();
-		createdEntity = NoEntity();
-		levelLoader.LoadLevel("SavedLevel.yaml");
+	{
+		ImGui::BeginTable("Load", 2);
+		ImGui::TableNextColumn();
+		static char fileName[20] = "Level.yaml";
+		if (ImGui::Button("Load Level")) {
+			levelLoader.UnloadLevel();
+			levelTree.Clear();
+			selectedEntity = NoEntity();
+			createdEntity = NoEntity();
+			levelLoader.LoadLevel(fileName);
+		}
+		ImGui::TableNextColumn();
+		ImGui::InputText(" ", fileName, 20);
+		ImGui::EndTable();
 	}
-	if (ImGui::Button("Save Level")) {
-		levelLoader.SaveLevel("SavedLevel.yaml");
+	{
+		if (ImGui::Button("Save Level")) {
+			levelLoader.SaveLevel("SavedLevel.yaml");
+		}
 	}
-	if (ImGui::Button("Save Level As")) {
-		levelLoader.SaveLevel("SavedLevel.yaml");
+	{
+		ImGui::BeginTable("Save", 2);
+		static char fileName[20] = "NewLevel.yaml";
+		ImGui::TableNextColumn();
+		if (ImGui::Button("Save Level As")) {
+			levelLoader.SaveLevel(fileName);
+		}
+		ImGui::TableNextColumn();
+		ImGui::InputText(" ", fileName, 20);
+		ImGui::EndTable();
 	}
 	ImGui::EndTable();
 

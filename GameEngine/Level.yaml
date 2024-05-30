@@ -1,0 +1,81 @@
+- Type: Entity
+  Guid: 11756105538114718139
+  Transform:
+    position:
+      - -3.4962964
+      - 0.13703704
+    scale:
+      - 1
+      - 1
+    rotation: 0
+- Type: Entity
+  Guid: 6393761786733213117
+  Transform:
+    position:
+      - 2
+      - 0
+    scale:
+      - 1
+      - 1
+    rotation: 0
+  Sprite:
+    sprite: sekiroIdle
+    layer: 2
+    color:
+      - 1
+      - 1
+      - 1
+      - 1
+  Animation:
+    animation: sekiroIdleAnim
+- Type: Entity
+  Guid: 10698351772030436750
+  Transform:
+    position:
+      - 0
+      - 0
+    scale:
+      - 1
+      - 1
+    rotation: 0
+  Sprite:
+    sprite: block
+    layer: 1
+    color:
+      - 1
+      - 1
+      - 1
+      - 1
+- Type: Entity
+  Guid: 5266576921330336830
+  Transform:
+    position:
+      - 0
+      - 0
+    scale:
+      - 1
+      - 1
+    rotation: 0
+  Sprite:
+    sprite: sekiroIdle
+    layer: 2
+    color:
+      - 1
+      - 1
+      - 1
+      - 1
+  Animation:
+    animation: sekiroIdleAnim
+- Type: Entity
+  Guid: 9404588658664444746
+  Transform:
+    position:
+      - 0
+      - 0
+    scale:
+      - 1
+      - 1
+    rotation: 0
+  Camera:
+    height: 5
+    startCamera: 1

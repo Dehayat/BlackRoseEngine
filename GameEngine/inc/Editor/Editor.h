@@ -14,10 +14,10 @@ class Editor {
 	SDL_Window* window;
 	SDL_Renderer* renderer;
 	LevelEditor::LevelTree levelTree;
-	entt::entity selectedEntity;
 	entt::entity createdEntity;
 	bool mouseInViewport;
 	Tools selectedTool;
+
 	void SetupImgui();
 	void CloseImgui();
 	void PresentImGui();

@@ -56,7 +56,6 @@ Editor::~Editor()
 
 void Editor::Reset()
 {
-	selectedEntity = entt::entity(-1);
 	createdEntity = entt::entity(-1);
 	levelTree.Init();
 }
@@ -91,7 +90,7 @@ void Editor::UpdateViewportControls()
 			Logger::Log("entity created");
 			createdEntity = entities.CreateEntity();
 			levelTree.AddEntity(createdEntity);
-			selectedEntity = createdEntity;
+			levelTree.SelectEntity(createdEntity);
 			registry.emplace<TransformComponent>(createdEntity, glm::vec2(mousePos.x, mousePos.y), glm::vec2(1, 1), 0);
 		}
 		if (createdEntity != entt::entity(-1)) {
@@ -105,9 +104,9 @@ void Editor::UpdateViewportControls()
 	}
 	if (selectedTool == Tools::MoveEntity) {
 		auto mousePos = glm::vec3(input.GetMousePosition(), 1) * gameRenderer.GetScreenToWorldMatrix();
-		if (selectedEntity != entt::entity(-1)) {
+		if (levelTree.GetSelectedEntity() != entt::entity(-1)) {
 			if (input.GetMouseButton(LEFT_BUTTON).isPressed) {
-				registry.get<TransformComponent>(selectedEntity).position = glm::vec2(mousePos.x, mousePos.y);
+				registry.get<TransformComponent>(levelTree.GetSelectedEntity()).position = glm::vec2(mousePos.x, mousePos.y);
 			}
 		}
 	}
@@ -139,7 +138,6 @@ bool Editor::ProcessEvents()
 void Editor::RenderGizmos()
 {
 }
-bool entityList[100];
 
 void Editor::RenderEditor()
 {
@@ -153,7 +151,7 @@ void Editor::RenderEditor()
 	ImGui::SetWindowPos(ImVec2(0, 0));
 
 	RenderTools();
-	levelTree.Editor(selectedEntity, entityList);
+	levelTree.Editor();
 
 	ImGui::End();
 
@@ -167,7 +165,7 @@ void Editor::RenderTools()
 	auto& input = GETSYSTEM(InputSystem);
 	auto& gameRenderer = GETSYSTEM(RendererSystem);
 	auto& levelLoader = GETSYSTEM(LevelLoader);
-
+	ImGui::ShowDemoWindow();
 	ImGui::BeginTable("Tools", 3);
 	ImGui::TableNextColumn();
 	if (ImGui::Button("Create Entity")) {
@@ -177,23 +175,23 @@ void Editor::RenderTools()
 		selectedTool = Tools::MoveEntity;
 	}
 	if (ImGui::Button("Delete Entity")) {
-		selectedTool = Tools::DeleteEntity;
+		if (levelTree.GetSelectedEntity() != NoEntity()) {
+			entities.DestroyEntity(levelTree.GetSelectedEntity());
+			levelTree.Init();
+		}
 	}
 
 	ImGui::TableNextColumn();
 	auto view = registry.view<const GUIDComponent, TransformComponent>();
 	{
-		ImGui::BeginTable("Load", 2);
-		ImGui::TableNextColumn();
 		static char fileName[20] = "Level.yaml";
 		if (ImGui::Button("Load Level")) {
 			levelLoader.UnloadLevel();
 			levelLoader.LoadLevel(fileName);
 			levelTree.Init();
 		}
-		ImGui::TableNextColumn();
+		ImGui::SameLine();
 		ImGui::InputText(" ", fileName, 20);
-		ImGui::EndTable();
 	}
 	{
 		if (ImGui::Button("Save Level")) {
@@ -201,19 +199,16 @@ void Editor::RenderTools()
 		}
 	}
 	{
-		ImGui::BeginTable("Save", 2);
 		static char fileName[20] = "NewLevel.yaml";
-		ImGui::TableNextColumn();
 		if (ImGui::Button("Save Level As")) {
 			levelLoader.SaveLevel(fileName);
 		}
-		ImGui::TableNextColumn();
+		ImGui::SameLine();
 		ImGui::InputText(" ", fileName, 20);
-		ImGui::EndTable();
 	}
 	ImGui::EndTable();
-
-	if (selectedEntity != entt::entity(-1)) {
+	auto selectedEntity = levelTree.GetSelectedEntity();
+	if (levelTree.GetSelectedEntity() != entt::entity(-1)) {
 		if (registry.any_of<TransformComponent>(selectedEntity)) {
 			ImGui::BeginChild("Transform component");
 			TransformEditor::DrawEditor(registry.get<TransformComponent>(selectedEntity));
@@ -221,7 +216,7 @@ void Editor::RenderTools()
 		}
 		if (registry.any_of<PhysicsBodyComponent>(selectedEntity)) {
 			ImGui::BeginChild("PhysicsBody component");
-			auto trx = registry.get<TransformComponent>(selectedEntity);
+			auto& trx = registry.get<TransformComponent>(selectedEntity);
 			PhysicsEditor::DrawEditor(registry.get<PhysicsBodyComponent>(selectedEntity), trx);
 			ImGui::EndChild();
 			if (ImGui::Button("Remove PhysicsBody Component")) {
@@ -265,11 +260,7 @@ void Editor::RenderTools()
 void Editor::PresentImGui()
 {
 	ImGui::Render();
-	//SDL_SetRenderTarget(renderer, nullptr);
-	//SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
-	//SDL_RenderClear(renderer);
 	ImGui_ImplSDLRenderer2_RenderDrawData(ImGui::GetDrawData());
-	//SDL_RenderPresent(renderer);
 }
 
 void Editor::RenderImgui()

@@ -168,6 +168,7 @@
     <ClInclude Include="inc\Scripts\SpawnerScript.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\LevelTree.cpp" />
     <ClCompile Include="src\Editor.cpp" />
     <ClCompile Include="src\ScriptSystem.cpp" />
     <ClCompile Include="src\EntityEventSystem.cpp" />

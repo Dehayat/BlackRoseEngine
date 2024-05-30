@@ -76,8 +76,8 @@ void Entities::DestroyEntity(entt::entity entity)
 	auto& registry = GetRegistry();
 	Guid guid = -1;
 	if (registry.valid(entity)) {
-		registry.destroy(entity);
 		guid = registry.get<GUIDComponent>(entity).id;
+		registry.destroy(entity);
 	}
 	if (guid != -1 && allEntities.find(guid) != allEntities.end()) {
 		allEntities.erase(guid);

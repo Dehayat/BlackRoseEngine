@@ -47,7 +47,7 @@ struct AnimationComponent {
 	void Serialize(ryml::NodeRef node)
 	{
 		node |= ryml::MAP;
-		node["animtion"] << animation;
+		node["animation"] << animation;
 	}
 
 	void Update(float dt) {

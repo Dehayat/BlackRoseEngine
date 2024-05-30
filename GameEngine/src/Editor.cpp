@@ -143,17 +143,31 @@ void Editor::RenderEditor()
 {
 	RenderImgui();
 
-	ImGuiWindowFlags windowFlags = ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoTitleBar;
-	ImGui::Begin("ToolBar", nullptr, windowFlags);
 	int w, h;
 	SDL_GetWindowSize(window, &w, &h);
+
+	ImGui::ShowDemoWindow();
+
+	ImGuiWindowFlags windowFlags = ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoTitleBar;
+	ImGui::Begin("ToolBar", nullptr, windowFlags);
 	ImGui::SetWindowSize(ImVec2(w, 90));
 	ImGui::SetWindowPos(ImVec2(0, 0));
-
 	RenderTools();
-	levelTree.Editor();
-
 	ImGui::End();
+
+	ImGui::Begin("Level Tree", nullptr, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove);
+	ImGui::SetWindowSize(ImVec2(200, 200));
+	ImGui::SetWindowPos(ImVec2(w - 200, 90));
+	levelTree.Editor();
+	ImGui::End();
+
+	ImGui::Begin("Entity Properties", nullptr, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove);
+	ImGui::SetWindowSize(ImVec2(200, h - 290));
+	ImGui::SetWindowPos(ImVec2(w - 200, 290));
+	EntityEditor();
+	ImGui::End();
+
+
 
 	PresentImGui();
 }
@@ -165,7 +179,6 @@ void Editor::RenderTools()
 	auto& input = GETSYSTEM(InputSystem);
 	auto& gameRenderer = GETSYSTEM(RendererSystem);
 	auto& levelLoader = GETSYSTEM(LevelLoader);
-	ImGui::ShowDemoWindow();
 	ImGui::BeginTable("Tools", 3);
 	ImGui::TableNextColumn();
 	if (ImGui::Button("Create Entity")) {
@@ -207,20 +220,26 @@ void Editor::RenderTools()
 		ImGui::InputText(" ", fileName, 20);
 	}
 	ImGui::EndTable();
+}
+
+void Editor::EntityEditor()
+{
+	auto& entities = GETSYSTEM(Entities);
+	auto& registry = entities.GetRegistry();
 	auto selectedEntity = levelTree.GetSelectedEntity();
 	if (levelTree.GetSelectedEntity() != entt::entity(-1)) {
 		if (registry.any_of<TransformComponent>(selectedEntity)) {
-			ImGui::BeginChild("Transform component");
-			TransformEditor::DrawEditor(registry.get<TransformComponent>(selectedEntity));
-			ImGui::EndChild();
+			if (ImGui::CollapsingHeader("Transform component")) {
+				TransformEditor::DrawEditor(registry.get<TransformComponent>(selectedEntity));
+			}
 		}
 		if (registry.any_of<PhysicsBodyComponent>(selectedEntity)) {
-			ImGui::BeginChild("PhysicsBody component");
-			auto& trx = registry.get<TransformComponent>(selectedEntity);
-			PhysicsEditor::DrawEditor(registry.get<PhysicsBodyComponent>(selectedEntity), trx);
-			ImGui::EndChild();
-			if (ImGui::Button("Remove PhysicsBody Component")) {
-				registry.remove<PhysicsBodyComponent>(selectedEntity);
+			if (ImGui::CollapsingHeader("Transform component")) {
+				auto& trx = registry.get<TransformComponent>(selectedEntity);
+				PhysicsEditor::DrawEditor(registry.get<PhysicsBodyComponent>(selectedEntity), trx);
+				if (ImGui::Button("Remove PhysicsBody Component")) {
+					registry.remove<PhysicsBodyComponent>(selectedEntity);
+				}
 			}
 		}
 		else {
@@ -229,11 +248,11 @@ void Editor::RenderTools()
 			}
 		}
 		if (registry.any_of<SpriteComponent>(selectedEntity)) {
-			ImGui::BeginChild("Sprite component");
-			SpriteEditor::DrawEditor(registry.get<SpriteComponent>(selectedEntity));
-			ImGui::EndChild();
-			if (ImGui::Button("Remove Sprite Component")) {
-				registry.remove<SpriteComponent>(selectedEntity);
+			if (ImGui::CollapsingHeader("Sprite component")) {
+				SpriteEditor::DrawEditor(registry.get<SpriteComponent>(selectedEntity));
+				if (ImGui::Button("Remove Sprite Component")) {
+					registry.remove<SpriteComponent>(selectedEntity);
+				}
 			}
 		}
 		else {
@@ -242,11 +261,11 @@ void Editor::RenderTools()
 			}
 		}
 		if (registry.any_of<CameraComponent>(selectedEntity)) {
-			ImGui::BeginChild("Camera component");
-			CameraEditor::DrawEditor(registry.get<CameraComponent>(selectedEntity));
-			ImGui::EndChild();
-			if (ImGui::Button("Remove Camera Component")) {
-				registry.remove<CameraComponent>(selectedEntity);
+			if (ImGui::CollapsingHeader("Camera Component")) {
+				CameraEditor::DrawEditor(registry.get<CameraComponent>(selectedEntity));
+				if (ImGui::Button("Remove Camera Component")) {
+					registry.remove<CameraComponent>(selectedEntity);
+				}
 			}
 		}
 		else {

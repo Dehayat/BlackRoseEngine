@@ -3,7 +3,7 @@
 
 class TransformEditor {
 public:
-	static void SetParent(entt::registry& registry,TransformComponent& trx, std::optional<entt::entity> newParent)
+	static void SetParent(entt::registry& registry, TransformComponent& trx, std::optional<entt::entity> newParent)
 	{
 		trx.parent = newParent;
 		trx.hasParent = false;
@@ -17,10 +17,15 @@ public:
 			trx.level = parentTrx.level + 1;
 		}
 	}
-	static void DrawEditor(TransformComponent& trx) {
-		ImGui::DragFloat("Position X", &trx.position.x, 0.2f);
-		ImGui::DragFloat("Position y", &trx.position.y, 0.2f);
+	static void DrawEditor(TransformComponent& trx)
+	{
+		ImGui::Text("Position");
+		ImGui::DragFloat("X", &trx.position.x, 0.2f);
+		ImGui::SameLine();
+		ImGui::DragFloat("Y", &trx.position.y, 0.2f);
+
 		ImGui::DragFloat("Scale x", &trx.scale.x, 0.2f);
+		ImGui::SameLine();
 		ImGui::DragFloat("Scale y", &trx.scale.y, 0.2f);
 		ImGui::DragFloat("Rotation", &trx.rotation, 5.f);
 	}

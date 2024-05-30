@@ -23,6 +23,7 @@ class Editor {
 	void PresentImGui();
 	void RenderImgui();
 	void RenderTools();
+	void EntityEditor();
 	void UpdateViewportControls();
 public:
 	Editor();

@@ -4,10 +4,14 @@
 
 #include "Renderer.h"
 
+#include "Systems.h"
+
 #include "Components/SpriteComponent.h"
 #include "Components/CameraComponent.h"
 
-class SpriteEditor {
+#include "Editor/ComponentEditor.h"
+
+class SpriteEditor :public IComponentEditor {
 	static int ResizeStringCallback(ImGuiInputTextCallbackData* data)
 	{
 		if (data->EventFlag == ImGuiInputTextFlags_CallbackResize)
@@ -18,19 +22,23 @@ class SpriteEditor {
 		return 0;
 	}
 public:
-	static void DrawEditor(SpriteComponent& sprite) {
+	void Editor(entt::entity entity) {
+		auto& registry = GETSYSTEM(Entities).GetRegistry();
+		auto& sprite = registry.get<SpriteComponent>(entity);
 		ImGui::ColorEdit4("Color", (float*)(&sprite.color), ImGuiColorEditFlags_AlphaBar | ImGuiColorEditFlags_Float);
 		if (sprite.sprite.capacity() < 20) {
 			sprite.sprite.reserve(20);
 		}
-		ImGui::InputText("sprite", &sprite.sprite[0], sprite.sprite.capacity(), ImGuiInputTextFlags_CallbackResize, ResizeStringCallback, &sprite.sprite);
+		ImGui::InputText("sprite", &sprite.sprite[0], 21, ImGuiInputTextFlags_CallbackResize, ResizeStringCallback, &sprite.sprite);
 	}
 };
 
-class CameraEditor {
+class CameraEditor :public IComponentEditor {
 public:
-	static void DrawEditor(CameraComponent& camera) {
-		ImGui::DragFloat("Camera Heigh", &camera.height, 0.2f, 0.1f, 100.f);
+	void Editor(entt::entity entity) {
+		auto& registry = GETSYSTEM(Entities).GetRegistry();
+		auto& camera = registry.get<CameraComponent>(entity);
+		ImGui::DragFloat("Camera Height", &camera.height, 0.2f, 0.1f, 100.f);
 		ImGui::Checkbox("start Camera", &camera.startCamera);
 	}
 	static void DrawGizmos(SDL_Renderer* sdl, RendererSystem& renderer, const CameraComponent& camera, const TransformComponent& trx) {
@@ -61,10 +69,10 @@ public:
 		boxPoints[1] = pos + glm::vec2(-cosTheta * halfWidth - sinTheta * halfHeight, -sinTheta * halfWidth + cosTheta * halfHeight);
 		boxPoints[2] = pos + glm::vec2(-cosTheta * halfWidth + sinTheta * halfHeight, -sinTheta * halfWidth - cosTheta * halfHeight);
 		boxPoints[3] = pos + glm::vec2(cosTheta * halfWidth + sinTheta * halfHeight, sinTheta * halfWidth - cosTheta * halfHeight);
-		for (int i = 0;i < 4;i++) {
+		for (int i = 0; i < 4; i++) {
 			boxPoints[i] = glm::vec3(boxPoints[i], 1) * renderer.GetWorldToScreenMatrix();
 		}
-		for (int i = 0;i < 4;i++) {
+		for (int i = 0; i < 4; i++) {
 			auto target = boxPoints[0];
 			if (i < 3) {
 				target = boxPoints[i + 1];

@@ -134,9 +134,12 @@
     <ClInclude Include="inc\Animation\AnimationSystem.h" />
     <ClInclude Include="inc\Components\AnimationComponent.h" />
     <ClInclude Include="inc\Components\CameraComponent.h" />
+    <ClInclude Include="inc\Components\Components.h" />
     <ClInclude Include="inc\Components\PhysicsBodyComponent.h" />
     <ClInclude Include="inc\Components\ScriptComponent.h" />
     <ClInclude Include="inc\Components\SpriteComponent.h" />
+    <ClInclude Include="inc\Editor\AnimationEditor.h" />
+    <ClInclude Include="inc\Editor\ComponentEditor.h" />
     <ClInclude Include="inc\Editor\Editor.h" />
     <ClInclude Include="inc\Editor\LevelTree.h" />
     <ClInclude Include="inc\Editor\PhysicsEditor.h" />

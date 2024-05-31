@@ -1,9 +1,15 @@
 #pragma once
 #include "Components/PhysicsBodyComponent.h"
 #include "Components/TransformComponent.h"
-class PhysicsEditor {
+
+#include "Editor/ComponentEditor.h"
+
+class PhysicsEditor :public IComponentEditor {
 public:
-	static void DrawEditor(PhysicsBodyComponent& phys, TransformComponent& trx) {
+	void Editor(entt::entity entity){
+		auto& registry = GETSYSTEM(Entities).GetRegistry();
+		auto& trx = registry.get<TransformComponent>(entity);
+		auto& phys = registry.get<PhysicsBodyComponent>(entity);
 		auto pos = b2Vec2(trx.position.x, trx.position.y);
 		phys.body->SetTransform(pos, radians(trx.rotation));
 		bool changeSize = ImGui::DragFloat("size x", &phys.size.x, 0.1f, 0.05f, 2000);

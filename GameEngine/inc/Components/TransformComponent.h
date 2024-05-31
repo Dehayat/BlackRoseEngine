@@ -1,14 +1,19 @@
 #pragma once
 #include <optional>
+
 #include <glm/glm.hpp>
 #include <entt/entity/entity.hpp>
 #include <ryml/ryml.hpp>
+
 #include "Entity.h"
+
+#include "Components/Components.h"
+
 #include "Logger.h"
 
 using namespace glm;
 using namespace entt;
-struct TransformComponent {
+struct TransformComponent :IComponent {
 	vec2 position;
 	vec2 scale;
 	float rotation;
@@ -31,7 +36,7 @@ struct TransformComponent {
 		this->hasParent = false;
 		this->parentGUID = -1;
 	}
-	TransformComponent(ryml::NodeRef &node) {
+	TransformComponent(ryml::NodeRef& node) {
 		this->position = vec2(0, 0);
 		this->scale = vec2(1, 1);
 		this->rotation = 0;

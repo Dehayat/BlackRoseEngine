@@ -1,7 +1,10 @@
 #pragma once
 #include <SDL2/SDL.h>
 
+#include "Components/Components.h"
+
 #include "Editor/LevelTree.h"
+#include "Editor/ComponentEditor.h"
 
 enum Tools {
 	//Entity Tools
@@ -33,4 +36,27 @@ public:
 	bool ProcessEvents();
 	void RenderGizmos();
 	void RenderEditor();
+
+	template<typename TComponent, typename TEditor>
+	void RenderComponent(bool removable, const std::string& componentName, entt::entity entity)
+	{
+		auto& entities = GETSYSTEM(Entities);
+		auto& registry = entities.GetRegistry();
+		if (registry.any_of<TComponent>(entity)) {
+			if (removable && ImGui::Button(("Remove " + componentName).c_str())) {
+				registry.remove<TComponent>(entity);
+			}
+			TEditor editor = TEditor();
+			IComponentEditor* compEditor = static_cast<IComponentEditor*>(&editor);
+			if (ImGui::CollapsingHeader(componentName.c_str())) {
+				//TEditor::DrawEditor(registry.get<TComponent>(entity));
+				compEditor->Editor(entity);
+			}
+		}
+		else {
+			if (ImGui::Button(("Add " + componentName).c_str())) {
+				registry.emplace<TComponent>(entity);
+			}
+		}
+	}
 };

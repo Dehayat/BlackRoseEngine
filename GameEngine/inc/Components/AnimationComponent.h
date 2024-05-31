@@ -10,6 +10,7 @@
 
 struct AnimationComponent {
 	std::string animation;
+
 	float currentFrameTime;
 	int currentFrame;
 	bool justFinished;
@@ -18,8 +19,7 @@ struct AnimationComponent {
 	float currentAnimationTime;
 	std::queue<std::string> eventQueue;
 
-	AnimationComponent(std::string animaiton) {
-		this->animation = animaiton;
+	void Reset() {
 		currentFrame = 0;
 		currentFrameTime = 0;
 		justFinished = false;
@@ -27,16 +27,14 @@ struct AnimationComponent {
 		nextEventIndex = 0;
 		currentAnimationTime = 0;
 	}
+	AnimationComponent(std::string animaiton = "") {
+		this->animation = animaiton;
+		Reset();
+	}
 
 	AnimationComponent(ryml::NodeRef node)
 	{
-		currentFrame = 0;
-		currentFrameTime = 0;
-		justFinished = false;
-		isOver = false;
-		nextEventIndex = 0;
-		currentAnimationTime = 0;
-
+		Reset();
 		this->animation = "";
 		if (node.is_map()) {
 			if (node.has_child("animation")) {
@@ -53,6 +51,9 @@ struct AnimationComponent {
 	void Update(float dt) {
 		AssetStore& assetStore = GETSYSTEM(AssetStore);
 		auto animationAsset = assetStore.GetAnimation(animation);
+		if (animationAsset == nullptr) {
+			return;
+		}
 		currentFrameTime += dt;
 		currentAnimationTime += dt;
 		while (nextEventIndex < animationAsset->animationEvents.size()) {

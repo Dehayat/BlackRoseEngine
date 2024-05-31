@@ -29,6 +29,9 @@ void AnimationPlayer::Update() {
 		auto& spriteComponent = view.get<SpriteComponent>(entity);
 		animationComponent.Update(dt);
 		auto animation = assetStore.GetAnimation(animationComponent.animation);
+		if (animation == nullptr) {
+			continue;
+		}
 		spriteComponent.sprite = animation->texture;
 		if (spriteComponent.sourceRect != nullptr) {
 			delete spriteComponent.sourceRect;

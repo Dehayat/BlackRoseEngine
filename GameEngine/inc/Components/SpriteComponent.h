@@ -16,7 +16,7 @@ struct SpriteComponent {
 
 	SDL_Rect* sourceRect;
 
-	SpriteComponent(std::string sprite, int layer = 0, vec4 color = vec4(1, 1, 1, 1)) {
+	SpriteComponent(std::string sprite = "block", int layer = 0, vec4 color = vec4(1, 1, 1, 1)) {
 		this->sprite = sprite;
 		this->layer = layer;
 		this->color = color;

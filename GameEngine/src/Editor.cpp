@@ -18,11 +18,14 @@
 #include "Components/TransformComponent.h"
 #include "Components/SpriteComponent.h"
 #include "Components/CameraComponent.h"
+#include "Components/AnimationComponent.h"
+#include "Components/ScriptComponent.h"
 
 
 #include "Editor/PhysicsEditor.h"
 #include "Editor/RenderEditor.h"
 #include "Editor/TransformEditor.h"
+#include "Editor/AnimationEditor.h"
 
 Editor::Editor()
 {
@@ -35,8 +38,6 @@ void Editor::SetupImgui()
 	auto& sdl = GETSYSTEM(SdlContainer);
 	SDL_RenderSetVSync(sdl.GetRenderer(), 1);
 
-	//window = SDL_CreateWindow("Imgui Window", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 500, 500, SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE);
-	//renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_PRESENTVSYNC | SDL_RENDERER_ACCELERATED);
 	window = sdl.GetWindow();
 	renderer = sdl.GetRenderer();
 	SDL_SetHint(SDL_HINT_IME_SHOW_UI, "1");
@@ -65,10 +66,6 @@ void Editor::CloseImgui()
 	ImGui_ImplSDLRenderer2_Shutdown();
 	ImGui_ImplSDL2_Shutdown();
 	ImGui::DestroyContext();
-	if (SDL_WasInit(0) != 0) {
-		SDL_DestroyRenderer(renderer);
-		SDL_DestroyWindow(window);
-	}
 }
 
 void Editor::Update()
@@ -146,8 +143,6 @@ void Editor::RenderEditor()
 	int w, h;
 	SDL_GetWindowSize(window, &w, &h);
 
-	ImGui::ShowDemoWindow();
-
 	ImGuiWindowFlags windowFlags = ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoTitleBar;
 	ImGui::Begin("ToolBar", nullptr, windowFlags);
 	ImGui::SetWindowSize(ImVec2(w, 90));
@@ -166,8 +161,6 @@ void Editor::RenderEditor()
 	ImGui::SetWindowPos(ImVec2(w - 200, 290));
 	EntityEditor();
 	ImGui::End();
-
-
 
 	PresentImGui();
 }
@@ -228,53 +221,14 @@ void Editor::EntityEditor()
 	auto& registry = entities.GetRegistry();
 	auto selectedEntity = levelTree.GetSelectedEntity();
 	if (levelTree.GetSelectedEntity() != entt::entity(-1)) {
-		if (registry.any_of<TransformComponent>(selectedEntity)) {
-			if (ImGui::CollapsingHeader("Transform component")) {
-				TransformEditor::DrawEditor(registry.get<TransformComponent>(selectedEntity));
-			}
-		}
-		if (registry.any_of<PhysicsBodyComponent>(selectedEntity)) {
-			if (ImGui::CollapsingHeader("Transform component")) {
-				auto& trx = registry.get<TransformComponent>(selectedEntity);
-				PhysicsEditor::DrawEditor(registry.get<PhysicsBodyComponent>(selectedEntity), trx);
-				if (ImGui::Button("Remove PhysicsBody Component")) {
-					registry.remove<PhysicsBodyComponent>(selectedEntity);
-				}
-			}
-		}
-		else {
-			if (ImGui::Button("Add PhysicsBody Component")) {
-				registry.emplace<PhysicsBodyComponent>(selectedEntity);
-			}
-		}
-		if (registry.any_of<SpriteComponent>(selectedEntity)) {
-			if (ImGui::CollapsingHeader("Sprite component")) {
-				SpriteEditor::DrawEditor(registry.get<SpriteComponent>(selectedEntity));
-				if (ImGui::Button("Remove Sprite Component")) {
-					registry.remove<SpriteComponent>(selectedEntity);
-				}
-			}
-		}
-		else {
-			if (ImGui::Button("Add Sprite Component")) {
-				registry.emplace<SpriteComponent>(selectedEntity, "block");
-			}
-		}
-		if (registry.any_of<CameraComponent>(selectedEntity)) {
-			if (ImGui::CollapsingHeader("Camera Component")) {
-				CameraEditor::DrawEditor(registry.get<CameraComponent>(selectedEntity));
-				if (ImGui::Button("Remove Camera Component")) {
-					registry.remove<CameraComponent>(selectedEntity);
-				}
-			}
-		}
-		else {
-			if (ImGui::Button("Add Camera Component")) {
-				registry.emplace<CameraComponent>(selectedEntity);
-			}
-		}
+		RenderComponent<TransformComponent, TransformEditor>(false, "Transform Component", selectedEntity);
+		RenderComponent<PhysicsBodyComponent, PhysicsEditor>(true, "Physics Body Component", selectedEntity);
+		RenderComponent<SpriteComponent, SpriteEditor>(true, "Sprite Component", selectedEntity);
+		RenderComponent<CameraComponent, CameraEditor>(true, "Camera Component", selectedEntity);
+		RenderComponent<AnimationComponent, AnimationEditor>(true, "Animation Component", selectedEntity);
 	}
 }
+
 
 void Editor::PresentImGui()
 {

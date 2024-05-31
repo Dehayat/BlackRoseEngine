@@ -45,6 +45,7 @@ public:
 		if (registry.any_of<TComponent>(entity)) {
 			if (removable && ImGui::Button(("Remove " + componentName).c_str())) {
 				registry.remove<TComponent>(entity);
+				return;
 			}
 			TEditor editor = TEditor();
 			IComponentEditor* compEditor = static_cast<IComponentEditor*>(&editor);

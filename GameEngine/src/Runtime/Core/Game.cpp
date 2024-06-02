@@ -87,13 +87,13 @@ void Game::Setup()
 void Game::LoadAssets()
 {
 	AssetStore& assetStore = GETSYSTEM(AssetStore);
-	assetStore.LoadPackage("a.pkg");
+	assetStore.LoadPackage("assets/Packages/a.pkg");
 }
 
 void Game::LoadLevel()
 {
 	LevelLoader& levelLoader = GETSYSTEM(LevelLoader);
-	levelLoader.LoadLevel("Level.yaml");
+	levelLoader.LoadLevel("assets/Levels/Level.yaml");
 	TransformSystem& transformSystem = GETSYSTEM(TransformSystem);
 	transformSystem.InitLoaded();
 }

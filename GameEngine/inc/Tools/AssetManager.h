@@ -34,7 +34,7 @@ public:
 		if (ImGui::Button("New Asset Package")) {
 			assetPackages.push_back(new AssetPackage());
 		}
-		static char fileName[20] = "AssetPackage";
+		static char fileName[31] = "AssetPackage";
 		if (ImGui::Button("Open Asset Package")) {
 			if (PackageIsLoaded(fileName)) {
 				Logger::Log("Asset package already Open");
@@ -53,15 +53,15 @@ public:
 
 		}
 		ImGui::SameLine();
-		ImGui::InputText(" ", fileName, 20);
+		ImGui::InputText(" ", fileName, 31);
 
 		for (auto package : assetPackages) {
 			if (ImGui::CollapsingHeader(package->filePath.c_str())) {
 				ImGui::Indent();
-				if (package->filePath.capacity() < 21) {
-					package->filePath.reserve(21);
+				if (package->filePath.capacity() < 31) {
+					package->filePath.reserve(31);
 				}
-				ImGui::InputText("File Path", &package->filePath[0], 21, ImGuiInputTextFlags_CallbackResize, ResizeStringCallback, &package->filePath);
+				ImGui::InputText("File Path", &package->filePath[0], 31, ImGuiInputTextFlags_CallbackResize, ResizeStringCallback, &package->filePath);
 				if (ImGui::Button("Save")) {
 					package->Save();
 				}

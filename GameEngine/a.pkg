@@ -2,22 +2,22 @@ Guid: 3581330142006529748
 Assets:
   - Guid: 6109940232114618319
     AssetType: 1
-    FilePath: assets/Block.jpg
+    FilePath: assets/Textures/Block.jpg
     name: block
-    ppu: 128
+    ppu: 64
   - Guid: 16993197691249154856
     AssetType: 1
-    FilePath: assets/Rose.png
+    FilePath: assets/Textures/Rose.png
     name: rose
     ppu: 256
   - Guid: 11435242004091385179
     AssetType: 1
-    FilePath: assets/BigGround.png
+    FilePath: assets/Textures/BigGround.png
     name: ground
     ppu: 128
   - Guid: 10315073213493450933
     AssetType: 1
-    FilePath: assets/Sekiro_Idle.png
+    FilePath: assets/Textures/Sekiro_Idle.png
     name: sekiroIdle
     ppu: 32
   - Guid: 12419322157906067642

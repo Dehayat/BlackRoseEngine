@@ -146,6 +146,7 @@
     <ClInclude Include="inc\Runtime\Animation\AnimationSystem.h" />
     <ClInclude Include="inc\Runtime\AssetStore\AnimationAsset.h" />
     <ClInclude Include="inc\Runtime\AssetStore\AssetHandle.h" />
+    <ClInclude Include="inc\Runtime\AssetStore\AssetPackage.h" />
     <ClInclude Include="inc\Runtime\AssetStore\AssetStore.h" />
     <ClInclude Include="inc\Runtime\AssetStore\TextureAsset.h" />
     <ClInclude Include="inc\Runtime\Components\AnimationComponent.h" />

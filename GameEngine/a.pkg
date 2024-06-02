@@ -1,9 +1,26 @@
-Guid: 4692519728255276635
+Guid: 3581330142006529748
 Assets:
-  - Guid: 1253341333849232539
-    AssetType: 2
-    FilePath: a.anim
-  - Guid: 10675362841265715697
+  - Guid: 6109940232114618319
     AssetType: 1
-    FilePath: x.png
-    ppu: 50
+    FilePath: assets/Block.jpg
+    name: block
+    ppu: 128
+  - Guid: 16993197691249154856
+    AssetType: 1
+    FilePath: assets/Rose.png
+    name: rose
+    ppu: 256
+  - Guid: 11435242004091385179
+    AssetType: 1
+    FilePath: assets/BigGround.png
+    name: ground
+    ppu: 128
+  - Guid: 10315073213493450933
+    AssetType: 1
+    FilePath: assets/Sekiro_Idle.png
+    name: sekiroIdle
+    ppu: 32
+  - Guid: 12419322157906067642
+    AssetType: 2
+    FilePath: assets/AnimationData/Sekiro_Idle.anim
+    name: sekiroIdleAnim

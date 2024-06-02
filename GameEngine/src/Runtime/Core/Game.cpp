@@ -87,19 +87,13 @@ void Game::Setup()
 void Game::LoadAssets()
 {
 	AssetStore& assetStore = GETSYSTEM(AssetStore);
-	assetStore.AddTexture("rose", "./assets/Rose.png", 256);
-	assetStore.AddTexture("hornet", "./assets/Hornet_Idle.png", 128);
-	assetStore.AddTexture("block", "./assets/Block.jpg", 64);
-	assetStore.AddTexture("big_ground", "./assets/BigGround.png", 128);
-	assetStore.AddTexture("ground", "./assets/Ground.png", 128);
-	assetStore.AddTexture("sekiroIdle", "./assets/Sekiro_Idle.png", 32);
-	assetStore.LoadAnimation("sekiroIdleAnim", "./assets/AnimationData/Sekiro_Idle.anim");
+	assetStore.LoadPackage("a.pkg");
 }
 
 void Game::LoadLevel()
 {
 	LevelLoader& levelLoader = GETSYSTEM(LevelLoader);
-	levelLoader.LoadLevel("SavedLevel.yaml");
+	levelLoader.LoadLevel("Level.yaml");
 	TransformSystem& transformSystem = GETSYSTEM(TransformSystem);
 	transformSystem.InitLoaded();
 }

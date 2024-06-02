@@ -7,6 +7,8 @@
 
 #include "Systems.h"
 
+#include "AssetStore/AssetPackage.h"
+
 #include "Debug/Logger.h"
 
 
@@ -60,4 +62,35 @@ AssetHandle AssetStore::GetAsset(const std::string& assetId) const
 		return AssetHandle();
 	}
 	return assets.at(assetId);
+}
+
+void AssetStore::LoadPackage(const std::string& filePath)
+{
+	auto pkg = new AssetPackage();
+	if (pkg->Load(filePath)) {
+		for (auto assetFile : pkg->assets) {
+			switch (assetFile->assetType)
+			{
+			case AssetType::Texture:
+			{
+				auto metaData = (TextureMetaData*)(assetFile->metaData);
+				AddTexture(metaData->name, assetFile->filePath, metaData->ppu);
+				break;
+			}
+			case AssetType::Animation:
+			{
+				auto metaData = (AnimationMetaData*)(assetFile->metaData);
+				LoadAnimation(metaData->name, assetFile->filePath);
+				break;
+			}
+			default:
+				break;
+			}
+		}
+		delete pkg;
+	}
+	else {
+		Logger::Log("Failed to load asset package" + filePath);
+	}
+
 }

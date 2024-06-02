@@ -2,6 +2,7 @@
 #include "Scripting/Script.h"
 
 #include "Scripting/SpawnerScript.h"
+#include "Scripting/PlayerScript.h"
 
 #include <ryml/ryml.hpp>
 
@@ -9,6 +10,9 @@ struct ScriptComponent {
 	Script* script;
 	ScriptComponent(Script* script) {
 		this->script = script;
+	}
+	ScriptComponent() {
+		this->script = nullptr;
 	}
 	~ScriptComponent() {
 		if (script != nullptr) {
@@ -18,11 +22,11 @@ struct ScriptComponent {
 	ScriptComponent(const ScriptComponent&) = delete;
 	ScriptComponent& operator=(const ScriptComponent&) = delete;
 
-	ScriptComponent(ryml::NodeRef node)
+	ScriptComponent(ryml::NodeRef& node)
 	{
 		//script = new Script();
-		script = new SpawnerScript();
-		Logger::Log("deser");
+		//script = new SpawnerScript();
+		script = new PlayerScript();
 	}
 	ScriptComponent(ScriptComponent&& other) {
 		script = other.script;
@@ -38,5 +42,8 @@ struct ScriptComponent {
 		script = temp;
 		return *this;
 	}
-
+	void Serialize(ryml::NodeRef& node)
+	{
+		node |= ryml::MAP;
+	}
 };

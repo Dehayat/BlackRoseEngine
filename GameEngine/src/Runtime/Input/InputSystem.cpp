@@ -1,8 +1,18 @@
 #include "Input/InputSystem.h"
 
+#include <entt/entt.hpp>
+
 #include "SdlContainer.h"
+#include "Entity.h"
+
+#include "Events/EntityEventSystem.h"
+
+#include "Components/PlayerComponent.h"
 
 #include "Systems.h"
+
+#include "Events/EntityEvent.h"
+
 
 KeyData::KeyData() {
 	justPressed = false;
@@ -19,9 +29,9 @@ InputSystem::~InputSystem()
 }
 
 void InputSystem::Update() {
-	SDL_Window*  window = GETSYSTEM(SdlContainer).GetWindow();
+	SDL_Window* window = GETSYSTEM(SdlContainer).GetWindow();
 	auto keyArray = SDL_GetKeyboardState(nullptr);
-	for (int i = 0;i < keyCount;i++) {
+	for (int i = 0; i < keyCount; i++) {
 		if (keyArray[keys[i]] == 1) {
 			if (input.keys[i].isPressed) {
 				input.keys[i].justPressed = false;
@@ -87,6 +97,23 @@ void InputSystem::Update() {
 		}
 	}
 	input.mousePosition = mousePos;
+
+	entt::registry& registry = GETSYSTEM(Entities).GetRegistry();
+	auto& eventSystem = GETSYSTEM(EntityEventSystem);
+	auto view = registry.view<PlayerComponent>();
+	for (auto entity : view) {
+		for (int i = 0; i < keyCount; i++) {
+			if (input.keys[i].justPressed) {
+				if (i == InputKey::A || i == InputKey::LEFT) {
+					eventSystem.QueueEvent(EntityEvent(entity, "LeftKeyPressed"));
+				}
+				if (i == InputKey::D || i == InputKey::RIGHT) {
+					eventSystem.QueueEvent(EntityEvent(entity, "RightKeyPressed"));
+				}
+			}
+		}
+	}
+
 }
 
 KeyData InputSystem::GetKey(InputKey key)

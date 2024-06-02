@@ -139,6 +139,7 @@
     <ClInclude Include="inc\Editor\LevelTree.h" />
     <ClInclude Include="inc\Editor\PhysicsEditor.h" />
     <ClInclude Include="inc\Editor\RenderEditor.h" />
+    <ClInclude Include="inc\Editor\ScriptEditor.h" />
     <ClInclude Include="inc\Editor\TransformEditor.h" />
     <ClInclude Include="inc\AssetStore\AssetStore.h" />
     <ClInclude Include="inc\Events\CollisionEvent.h" />
@@ -176,6 +177,7 @@
     <ClInclude Include="inc\Runtime\Input\InputSystem.h" />
     <ClInclude Include="inc\Runtime\Physics\Physics.h" />
     <ClInclude Include="inc\Runtime\Renderer\Renderer.h" />
+    <ClInclude Include="inc\Runtime\Scripting\PlayerScript.h" />
     <ClInclude Include="inc\Runtime\Scripting\Script.h" />
     <ClInclude Include="inc\Runtime\Scripting\ScriptSystem.h" />
     <ClInclude Include="inc\Runtime\Scripting\SpawnerScript.h" />

@@ -36,6 +36,8 @@ public:
 	bool ProcessEvents();
 	void RenderGizmos();
 	void RenderEditor();
+	entt::entity GetSelectedEntity();
+
 
 	template<typename TComponent, typename TEditor>
 	void RenderComponent(bool removable, const std::string& componentName, entt::entity entity)
@@ -50,7 +52,6 @@ public:
 			TEditor editor = TEditor();
 			IComponentEditor* compEditor = static_cast<IComponentEditor*>(&editor);
 			if (ImGui::CollapsingHeader(componentName.c_str())) {
-				//TEditor::DrawEditor(registry.get<TComponent>(entity));
 				compEditor->Editor(entity);
 			}
 		}

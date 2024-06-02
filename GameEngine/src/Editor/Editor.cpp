@@ -20,12 +20,14 @@
 #include "Components/CameraComponent.h"
 #include "Components/AnimationComponent.h"
 #include "Components/ScriptComponent.h"
+#include "Components/PlayerComponent.h"
 
 
 #include "Editor/PhysicsEditor.h"
 #include "Editor/RenderEditor.h"
 #include "Editor/TransformEditor.h"
 #include "Editor/AnimationEditor.h"
+#include "Editor/ScriptEditor.h"
 
 #include "Tools/AssetManager.h"
 
@@ -174,7 +176,7 @@ void Editor::RenderEditor()
 	ImGui::End();
 
 	if (assetManager.IsAssetSelected()) {
-		ImGui::Begin("Asset Editor", nullptr, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove);
+		ImGui::Begin("Asset Editor", nullptr);
 		ImGui::SetWindowSize(ImVec2(300, 300));
 		ImGui::SetWindowPos(ImVec2(400, h - 300));
 		assetManager.RenderSelectedAsset();
@@ -183,6 +185,11 @@ void Editor::RenderEditor()
 
 
 	PresentImGui();
+}
+
+entt::entity Editor::GetSelectedEntity()
+{
+	return levelTree.GetSelectedEntity();
 }
 
 void Editor::RenderTools()
@@ -210,27 +217,29 @@ void Editor::RenderTools()
 	ImGui::TableNextColumn();
 	auto view = registry.view<const GUIDComponent, TransformComponent>();
 	{
-		static char fileName[20] = "Level.yaml";
+		static char fileName[41] = "Level.yaml";
 		if (ImGui::Button("Load Level")) {
 			levelLoader.UnloadLevel();
 			levelLoader.LoadLevel(fileName);
 			levelTree.Init();
 		}
 		ImGui::SameLine();
-		ImGui::InputText(" ", fileName, 20);
+		ImGui::InputText("L1", fileName, 41);
 	}
 	{
 		if (ImGui::Button("Save Level")) {
-			levelLoader.SaveLevel("SavedLevel.yaml");
+			if (levelLoader.GetCurrentLevelFile() != "") {
+				levelLoader.SaveLevel(levelLoader.GetCurrentLevelFile());
+			}
 		}
 	}
 	{
-		static char fileName[20] = "NewLevel.yaml";
+		static char fileName2[41] = "NewLevel.yaml";
 		if (ImGui::Button("Save Level As")) {
-			levelLoader.SaveLevel(fileName);
+			levelLoader.SaveLevel(fileName2);
 		}
 		ImGui::SameLine();
-		ImGui::InputText(" ", fileName, 20);
+		ImGui::InputText("L2", fileName2, 41);
 	}
 	ImGui::EndTable();
 }
@@ -246,6 +255,8 @@ void Editor::EntityEditor()
 		RenderComponent<SpriteComponent, SpriteEditor>(true, "Sprite Component", selectedEntity);
 		RenderComponent<CameraComponent, CameraEditor>(true, "Camera Component", selectedEntity);
 		RenderComponent<AnimationComponent, AnimationEditor>(true, "Animation Component", selectedEntity);
+		RenderComponent<ScriptComponent, ScriptEditor>(true, "Script Component", selectedEntity);
+		RenderComponent<PlayerComponent, ScriptEditor>(true, "Player Component", selectedEntity);
 	}
 }
 

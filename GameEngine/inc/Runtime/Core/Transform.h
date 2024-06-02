@@ -12,7 +12,7 @@ class DebugDrawTransform
 public:
 	DebugDrawTransform();
 	void SetMatrix(glm::mat3 worldToScreen);
-	void DrawTransform(const TransformComponent& t);
+	void DrawTransform(const TransformComponent& t,bool selected);
 };
 
 class TransformSystem
@@ -26,7 +26,7 @@ public:
 	void InitLoaded();
 	void InitDebugDrawer();
 	void EnableDebug(bool enable);
-	void DebugRender(glm::mat3 viewMatrix);
+	void DebugRender(glm::mat3 viewMatrix, entt::entity selectedEntity);
 	void SetParent(TransformComponent& child, entt::entity parent);
 	void TransformCreated(entt::registry& registry, entt::entity);
 	static glm::mat3 CalcMatrix(TransformComponent& trx);

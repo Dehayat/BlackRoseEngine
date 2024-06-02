@@ -41,6 +41,7 @@ void LevelLoader::LoadLevel(const std::string& fileName)
 	auto tree = ryml::parse_in_arena(ryml::to_csubstr(fileString));
 	auto root = tree.rootref();
 	DeserializeLevel(registry, root);
+	loadedLevel = fileName;
 }
 void LevelLoader::DeserializeLevel(entt::registry& registry, ryml::NodeRef& node)
 {
@@ -54,7 +55,7 @@ void LevelLoader::DeserializeLevel(entt::registry& registry, ryml::NodeRef& node
 		child = child.next_sibling();
 	}
 }
-entt::entity LevelLoader::DeserializeEntity(entt::registry& registry,ryml::NodeRef& node)
+entt::entity LevelLoader::DeserializeEntity(entt::registry& registry, ryml::NodeRef& node)
 {
 	entt::entity entity;
 	auto& entities = GETSYSTEM(Entities);
@@ -117,6 +118,10 @@ void LevelLoader::UnloadLevel()
 	Entities& entities = entt::locator<Entities>::value();
 	entities.DestroyAllEntities();
 }
+const std::string& LevelLoader::GetCurrentLevelFile()
+{
+	return loadedLevel;
+}
 void LevelLoader::SerializeLevel(entt::registry& registry, ryml::NodeRef& node)
 {
 	node |= ryml::SEQ;
@@ -162,5 +167,10 @@ void LevelLoader::SerializeEntity(entt::registry& registry, ryml::NodeRef& paren
 		auto componentNode = node.append_child();
 		componentNode.set_key("Animation");
 		registry.get<AnimationComponent>(entity).Serialize(componentNode);
+	}
+	if (registry.any_of<ScriptComponent>(entity)) {
+		auto componentNode = node.append_child();
+		componentNode.set_key("Script");
+		registry.get<ScriptComponent>(entity).Serialize(componentNode);
 	}
 }

@@ -112,7 +112,6 @@ void Game::Update()
 	GETSYSTEM(TransformSystem).Update();
 	GETSYSTEM(InputSystem).Update();
 	GETSYSTEM(AnimationPlayer).Update();
-	GETSYSTEM(EntityEventSystem).Update();
 	GETSYSTEM(Editor).Update();
 #else
 	GETSYSTEM(TimeSystem).Update();
@@ -135,12 +134,16 @@ void Game::Render()
 
 	TransformSystem& transformSystem = GETSYSTEM(TransformSystem);
 	transformSystem.GetDebugRenderer().SetMatrix(renderer.GetWorldToScreenMatrix());
-	transformSystem.DebugRender(renderer.GetWorldToScreenMatrix());
+#ifndef _EDITOR
+	transformSystem.DebugRender(renderer.GetWorldToScreenMatrix(), NoEntity());
+#endif
 #endif // _DEBUG
 
 #ifdef _EDITOR
-	GETSYSTEM(Editor).RenderGizmos();
-	GETSYSTEM(Editor).RenderEditor();
+	auto& editor = GETSYSTEM(Editor);
+	transformSystem.DebugRender(renderer.GetWorldToScreenMatrix(), editor.GetSelectedEntity());
+	editor.RenderGizmos();
+	editor.RenderEditor();
 #endif
 	renderer.Present();
 }

@@ -121,7 +121,7 @@ void TransformSystem::EnableDebug(bool enable)
 		drawDebug = enable;
 	}
 }
-void TransformSystem::DebugRender(glm::mat3 viewMatrix)
+void TransformSystem::DebugRender(glm::mat3 viewMatrix, entt::entity selectedEntity)
 {
 	Entities& entities = entt::locator<Entities>::value();
 	entt::registry& registry = entities.GetRegistry();
@@ -130,7 +130,7 @@ void TransformSystem::DebugRender(glm::mat3 viewMatrix)
 		auto view3 = registry.view<const TransformComponent>();
 		for (auto entity : view3) {
 			const auto& pos = view3.get<TransformComponent>(entity);
-			debugDrawer->DrawTransform(pos);
+			debugDrawer->DrawTransform(pos, selectedEntity == entity);
 		}
 	}
 }
@@ -168,13 +168,19 @@ void DebugDrawTransform::SetMatrix(glm::mat3 worldToScreen)
 {
 	matrix = worldToScreen;
 }
-void DebugDrawTransform::DrawTransform(const TransformComponent& t)
+void DebugDrawTransform::DrawTransform(const TransformComponent& t, bool selected)
 {
 	float scale = 1;
 	glm::vec3 orig = glm::vec3(0, 0, 1);
 	glm::vec3 dest = glm::vec3(0, 0.6f * scale, 1);
 	orig = orig * t.matrix * matrix;
 	dest = dest * t.matrix * matrix;
-	filledCircleRGBA(renderer, orig.x, orig.y, 10 * scale, 20, 100, 30, 255);
-	thickLineRGBA(renderer, orig.x, orig.y, dest.x, dest.y, 3, 20, 100, 30, 255);
+	if (selected) {
+		filledCircleRGBA(renderer, orig.x, orig.y, 10 * scale, 20, 30, 130, 255);
+		thickLineRGBA(renderer, orig.x, orig.y, dest.x, dest.y, 3, 20, 300, 130, 255);
+	}
+	else {
+		filledCircleRGBA(renderer, orig.x, orig.y, 10 * scale, 20, 100, 30, 255);
+		thickLineRGBA(renderer, orig.x, orig.y, dest.x, dest.y, 3, 20, 100, 30, 255);
+	}
 }

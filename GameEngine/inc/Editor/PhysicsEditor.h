@@ -6,7 +6,7 @@
 
 class PhysicsEditor :public IComponentEditor {
 public:
-	void Editor(entt::entity entity){
+	void Editor(entt::entity entity) {
 		auto& registry = GETSYSTEM(Entities).GetRegistry();
 		auto& trx = registry.get<TransformComponent>(entity);
 		auto& phys = registry.get<PhysicsBodyComponent>(entity);
@@ -15,8 +15,14 @@ public:
 		bool changeSize = ImGui::DragFloat("size x", &phys.size.x, 0.1f, 0.05f, 2000);
 		changeSize |= ImGui::DragFloat("size y", &phys.size.y, 0.1f, 0.05f, 2000);
 		if (changeSize) {
+			if (phys.size.x <= 0.01) {
+				phys.size.x = 0.01;
+			}
+			if (phys.size.y <= 0.01) {
+				phys.size.y = 0.01;
+			}
 			phys.body->DestroyFixture(&phys.body->GetFixtureList()[0]);
-			phys.shape.SetAsBox(phys.size.x, phys.size.y);
+			phys.shape.SetAsBox(phys.size.x / 2, phys.size.y / 2);
 			phys.body->CreateFixture(&phys.fixture);
 		}
 		if (ImGui::Checkbox("Static", &phys.isStatic)) {

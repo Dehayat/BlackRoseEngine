@@ -171,6 +171,12 @@
     <ClInclude Include="inc\Runtime\AssetStore\AssetPackage.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="inc\Runtime\Scripting\PlayerScript.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="inc\Editor\ScriptEditor.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Editor\Editor.cpp">

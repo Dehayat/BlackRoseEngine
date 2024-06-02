@@ -1,0 +1,9 @@
+Guid: 4692519728255276635
+Assets:
+  - Guid: 1253341333849232539
+    AssetType: 2
+    FilePath: a.anim
+  - Guid: 10675362841265715697
+    AssetType: 1
+    FilePath: x.png
+    ppu: 50

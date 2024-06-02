@@ -26,8 +26,8 @@ public:
 	void Editor(entt::entity entity) {
 		auto& registry = GETSYSTEM(Entities).GetRegistry();
 		auto& anim = registry.get<AnimationComponent>(entity);
-		if (anim.animation.capacity() < 20) {
-			anim.animation.reserve(20);
+		if (anim.animation.capacity() < 21) {
+			anim.animation.reserve(21);
 		}
 		ImGui::InputText("Animation", &anim.animation[0], 21, ImGuiInputTextFlags_CallbackResize, ResizeStringCallback, &anim.animation);
 	}

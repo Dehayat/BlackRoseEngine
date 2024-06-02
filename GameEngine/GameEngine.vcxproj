@@ -179,6 +179,7 @@
     <ClInclude Include="inc\Runtime\Scripting\ScriptSystem.h" />
     <ClInclude Include="inc\Runtime\Scripting\SpawnerScript.h" />
     <ClInclude Include="inc\Runtime\Structures\Tree.h" />
+    <ClInclude Include="inc\Tools\AssetManager.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Editor\Editor.cpp" />

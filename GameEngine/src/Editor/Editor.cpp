@@ -27,8 +27,11 @@
 #include "Editor/TransformEditor.h"
 #include "Editor/AnimationEditor.h"
 
+#include "Tools/AssetManager.h"
+
 Editor::Editor()
 {
+	CREATESYSTEM(AssetManager);
 	SetupImgui();
 	Reset();
 }
@@ -161,6 +164,23 @@ void Editor::RenderEditor()
 	ImGui::SetWindowPos(ImVec2(w - 200, 290));
 	EntityEditor();
 	ImGui::End();
+
+
+	auto& assetManager = GETSYSTEM(AssetManager);
+	ImGui::Begin("Asset Manager", nullptr, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove);
+	ImGui::SetWindowSize(ImVec2(400, 300));
+	ImGui::SetWindowPos(ImVec2(0, h - 300));
+	assetManager.Render();
+	ImGui::End();
+
+	if (assetManager.IsAssetSelected()) {
+		ImGui::Begin("Asset Editor", nullptr, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove);
+		ImGui::SetWindowSize(ImVec2(300, 300));
+		ImGui::SetWindowPos(ImVec2(400, h - 300));
+		assetManager.RenderSelectedAsset();
+		ImGui::End();
+	}
+
 
 	PresentImGui();
 }

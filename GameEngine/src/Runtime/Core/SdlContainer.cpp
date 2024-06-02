@@ -1,10 +1,12 @@
 #include "SdlContainer.h"
 
-SdlContainer::SdlContainer(int windowWidth, int windowHeight)
+SdlContainer::SdlContainer(int windowWidth, int windowHeight, std::string windowName)
 {
-	SDL_Init(SDL_INIT_EVERYTHING);
+	if (!SDL_WasInit(0)) {
+		SDL_Init(SDL_INIT_EVERYTHING);
+	}
 	window = SDL_CreateWindow(
-		"Rose Engine",
+		windowName.c_str(),
 		SDL_WINDOWPOS_CENTERED,
 		SDL_WINDOWPOS_CENTERED,
 		windowWidth,

@@ -16,11 +16,11 @@ private:
 	float spawnDelay;
 	float currentTime;
 public:
-	virtual void Setup() override {
+	virtual void Setup(entt::entity owner) override {
 		spawnDelay = 5;
 		currentTime = 0;
 	}
-	virtual void Update() override {
+	virtual void Update(entt::entity owner) override {
 		auto& timeSystem = GETSYSTEM(TimeSystem);
 		currentTime += timeSystem.GetdeltaTime();
 		if (currentTime > spawnDelay) {

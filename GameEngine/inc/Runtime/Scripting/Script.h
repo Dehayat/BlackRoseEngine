@@ -6,13 +6,13 @@
 
 class Script {
 public:
-	virtual void Setup() {
+	virtual void Setup(entt::entity owner) {
 		//Logger::Log("Setup Script");
 	}
-	virtual void Update() {
+	virtual void Update(entt::entity owner) {
 		//Logger::Log("Update Script");
 	}
-	virtual void OnEvent(const EntityEvent& entityEvent) {
+	virtual void OnEvent(entt::entity owner, const EntityEvent& entityEvent) {
 		//Logger::Log(entityEvent.name);
 	}
 };

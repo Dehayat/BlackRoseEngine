@@ -111,6 +111,14 @@ void InputSystem::Update() {
 					eventSystem.QueueEvent(EntityEvent(entity, "RightKeyPressed"));
 				}
 			}
+			if (input.keys[i].justReleased) {
+				if (i == InputKey::A || i == InputKey::LEFT) {
+					eventSystem.QueueEvent(EntityEvent(entity, "LeftKeyReleased"));
+				}
+				if (i == InputKey::D || i == InputKey::RIGHT) {
+					eventSystem.QueueEvent(EntityEvent(entity, "RightKeyReleased"));
+				}
+			}
 		}
 	}
 

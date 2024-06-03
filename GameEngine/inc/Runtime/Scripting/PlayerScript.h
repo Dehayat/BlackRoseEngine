@@ -13,22 +13,33 @@
 
 class PlayerScript : public Script {
 private:
-
+	int walkDir = 0;
+	int speed = 5;
 public:
-	virtual void Setup() override {
-	}
-	virtual void Update() override {
+	virtual void Update(entt::entity owner) override {
 		auto& timeSystem = GETSYSTEM(TimeSystem);
 		float dt = timeSystem.GetdeltaTime();
+		if (walkDir != 0) {
+			auto& transform = GETSYSTEM(Entities).GetRegistry().get<TransformComponent>(owner);
+			transform.position.x += walkDir * dt * speed;
+		}
 	}
-	virtual void OnEvent(const EntityEvent& entityEvent) override {
+	virtual void OnEvent(entt::entity owner, const EntityEvent& entityEvent) override {
 		if (entityEvent.name == "LeftKeyPressed") {
-			auto& transform = GETSYSTEM(Entities).GetRegistry().get<TransformComponent>(entityEvent.entity);
-			transform.position.x -= 0.25;
+			walkDir = -1;
+		}
+		if (entityEvent.name == "LeftKeyReleased") {
+			if (walkDir == -1) {
+				walkDir = 0;
+			}
 		}
 		if (entityEvent.name == "RightKeyPressed") {
-			auto& transform = GETSYSTEM(Entities).GetRegistry().get<TransformComponent>(entityEvent.entity);
-			transform.position.x += 0.25;
+			walkDir = 1;
+		}
+		if (entityEvent.name == "RightKeyReleased") {
+			if (walkDir == 1) {
+				walkDir = 0;
+			}
 		}
 	}
 };

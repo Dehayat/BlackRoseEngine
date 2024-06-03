@@ -23,12 +23,12 @@ void ScriptSystem::Update()
 	while (!newlyAddedScripts.empty()) {
 		auto& entity = newlyAddedScripts.front();
 		auto& scriptComponent = registry.get<ScriptComponent>(entity);
-		scriptComponent.script->Setup();
+		scriptComponent.script->Setup(entity);
 		newlyAddedScripts.pop();
 	}
 	auto view = registry.view<ScriptComponent>();
 	for (auto entity : view) {
 		auto& scriptComponent = registry.get<ScriptComponent>(entity);
-		scriptComponent.script->Update();
+		scriptComponent.script->Update(entity);
 	}
 }

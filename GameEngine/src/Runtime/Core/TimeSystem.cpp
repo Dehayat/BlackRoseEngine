@@ -5,6 +5,8 @@
 
 #include "Debug/Logger.h"
 
+const float MAX_DT = FRAMETIME_MS / 1000.0 * 4;
+
 TimeSystem::TimeSystem()
 {
 	dt = 0;
@@ -19,6 +21,9 @@ void TimeSystem::Update()
 		SDL_Delay(waitTimeMs);
 	}
 	dt = (SDL_GetTicks64() - msLastFrame) / 1000.0f;
+	if (dt > MAX_DT) {
+		dt = MAX_DT;
+	}
 	msLastFrame = SDL_GetTicks64();
 }
 

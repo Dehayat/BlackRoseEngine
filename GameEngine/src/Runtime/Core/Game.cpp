@@ -109,10 +109,18 @@ void Game::Update()
 		isRunning = false;
 	}
 #ifdef _EDITOR
-	GETSYSTEM(TransformSystem).Update();
-	GETSYSTEM(InputSystem).Update();
-	GETSYSTEM(AnimationPlayer).Update();
 	GETSYSTEM(Editor).Update();
+	bool isGameRunning = GETSYSTEM(Editor).IsGameRunning();
+	GETSYSTEM(TimeSystem).Update();
+	GETSYSTEM(TransformSystem).Update();
+	GETSYSTEM(InputSystem).Update(); if (isGameRunning) {
+		GETSYSTEM(PhysicsSystem).Update();
+	}
+	GETSYSTEM(AnimationPlayer).Update();
+	if (isGameRunning) {
+		GETSYSTEM(EntityEventSystem).Update();
+		GETSYSTEM(ScriptSystem).Update();
+	}
 #else
 	GETSYSTEM(TimeSystem).Update();
 	GETSYSTEM(TransformSystem).Update();

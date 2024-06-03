@@ -36,6 +36,7 @@ Editor::Editor()
 	CREATESYSTEM(AssetManager);
 	SetupImgui();
 	Reset();
+	isGameRunning = false;
 }
 
 void Editor::SetupImgui()
@@ -192,6 +193,11 @@ entt::entity Editor::GetSelectedEntity()
 	return levelTree.GetSelectedEntity();
 }
 
+bool Editor::IsGameRunning()
+{
+	return isGameRunning;
+}
+
 void Editor::RenderTools()
 {
 	auto& entities = GETSYSTEM(Entities);
@@ -217,14 +223,14 @@ void Editor::RenderTools()
 	ImGui::TableNextColumn();
 	auto view = registry.view<const GUIDComponent, TransformComponent>();
 	{
-		static char fileName[41] = "Level.yaml";
+		static char fileName[41] = "assets/Levels/Level.yaml";
 		if (ImGui::Button("Load Level")) {
 			levelLoader.UnloadLevel();
 			levelLoader.LoadLevel(fileName);
 			levelTree.Init();
 		}
 		ImGui::SameLine();
-		ImGui::InputText("L1", fileName, 41);
+		ImGui::InputText("##L1", fileName, 41);
 	}
 	{
 		if (ImGui::Button("Save Level")) {
@@ -234,13 +240,26 @@ void Editor::RenderTools()
 		}
 	}
 	{
-		static char fileName2[41] = "NewLevel.yaml";
+		static char fileName2[41] = "assets/Levels/NewLevel.yaml";
 		if (ImGui::Button("Save Level As")) {
 			levelLoader.SaveLevel(fileName2);
 		}
 		ImGui::SameLine();
-		ImGui::InputText("L2", fileName2, 41);
+		ImGui::InputText("##L2", fileName2, 41);
 	}
+
+	ImGui::TableNextColumn();
+	if (IsGameRunning()) {
+		if (ImGui::Button("Stop")) {
+			isGameRunning = false;
+		}
+	}
+	else {
+		if (ImGui::Button("Play")) {
+			isGameRunning = true;
+		}
+	}
+
 	ImGui::EndTable();
 }
 

@@ -67,7 +67,6 @@ entt::entity LevelLoader::DeserializeEntity(entt::registry& registry, ryml::Node
 	else {
 		entity = entities.CreateEntity();
 	}
-	Logger::Log("Entity created");
 	if (node.has_child("Transform")) {
 		auto trx = node["Transform"];
 		ComponentSer<TransformComponent>::Deserialize(registry, trx, entity);
@@ -137,7 +136,6 @@ void LevelLoader::SerializeEntity(entt::registry& registry, ryml::NodeRef& paren
 	node["Type"] << "Entity";
 	node["Guid"] << registry.get<GUIDComponent>(entity).id;
 
-	Logger::Log("Entity created");
 	if (registry.any_of<TransformComponent>(entity)) {
 		auto componentNode = node.append_child();
 		componentNode.set_key("Transform");

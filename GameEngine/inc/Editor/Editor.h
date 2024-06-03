@@ -20,6 +20,7 @@ class Editor {
 	entt::entity createdEntity;
 	bool mouseInViewport;
 	Tools selectedTool;
+	bool isGameRunning;
 
 	void SetupImgui();
 	void CloseImgui();
@@ -37,6 +38,7 @@ public:
 	void RenderGizmos();
 	void RenderEditor();
 	entt::entity GetSelectedEntity();
+	bool IsGameRunning();
 
 
 	template<typename TComponent, typename TEditor>

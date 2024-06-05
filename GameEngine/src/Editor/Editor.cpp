@@ -213,8 +213,8 @@ void Editor::RenderTools()
 	}
 	if (ImGui::Button("Delete Entity")) {
 		if (levelTreeEditor.GetSelectedEntity() != NoEntity()) {
-			//entities.DestroyEntity(levelTreeEditor.GetSelectedEntity());
-			//levelTreeEditor.CleanTree();
+			entities.DestroyEntity(levelTreeEditor.GetSelectedEntity());
+			levelTreeEditor.CleanTree();
 		}
 	}
 

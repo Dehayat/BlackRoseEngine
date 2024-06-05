@@ -100,7 +100,6 @@ void RendererSystem::Render()
 		auto viewMatrix = pos.matrixL2W * worldToScreenMatrix;
 		auto localPos = glm::vec3(0, 0, 1);
 		auto position = localPos * viewMatrix;
-		//auto position = glm::vec2(viewMatrix[0][2], viewMatrix[1][2]);
 		auto scale = glm::vec2(glm::sqrt(viewMatrix[0][0] * viewMatrix[0][0] + viewMatrix[1][0] * viewMatrix[1][0]), glm::sqrt(viewMatrix[0][1] * viewMatrix[0][1] + viewMatrix[1][1] * viewMatrix[1][1]));
 		auto rotation = glm::degrees(std::atan2f(viewMatrix[1][0], viewMatrix[0][0]));
 		int spriteSizeX = scale.x * ((float)texW / texture->ppu);

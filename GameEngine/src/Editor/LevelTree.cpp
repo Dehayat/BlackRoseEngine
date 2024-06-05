@@ -118,7 +118,7 @@ void LevelTree::CleanTree()
 	for (auto& node : nodesMap) {
 		std::vector<Node<entt::entity>*> remove;
 		for (auto child : node.second->children) {
-			if (entities.EntityExists(child->element)) {
+			if (!entities.EntityExists(child->element)) {
 				remove.push_back(child);
 			}
 		}

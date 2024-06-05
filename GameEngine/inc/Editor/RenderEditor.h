@@ -50,7 +50,7 @@ public:
 
 		float halfWidth = camWidth / 2.0f;
 		float halfHeight = camera.height / 2.0f;
-		auto viewMatrix = trx.matrix;
+		auto viewMatrix = trx.matrixL2W;
 		auto pos = glm::vec2(viewMatrix[0][2], viewMatrix[1][2]);
 		auto rotation = glm::degrees(std::atan2f(viewMatrix[1][0], viewMatrix[0][0]));
 

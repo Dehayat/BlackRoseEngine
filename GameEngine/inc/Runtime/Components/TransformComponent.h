@@ -22,7 +22,10 @@ struct TransformComponent :IComponent {
 
 	int level;
 	std::optional<entity> parent;
-	mat3 matrix;
+	mat3 matrixL2W;
+
+	//TransformComponent(const TransformComponent&) = delete;
+	//TransformComponent& operator=(const TransformComponent&) = delete;
 
 	TransformComponent(vec2 position = vec2(0, 0), vec2 scale = vec2(1, 1), float rotation = 0, std::optional<entity> parent = std::nullopt) {
 		this->position = position;
@@ -31,7 +34,7 @@ struct TransformComponent :IComponent {
 		this->parent = parent;
 
 		this->level = 0;
-		this->matrix = mat3(0);
+		this->matrixL2W = mat3(0);
 
 		this->hasParent = false;
 		this->parentGUID = -1;
@@ -43,7 +46,7 @@ struct TransformComponent :IComponent {
 		this->parentGUID = 0;
 
 		this->parent = std::nullopt;
-		this->matrix = mat3(0);
+		this->matrixL2W = mat3(0);
 		this->hasParent = false;
 		this->level = 0;
 
@@ -63,6 +66,15 @@ struct TransformComponent :IComponent {
 			node["parent"] >> parentGUID;
 		}
 	}
+
+	//TransformComponent(TransformComponent&& other) {
+
+	//}
+
+	//TransformComponent& operator=(TransformComponent&& other) {
+
+	//	return *this;
+	//}
 	void Serialize(ryml::NodeRef node)
 	{
 		node |= ryml::MAP;

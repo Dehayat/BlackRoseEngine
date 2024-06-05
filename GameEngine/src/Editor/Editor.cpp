@@ -64,7 +64,6 @@ Editor::~Editor()
 void Editor::Reset()
 {
 	createdEntity = entt::entity(-1);
-	levelTree.Init();
 }
 
 void Editor::CloseImgui()
@@ -92,8 +91,7 @@ void Editor::UpdateViewportControls()
 		if (input.GetMouseButton(LEFT_BUTTON).justPressed) {
 			Logger::Log("entity created");
 			createdEntity = entities.CreateEntity();
-			levelTree.AddEntity(createdEntity);
-			levelTree.SelectEntity(createdEntity);
+			levelTreeEditor.SelectEntity(createdEntity);
 			registry.emplace<TransformComponent>(createdEntity, glm::vec2(mousePos.x, mousePos.y), glm::vec2(1, 1), 0);
 		}
 		if (createdEntity != entt::entity(-1)) {
@@ -107,9 +105,9 @@ void Editor::UpdateViewportControls()
 	}
 	if (selectedTool == Tools::MoveEntity) {
 		auto mousePos = glm::vec3(input.GetMousePosition(), 1) * gameRenderer.GetScreenToWorldMatrix();
-		if (levelTree.GetSelectedEntity() != entt::entity(-1)) {
+		if (levelTreeEditor.GetSelectedEntity() != entt::entity(-1)) {
 			if (input.GetMouseButton(LEFT_BUTTON).isPressed) {
-				registry.get<TransformComponent>(levelTree.GetSelectedEntity()).position = glm::vec2(mousePos.x, mousePos.y);
+				registry.get<TransformComponent>(levelTreeEditor.GetSelectedEntity()).position = glm::vec2(mousePos.x, mousePos.y);
 			}
 		}
 	}
@@ -159,7 +157,7 @@ void Editor::RenderEditor()
 	ImGui::Begin("Level Tree", nullptr, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove);
 	ImGui::SetWindowSize(ImVec2(200, 200));
 	ImGui::SetWindowPos(ImVec2(w - 200, 90));
-	levelTree.Editor();
+	levelTreeEditor.Editor();
 	ImGui::End();
 
 	ImGui::Begin("Entity Properties", nullptr, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove);
@@ -190,7 +188,7 @@ void Editor::RenderEditor()
 
 entt::entity Editor::GetSelectedEntity()
 {
-	return levelTree.GetSelectedEntity();
+	return levelTreeEditor.GetSelectedEntity();
 }
 
 bool Editor::IsGameRunning()
@@ -214,9 +212,9 @@ void Editor::RenderTools()
 		selectedTool = Tools::MoveEntity;
 	}
 	if (ImGui::Button("Delete Entity")) {
-		if (levelTree.GetSelectedEntity() != NoEntity()) {
-			entities.DestroyEntity(levelTree.GetSelectedEntity());
-			levelTree.Init();
+		if (levelTreeEditor.GetSelectedEntity() != NoEntity()) {
+			//entities.DestroyEntity(levelTreeEditor.GetSelectedEntity());
+			//levelTreeEditor.CleanTree();
 		}
 	}
 
@@ -227,7 +225,6 @@ void Editor::RenderTools()
 		if (ImGui::Button("Load Level")) {
 			levelLoader.UnloadLevel();
 			levelLoader.LoadLevel(fileName);
-			levelTree.Init();
 		}
 		ImGui::SameLine();
 		ImGui::InputText("##L1", fileName, 41);
@@ -267,8 +264,8 @@ void Editor::EntityEditor()
 {
 	auto& entities = GETSYSTEM(Entities);
 	auto& registry = entities.GetRegistry();
-	auto selectedEntity = levelTree.GetSelectedEntity();
-	if (levelTree.GetSelectedEntity() != entt::entity(-1)) {
+	auto selectedEntity = levelTreeEditor.GetSelectedEntity();
+	if (levelTreeEditor.GetSelectedEntity() != entt::entity(-1)) {
 		RenderComponent<TransformComponent, TransformEditor>(false, "Transform Component", selectedEntity);
 		RenderComponent<PhysicsBodyComponent, PhysicsEditor>(true, "Physics Body Component", selectedEntity);
 		RenderComponent<SpriteComponent, SpriteEditor>(true, "Sprite Component", selectedEntity);

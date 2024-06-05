@@ -1,6 +1,6 @@
 #pragma once
 #include <map>
-#include <set>
+#include <vector>
 
 #include <entt/entt.hpp>
 #include <imgui.h>
@@ -14,40 +14,22 @@
 
 #include "Systems.h"
 
-#include "Editor/TransformEditor.h"
+class LevelTree {
+	Node<entt::entity>* root;
+	std::unordered_map<entt::entity, Node<entt::entity>*> nodesMap;
+	std::unordered_map < Guid, std::vector<Node<entt::entity>*> > waitingForParent;
 
+	void UpdateChildrenRecursive(entt::registry& registry, Node<entt::entity>* parent);
 
-namespace LevelEditor {
-
-	struct ChildCommand {
-		entt::entity child;
-		entt::entity newParent;
-		ChildCommand() {
-			Reset();
-		}
-		void Reset() {
-			child = entt::entity(-1);
-		}
-	};
-
-	class LevelTree {
-		Node<entt::entity>* root;
-		std::unordered_map<entt::entity, Node<entt::entity>*> nodesMap;
-		ChildCommand currentCommand;
-		entt::entity selectedEntity;
-
-		Node<entt::entity>* InitParentRecursive(entt::registry& registry, entt::entity entity);
-		void EditorChildren(entt::registry& registry, Node<entt::entity>* node);
-		void ShowEntity(entt::registry& registry);
-	
-	public:
-		Node<entt::entity>* AddEntity(entt::entity entity);
-		LevelTree();
-		~LevelTree();
-		void Clear();
-		void Init();
-		void Editor();
-		entt::entity GetSelectedEntity();
-		void SelectEntity(entt::entity entity);
-	};
-}
+public:
+	Node<entt::entity>* AddEntity(entt::entity entity, Node<entt::entity>* parent = nullptr);
+	LevelTree();
+	~LevelTree();
+	void TransformCreated(entt::registry& registry, entt::entity antity);
+	void TransformDestroyed(entt::registry& registry, entt::entity entity);
+	void RemoveParent(entt::entity);
+	void SetParent(entt::entity child, entt::entity parent);
+	void Clear();
+	Node<entt::entity>* GetRoot();
+	void CleanTree();
+};

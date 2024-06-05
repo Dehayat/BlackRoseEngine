@@ -29,12 +29,12 @@ public:
 		trx.parent = newParent;
 		trx.hasParent = false;
 		trx.level = 0;
-		trx.matrix = TransformSystem::CalcMatrix(trx);
+		trx.matrixL2W = TransformSystem::CalcMatrix(trx);
 		if (newParent && registry.valid(newParent.value())) {
 			trx.hasParent = true;
-			trx.matrix = TransformSystem::CalcMatrix(trx);
+			trx.matrixL2W = TransformSystem::CalcMatrix(trx);
 			auto& parentTrx = registry.get<TransformComponent>(trx.parent.value());
-			trx.matrix = trx.matrix * parentTrx.matrix;
+			trx.matrixL2W = trx.matrixL2W * parentTrx.matrixL2W;
 			trx.level = parentTrx.level + 1;
 		}
 	}

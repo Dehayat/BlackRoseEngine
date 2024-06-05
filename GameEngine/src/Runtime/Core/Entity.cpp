@@ -21,7 +21,17 @@ entt::registry& Entities::GetRegistry()
 
 entt::entity Entities::GetEntity(Guid guid)
 {
-	return allEntities[guid];
+	if (allEntities.find(guid) != allEntities.end()) {
+		return allEntities[guid];
+	}
+	else {
+		return NoEntity();
+	}
+}
+
+Guid Entities::GetEntityGuid(entt::entity entity)
+{
+	return allEntityGuids[entity];
 }
 
 bool Entities::EntityExists(Guid guid)
@@ -39,6 +49,10 @@ bool Entities::EntityExists(Guid guid)
 		}
 	}
 }
+bool Entities::EntityExists(entt::entity entity)
+{
+	return GetRegistry().valid(entity);
+}
 
 void Entities::DestroyAllEntities()
 {
@@ -50,11 +64,13 @@ void Entities::DestroyAllEntities()
 		}
 	}
 	allEntities.clear();
+	allEntityGuids.clear();
 }
 
 void Entities::AddEntity(Guid guid, entt::entity entity)
 {
 	allEntities.emplace(guid, entity);
+	allEntityGuids.emplace(entity, guid);
 }
 
 entt::entity Entities::CreateEntity()
@@ -82,5 +98,8 @@ void Entities::DestroyEntity(entt::entity entity)
 	}
 	if (guid != -1 && allEntities.find(guid) != allEntities.end()) {
 		allEntities.erase(guid);
+	}
+	if (allEntityGuids.find(entity) != allEntityGuids.end()) {
+		allEntityGuids.erase(entity);
 	}
 }

@@ -4,6 +4,7 @@
 #include "Components/Components.h"
 
 #include "Editor/LevelTree.h"
+#include "Editor/LevelTreeEditor.h"
 #include "Editor/ComponentEditor.h"
 
 enum Tools {
@@ -16,7 +17,7 @@ enum Tools {
 class Editor {
 	SDL_Window* window;
 	SDL_Renderer* renderer;
-	LevelEditor::LevelTree levelTree;
+	LevelTreeEditor levelTreeEditor;
 	entt::entity createdEntity;
 	bool mouseInViewport;
 	Tools selectedTool;

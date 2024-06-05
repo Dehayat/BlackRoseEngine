@@ -9,19 +9,23 @@ struct Node {
 	std::unordered_set<Node*> children;
 	Node(T element, Node* parent = nullptr) {
 		this->element = element;
-		this->parent = parent;
-	}
-	void SetParent(Node* parent) {
-		if (this->parent != nullptr) {
-			this->parent->children.erase(this);
+		this->parent = nullptr;
+		if (parent != nullptr) {
+			parent->AddChild(this);
 		}
-		this->parent = parent;
-		this->parent->children.insert(this);
 	}
 	void RemoveChild(Node* child) {
-		if (children.find(child)) {
+		child->parent = nullptr;
+		if (children.find(child) != children.end()) {
 			children.erase(child);
 		}
+	}
+	void AddChild(Node* child) {
+		if (child->parent != nullptr) {
+			child->parent->RemoveChild(child);
+		}
+		child->parent = this;
+		children.insert(child);
 	}
 	void DeleteChildren() {
 		for (auto p : children) {

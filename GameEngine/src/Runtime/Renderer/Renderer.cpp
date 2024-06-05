@@ -4,6 +4,7 @@
 #include <entt/entt.hpp>
 
 #include "SdlContainer.h"
+#include "AssetStore/AssetStore.h"
 
 #include "Components/TransformComponent.h"
 #include "Components/SpriteComponent.h"
@@ -32,26 +33,25 @@ void RendererSystem::Render()
 	registry.sort<SpriteComponent>([](const auto& lhs, const auto& rhs) {
 		return lhs.layer < rhs.layer;
 		});
-	TransformComponent camPos;
+	TransformComponent* camPos = nullptr;
 	float camHeight = 10;
-#ifdef _EDITOR
-	camPos = editorCamTrx;
-	camHeight = editorCam.height;
-#else
 	if (registry.valid(camera)) {
-		auto& cam = registry.get<CameraComponent>(camera);
-		camHeight = cam.height;
-		camPos = registry.get<TransformComponent>(camera);
+		camPos = &registry.get<TransformComponent>(camera);
+		camHeight = registry.get<CameraComponent>(camera).height;
 	}
-	else {
+	if (camPos == nullptr) {
 		Logger::Error("No Camera Assigned to renderer");
+		return;
 	}
-#endif
 	auto camToWorldMatrix = glm::mat3(
-		glm::cos(glm::radians(camPos.rotation)), -glm::sin(glm::radians(camPos.rotation)), camPos.position.x,
-		glm::sin(glm::radians(camPos.rotation)), glm::cos(glm::radians(camPos.rotation)), camPos.position.y,
+		glm::cos(glm::radians(camPos->rotation)), -glm::sin(glm::radians(camPos->rotation)), camPos->position.x,
+		glm::sin(glm::radians(camPos->rotation)), glm::cos(glm::radians(camPos->rotation)), camPos->position.y,
 		0, 0, 1
 	);
+	/*if (camPos->hasParent) {
+		auto& parentPos = registry.get<TransformComponent>(camPos->parent.value());
+		camToWorldMatrix = camToWorldMatrix;
+	}*/
 	auto worldToCamMatrix = glm::inverse(camToWorldMatrix);
 	int windowSizeX, windowSizeY;
 	SDL_GetRendererOutputSize(sdlRenderer, &windowSizeX, &windowSizeY);
@@ -97,8 +97,10 @@ void RendererSystem::Render()
 		else {
 			SDL_QueryTexture(texture->texture, nullptr, nullptr, &texW, &texH);
 		}
-		auto viewMatrix = pos.matrix * worldToScreenMatrix;
-		auto position = glm::vec2(viewMatrix[0][2], viewMatrix[1][2]);
+		auto viewMatrix = pos.matrixL2W * worldToScreenMatrix;
+		auto localPos = glm::vec3(0, 0, 1);
+		auto position = localPos * viewMatrix;
+		//auto position = glm::vec2(viewMatrix[0][2], viewMatrix[1][2]);
 		auto scale = glm::vec2(glm::sqrt(viewMatrix[0][0] * viewMatrix[0][0] + viewMatrix[1][0] * viewMatrix[1][0]), glm::sqrt(viewMatrix[0][1] * viewMatrix[0][1] + viewMatrix[1][1] * viewMatrix[1][1]));
 		auto rotation = glm::degrees(std::atan2f(viewMatrix[1][0], viewMatrix[0][0]));
 		int spriteSizeX = scale.x * ((float)texW / texture->ppu);
@@ -139,16 +141,12 @@ void RendererSystem::InitLoaded()
 {
 	Entities& entities = entt::locator<Entities>::value();
 	entt::registry& registry = entities.GetRegistry();
-	auto view = registry.view<const CameraComponent, const TransformComponent>();
+	auto view = registry.view<CameraComponent, TransformComponent>();
 	for (auto entity : view) {
-		const auto& pos = view.get<TransformComponent>(entity);
-		const auto& body = view.get<CameraComponent>(entity);
+		auto& pos = view.get<TransformComponent>(entity);
+		auto& body = view.get<CameraComponent>(entity);
 		if (body.startCamera) {
 			SetCamera(entity);
-#ifdef _EDITOR
-			editorCam = body;
-			editorCamTrx = pos;
-#endif
 			break;
 		}
 	}

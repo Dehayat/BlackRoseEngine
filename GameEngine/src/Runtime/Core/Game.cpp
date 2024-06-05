@@ -18,6 +18,7 @@
 #include "Animation/AnimationSystem.h"
 #include "Events/EntityEventSystem.h"
 #include "Scripting/ScriptSystem.h"
+#include "Editor/LevelTree.h"
 
 #ifdef _EDITOR
 #include "Editor/Editor.h"
@@ -45,6 +46,7 @@ void Game::SetupBaseSystems() {
 
 void Game::SetupLowLevelSystems()
 {
+	CREATESYSTEM(LevelTree);
 	CREATESYSTEM(TimeSystem);
 	CREATESYSTEM(InputSystem);
 	CREATESYSTEM(RendererSystem);
@@ -95,7 +97,7 @@ void Game::LoadLevel()
 	LevelLoader& levelLoader = GETSYSTEM(LevelLoader);
 	levelLoader.LoadLevel("assets/Levels/Level.yaml");
 	TransformSystem& transformSystem = GETSYSTEM(TransformSystem);
-	transformSystem.InitLoaded();
+	//transformSystem.InitLoaded();
 }
 
 void Game::Update()
@@ -113,7 +115,8 @@ void Game::Update()
 	bool isGameRunning = GETSYSTEM(Editor).IsGameRunning();
 	GETSYSTEM(TimeSystem).Update();
 	GETSYSTEM(TransformSystem).Update();
-	GETSYSTEM(InputSystem).Update(); if (isGameRunning) {
+	GETSYSTEM(InputSystem).Update();
+	if (isGameRunning) {
 		GETSYSTEM(PhysicsSystem).Update();
 	}
 	GETSYSTEM(AnimationPlayer).Update();

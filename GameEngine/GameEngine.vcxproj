@@ -201,7 +201,7 @@
     <ClCompile Include="src\Runtime\Core\SdlContainer.cpp" />
     <ClCompile Include="src\Runtime\Core\TimeSystem.cpp" />
     <ClCompile Include="src\Runtime\Core\Transform.cpp" />
-    <ClCompile Include="src\Runtime\Debug\Logger.cpp" />
+    <ClCompile Include="src\Runtime\Debugging\Logger.cpp" />
     <ClCompile Include="src\Runtime\Input\InputSystem.cpp" />
     <ClCompile Include="src\Runtime\Levels\LevelLoader.cpp" />
     <ClCompile Include="src\Runtime\Physics\Physics.cpp" />

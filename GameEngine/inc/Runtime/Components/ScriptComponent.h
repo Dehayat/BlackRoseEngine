@@ -13,6 +13,7 @@ struct ScriptComponent {
 	}
 	ScriptComponent() {
 		this->script = nullptr;
+		script = new PlayerScript();
 	}
 	~ScriptComponent() {
 		if (script != nullptr) {

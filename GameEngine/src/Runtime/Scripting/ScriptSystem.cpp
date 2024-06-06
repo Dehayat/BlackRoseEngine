@@ -22,13 +22,19 @@ void ScriptSystem::Update()
 	entt::registry& registry = GETSYSTEM(Entities).GetRegistry();
 	while (!newlyAddedScripts.empty()) {
 		auto& entity = newlyAddedScripts.front();
-		auto& scriptComponent = registry.get<ScriptComponent>(entity);
-		scriptComponent.script->Setup(entity);
+		if (registry.valid(entity) && registry.any_of<ScriptComponent>(entity)) {
+			auto& scriptComponent = registry.get<ScriptComponent>(entity);
+			if (scriptComponent.script != nullptr) {
+				scriptComponent.script->Setup(entity);
+			}
+		}
 		newlyAddedScripts.pop();
 	}
 	auto view = registry.view<ScriptComponent>();
 	for (auto entity : view) {
 		auto& scriptComponent = registry.get<ScriptComponent>(entity);
-		scriptComponent.script->Update(entity);
+		if (scriptComponent.script != nullptr) {
+			scriptComponent.script->Update(entity);
+		}
 	}
 }

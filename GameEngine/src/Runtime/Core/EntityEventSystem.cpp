@@ -17,7 +17,7 @@ void EntityEventSystem::Update()
 	while (!eventQueue.empty()) {
 		auto& entityEvent = eventQueue.front();
 		auto scriptComponent = registry.try_get<ScriptComponent>(entityEvent.entity);
-		if (scriptComponent != nullptr) {
+		if (scriptComponent != nullptr && scriptComponent->script != nullptr) {
 			scriptComponent->script->OnEvent(entityEvent.entity, entityEvent);
 		}
 		eventQueue.pop();

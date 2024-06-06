@@ -11,7 +11,7 @@
 #include "Components/CameraComponent.h"
 
 
-#include "Debug/Logger.h"
+#include "Debugging/Logger.h"
 
 RendererSystem::RendererSystem()
 {

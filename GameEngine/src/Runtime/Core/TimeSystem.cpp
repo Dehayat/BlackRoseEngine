@@ -3,7 +3,7 @@
 
 #include <SDL2/SDL.h>
 
-#include "Debug/Logger.h"
+#include "Debugging/Logger.h"
 
 const float MAX_DT = FRAMETIME_MS / 1000.0 * 4;
 

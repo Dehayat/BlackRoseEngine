@@ -9,7 +9,7 @@
 
 #include "Components/Components.h"
 
-#include "Debug/Logger.h"
+#include "Debugging/Logger.h"
 
 using namespace glm;
 using namespace entt;

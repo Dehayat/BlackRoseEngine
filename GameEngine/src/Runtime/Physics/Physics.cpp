@@ -7,7 +7,7 @@
 
 #include "Systems.h"
 
-#include "Debug/Logger.h"
+#include "Debugging/Logger.h"
 
 PhysicsSystem::PhysicsSystem(float gravityX, float gravityY) {
 	b2Vec2 gravity(gravityX, gravityY);

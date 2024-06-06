@@ -6,7 +6,7 @@
 
 #include "AssetStore/AssetPackage.h"
 
-#include "Debug/Logger.h"
+#include "Debugging/Logger.h"
 
 static std::string Label(const std::string& label, Guid guid) {
 	return label + "##" + std::to_string(guid);

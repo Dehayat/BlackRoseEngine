@@ -2,7 +2,7 @@
 
 #include "Events/EntityEvent.h"
 
-#include "Debug/Logger.h"
+#include "Debugging/Logger.h"
 
 class Script {
 public:

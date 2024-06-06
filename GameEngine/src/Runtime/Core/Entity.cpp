@@ -6,7 +6,7 @@
 
 #include "Systems.h"
 
-#include "Debug/Logger.h"
+#include "Debugging/Logger.h"
 
 Entities::Entities()
 {

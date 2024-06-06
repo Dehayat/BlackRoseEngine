@@ -19,7 +19,7 @@
 #include "Components/AnimationComponent.h"
 #include "Components/ScriptComponent.h"
 
-#include "Debug/Logger.h"
+#include "Debugging/Logger.h"
 
 
 LevelLoader::LevelLoader()

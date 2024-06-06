@@ -9,7 +9,7 @@
 
 #include "AssetStore/AssetPackage.h"
 
-#include "Debug/Logger.h"
+#include "Debugging/Logger.h"
 
 
 AssetStore::AssetStore()

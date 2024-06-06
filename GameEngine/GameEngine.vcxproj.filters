@@ -162,7 +162,7 @@
     <ClInclude Include="inc\Editor\Editor.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="inc\Runtime\Debug\Logger.h">
+    <ClInclude Include="inc\Runtime\Debugging\Logger.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="inc\Tools\AssetManager.h">

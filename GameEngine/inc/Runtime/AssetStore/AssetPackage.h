@@ -13,7 +13,7 @@
 
 #include "FileResource.h"
 
-#include "Debug/Logger.h"
+#include "Debugging/Logger.h"
 
 const int FILE_PATH_SIZE = 41;
 

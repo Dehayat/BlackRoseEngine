@@ -3,7 +3,7 @@
 #include <entt/entt.hpp>
 
 #include "Systems.h"
-#include "Debug/Logger.h"
+#include "Debugging/Logger.h"
 
 #include "SdlContainer.h"
 #include "AssetStore/AssetStore.h"

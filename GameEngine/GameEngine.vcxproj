@@ -168,7 +168,7 @@
     <ClInclude Include="inc\Runtime\Core\Systems.h" />
     <ClInclude Include="inc\Runtime\Core\TimeSystem.h" />
     <ClInclude Include="inc\Runtime\Core\Transform.h" />
-    <ClInclude Include="inc\Runtime\Debug\Logger.h" />
+    <ClInclude Include="inc\Runtime\Debugging\Logger.h" />
     <ClInclude Include="inc\Runtime\Events\AnimationEvent.h" />
     <ClInclude Include="inc\Runtime\Events\EntityEvent.h" />
     <ClInclude Include="inc\Runtime\Events\EntityEventSystem.h" />

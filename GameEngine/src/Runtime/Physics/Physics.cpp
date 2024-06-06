@@ -41,7 +41,8 @@ void PhysicsSystem::PhysicsBodyCreated(entt::registry& registry, entt::entity en
 	if (globalScale.y<0.01 && globalScale.y > -0.01) {
 		globalScale.y = 0.01;
 	}
-	phys.shape.SetAsBox(phys.size.x * globalScale.x / 2.0, phys.size.y * globalScale.y / 2.0);
+	phys.globalSize = vec2(phys.size.x * globalScale.x / 2.0, phys.size.y * globalScale.y / 2.0);
+	phys.shape.SetAsBox(phys.globalSize.x, phys.globalSize.y);
 
 	phys.fixture.shape = &phys.shape;
 	phys.fixture.density = 1.0f;
@@ -57,7 +58,7 @@ void PhysicsSystem::PhysicsBodyDestroyed(entt::registry& registry, entt::entity 
 }
 void PhysicsSystem::CopyTransformToBody(PhysicsBodyComponent& phys, TransformComponent& trx)
 {
-	if (phys.size.x != trx.globalScale.x || phys.size.y != trx.globalScale.y) {
+	if (phys.globalSize.x != trx.globalScale.x || phys.globalSize.y != trx.globalScale.y) {
 		b2Body* body = GetWorld().CreateBody(&phys.bodyDef);
 		auto globalScale = trx.globalScale;
 		if (globalScale.x<0.01 && globalScale.x > -0.01) {
@@ -67,7 +68,8 @@ void PhysicsSystem::CopyTransformToBody(PhysicsBodyComponent& phys, TransformCom
 			globalScale.y = 0.01;
 		}
 		phys.body->DestroyFixture(&phys.body->GetFixtureList()[0]);
-		phys.shape.SetAsBox(phys.size.x * globalScale.x / 2.0, phys.size.y * globalScale.y / 2.0);
+		phys.globalSize = vec2(phys.size.x * globalScale.x / 2.0, phys.size.y * globalScale.y / 2.0);
+		phys.shape.SetAsBox(phys.globalSize.x, phys.globalSize.y);
 		phys.body->CreateFixture(&phys.fixture);
 	}
 	phys.body->SetTransform(b2Vec2(trx.globalPosition.x, trx.globalPosition.y), glm::radians(trx.globalRotation));

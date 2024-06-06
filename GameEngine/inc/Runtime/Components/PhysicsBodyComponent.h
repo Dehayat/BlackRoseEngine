@@ -10,6 +10,7 @@ struct PhysicsBodyComponent {
 	vec2 size;
 	bool isStatic;
 
+	vec2 globalSize;
 	b2Body* body;
 	b2PolygonShape shape;
 	b2FixtureDef fixture;
@@ -20,6 +21,7 @@ struct PhysicsBodyComponent {
 		this->isStatic = isStatic;
 
 		this->body = nullptr;
+		globalSize = vec2();
 	}
 	PhysicsBodyComponent(ryml::NodeRef node)
 	{
@@ -33,6 +35,7 @@ struct PhysicsBodyComponent {
 			isStatic = true;
 		}
 
+		globalSize = vec2();
 		this->body = nullptr;
 	}
 	void Serialize(ryml::NodeRef node)

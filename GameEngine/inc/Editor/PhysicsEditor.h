@@ -15,8 +15,8 @@ public:
 		auto& trx = registry.get<TransformComponent>(entity);
 		auto& phys = registry.get<PhysicsBodyComponent>(entity);
 		physics.CopyTransformToBody(phys, trx);
-		auto pos = b2Vec2(trx.position.x, trx.position.y);
-		phys.body->SetTransform(pos, radians(trx.rotation));
+		auto pos = b2Vec2(trx.globalPosition.x, trx.globalPosition.y);
+		phys.body->SetTransform(pos, radians(trx.globalRotation));
 		bool changeSize = ImGui::DragFloat("size x", &phys.size.x, 0.1f, 0.01f, 2000);
 		changeSize |= ImGui::DragFloat("size y", &phys.size.y, 0.1f, 0.01f, 2000);
 		if (changeSize) {

@@ -1,1 +1,13 @@
- []
+- Type: Entity
+  Guid: 16695479920711999621
+  Transform:
+    position:
+      - 0
+      - 0
+    scale:
+      - 1
+      - 1
+    rotation: 0
+  Camera:
+    height: 5
+    startCamera: 1

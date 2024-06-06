@@ -224,7 +224,9 @@ void Editor::RenderTools()
 		static char fileName[41] = "assets/Levels/Level.yaml";
 		if (ImGui::Button("Load Level")) {
 			levelLoader.UnloadLevel();
+			levelTreeEditor.CleanTree();
 			levelLoader.LoadLevel(fileName);
+			GETSYSTEM(RendererSystem).InitLoaded();
 		}
 		ImGui::SameLine();
 		ImGui::InputText("##L1", fileName, 41);

@@ -29,6 +29,7 @@ void TransformSystem::TransformCreated(entt::registry& registry, entt::entity en
 {
 	auto& trx = registry.get<TransformComponent>(entity);
 	GETSYSTEM(LevelTree).TransformCreated(registry, entity);
+	UpdateGlobals(trx);
 }
 void TransformSystem::TransformDestroyed(entt::registry& registry, entt::entity entity)
 {
@@ -80,8 +81,25 @@ void TransformSystem::Update()
 	for (auto entity : view3) {
 		auto& trx = view3.get<TransformComponent>(entity);
 		trx.matrixL2W = CalcMatrixL2W(trx);
+		UpdateGlobals(trx);
 	}
 }
+
+void TransformSystem::UpdateGlobals(TransformComponent& trx)
+{
+	auto pos = glm::vec3(0, 0, 1);
+	auto globalPos = pos * trx.matrixL2W;
+	trx.globalPosition.x = globalPos.x;
+	trx.globalPosition.y = globalPos.y;
+
+	auto globalScale = glm::vec2(glm::sqrt(trx.matrixL2W[0][0] * trx.matrixL2W[0][0] + trx.matrixL2W[1][0] * trx.matrixL2W[1][0]), glm::sqrt(trx.matrixL2W[0][1] * trx.matrixL2W[0][1] + trx.matrixL2W[1][1] * trx.matrixL2W[1][1]));
+
+	trx.globalScale.x = globalScale.x;
+	trx.globalScale.y = globalScale.y;
+	auto globalRotation = glm::degrees(std::atan2f(trx.matrixL2W[1][0], trx.matrixL2W[0][0]));
+	trx.globalRotation = globalRotation;
+}
+
 glm::mat3 TransformSystem::CalcMatrix(TransformComponent& trx)
 {
 	return glm::mat3(
@@ -154,6 +172,7 @@ void TransformSystem::SetParent(entt::entity entity, entt::entity parent)
 		child.level = parentTrx.level + 1;
 		child.hasParent = true;
 	}
+	UpdateGlobals(child);
 }
 
 

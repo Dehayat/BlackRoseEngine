@@ -31,6 +31,7 @@ public:
 	void TransformCreated(entt::registry& registry, entt::entity);
 	void TransformDestroyed(entt::registry& registry, entt::entity);
 	static void BakeTransform(TransformComponent& trx);
+	void UpdateGlobals(TransformComponent& trx);
 	static void MoveTransformToParentSpace(TransformComponent& trx, TransformComponent& source);
 	static glm::mat3 CalcMatrix(TransformComponent& trx);
 	static glm::mat3 CalcMatrixL2W(TransformComponent& trx);

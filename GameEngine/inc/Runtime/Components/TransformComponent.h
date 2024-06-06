@@ -23,6 +23,9 @@ struct TransformComponent :IComponent {
 	int level;
 	std::optional<entity> parent;
 	mat3 matrixL2W;
+	vec2 globalPosition;
+	vec2 globalScale;
+	float globalRotation;
 
 	//TransformComponent(const TransformComponent&) = delete;
 	//TransformComponent& operator=(const TransformComponent&) = delete;
@@ -35,6 +38,9 @@ struct TransformComponent :IComponent {
 
 		this->level = 0;
 		this->matrixL2W = mat3(0);
+		globalPosition = vec2();
+		globalScale= vec2();
+		globalRotation = 0;
 
 		this->hasParent = false;
 		this->parentGUID = -1;
@@ -49,6 +55,9 @@ struct TransformComponent :IComponent {
 		this->matrixL2W = mat3(0);
 		this->hasParent = false;
 		this->level = 0;
+		globalPosition = vec2();
+		globalScale = vec2();
+		globalRotation = 0;
 
 		if (node.has_child("position")) {
 			node["position"][0] >> position.x;

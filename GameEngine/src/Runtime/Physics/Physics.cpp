@@ -31,36 +31,62 @@ void PhysicsSystem::PhysicsBodyCreated(entt::registry& registry, entt::entity en
 	if (!phys.isStatic) {
 		phys.bodyDef.type = b2_dynamicBody;
 	}
-	phys.bodyDef.position.Set(trx.position.x, trx.position.y);
+	phys.bodyDef.position.Set(trx.globalPosition.x, trx.globalPosition.y);
+
 	b2Body* body = GetWorld().CreateBody(&phys.bodyDef);
-	phys.shape.SetAsBox(phys.size.x / 2.0, phys.size.y / 2.0);
+	auto globalScale = trx.globalScale;
+	if (globalScale.x<0.01 && globalScale.x > -0.01) {
+		globalScale.x = 0.01;
+	}
+	if (globalScale.y<0.01 && globalScale.y > -0.01) {
+		globalScale.y = 0.01;
+	}
+	phys.shape.SetAsBox(phys.size.x * globalScale.x / 2.0, phys.size.y * globalScale.y / 2.0);
+
 	phys.fixture.shape = &phys.shape;
 	phys.fixture.density = 1.0f;
 	phys.fixture.friction = 0.3f;
 	body->CreateFixture(&phys.fixture);
 	phys.body = body;
+	phys.body->SetTransform(b2Vec2(trx.globalPosition.x, trx.globalPosition.y), glm::radians(trx.globalRotation));
 }
 void PhysicsSystem::PhysicsBodyDestroyed(entt::registry& registry, entt::entity entity)
 {
 	auto& phys = registry.get<PhysicsBodyComponent>(entity);
 	GetWorld().DestroyBody(phys.body);
 }
-
+void PhysicsSystem::CopyTransformToBody(PhysicsBodyComponent& phys, TransformComponent& trx)
+{
+	if (phys.size.x != trx.globalScale.x || phys.size.y != trx.globalScale.y) {
+		b2Body* body = GetWorld().CreateBody(&phys.bodyDef);
+		auto globalScale = trx.globalScale;
+		if (globalScale.x<0.01 && globalScale.x > -0.01) {
+			globalScale.x = 0.01;
+		}
+		if (globalScale.y<0.01 && globalScale.y > -0.01) {
+			globalScale.y = 0.01;
+		}
+		phys.body->DestroyFixture(&phys.body->GetFixtureList()[0]);
+		phys.shape.SetAsBox(phys.size.x * globalScale.x / 2.0, phys.size.y * globalScale.y / 2.0);
+		phys.body->CreateFixture(&phys.fixture);
+	}
+	phys.body->SetTransform(b2Vec2(trx.globalPosition.x, trx.globalPosition.y), glm::radians(trx.globalRotation));
+	phys.body->SetAwake(true);
+}
+void PhysicsSystem::CopyBodyToTransform(PhysicsBodyComponent& phys, TransformComponent& trx)
+{
+	trx.position = glm::vec2(phys.body->GetPosition().x, phys.body->GetPosition().y);
+	trx.rotation = glm::degrees(phys.body->GetAngle());
+}
 void PhysicsSystem::Update()
 {
 	Entities& entities = entt::locator<Entities>::value();
 	entt::registry& registry = entities.GetRegistry();
 	auto phView = registry.view<PhysicsBodyComponent, TransformComponent>();
 	for (auto entity : phView) {
-		const auto& pos = phView.get<TransformComponent>(entity);
+		auto& pos = phView.get<TransformComponent>(entity);
 		auto& body = phView.get<PhysicsBodyComponent>(entity);
-		auto rotation = body.body->GetAngle();
-		auto position = body.body->GetPosition();
-		position.x = pos.position.x;
-		position.y = pos.position.y;
-		rotation = glm::radians(pos.rotation);
-		body.body->SetTransform(position, rotation);
-		body.body->SetAwake(true);
+		CopyTransformToBody(body, pos);
 	}
 
 	TimeSystem& timeSystem = GETSYSTEM(TimeSystem);
@@ -71,9 +97,8 @@ void PhysicsSystem::Update()
 
 	for (auto entity : phView) {
 		auto& pos = phView.get<TransformComponent>(entity);
-		const auto& body = phView.get<PhysicsBodyComponent>(entity);
-		pos.position = glm::vec2(body.body->GetPosition().x, body.body->GetPosition().y);
-		pos.rotation = glm::degrees(body.body->GetAngle());
+		auto& body = phView.get<PhysicsBodyComponent>(entity);
+		CopyBodyToTransform(body, pos);
 	}
 }
 b2World& PhysicsSystem::GetWorld()

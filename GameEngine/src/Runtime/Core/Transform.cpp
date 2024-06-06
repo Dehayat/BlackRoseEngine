@@ -49,7 +49,7 @@ void TransformSystem::BakeTransform(TransformComponent& trx)
 	trx.scale.y = bakedScale.y;
 	auto bakedRotation = glm::degrees(std::atan2f(trx.matrixL2W[1][0], trx.matrixL2W[0][0]));
 	trx.rotation = bakedRotation;
-	CalcMatrixL2W(trx);
+	trx.matrixL2W = CalcMatrixL2W(trx);
 }
 void TransformSystem::MoveTransformToParentSpace(TransformComponent& child, TransformComponent& parent)
 {

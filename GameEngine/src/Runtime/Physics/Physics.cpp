@@ -75,8 +75,23 @@ void PhysicsSystem::CopyTransformToBody(PhysicsBodyComponent& phys, TransformCom
 }
 void PhysicsSystem::CopyBodyToTransform(PhysicsBodyComponent& phys, TransformComponent& trx)
 {
-	trx.position = glm::vec2(phys.body->GetPosition().x, phys.body->GetPosition().y);
-	trx.rotation = glm::degrees(phys.body->GetAngle());
+	if (trx.hasParent) {
+		auto& parentTrx = GETSYSTEM(Entities).GetRegistry().get<TransformComponent>(trx.parent.value());
+		auto matW2P = glm::inverse(parentTrx.matrixL2W);
+		auto globalPos = glm::vec3(phys.body->GetPosition().x, phys.body->GetPosition().y, 1);
+		auto localPos = globalPos * matW2P;
+		trx.position = glm::vec2(localPos.x, localPos.y);
+
+		float globalRotation = phys.body->GetAngle();
+		glm::mat4 parentRotationMat = glm::inverse(parentTrx.matrixL2W);
+		float parentRotation = atan2f(parentRotationMat[1][0], parentRotationMat[0][0]);
+		float localRotation = globalRotation + parentRotation;
+		trx.rotation = glm::degrees(localRotation);
+	}
+	else {
+		trx.position = glm::vec2(phys.body->GetPosition().x, phys.body->GetPosition().y);
+		trx.rotation = glm::degrees(phys.body->GetAngle());
+	}
 }
 void PhysicsSystem::Update()
 {

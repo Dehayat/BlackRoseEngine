@@ -13,6 +13,7 @@
 
 using namespace glm;
 using namespace entt;
+
 struct TransformComponent :IComponent {
 	vec2 position;
 	vec2 scale;

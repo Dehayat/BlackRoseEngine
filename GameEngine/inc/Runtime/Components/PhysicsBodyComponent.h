@@ -9,6 +9,7 @@ using namespace glm;
 struct PhysicsBodyComponent {
 	vec2 size;
 	bool isStatic;
+	bool isSensor;
 
 	vec2 globalSize;
 	b2Body* body;
@@ -16,9 +17,10 @@ struct PhysicsBodyComponent {
 	b2FixtureDef fixture;
 	b2BodyDef bodyDef;
 
-	PhysicsBodyComponent(vec2 size = vec2(1.f, 1.f), bool isStatic = false) {
+	PhysicsBodyComponent(vec2 size = vec2(1.f, 1.f), bool isStatic = false, bool isSensor = false) {
 		this->size = size;
 		this->isStatic = isStatic;
+		this->isSensor = isSensor;
 
 		this->body = nullptr;
 		globalSize = vec2();
@@ -27,12 +29,16 @@ struct PhysicsBodyComponent {
 	{
 		size = { 1.f,1.f };
 		this->isStatic = false;
+		this->isSensor = false;
 		if (node.is_map() && node.has_child("size")) {
 			node["size"][0] >> size.x;
 			node["size"][1] >> size.y;
 		}
 		if (node.is_map() && node.has_child("isStatic")) {
 			isStatic = true;
+		}
+		if (node.is_map() && node.has_child("isSensor")) {
+			isSensor = true;
 		}
 
 		globalSize = vec2();
@@ -46,6 +52,9 @@ struct PhysicsBodyComponent {
 		node["size"].append_child() << size.y;
 		if (isStatic) {
 			node["isStatic"] << isStatic;
+		}
+		if (isSensor) {
+			node["isSensor"] << isSensor;
 		}
 	}
 };

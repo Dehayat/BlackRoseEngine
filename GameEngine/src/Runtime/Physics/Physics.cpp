@@ -47,6 +47,7 @@ void PhysicsSystem::PhysicsBodyCreated(entt::registry& registry, entt::entity en
 	phys.fixture.shape = &phys.shape;
 	phys.fixture.density = 1.0f;
 	phys.fixture.friction = 0.3f;
+	phys.fixture.isSensor = phys.isSensor;
 	body->CreateFixture(&phys.fixture);
 	phys.body = body;
 	phys.body->SetTransform(b2Vec2(trx.globalPosition.x, trx.globalPosition.y), glm::radians(trx.globalRotation));

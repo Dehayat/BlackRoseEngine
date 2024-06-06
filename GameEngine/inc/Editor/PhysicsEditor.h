@@ -35,5 +35,9 @@ public:
 				phys.body->SetType(b2BodyType::b2_dynamicBody);
 			}
 		}
+		if (ImGui::Checkbox("Sensor", &phys.isSensor)) {
+			phys.fixture.isSensor = phys.isSensor;
+			phys.body->GetFixtureList()[0].SetSensor(phys.isSensor);
+		}
 	}
 };

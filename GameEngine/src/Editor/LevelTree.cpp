@@ -42,12 +42,14 @@ void LevelTree::TransformCreated(entt::registry& registry, entt::entity entity)
 
 	auto guid = GETSYSTEM(Entities).GetEntityGuid(entity);
 	if (waitingForParent.find(guid) != waitingForParent.end()) {
+		Logger::Log("found parent");
 		for (auto child : waitingForParent[guid]) {
 			node->AddChild(child);
 			auto& childTrx = registry.get<TransformComponent>(child->element);
 			childTrx.parent = node->element;
 			childTrx.hasParent = true;
 		}
+		waitingForParent.erase(guid);
 		UpdateChildrenRecursive(registry, node);
 	}
 }

@@ -1,5 +1,5 @@
 - Type: Entity
-  Guid: 13042357385276534483
+  Guid: 16695479920711999621
   Transform:
     position:
       - 0
@@ -8,34 +8,24 @@
       - 1
       - 1
     rotation: 0
-    parent: 17640613414784985595
-  Sprite:
-    sprite: sekiroIdle
-    layer: 0
-    color:
-      - 1
-      - 1
-      - 1
-      - 1
-  Animation:
-    animation: sekiroIdleAnim
+  Camera:
+    height: 5
+    startCamera: 1
 - Type: Entity
-  Guid: 17640613414784985595
+  Guid: 15925110006036969522
   Transform:
     position:
-      - -3.3481483
-      - 0.070370436
+      - 0
+      - -0.80370355
     scale:
       - 1
       - 1
     rotation: 0
-  Player:
-    speed: 10
   PhysicsBody:
     size:
-      - 0.5
-      - 1
-  Script: {}
+      - 20
+      - 0.4
+    isStatic: 1
 - Type: Entity
   Guid: 2437737518152397576
   Transform:
@@ -56,22 +46,24 @@
       - 1
       - 1
 - Type: Entity
-  Guid: 15925110006036969522
+  Guid: 17640613414784985595
   Transform:
     position:
-      - 0
-      - -0.80370355
+      - -3.3481483
+      - 0.070370436
     scale:
       - 1
       - 1
     rotation: 0
+  Player:
+    speed: 10
   PhysicsBody:
     size:
-      - 20
-      - 0.4
-    isStatic: 1
+      - 0.5
+      - 1
+  Script: {}
 - Type: Entity
-  Guid: 16695479920711999621
+  Guid: 13042357385276534483
   Transform:
     position:
       - 0
@@ -80,6 +72,14 @@
       - 1
       - 1
     rotation: 0
-  Camera:
-    height: 5
-    startCamera: 1
+    parent: 17640613414784985595
+  Sprite:
+    sprite: sekiroIdle
+    layer: 0
+    color:
+      - 1
+      - 1
+      - 1
+      - 1
+  Animation:
+    animation: sekiroIdleAnim

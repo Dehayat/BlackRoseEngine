@@ -95,9 +95,7 @@ void Game::LoadAssets()
 void Game::LoadLevel()
 {
 	LevelLoader& levelLoader = GETSYSTEM(LevelLoader);
-	levelLoader.LoadLevel("assets/Levels/Level.yaml");
-	TransformSystem& transformSystem = GETSYSTEM(TransformSystem);
-	//transformSystem.InitLoaded();
+	levelLoader.LoadLevel("assets/Levels/Level1.yaml");
 }
 
 void Game::Update()

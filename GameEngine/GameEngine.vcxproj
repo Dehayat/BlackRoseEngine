@@ -186,7 +186,7 @@
     <ClInclude Include="inc\Tools\AssetManager.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="inc\Editor\LevelTreeEditor.cpp" />
+    <ClCompile Include="src\Editor\LevelTreeEditor.cpp" />
     <ClCompile Include="src\Editor\Editor.cpp" />
     <ClCompile Include="src\Editor\ImguiSystem.cpp" />
     <ClCompile Include="src\Editor\LevelTree.cpp" />

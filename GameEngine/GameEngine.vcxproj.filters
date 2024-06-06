@@ -242,7 +242,7 @@
     <ClCompile Include="src\Runtime\Debug\Logger.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="inc\Editor\LevelTreeEditor.cpp">
+    <ClCompile Include="src\Editor\LevelTreeEditor.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

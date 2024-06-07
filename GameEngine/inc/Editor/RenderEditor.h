@@ -26,6 +26,7 @@ public:
 		auto& registry = GETSYSTEM(Entities).GetRegistry();
 		auto& sprite = registry.get<SpriteComponent>(entity);
 		ImGui::ColorEdit4("Color", (float*)(&sprite.color), ImGuiColorEditFlags_AlphaBar | ImGuiColorEditFlags_Float);
+		ImGui::InputInt("Layer", &sprite.layer);
 		if (sprite.sprite.capacity() < 21) {
 			sprite.sprite.reserve(21);
 		}

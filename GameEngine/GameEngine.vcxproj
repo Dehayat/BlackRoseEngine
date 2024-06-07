@@ -139,6 +139,7 @@
     <ClInclude Include="inc\Editor\LevelTree.h" />
     <ClInclude Include="inc\Editor\LevelTreeEditor.h" />
     <ClInclude Include="inc\Editor\PhysicsEditor.h" />
+    <ClInclude Include="inc\Editor\PlayerEditor.h" />
     <ClInclude Include="inc\Editor\RenderEditor.h" />
     <ClInclude Include="inc\Editor\ScriptEditor.h" />
     <ClInclude Include="inc\Editor\TransformEditor.h" />

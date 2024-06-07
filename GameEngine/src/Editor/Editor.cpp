@@ -28,6 +28,7 @@
 #include "Editor/TransformEditor.h"
 #include "Editor/AnimationEditor.h"
 #include "Editor/ScriptEditor.h"
+#include "Editor/PlayerEditor.h"
 
 #include "Tools/AssetManager.h"
 
@@ -274,7 +275,7 @@ void Editor::EntityEditor()
 		RenderComponent<CameraComponent, CameraEditor>(true, "Camera Component", selectedEntity);
 		RenderComponent<AnimationComponent, AnimationEditor>(true, "Animation Component", selectedEntity);
 		RenderComponent<ScriptComponent, ScriptEditor>(true, "Script Component", selectedEntity);
-		RenderComponent<PlayerComponent, ScriptEditor>(true, "Player Component", selectedEntity);
+		RenderComponent<PlayerComponent, PlayerEditor>(true, "Player Component", selectedEntity);
 	}
 }
 

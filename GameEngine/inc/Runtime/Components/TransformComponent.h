@@ -40,11 +40,13 @@ struct TransformComponent :IComponent {
 		this->level = 0;
 		this->matrixL2W = mat3(0);
 		globalPosition = vec2();
-		globalScale= vec2();
+		globalScale = vec2();
 		globalRotation = 0;
-
-		this->hasParent = false;
 		this->parentGUID = -1;
+		this->hasParent = false;
+		if (this->parent) {
+			this->hasParent = true;
+		}
 	}
 	TransformComponent(ryml::NodeRef& node) {
 		this->position = vec2(0, 0);
@@ -95,7 +97,7 @@ struct TransformComponent :IComponent {
 		node["scale"].append_child() << scale.x;
 		node["scale"].append_child() << scale.y;
 		node["rotation"] << rotation;
-		if (parent) {
+		if (hasParent) {
 			node["parent"] << parentGUID;
 		}
 	}

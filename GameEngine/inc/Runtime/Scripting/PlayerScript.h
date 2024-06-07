@@ -9,19 +9,19 @@
 #include "Systems.h"
 
 #include "Components/TransformComponent.h"
-#include "Components/PhysicsBodyComponent.h"
+#include "Components/PlayerComponent.h"
 
 class PlayerScript : public Script {
 private:
 	int walkDir = 0;
-	int speed = 5;
 public:
 	virtual void Update(entt::entity owner) override {
 		auto& timeSystem = GETSYSTEM(TimeSystem);
 		float dt = timeSystem.GetdeltaTime();
 		if (walkDir != 0) {
 			auto& transform = GETSYSTEM(Entities).GetRegistry().get<TransformComponent>(owner);
-			transform.position.x += walkDir * dt * speed;
+			auto& player = GETSYSTEM(Entities).GetRegistry().get<PlayerComponent>(owner);
+			transform.position.x += walkDir * dt * player.speed;
 		}
 	}
 	virtual void OnEvent(entt::entity owner, const EntityEvent& entityEvent) override {

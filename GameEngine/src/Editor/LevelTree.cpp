@@ -48,6 +48,7 @@ void LevelTree::TransformCreated(entt::registry& registry, entt::entity entity)
 			auto& childTrx = registry.get<TransformComponent>(child->element);
 			childTrx.parent = node->element;
 			childTrx.hasParent = true;
+			childTrx.parentGUID = guid;
 		}
 		waitingForParent.erase(guid);
 		UpdateChildrenRecursive(registry, node);

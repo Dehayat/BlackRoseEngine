@@ -28,6 +28,12 @@ TransformSystem::~TransformSystem()
 void TransformSystem::TransformCreated(entt::registry& registry, entt::entity entity)
 {
 	auto& trx = registry.get<TransformComponent>(entity);
+	auto& entities = GETSYSTEM(Entities);
+	if (trx.hasParent && !trx.parent) {
+		if (entities.EntityExists(trx.parentGUID)) {
+			trx.parent = entities.GetEntity(trx.parentGUID);
+		}
+	}
 	GETSYSTEM(LevelTree).TransformCreated(registry, entity);
 	UpdateGlobals(trx);
 }
@@ -161,7 +167,8 @@ void TransformSystem::SetParent(entt::entity entity, entt::entity parent)
 	auto& child = registry.get<TransformComponent>(entity);
 	if (child.hasParent) {
 		GETSYSTEM(LevelTree).RemoveParent(entity);
-		child.parent = entt::entity(-1);
+		child.hasParent = false;
+		child.parent.reset();
 		child.level = 0;
 	}
 
@@ -171,6 +178,7 @@ void TransformSystem::SetParent(entt::entity entity, entt::entity parent)
 		auto& parentTrx = registry.get<TransformComponent>(parent);
 		child.level = parentTrx.level + 1;
 		child.hasParent = true;
+		child.parentGUID = entities.GetEntityGuid(parent);
 	}
 	UpdateGlobals(child);
 }

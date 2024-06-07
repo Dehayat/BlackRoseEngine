@@ -25,5 +25,14 @@ public:
 		auto& registry = GETSYSTEM(Entities).GetRegistry();
 		auto& player = registry.get<PlayerComponent>(entity);
 		ImGui::SliderFloat("Speed", &player.speed, 0, 10);
+		if (player.idleAnim.capacity() < 21) {
+			player.idleAnim.reserve(21);
+		}
+		ImGui::InputText("idle Animation", &player.idleAnim[0], 21, ImGuiInputTextFlags_CallbackResize, ResizeStringCallback, &player.idleAnim);
+
+		if (player.runAnim.capacity() < 21) {
+			player.runAnim.reserve(21);
+		}
+		ImGui::InputText("run Animation", &player.runAnim[0], 21, ImGuiInputTextFlags_CallbackResize, ResizeStringCallback, &player.runAnim);
 	}
 };

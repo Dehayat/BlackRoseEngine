@@ -26,6 +26,9 @@ struct AnimationComponent {
 		isOver = false;
 		nextEventIndex = 0;
 		currentAnimationTime = 0;
+		while (!eventQueue.empty()) {
+			eventQueue.pop();
+		}
 	}
 	AnimationComponent(std::string animaiton = "") {
 		this->animation = animaiton;
@@ -58,6 +61,9 @@ struct AnimationComponent {
 		if (animationAsset == nullptr) {
 			return;
 		}
+		if (currentFrame >= animationAsset->frames.size()) {
+			Reset();
+		}
 		currentFrameTime += dt;
 		currentAnimationTime += dt;
 		while (nextEventIndex < animationAsset->animationEvents.size()) {
@@ -75,6 +81,7 @@ struct AnimationComponent {
 			if (currentFrame < animationAsset->frames.size() - 1) {
 				currentFrameTime = 0;
 				currentFrame++;
+				currentFrame %= animationAsset->frames.size();
 			}
 			else {
 				if (!isOver) {
@@ -104,6 +111,11 @@ struct AnimationComponent {
 		auto& eventName = eventQueue.front();
 		eventQueue.pop();
 		return eventName;
+	}
+
+	void Play(const std::string& animation) {
+		this->animation = animation;
+		Reset();
 	}
 
 };

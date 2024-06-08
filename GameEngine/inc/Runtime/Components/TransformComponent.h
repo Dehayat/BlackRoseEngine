@@ -1,6 +1,4 @@
 #pragma once
-#include <optional>
-
 #include <glm/glm.hpp>
 #include <entt/entity/entity.hpp>
 #include <ryml/ryml.hpp>
@@ -9,10 +7,7 @@
 
 #include "Components/Components.h"
 
-#include "Debugging/Logger.h"
-
 using namespace glm;
-using namespace entt;
 
 struct TransformComponent :IComponent {
 	vec2 position;
@@ -22,16 +17,13 @@ struct TransformComponent :IComponent {
 	Guid parentGUID;
 
 	int level;
-	std::optional<entity> parent;
+	entt::entity parent;
 	mat3 matrixL2W;
 	vec2 globalPosition;
 	vec2 globalScale;
 	float globalRotation;
 
-	//TransformComponent(const TransformComponent&) = delete;
-	//TransformComponent& operator=(const TransformComponent&) = delete;
-
-	TransformComponent(vec2 position = vec2(0, 0), vec2 scale = vec2(1, 1), float rotation = 0, std::optional<entity> parent = std::nullopt) {
+	TransformComponent(vec2 position = vec2(0, 0), vec2 scale = vec2(1, 1), float rotation = 0, entt::entity parent = NoEntity()) {
 		this->position = position;
 		this->scale = scale;
 		this->rotation = rotation;
@@ -42,25 +34,26 @@ struct TransformComponent :IComponent {
 		globalPosition = vec2();
 		globalScale = vec2();
 		globalRotation = 0;
-		this->parentGUID = -1;
+		this->parent = parent;
+
 		this->hasParent = false;
-		if (this->parent) {
-			this->hasParent = true;
-		}
+		this->parentGUID = -1;
 	}
 	TransformComponent(ryml::NodeRef& node) {
 		this->position = vec2(0, 0);
 		this->scale = vec2(1, 1);
 		this->rotation = 0;
-		this->parentGUID = 0;
+		this->parent = NoEntity();
 
-		this->parent = std::nullopt;
+
 		this->matrixL2W = mat3(0);
-		this->hasParent = false;
 		this->level = 0;
 		globalPosition = vec2();
 		globalScale = vec2();
 		globalRotation = 0;
+
+		this->hasParent = false;
+		this->parentGUID = -1;
 
 		if (node.has_child("position")) {
 			node["position"][0] >> position.x;
@@ -74,19 +67,10 @@ struct TransformComponent :IComponent {
 			node["rotation"] >> rotation;
 		}
 		if (node.has_child("parent")) {
-			hasParent = true;
 			node["parent"] >> parentGUID;
 		}
 	}
 
-	//TransformComponent(TransformComponent&& other) {
-
-	//}
-
-	//TransformComponent& operator=(TransformComponent&& other) {
-
-	//	return *this;
-	//}
 	void Serialize(ryml::NodeRef node)
 	{
 		node |= ryml::MAP;

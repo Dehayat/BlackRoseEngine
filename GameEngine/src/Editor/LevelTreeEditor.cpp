@@ -1,5 +1,7 @@
 #include "Editor/LevelTreeEditor.h"
 
+#include <string>
+
 #include "Editor/TransformEditor.h"
 
 LevelTreeEditor::LevelTreeEditor()

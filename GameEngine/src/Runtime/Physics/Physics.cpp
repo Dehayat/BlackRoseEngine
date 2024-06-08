@@ -79,7 +79,7 @@ void PhysicsSystem::CopyTransformToBody(PhysicsBodyComponent& phys, TransformCom
 void PhysicsSystem::CopyBodyToTransform(PhysicsBodyComponent& phys, TransformComponent& trx)
 {
 	if (trx.hasParent) {
-		auto& parentTrx = GETSYSTEM(Entities).GetRegistry().get<TransformComponent>(trx.parent.value());
+		auto& parentTrx = GETSYSTEM(Entities).GetRegistry().get<TransformComponent>(trx.parent);
 		auto matW2P = glm::inverse(parentTrx.matrixL2W);
 		auto globalPos = glm::vec3(phys.body->GetPosition().x, phys.body->GetPosition().y, 1);
 		auto localPos = globalPos * matW2P;

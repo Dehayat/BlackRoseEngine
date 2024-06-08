@@ -24,16 +24,16 @@ public:
 		ImGui::DragFloat("Rotation", &trx.rotation, 5.f);
 	}
 
-	static void SetParent(entt::registry& registry, TransformComponent& trx, std::optional<entt::entity> newParent)
+	static void SetParent(entt::registry& registry, TransformComponent& trx, entt::entity newParent)
 	{
 		trx.parent = newParent;
 		trx.hasParent = false;
 		trx.level = 0;
 		trx.matrixL2W = TransformSystem::CalcMatrix(trx);
-		if (newParent && registry.valid(newParent.value())) {
+		if (registry.valid(newParent)) {
 			trx.hasParent = true;
 			trx.matrixL2W = TransformSystem::CalcMatrix(trx);
-			auto& parentTrx = registry.get<TransformComponent>(trx.parent.value());
+			auto& parentTrx = registry.get<TransformComponent>(trx.parent);
 			trx.matrixL2W = trx.matrixL2W * parentTrx.matrixL2W;
 			trx.level = parentTrx.level + 1;
 		}

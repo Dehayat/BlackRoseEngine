@@ -9,6 +9,8 @@
 
 #include "Systems.h"
 
+#include "Debugging/Logger.h"
+
 TransformSystem::TransformSystem()
 {
 	debugDrawer = nullptr;
@@ -29,12 +31,7 @@ void TransformSystem::TransformCreated(entt::registry& registry, entt::entity en
 {
 	auto& trx = registry.get<TransformComponent>(entity);
 	auto& entities = GETSYSTEM(Entities);
-	if (trx.hasParent && !trx.parent) {
-		if (entities.EntityExists(trx.parentGUID)) {
-			trx.parent = entities.GetEntity(trx.parentGUID);
-		}
-	}
-	GETSYSTEM(LevelTree).TransformCreated(registry, entity);
+	GETSYSTEM(LevelTree).InsertEntity(entity);
 	UpdateGlobals(trx);
 }
 void TransformSystem::TransformDestroyed(entt::registry& registry, entt::entity entity)
@@ -123,9 +120,9 @@ glm::mat3 TransformSystem::CalcMatrixL2W(TransformComponent& trx)
 		glm::sin(glm::radians(trx.rotation)) * trx.scale.x, glm::cos(glm::radians(trx.rotation)) * trx.scale.y, trx.position.y,
 		0, 0, 1
 	);
-	if (trx.hasParent && trx.parent) {
+	if (trx.hasParent) {
 		entt::registry& registry = GETSYSTEM(Entities).GetRegistry();
-		auto matrixP2W = registry.get<TransformComponent>(trx.parent.value()).matrixL2W;
+		auto matrixP2W = registry.get<TransformComponent>(trx.parent).matrixL2W;
 		return matrixL2P * matrixP2W;
 	}
 	else {
@@ -168,7 +165,7 @@ void TransformSystem::SetParent(entt::entity entity, entt::entity parent)
 	if (child.hasParent) {
 		GETSYSTEM(LevelTree).RemoveParent(entity);
 		child.hasParent = false;
-		child.parent.reset();
+		child.parent = NoEntity();
 		child.level = 0;
 	}
 

@@ -20,12 +20,14 @@ class LevelTree {
 	std::unordered_map < Guid, std::vector<Node<entt::entity>*> > waitingForParent;
 
 	void UpdateChildrenRecursive(entt::registry& registry, Node<entt::entity>* parent);
+	Node<entt::entity>* TryGetParent(TransformComponent& trx);
+	void ConnectWaitingChildren(Node<entt::entity>*, Guid guid);
 
 public:
 	Node<entt::entity>* AddEntity(entt::entity entity, Node<entt::entity>* parent = nullptr);
 	LevelTree();
 	~LevelTree();
-	void TransformCreated(entt::registry& registry, entt::entity antity);
+	void InsertEntity(entt::entity antity);
 	void TransformDestroyed(entt::registry& registry, entt::entity entity);
 	void RemoveParent(entt::entity);
 	void SetParent(entt::entity child, entt::entity parent);

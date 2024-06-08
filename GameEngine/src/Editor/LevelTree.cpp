@@ -2,6 +2,8 @@
 
 #include "Transform.h"
 
+#include "Debugging/Logger.h"
+
 LevelTree::LevelTree() {
 	root = new Node<entt::entity>(NoEntity());
 	nodesMap[entt::entity(-1)] = root;
@@ -9,31 +11,25 @@ LevelTree::LevelTree() {
 LevelTree::~LevelTree() {
 	delete root;
 }
-void LevelTree::TransformCreated(entt::registry& registry, entt::entity entity)
+void LevelTree::InsertEntity(entt::entity entity)
 {
 	if (nodesMap.find(entity) != nodesMap.end()) {
 		Logger::Error("trying to add entity that already exists in levelTree");
 		return;
 	}
-	auto parent = root;
+	auto& entities = GETSYSTEM(Entities);
+	auto& registry = entities.GetRegistry();
 	auto& trx = registry.get<TransformComponent>(entity);
 	trx.level = 0;
-	bool isWaitingForParent = false;
-	if (trx.hasParent) {
-		if (!trx.parent || nodesMap.find(trx.parent.value()) == nodesMap.end()) {
-			Logger::Log("parent of new entity not found in levelTree");
-			parent = root;
-			isWaitingForParent = true;
-		}
-		else {
-			parent = nodesMap[trx.parent.value()];
-			auto& parentTrx = registry.get<TransformComponent>(trx.parent.value());
-			trx.level = parentTrx.level + 1;
-		}
-	}
+	auto parent = TryGetParent(trx);
 	auto node = AddEntity(entity, parent);
-
-	if (isWaitingForParent) {
+	if (parent != nullptr) {
+		auto& childTrx = registry.get<TransformComponent>(node->element);
+		childTrx.hasParent = true;
+		auto& parentTrx = registry.get<TransformComponent>(childTrx.parent);
+		childTrx.level = parentTrx.level + 1;
+	}
+	else if (trx.parentGUID != -1) {
 		waitingForParent[trx.parentGUID].push_back(node);
 	}
 
@@ -41,17 +37,51 @@ void LevelTree::TransformCreated(entt::registry& registry, entt::entity entity)
 	trx.matrixL2W = transformSystem.CalcMatrixL2W(trx);
 
 	auto guid = GETSYSTEM(Entities).GetEntityGuid(entity);
-	if (waitingForParent.find(guid) != waitingForParent.end()) {
-		Logger::Log("found parent");
-		for (auto child : waitingForParent[guid]) {
-			node->AddChild(child);
-			auto& childTrx = registry.get<TransformComponent>(child->element);
-			childTrx.parent = node->element;
-			childTrx.hasParent = true;
-			childTrx.parentGUID = guid;
+	ConnectWaitingChildren(node, guid);
+}
+Node<entt::entity>* LevelTree::TryGetParent(TransformComponent& trx)
+{
+	auto& entities = GETSYSTEM(Entities);
+	if (entities.EntityExists(trx.parent)) {
+		trx.parentGUID = entities.GetEntityGuid(trx.parent);
+	}
+	if (entities.EntityExists(trx.parentGUID)) {
+		trx.parent = entities.GetEntity(trx.parentGUID);
+	}
+	if (entities.EntityExists(trx.parent)) {
+		if (nodesMap.find(trx.parent) != nodesMap.end()) {
+			Logger::Log("parent of new entity not found in levelTree");
+			return nodesMap[trx.parent];
 		}
-		waitingForParent.erase(guid);
-		UpdateChildrenRecursive(registry, node);
+	}
+	return nullptr;
+}
+void LevelTree::ConnectWaitingChildren(Node<entt::entity>* parentNode, Guid parentGuid)
+{
+	auto& entities = GETSYSTEM(Entities);
+	auto& registry = entities.GetRegistry();
+	if (waitingForParent.find(parentGuid) != waitingForParent.end()) {
+		Logger::Log("found parent");
+		for (auto child : waitingForParent[parentGuid]) {
+			parentNode->AddChild(child);
+			auto& childTrx = registry.get<TransformComponent>(child->element);
+			childTrx.parent = parentNode->element;
+			childTrx.hasParent = true;
+		}
+		waitingForParent.erase(parentGuid);
+		UpdateChildrenRecursive(registry, parentNode);
+	}
+}
+void LevelTree::UpdateChildrenRecursive(entt::registry& registry, Node<entt::entity>* parent)
+{
+	auto& transform = GETSYSTEM(TransformSystem);
+	auto& parentTrx = registry.get<TransformComponent>(parent->element);
+	for (auto child : parent->children) {
+		auto entity = child->element;
+		auto& trx = registry.get<TransformComponent>(entity);
+		trx.matrixL2W = transform.CalcMatrixL2W(trx);
+		trx.level = parentTrx.level + 1;
+		UpdateChildrenRecursive(registry, child);
 	}
 }
 void LevelTree::TransformDestroyed(entt::registry& registry, entt::entity entity)
@@ -73,8 +103,8 @@ void LevelTree::RemoveParent(entt::entity entity)
 	entt::registry& registry = GETSYSTEM(Entities).GetRegistry();
 	auto& transformSystem = GETSYSTEM(TransformSystem);
 	auto& childTrx = registry.get<TransformComponent>(entity);
-	if (childTrx.hasParent && childTrx.parent) {
-		auto parent = childTrx.parent.value();
+	if (childTrx.hasParent) {
+		auto parent = childTrx.parent;
 		auto& parentTrx = registry.get<TransformComponent>(parent);
 		TransformSystem::BakeTransform(childTrx);
 		childTrx.hasParent = false;
@@ -94,18 +124,6 @@ void LevelTree::SetParent(entt::entity child, entt::entity parent)
 	nodesMap[parent]->AddChild(node);
 	TransformSystem::MoveTransformToParentSpace(childTrx, parentTrx);
 	Logger::Log("setting parent");
-}
-void LevelTree::UpdateChildrenRecursive(entt::registry& registry, Node<entt::entity>* parent)
-{
-	auto& transform = GETSYSTEM(TransformSystem);
-	auto& parentTrx = registry.get<TransformComponent>(parent->element);
-	for (auto child : parent->children) {
-		auto entity = child->element;
-		auto& trx = registry.get<TransformComponent>(entity);
-		trx.matrixL2W = transform.CalcMatrixL2W(trx);
-		trx.level = parentTrx.level + 1;
-		UpdateChildrenRecursive(registry, child);
-	}
 }
 void LevelTree::Clear() {
 	root->DeleteChildren();

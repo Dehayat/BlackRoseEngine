@@ -34,7 +34,7 @@ void LevelTree::InsertEntity(entt::entity entity)
 	}
 
 	auto& transformSystem = GETSYSTEM(TransformSystem);
-	trx.matrixL2W = transformSystem.CalcMatrixL2W(trx);
+	trx.CalcMatrix();
 
 	auto guid = GETSYSTEM(Entities).GetEntityGuid(entity);
 	ConnectWaitingChildren(node, guid);
@@ -79,7 +79,7 @@ void LevelTree::UpdateChildrenRecursive(entt::registry& registry, Node<entt::ent
 	for (auto child : parent->children) {
 		auto entity = child->element;
 		auto& trx = registry.get<TransformComponent>(entity);
-		trx.matrixL2W = transform.CalcMatrixL2W(trx);
+		trx.CalcMatrix();
 		trx.level = parentTrx.level + 1;
 		UpdateChildrenRecursive(registry, child);
 	}
@@ -106,7 +106,7 @@ void LevelTree::RemoveParent(entt::entity entity)
 	if (childTrx.hasParent) {
 		auto parent = childTrx.parent;
 		auto& parentTrx = registry.get<TransformComponent>(parent);
-		TransformSystem::BakeTransform(childTrx);
+		TransformSystem::MoveTransformToWorldSpace(childTrx);
 		childTrx.hasParent = false;
 		root->AddChild(nodesMap[entity]);
 		Logger::Log("removing parent");

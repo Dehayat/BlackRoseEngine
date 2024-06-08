@@ -32,45 +32,27 @@ void TransformSystem::TransformCreated(entt::registry& registry, entt::entity en
 	auto& trx = registry.get<TransformComponent>(entity);
 	auto& entities = GETSYSTEM(Entities);
 	GETSYSTEM(LevelTree).InsertEntity(entity);
-	UpdateGlobals(trx);
+	trx.UpdateGlobals();
 }
 void TransformSystem::TransformDestroyed(entt::registry& registry, entt::entity entity)
 {
 	auto& trx = registry.get<TransformComponent>(entity);
 	GETSYSTEM(LevelTree).TransformDestroyed(registry, entity);
 }
-void TransformSystem::BakeTransform(TransformComponent& trx)
+void TransformSystem::MoveTransformToWorldSpace(TransformComponent& trx)
 {
-	auto pos = glm::vec3(0, 0, 1);
-	auto bakedPos = pos * trx.matrixL2W;
-	trx.position.x = bakedPos.x;
-	trx.position.y = bakedPos.y;
-
-	auto bakedScale = glm::vec2(glm::sqrt(trx.matrixL2W[0][0] * trx.matrixL2W[0][0] + trx.matrixL2W[1][0] * trx.matrixL2W[1][0]), glm::sqrt(trx.matrixL2W[0][1] * trx.matrixL2W[0][1] + trx.matrixL2W[1][1] * trx.matrixL2W[1][1]));
-
-	trx.scale.x = bakedScale.x;
-	trx.scale.y = bakedScale.y;
-	auto bakedRotation = glm::degrees(std::atan2f(trx.matrixL2W[1][0], trx.matrixL2W[0][0]));
-	trx.rotation = bakedRotation;
-	trx.matrixL2W = CalcMatrixL2W(trx);
+	trx.position = TransformComponent::GetPosition(trx.matrixL2W);
+	trx.scale = TransformComponent::GetScale(trx.matrixL2W);
+	trx.rotation = TransformComponent::GetRotation(trx.matrixL2W);
+	trx.CalcMatrix();
 }
 void TransformSystem::MoveTransformToParentSpace(TransformComponent& child, TransformComponent& parent)
 {
 	auto matrixW2sL = glm::inverse(parent.matrixL2W);
-
 	auto matrixtL2sL = child.matrixL2W * matrixW2sL;
-
-	auto pos = glm::vec3(0, 0, 1);
-	auto extractedPos = pos * matrixtL2sL;
-	child.position.x = extractedPos.x;
-	child.position.y = extractedPos.y;
-
-	auto extractedScale = glm::vec2(glm::sqrt(matrixtL2sL[0][0] * matrixtL2sL[0][0] + matrixtL2sL[1][0] * matrixtL2sL[1][0]), glm::sqrt(matrixtL2sL[0][1] * matrixtL2sL[0][1] + matrixtL2sL[1][1] * matrixtL2sL[1][1]));
-
-	child.scale.x = extractedScale.x;
-	child.scale.y = extractedScale.y;
-	auto extractedRotation = glm::degrees(std::atan2f(matrixtL2sL[1][0], matrixtL2sL[0][0]));
-	child.rotation = extractedRotation;
+	child.position = TransformComponent::GetPosition(matrixtL2sL);
+	child.scale = TransformComponent::GetScale(matrixtL2sL);
+	child.rotation = TransformComponent::GetRotation(matrixtL2sL);
 }
 void TransformSystem::Update()
 {
@@ -83,24 +65,9 @@ void TransformSystem::Update()
 	//Logger::Log("Frame");
 	for (auto entity : view3) {
 		auto& trx = view3.get<TransformComponent>(entity);
-		trx.matrixL2W = CalcMatrixL2W(trx);
-		UpdateGlobals(trx);
+		trx.CalcMatrix();
+		trx.UpdateGlobals();
 	}
-}
-
-void TransformSystem::UpdateGlobals(TransformComponent& trx)
-{
-	auto pos = glm::vec3(0, 0, 1);
-	auto globalPos = pos * trx.matrixL2W;
-	trx.globalPosition.x = globalPos.x;
-	trx.globalPosition.y = globalPos.y;
-
-	auto globalScale = glm::vec2(glm::sqrt(trx.matrixL2W[0][0] * trx.matrixL2W[0][0] + trx.matrixL2W[1][0] * trx.matrixL2W[1][0]), glm::sqrt(trx.matrixL2W[0][1] * trx.matrixL2W[0][1] + trx.matrixL2W[1][1] * trx.matrixL2W[1][1]));
-
-	trx.globalScale.x = globalScale.x;
-	trx.globalScale.y = globalScale.y;
-	auto globalRotation = glm::degrees(std::atan2f(trx.matrixL2W[1][0], trx.matrixL2W[0][0]));
-	trx.globalRotation = globalRotation;
 }
 
 glm::mat3 TransformSystem::CalcMatrix(TransformComponent& trx)
@@ -110,24 +77,6 @@ glm::mat3 TransformSystem::CalcMatrix(TransformComponent& trx)
 		glm::sin(glm::radians(trx.rotation)) * trx.scale.x, glm::cos(glm::radians(trx.rotation)) * trx.scale.y, trx.position.y,
 		0, 0, 1
 	);
-}
-
-glm::mat3 TransformSystem::CalcMatrixL2W(TransformComponent& trx)
-{
-	//Logger::Log(std::to_string(trx.level));
-	auto matrixL2P = glm::mat3(
-		glm::cos(glm::radians(trx.rotation)) * trx.scale.x, -glm::sin(glm::radians(trx.rotation)) * trx.scale.y, trx.position.x,
-		glm::sin(glm::radians(trx.rotation)) * trx.scale.x, glm::cos(glm::radians(trx.rotation)) * trx.scale.y, trx.position.y,
-		0, 0, 1
-	);
-	if (trx.hasParent) {
-		entt::registry& registry = GETSYSTEM(Entities).GetRegistry();
-		auto matrixP2W = registry.get<TransformComponent>(trx.parent).matrixL2W;
-		return matrixL2P * matrixP2W;
-	}
-	else {
-		return matrixL2P;
-	}
 }
 
 void TransformSystem::InitDebugDrawer()
@@ -177,10 +126,8 @@ void TransformSystem::SetParent(entt::entity entity, entt::entity parent)
 		child.hasParent = true;
 		child.parentGUID = entities.GetEntityGuid(parent);
 	}
-	UpdateGlobals(child);
+	child.UpdateGlobals();
 }
-
-
 
 #ifdef _DEBUG
 DebugDrawTransform& TransformSystem::GetDebugRenderer()
@@ -200,17 +147,16 @@ void DebugDrawTransform::SetMatrix(glm::mat3 worldToScreen)
 }
 void DebugDrawTransform::DrawTransform(const TransformComponent& t, bool selected)
 {
-	float scale = 1;
-	glm::vec3 orig = glm::vec3(0, 0, 1);
-	glm::vec3 dest = glm::vec3(0, 0.6f * scale, 1);
-	orig = orig * t.matrixL2W * matrix;
-	dest = dest * t.matrixL2W * matrix;
+	float scale = 1 - (0.2 * t.level);
+	auto orig = TransformComponent::GetPosition(t.matrixL2W * matrix, vec2(0, 0));
+	auto dir = TransformComponent::GetDir(t.matrixL2W * matrix, vec2(0, 1)) * 100.0f;
+	auto dest = orig + dir * scale;
 	if (selected) {
-		filledCircleRGBA(renderer, orig.x, orig.y, 10 * scale, 20, 30, 130, 255);
-		thickLineRGBA(renderer, orig.x, orig.y, dest.x, dest.y, 3, 20, 300, 130, 255);
+		filledCircleRGBA(renderer, orig.x, orig.y, 14 * scale, 255, 255, 255, 255);
+		thickLineRGBA(renderer, orig.x, orig.y, dest.x, dest.y, 10 * scale, 255, 255, 255, 255);
 	}
 	else {
-		filledCircleRGBA(renderer, orig.x, orig.y, 10 * scale, 20, 100, 30, 255);
-		thickLineRGBA(renderer, orig.x, orig.y, dest.x, dest.y, 3, 20, 100, 30, 255);
+		filledCircleRGBA(renderer, orig.x, orig.y, 14 * scale, 20, 100, 30, 200);
+		thickLineRGBA(renderer, orig.x, orig.y, dest.x, dest.y, 10 * scale, 20, 100, 30, 200);
 	}
 }

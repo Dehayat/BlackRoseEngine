@@ -1,4 +1,17 @@
 - Type: Entity
+  Guid: 16695479920711999621
+  Transform:
+    position:
+      - 0.4
+      - 1.4
+    scale:
+      - 1
+      - 1
+    rotation: 0
+  Camera:
+    height: 7
+    startCamera: 1
+- Type: Entity
   Guid: 17640613414784985595
   Transform:
     position:
@@ -23,33 +36,3 @@
   Animation:
     animation: sekiroIdleAnim
   Script: {}
-- Type: Entity
-  Guid: 16695479920711999621
-  Transform:
-    position:
-      - 0.4
-      - 1.4
-    scale:
-      - 1
-      - 1
-    rotation: 0
-  Camera:
-    height: 7
-    startCamera: 1
-- Type: Entity
-  Guid: 11968464265188034448
-  Transform:
-    position:
-      - 1.2051582
-      - -0.014758229
-    scale:
-      - 1
-      - 1
-    rotation: 323.9895
-    parent: 17640613414784985595
-  PhysicsBody:
-    size:
-      - 1
-      - 1
-    isStatic: 1
-    isSensor: 1

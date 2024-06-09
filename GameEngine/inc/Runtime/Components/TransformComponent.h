@@ -21,6 +21,7 @@ struct TransformComponent :IComponent {
 	mat3 matrixL2W;
 	vec2 globalPosition;
 	vec2 globalScale;
+	vec2 scaleSign;
 	float globalRotation;
 
 	static vec2 GetScale(mat3 matrix);

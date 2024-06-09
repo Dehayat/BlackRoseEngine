@@ -98,10 +98,9 @@ void RendererSystem::Render()
 			SDL_QueryTexture(texture->texture, nullptr, nullptr, &texW, &texH);
 		}
 		auto viewMatrix = pos.matrixL2W * worldToScreenMatrix;
-		auto localPos = glm::vec3(0, 0, 1);
-		auto position = localPos * viewMatrix;
-		auto scale = glm::vec2(glm::sqrt(viewMatrix[0][0] * viewMatrix[0][0] + viewMatrix[1][0] * viewMatrix[1][0]), glm::sqrt(viewMatrix[0][1] * viewMatrix[0][1] + viewMatrix[1][1] * viewMatrix[1][1]));
-		auto rotation = glm::degrees(std::atan2f(viewMatrix[1][0], viewMatrix[0][0]));
+		auto position = TransformComponent::GetPosition(viewMatrix);
+		auto rotation = TransformComponent::GetRotation(viewMatrix);
+		auto scale = TransformComponent::GetScale(viewMatrix);
 		int spriteSizeX = scale.x * ((float)texW / texture->ppu);
 		int spriteSizeY = scale.y * ((float)texH / texture->ppu);
 		SDL_FRect player = SDL_FRect{
@@ -113,7 +112,17 @@ void RendererSystem::Render()
 		SDL_SetTextureColorMod(texture->texture, sp.color.r * 255, sp.color.g * 255, sp.color.b * 255);
 		SDL_SetTextureBlendMode(texture->texture, SDL_BLENDMODE_BLEND);
 		SDL_SetTextureAlphaMod(texture->texture, sp.color.a * 255);
-		SDL_RenderCopyExF(sdlRenderer, texture->texture, sourceRect, &player, rotation, nullptr, SDL_FLIP_NONE);
+		SDL_RendererFlip flip = SDL_FLIP_NONE;
+		if (pos.scaleSign.x < 0 && pos.scaleSign.y < 0) {
+		}
+		else if (pos.scaleSign.x < 0) {
+			flip = SDL_FLIP_VERTICAL;
+		}
+		else if (pos.scaleSign.y < 0) {
+			flip = SDL_FLIP_VERTICAL;
+		}
+		SDL_RenderCopyExF(sdlRenderer, texture->texture, sourceRect, &player, rotation, nullptr, flip);
+
 	}
 }
 void RendererSystem::Present()

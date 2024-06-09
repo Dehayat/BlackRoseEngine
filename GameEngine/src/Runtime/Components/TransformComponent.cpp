@@ -39,18 +39,22 @@ TransformComponent::TransformComponent(ryml::NodeRef& node)
 	this->hasParent = false;
 	this->parentGUID = -1;
 
-	if (node.has_child("position")) {
+	if (node.has_child("position"))
+	{
 		node["position"][0] >> position.x;
 		node["position"][1] >> position.y;
 	}
-	if (node.has_child("scale")) {
+	if (node.has_child("scale"))
+	{
 		node["scale"][0] >> scale.x;
 		node["scale"][1] >> scale.y;
 	}
-	if (node.has_child("rotation")) {
+	if (node.has_child("rotation"))
+	{
 		node["rotation"] >> rotation;
 	}
-	if (node.has_child("parent")) {
+	if (node.has_child("parent"))
+	{
 		node["parent"] >> parentGUID;
 	}
 }
@@ -65,7 +69,8 @@ void TransformComponent::Serialize(ryml::NodeRef node)
 	node["scale"].append_child() << scale.x;
 	node["scale"].append_child() << scale.y;
 	node["rotation"] << rotation;
-	if (hasParent) {
+	if (hasParent)
+	{
 		node["parent"] << parentGUID;
 	}
 }
@@ -91,7 +96,8 @@ void TransformComponent::CalcMatrix()
 		0, 0, 1
 	);
 	matrixL2W = matS * matR * matT;
-	if (hasParent) {
+	if (hasParent)
+	{
 		entt::registry& registry = GETSYSTEM(Entities).GetRegistry();
 		auto matrixP2W = registry.get<TransformComponent>(parent).matrixL2W;
 		matrixL2W = matrixL2W * matrixP2W;
@@ -105,31 +111,25 @@ void TransformComponent::UpdateGlobals()
 	globalScale = GetScale(matrixL2W);
 	globalRotation = GetRotation(matrixL2W);
 	globalRotation = glm::mod(globalRotation + 360, 360.0f);
+	scaleSign = vec2(sign(scale.x), sign(scale.y));
+	if (hasParent) {
+		auto& pTrx = GETSYSTEM(Entities).GetRegistry().get<TransformComponent>(parent);
+		scaleSign = pTrx.scaleSign * scaleSign;
+	}
 }
 
 void TransformComponent::UpdateLocals()
 {
 	globalRotation = glm::mod(globalRotation + 360, 360.0f);
-
-	/*auto matrixW2L = inverse(matrixL2W);
-	auto oldGlobalPos = GetPosition(matrixL2W);
-	auto moveVector = GetDir(matrixW2L, globalPosition - oldGlobalPos);
-	float oldGlobalRotation = GetRotation(matrixL2W);
-	oldGlobalRotation = glm::mod(oldGlobalRotation + 360, 360.0f);
-	Logger::Log("locPosX: " + std::to_string(position.x) + " - " + std::to_string(oldGlobalPos.x) + " -> " + std::to_string(globalPosition.x));
-	Logger::Log("locPosY: " + std::to_string(position.y) + " - " + std::to_string(oldGlobalPos.y) + " -> " + std::to_string(globalPosition.y));
-	Logger::Log("locRot: " + std::to_string(rotation) + " - " + std::to_string(oldGlobalRotation) + " -> " + std::to_string(globalRotation));*/
-	auto calcRot = GetRotation(matrixL2W);
-	//Logger::Log("locRot: " + std::to_string(rotation));
-	//Logger::Log("globRot: " + std::to_string(calcRot) + " -> " + std::to_string(globalRotation));
-	if (hasParent) {
+	if (hasParent)
+	{
 		auto& pTrx = GETSYSTEM(Entities).GetRegistry().get<TransformComponent>(parent);
 		auto matW2P = inverse(pTrx.matrixL2W);
 
 		position = GetPosition(matW2P, globalPosition);
 
 		auto matGR = MakeRotMatrix(globalRotation);
-		auto matLR =  matGR * matW2P* MakeScaleMatrix(scale);
+		auto matLR = matGR * matW2P * MakeScaleMatrix(scale);
 		rotation = GetRotation(matLR);
 		rotation = glm::mod(rotation + 360, 360.0f);
 
@@ -137,18 +137,17 @@ void TransformComponent::UpdateLocals()
 		auto scaleChange = globalScale / oldGlobalScale;
 		scale = scale * scaleChange;
 	}
-	else {
+	else
+	{
 		position = globalPosition;
 
 		auto matGR = MakeRotMatrix(globalRotation);
-		auto matLR = matGR  * MakeScaleMatrix(scale);
+		auto matLR = matGR * MakeScaleMatrix(scale);
 		rotation = GetRotation(matLR);
 		rotation = glm::mod(rotation + 360, 360.0f);
 
 		globalScale = scale;
 	}
-	//Logger::Log("->locRot: " + std::to_string(rotation));
-
 	CalcMatrix();
 }
 
@@ -204,7 +203,8 @@ mat3 TransformComponent::MakeScaleMatrix(vec2 scale)
 		0, 0, 1
 	);
 }
-vec2 TransformComponent::GetScale(mat3 matrix) {
+vec2 TransformComponent::GetScale(mat3 matrix)
+{
 	auto scale = glm::vec2(glm::sqrt(matrix[0][0] * matrix[0][0] + matrix[1][0] * matrix[1][0]), glm::sqrt(matrix[0][1] * matrix[0][1] + matrix[1][1] * matrix[1][1]));
 	return scale;
 }

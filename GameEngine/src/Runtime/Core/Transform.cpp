@@ -62,7 +62,6 @@ void TransformSystem::Update()
 		return lhs.level < rhs.level;
 		});
 	auto view3 = registry.view<TransformComponent>();
-	//Logger::Log("Frame");
 	for (auto entity : view3) {
 		auto& trx = view3.get<TransformComponent>(entity);
 		trx.CalcMatrix();

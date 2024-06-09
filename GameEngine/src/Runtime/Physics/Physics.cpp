@@ -34,15 +34,15 @@ void PhysicsSystem::PhysicsBodyCreated(entt::registry& registry, entt::entity en
 	phys.bodyDef.position.Set(trx.globalPosition.x, trx.globalPosition.y);
 
 	b2Body* body = GetWorld().CreateBody(&phys.bodyDef);
-	auto globalScale = trx.globalScale;
-	if (globalScale.x<0.01 && globalScale.x > -0.01) {
+	auto globalScale = glm::abs(trx.globalScale);
+	if (globalScale.x < 0.01) {
 		globalScale.x = 0.01;
 	}
-	if (globalScale.y<0.01 && globalScale.y > -0.01) {
+	if (globalScale.y < 0.01) {
 		globalScale.y = 0.01;
 	}
 	phys.globalSize = vec2(phys.size.x * globalScale.x, phys.size.y * globalScale.y);
-	phys.shape.SetAsBox(glm::abs(phys.globalSize.x / 2), glm::abs(phys.globalSize.y / 2));
+	phys.shape.SetAsBox(phys.globalSize.x / 2, phys.globalSize.y / 2);
 
 	phys.fixture.shape = &phys.shape;
 	phys.fixture.density = 1.0f;
@@ -59,18 +59,18 @@ void PhysicsSystem::PhysicsBodyDestroyed(entt::registry& registry, entt::entity 
 }
 void PhysicsSystem::CopyTransformToBody(PhysicsBodyComponent& phys, TransformComponent& trx)
 {
-	auto newSize = vec2(phys.size.x * trx.globalScale.x, phys.size.y * trx.globalScale.y);
+	auto globalScale = glm::abs(trx.globalScale);
+	if (globalScale.x < 0.01) {
+		globalScale.x = 0.01;
+	}
+	if (globalScale.y < 0.01) {
+		globalScale.y = 0.01;
+	}
+	auto newSize = vec2(phys.size.x * globalScale.x, phys.size.y * globalScale.y);
 	if (phys.globalSize != newSize) {
-		auto globalScale = trx.globalScale;
-		if (globalScale.x<0.01 && globalScale.x > -0.01) {
-			globalScale.x = 0.01;
-		}
-		if (globalScale.y<0.01 && globalScale.y > -0.01) {
-			globalScale.y = 0.01;
-		}
 		phys.body->DestroyFixture(&phys.body->GetFixtureList()[0]);
-		phys.globalSize = vec2(phys.size.x * globalScale.x, phys.size.y * globalScale.y);
-		phys.shape.SetAsBox(glm::abs(phys.globalSize.x / 2), glm::abs(phys.globalSize.y / 2));
+		phys.globalSize = newSize;
+		phys.shape.SetAsBox(phys.globalSize.x / 2, phys.globalSize.y / 2);
 		phys.body->CreateFixture(&phys.fixture);
 	}
 	phys.body->SetTransform(b2Vec2(trx.globalPosition.x, trx.globalPosition.y), glm::radians(trx.globalRotation));
@@ -78,27 +78,9 @@ void PhysicsSystem::CopyTransformToBody(PhysicsBodyComponent& phys, TransformCom
 }
 void PhysicsSystem::CopyBodyToTransform(PhysicsBodyComponent& phys, TransformComponent& trx)
 {
-	if (trx.hasParent) {
-		auto& parentTrx = GETSYSTEM(Entities).GetRegistry().get<TransformComponent>(trx.parent);
-		auto matW2P = glm::inverse(parentTrx.matrixL2W);
-		auto globalPos = glm::vec3(phys.body->GetPosition().x, phys.body->GetPosition().y, 1);
-		auto localPos = globalPos * matW2P;
-		trx.position = glm::vec2(localPos.x, localPos.y);
-
-		float globalRotation = glm::degrees(phys.body->GetAngle());
-		glm::mat4 parentRotationMat = glm::inverse(parentTrx.matrixL2W);
-		float parentRotation = atan2f(parentRotationMat[1][0], parentRotationMat[0][0]);
-		float localRotation = globalRotation + parentRotation;
-	}
-	else {
-		trx.position = glm::vec2(phys.body->GetPosition().x, phys.body->GetPosition().y);
-		if (trx.scale.x > 0) {
-			trx.rotation = glm::degrees(phys.body->GetAngle());
-		}
-		else {
-			trx.rotation = 180 + glm::degrees(phys.body->GetAngle());
-		}
-	}
+	trx.globalPosition = glm::vec2(phys.body->GetPosition().x, phys.body->GetPosition().y);
+	trx.globalRotation = glm::degrees(phys.body->GetAngle());
+	trx.UpdateLocals();
 }
 void PhysicsSystem::Update()
 {

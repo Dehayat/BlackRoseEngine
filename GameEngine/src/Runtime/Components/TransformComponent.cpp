@@ -4,6 +4,8 @@
 
 #include "Systems.h"
 
+#include "Debugging/Logger.h"
+
 using namespace glm;
 
 TransformComponent::TransformComponent(vec2 position, vec2 scale, float rotation, entt::entity parent)
@@ -75,6 +77,7 @@ void TransformComponent::CalcMatrix()
 		0, 1, position.y,
 		0, 0, 1
 	);
+	rotation = glm::mod(rotation + 360, 360.0f);
 	auto cosT = cos(glm::radians(rotation));
 	auto sinT = sin(glm::radians(rotation));
 	auto matR = mat3(
@@ -97,21 +100,72 @@ void TransformComponent::CalcMatrix()
 
 void TransformComponent::UpdateGlobals()
 {
-	auto pos = glm::vec3(0, 0, 1);
-	auto globalPos = pos * matrixL2W;
-	globalPosition.x = globalPos.x;
-	globalPosition.y = globalPos.y;
-
+	globalPosition = GetPosition(matrixL2W);
 	globalScale = GetScale(matrixL2W);
-
 	globalRotation = GetRotation(matrixL2W);
+	globalRotation = glm::mod(globalRotation + 360, 360.0f);
 }
 
+void TransformComponent::UpdateLocals()
+{
+	globalRotation = glm::mod(globalRotation + 360, 360.0f);
+
+	/*auto matrixW2L = inverse(matrixL2W);
+	auto oldGlobalPos = GetPosition(matrixL2W);
+	auto moveVector = GetDir(matrixW2L, globalPosition - oldGlobalPos);
+	float oldGlobalRotation = GetRotation(matrixL2W);
+	oldGlobalRotation = glm::mod(oldGlobalRotation + 360, 360.0f);
+	Logger::Log("locPosX: " + std::to_string(position.x) + " - " + std::to_string(oldGlobalPos.x) + " -> " + std::to_string(globalPosition.x));
+	Logger::Log("locPosY: " + std::to_string(position.y) + " - " + std::to_string(oldGlobalPos.y) + " -> " + std::to_string(globalPosition.y));
+	Logger::Log("locRot: " + std::to_string(rotation) + " - " + std::to_string(oldGlobalRotation) + " -> " + std::to_string(globalRotation));*/
+
+	if (hasParent) {
+		auto& pTrx = GETSYSTEM(Entities).GetRegistry().get<TransformComponent>(parent);
+		auto matW2P = inverse(pTrx.matrixL2W);
+		auto oldGlobalPos = GetPosition(matrixL2W);
+		auto moveVector = GetDir(matW2P, globalPosition - oldGlobalPos);
+		position += moveVector;
+
+		float oldGlobalRotation = GetRotation(matrixL2W);
+		oldGlobalRotation = glm::mod(oldGlobalRotation + 360, 360.0f);
+		float rotationChange = globalRotation - oldGlobalRotation;
+		rotation += rotationChange;
+
+		auto oldGlobalScale = GetScale(matrixL2W);
+		auto scaleChange = globalScale / oldGlobalScale;
+		scale = scale * scaleChange;
+	}
+	else {
+		rotation = globalRotation;
+		position = globalPosition;
+		globalScale = scale;
+	}
+
+	CalcMatrix();
+}
+
+float TransformComponent::GetRotation(mat3 matrix, float angle)
+{
+	auto cosT = cos(glm::radians(angle));
+	auto sinT = sin(glm::radians(angle));
+	auto matR = mat3(
+		cosT, -sinT, 0,
+		sinT, cosT, 0,
+		0, 0, 1
+	);
+	matrix = matR * matrix;
+	auto dirVec = vec2(matrix[1][0], matrix[0][0]);
+	normalize(dirVec);
+	auto rotation = glm::degrees(std::atan2f(dirVec.x, dirVec.y));
+	rotation = mod(rotation + 360, 360.0f);
+	return rotation;
+}
 float TransformComponent::GetRotation(mat3 matrix)
 {
 	auto dirVec = vec2(matrix[1][0], matrix[0][0]);
 	normalize(dirVec);
 	auto rotation = glm::degrees(std::atan2f(dirVec.x, dirVec.y));
+	rotation = mod(rotation + 360, 360.0f);
 	return rotation;
 }
 vec2 TransformComponent::GetPosition(mat3 matrix, vec2 localPos)
@@ -122,7 +176,17 @@ vec2 TransformComponent::GetPosition(mat3 matrix, vec2 localPos)
 vec2 TransformComponent::GetDir(mat3 matrix, vec2 localDir)
 {
 	auto dir = vec3(localDir, 0);
-	return normalize(dir * matrix);
+	return dir * matrix;
+}
+mat3 TransformComponent::MakeRotMatrix(float angle)
+{
+	auto cosT = cos(glm::radians(angle));
+	auto sinT = sin(glm::radians(angle));
+	return mat3(
+		cosT, -sinT, 0,
+		sinT, cosT, 0,
+		0, 0, 1
+	);
 }
 vec2 TransformComponent::GetScale(mat3 matrix) {
 	auto scale = glm::vec2(glm::sqrt(matrix[0][0] * matrix[0][0] + matrix[1][0] * matrix[1][0]), glm::sqrt(matrix[0][1] * matrix[0][1] + matrix[1][1] * matrix[1][1]));

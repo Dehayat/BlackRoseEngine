@@ -149,7 +149,8 @@ void DebugDrawTransform::DrawTransform(const TransformComponent& t, bool selecte
 {
 	float scale = 1 - (0.2 * t.level);
 	auto orig = TransformComponent::GetPosition(t.matrixL2W * matrix, vec2(0, 0));
-	auto dir = TransformComponent::GetDir(t.matrixL2W * matrix, vec2(0, 1)) * 100.0f;
+	auto dir = TransformComponent::GetDir(t.matrixL2W * matrix, vec2(0, 1));
+	dir = normalize(dir) * 100.0f;
 	auto dest = orig + dir * scale;
 	if (selected) {
 		filledCircleRGBA(renderer, orig.x, orig.y, 14 * scale, 255, 255, 255, 255);

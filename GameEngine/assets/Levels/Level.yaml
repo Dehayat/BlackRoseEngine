@@ -5,19 +5,19 @@
       - -1.8518522
       - 1.3444445
     scale:
-      - -1
+      - 1
       - 1
     rotation: 0
 - Type: Entity
   Guid: 16504172705850045965
   Transform:
     position:
-      - -1.1185186
-      - -1.3862484
+      - 0
+      - 0
     scale:
       - 1
       - 1
-    rotation: 45
+    rotation: 325.971
     parent: 3324262261525283841
   Sprite:
     sprite: sekiroIdle

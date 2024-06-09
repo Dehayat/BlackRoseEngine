@@ -59,13 +59,13 @@ void PhysicsSystem::PhysicsBodyDestroyed(entt::registry& registry, entt::entity 
 }
 void PhysicsSystem::CopyTransformToBody(PhysicsBodyComponent& phys, TransformComponent& trx)
 {
-	Logger::Log("PosX: " + std::to_string(trx.globalPosition.x));
-	Logger::Log("PosY: " + std::to_string(trx.globalPosition.y));
-	Logger::Log("Rot: " + std::to_string(trx.globalRotation));
+	//Logger::Log("PosX: " + std::to_string(trx.globalPosition.x));
+	//Logger::Log("PosY: " + std::to_string(trx.globalPosition.y));
+	//Logger::Log("Rot: " + std::to_string(trx.globalRotation));
 
-	Logger::Log("->PosX: " + std::to_string(phys.body->GetPosition().x));
-	Logger::Log("->PosY: " + std::to_string(phys.body->GetPosition().y));
-	Logger::Log("->Rot: " + std::to_string(glm::degrees(phys.body->GetAngle())));
+	//Logger::Log("->PosX: " + std::to_string(phys.body->GetPosition().x));
+	//Logger::Log("->PosY: " + std::to_string(phys.body->GetPosition().y));
+	//Logger::Log("->Rot: " + std::to_string(glm::degrees(phys.body->GetAngle())));
 
 	auto globalScale = glm::abs(trx.globalScale);
 	if (globalScale.x < 0.01) {
@@ -89,7 +89,8 @@ void PhysicsSystem::CopyBodyToTransform(PhysicsBodyComponent& phys, TransformCom
 	trx.globalPosition = glm::vec2(phys.body->GetPosition().x, phys.body->GetPosition().y);
 	trx.globalRotation = glm::degrees(phys.body->GetAngle());
 	trx.UpdateLocals();
-	
+	trx.UpdateGlobals();
+
 	//Logger::Log("PosX: " + std::to_string(trx.globalPosition.x));
 	//Logger::Log("PosY: " + std::to_string(trx.globalPosition.y));
 	//Logger::Log("Rot: " + std::to_string(trx.globalRotation));
@@ -107,17 +108,20 @@ void PhysicsSystem::Update()
 		auto& pos = phView.get<TransformComponent>(entity);
 		auto& body = phView.get<PhysicsBodyComponent>(entity);
 		CopyTransformToBody(body, pos);
+		//Logger::Log("->Rot: " + std::to_string(glm::degrees(body.body->GetAngle())));
 	}
 
 	TimeSystem& timeSystem = GETSYSTEM(TimeSystem);
 	float timeStep = timeSystem.GetdeltaTime();
 	int velocityIterations = 10;
 	int positionIterations = 12;
+
 	physicsWorld->Step(timeStep, velocityIterations, positionIterations);
 
 	for (auto entity : phView) {
 		auto& pos = phView.get<TransformComponent>(entity);
 		auto& body = phView.get<PhysicsBodyComponent>(entity);
+		//Logger::Log("Rot: " + std::to_string(glm::degrees(body.body->GetAngle())));
 		CopyBodyToTransform(body, pos);
 	}
 }

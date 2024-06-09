@@ -29,6 +29,7 @@ struct TransformComponent :IComponent {
 	static vec2 GetPosition(mat3 matrix, vec2 localPos = vec2(0, 0));
 	static vec2 GetDir(mat3 matrix, vec2 localDir);
 	static mat3 MakeRotMatrix(float angle);
+	mat3 MakeScaleMatrix(vec2 scale);
 
 	TransformComponent(vec2 position = vec2(0, 0), vec2 scale = vec2(1, 1), float rotation = 0, entt::entity parent = NoEntity());
 	TransformComponent(ryml::NodeRef& node);

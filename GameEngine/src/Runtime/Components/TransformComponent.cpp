@@ -100,6 +100,7 @@ void TransformComponent::CalcMatrix()
 
 void TransformComponent::UpdateGlobals()
 {
+	CalcMatrix();
 	globalPosition = GetPosition(matrixL2W);
 	globalScale = GetScale(matrixL2W);
 	globalRotation = GetRotation(matrixL2W);
@@ -122,14 +123,10 @@ void TransformComponent::UpdateLocals()
 	if (hasParent) {
 		auto& pTrx = GETSYSTEM(Entities).GetRegistry().get<TransformComponent>(parent);
 		auto matW2P = inverse(pTrx.matrixL2W);
-		auto oldGlobalPos = GetPosition(matrixL2W);
-		auto moveVector = GetDir(matW2P, globalPosition - oldGlobalPos);
-		position += moveVector;
 
-		float oldGlobalRotation = GetRotation(matrixL2W);
-		oldGlobalRotation = glm::mod(oldGlobalRotation + 360, 360.0f);
-		float rotationChange = globalRotation - oldGlobalRotation;
-		rotation += rotationChange;
+		position = GetPosition(matW2P, globalPosition);
+
+		rotation = GetRotation(matW2P, globalRotation);
 
 		auto oldGlobalScale = GetScale(matrixL2W);
 		auto scaleChange = globalScale / oldGlobalScale;
@@ -155,7 +152,7 @@ float TransformComponent::GetRotation(mat3 matrix, float angle)
 	);
 	matrix = matR * matrix;
 	auto dirVec = vec2(matrix[1][0], matrix[0][0]);
-	normalize(dirVec);
+	dirVec = normalize(dirVec);
 	auto rotation = glm::degrees(std::atan2f(dirVec.x, dirVec.y));
 	rotation = mod(rotation + 360, 360.0f);
 	return rotation;
@@ -163,7 +160,7 @@ float TransformComponent::GetRotation(mat3 matrix, float angle)
 float TransformComponent::GetRotation(mat3 matrix)
 {
 	auto dirVec = vec2(matrix[1][0], matrix[0][0]);
-	normalize(dirVec);
+	dirVec = normalize(dirVec);
 	auto rotation = glm::degrees(std::atan2f(dirVec.x, dirVec.y));
 	rotation = mod(rotation + 360, 360.0f);
 	return rotation;

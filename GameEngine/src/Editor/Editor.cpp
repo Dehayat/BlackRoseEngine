@@ -100,7 +100,8 @@ void Editor::UpdateViewportControls()
 				createdEntity = entt::entity(-1);
 			}
 			if (input.GetMouseButton(LEFT_BUTTON).isPressed) {
-				registry.get<TransformComponent>(createdEntity).position = glm::vec2(mousePos.x, mousePos.y);
+				registry.get<TransformComponent>(createdEntity).globalPosition = glm::vec2(mousePos.x, mousePos.y);
+				registry.get<TransformComponent>(createdEntity).UpdateLocals();
 			}
 		}
 	}
@@ -108,7 +109,8 @@ void Editor::UpdateViewportControls()
 		auto mousePos = glm::vec3(input.GetMousePosition(), 1) * gameRenderer.GetScreenToWorldMatrix();
 		if (levelTreeEditor.GetSelectedEntity() != entt::entity(-1)) {
 			if (input.GetMouseButton(LEFT_BUTTON).isPressed) {
-				registry.get<TransformComponent>(levelTreeEditor.GetSelectedEntity()).position = glm::vec2(mousePos.x, mousePos.y);
+				registry.get<TransformComponent>(levelTreeEditor.GetSelectedEntity()).globalPosition = glm::vec2(mousePos.x, mousePos.y);
+				registry.get<TransformComponent>(levelTreeEditor.GetSelectedEntity()).UpdateLocals();
 			}
 		}
 	}

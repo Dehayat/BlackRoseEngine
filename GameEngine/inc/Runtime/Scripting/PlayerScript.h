@@ -22,14 +22,18 @@ public:
 		if (walkDir != 0) {
 			auto& transform = GETSYSTEM(Entities).GetRegistry().get<TransformComponent>(owner);
 			auto& player = GETSYSTEM(Entities).GetRegistry().get<PlayerComponent>(owner);
-			transform.position.x += walkDir * dt * player.speed;
+			transform.globalPosition.x += walkDir * dt * player.speed;
+			transform.UpdateLocals();
 		}
 	}
 	virtual void OnEvent(entt::entity owner, const EntityEvent& entityEvent) override {
 		auto& registry = GETSYSTEM(Entities).GetRegistry();
 		int oldWalkDir = walkDir;
+		auto& trx = registry.get<TransformComponent>(owner);
 		if (entityEvent.name == "LeftKeyPressed") {
 			walkDir = -1;
+			trx.scale.x = -1;
+			trx.UpdateGlobals();
 		}
 		if (entityEvent.name == "LeftKeyReleased") {
 			if (walkDir == -1) {
@@ -38,6 +42,8 @@ public:
 		}
 		if (entityEvent.name == "RightKeyPressed") {
 			walkDir = 1;
+			trx.scale.x = 1;
+			trx.UpdateGlobals();
 		}
 		if (entityEvent.name == "RightKeyReleased") {
 			if (walkDir == 1) {

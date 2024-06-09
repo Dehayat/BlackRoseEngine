@@ -5,13 +5,11 @@
 
 #include "Systems.h"
 
-#include "Components/SpriteComponent.h"
-#include "Components/CameraComponent.h"
-#include "Components/AnimationComponent.h"
+#include "Components/GUIDComponent.h"
 
 #include "Editor/ComponentEditor.h"
 
-class AnimationEditor :public IComponentEditor {
+class GuidEditor :public IComponentEditor {
 	static int ResizeStringCallback(ImGuiInputTextCallbackData* data)
 	{
 		if (data->EventFlag == ImGuiInputTextFlags_CallbackResize)
@@ -24,10 +22,10 @@ class AnimationEditor :public IComponentEditor {
 public:
 	void Editor(entt::entity entity) {
 		auto& registry = GETSYSTEM(Entities).GetRegistry();
-		auto& anim = registry.get<AnimationComponent>(entity);
-		if (anim.animation.capacity() < 21) {
-			anim.animation.reserve(21);
+		auto& guid = registry.get<GUIDComponent>(entity);
+		if (guid.name.capacity() < 21) {
+			guid.name.reserve(21);
 		}
-		ImGui::InputText("Animation", &anim.animation[0], 21, ImGuiInputTextFlags_CallbackResize, ResizeStringCallback, &anim.animation);
+		ImGui::InputText(("Name##" + std::to_string(guid.id)).c_str(), &guid.name[0], 21, ImGuiInputTextFlags_CallbackResize, ResizeStringCallback, &guid.name);
 	}
 };

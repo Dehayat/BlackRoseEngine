@@ -86,7 +86,13 @@ entt::entity Entities::CreateEntity(Guid guid)
 	AddEntity(guid, entity);
 	return entity;
 }
-
+entt::entity Entities::CreateEntityWithoutGuidComponent(Guid guid)
+{
+	auto& registry = GetRegistry();
+	auto entity = registry.create();
+	AddEntity(guid, entity);
+	return entity;
+}
 
 void Entities::DestroyEntity(entt::entity entity)
 {

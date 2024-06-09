@@ -61,8 +61,16 @@ entt::entity LevelLoader::DeserializeEntity(entt::registry& registry, ryml::Node
 	auto& entities = GETSYSTEM(Entities);
 	auto guid = entities.GenerateGuid();
 	if (node.has_child("Guid")) {
-		node["Guid"] >> guid;
-		entity = entities.CreateEntity(guid);
+		if (node["Guid"].is_map()) {
+			auto guidNode = node["Guid"];
+			guidNode["id"] >> guid;
+			entity = entities.CreateEntityWithoutGuidComponent(guid);
+			ComponentSer<GUIDComponent>::Deserialize(registry, guidNode, entity);
+		}
+		else {
+			node["Guid"] >> guid;
+			entity = entities.CreateEntity(guid);
+		}
 	}
 	else {
 		entity = entities.CreateEntity();
@@ -134,8 +142,12 @@ void LevelLoader::SerializeEntity(entt::registry& registry, ryml::NodeRef& paren
 	auto node = parent.append_child();
 	node |= ryml::MAP;
 	node["Type"] << "Entity";
-	node["Guid"] << registry.get<GUIDComponent>(entity).id;
 
+	if (registry.any_of<GUIDComponent>(entity)) {
+		auto componentNode = node.append_child();
+		componentNode.set_key("Guid");
+		registry.get<GUIDComponent>(entity).Serialize(componentNode);
+	}
 	if (registry.any_of<TransformComponent>(entity)) {
 		auto componentNode = node.append_child();
 		componentNode.set_key("Transform");

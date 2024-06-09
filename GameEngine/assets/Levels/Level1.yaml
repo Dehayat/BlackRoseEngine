@@ -1,5 +1,20 @@
 - Type: Entity
-  Guid: 16695479920711999621
+  Guid:
+    name: Pants
+    id: 16650142479781371041
+  Transform:
+    position:
+      - 4.082098
+      - 0.083676875
+    scale:
+      - 1
+      - 1
+    rotation: 0.051757812
+    parent: 1706961204079769308
+- Type: Entity
+  Guid:
+    name: Camera
+    id: 11455113823770256278
   Transform:
     position:
       - 0.4
@@ -12,7 +27,9 @@
     height: 7
     startCamera: 1
 - Type: Entity
-  Guid: 17640613414784985595
+  Guid:
+    name: Sekiro
+    id: 1706961204079769308
   Transform:
     position:
       - -2.8066368

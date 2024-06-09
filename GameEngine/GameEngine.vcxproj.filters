@@ -183,6 +183,9 @@
     <ClInclude Include="inc\Editor\PlayerEditor.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="inc\Editor\GuidEditor.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Editor\Editor.cpp">

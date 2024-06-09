@@ -135,6 +135,7 @@
     <ClInclude Include="inc\Editor\AnimationEditor.h" />
     <ClInclude Include="inc\Editor\ComponentEditor.h" />
     <ClInclude Include="inc\Editor\Editor.h" />
+    <ClInclude Include="inc\Editor\GuidEditor.h" />
     <ClInclude Include="inc\Editor\ImguiSystem.h" />
     <ClInclude Include="inc\Editor\LevelTree.h" />
     <ClInclude Include="inc\Editor\LevelTreeEditor.h" />

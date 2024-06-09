@@ -14,6 +14,7 @@
 
 #include "Systems.h"
 
+#include "Components/GUIDComponent.h"
 #include "Components/PhysicsBodyComponent.h"
 #include "Components/TransformComponent.h"
 #include "Components/SpriteComponent.h"
@@ -23,6 +24,7 @@
 #include "Components/PlayerComponent.h"
 
 
+#include "Editor/GuidEditor.h"
 #include "Editor/PhysicsEditor.h"
 #include "Editor/RenderEditor.h"
 #include "Editor/TransformEditor.h"
@@ -271,6 +273,7 @@ void Editor::EntityEditor()
 	auto& registry = entities.GetRegistry();
 	auto selectedEntity = levelTreeEditor.GetSelectedEntity();
 	if (levelTreeEditor.GetSelectedEntity() != entt::entity(-1)) {
+		RenderComponent<GUIDComponent, GuidEditor>(false, "Entity Info", selectedEntity);
 		RenderComponent<TransformComponent, TransformEditor>(false, "Transform Component", selectedEntity);
 		RenderComponent<PhysicsBodyComponent, PhysicsEditor>(true, "Physics Body Component", selectedEntity);
 		RenderComponent<SpriteComponent, SpriteEditor>(true, "Sprite Component", selectedEntity);

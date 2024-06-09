@@ -36,7 +36,15 @@ void LevelTreeEditor::EditorChildren(entt::registry& registry, Node<entt::entity
 		| ImGuiTreeNodeFlags_OpenOnDoubleClick
 		| (node->element == selectedEntity ? ImGuiTreeNodeFlags_Selected : 0)
 		| (node->children.size() == 0 ? ImGuiTreeNodeFlags_Leaf : 0);
-	auto open = ImGui::TreeNodeEx(std::to_string(guid.id).c_str(), flags);
+
+	bool open = false;
+	if (guid.name == "") {
+		open = ImGui::TreeNodeEx(std::to_string(guid.id).c_str(), flags);
+	}
+	else {
+		open = ImGui::TreeNodeEx((guid.name + "##" + std::to_string(guid.id)).c_str(), flags);
+	}
+
 	if (ImGui::BeginDragDropSource())
 	{
 		ImGui::SetDragDropPayload("Node<entt::entity>", &(node->element), sizeof(node->element));

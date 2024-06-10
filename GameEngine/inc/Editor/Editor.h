@@ -9,6 +9,7 @@
 
 enum Tools {
 	//Entity Tools
+	SelectEntity,
 	CreateEntity,
 	MoveEntity,
 	DeleteEntity,

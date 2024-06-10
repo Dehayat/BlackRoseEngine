@@ -8,6 +8,7 @@
 
 #include "SdlContainer.h"
 #include "LevelLoader.h"
+#include "AssetStore/AssetStore.h"
 
 #include "Input/InputSystem.h"
 #include "Renderer/Renderer.h"
@@ -116,6 +117,9 @@ void Editor::UpdateViewportControls()
 			}
 		}
 	}
+	if (selectedTool == Tools::SelectEntity) {
+		//TODO: implement select rendered entities
+	}
 }
 
 bool Editor::ProcessEvents()
@@ -171,23 +175,6 @@ void Editor::RenderEditor()
 	EntityEditor();
 	ImGui::End();
 
-
-	auto& assetManager = GETSYSTEM(AssetManager);
-	ImGui::Begin("Asset Manager", nullptr, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove);
-	ImGui::SetWindowSize(ImVec2(400, 300));
-	ImGui::SetWindowPos(ImVec2(0, h - 300));
-	assetManager.Render();
-	ImGui::End();
-
-	if (assetManager.IsAssetSelected()) {
-		ImGui::Begin("Asset Editor", nullptr);
-		ImGui::SetWindowSize(ImVec2(300, 300));
-		ImGui::SetWindowPos(ImVec2(400, h - 300));
-		assetManager.RenderSelectedAsset();
-		ImGui::End();
-	}
-
-
 	PresentImGui();
 }
 
@@ -208,19 +195,33 @@ void Editor::RenderTools()
 	auto& input = GETSYSTEM(InputSystem);
 	auto& gameRenderer = GETSYSTEM(RendererSystem);
 	auto& levelLoader = GETSYSTEM(LevelLoader);
-	ImGui::BeginTable("Tools", 3);
+	ImGui::BeginTable("Tools", 4);
 	ImGui::TableNextColumn();
-	if (ImGui::Button("Create Entity")) {
+	if (ImGui::Button("Create")) {
 		selectedTool = Tools::CreateEntity;
 	}
-	if (ImGui::Button("Move Entity")) {
+	if (ImGui::Button("Move")) {
 		selectedTool = Tools::MoveEntity;
 	}
-	if (ImGui::Button("Delete Entity")) {
+	if (ImGui::Button("Select")) {
+		selectedTool = Tools::SelectEntity;
+	}
+
+	ImGui::TableNextColumn();
+	if (ImGui::Button("Delete")) {
 		if (levelTreeEditor.GetSelectedEntity() != NoEntity()) {
 			entities.DestroyEntity(levelTreeEditor.GetSelectedEntity());
 			levelTreeEditor.CleanTree();
 		}
+	}
+	{
+		static char fileName[41] = "assets/packages/package.pkg";
+		if (ImGui::Button("Load Package")) {
+			AssetStore& assetStore = GETSYSTEM(AssetStore);
+			assetStore.LoadPackage(fileName);
+		}
+		ImGui::SameLine();
+		ImGui::InputText("##LP", fileName, 41);
 	}
 
 	ImGui::TableNextColumn();

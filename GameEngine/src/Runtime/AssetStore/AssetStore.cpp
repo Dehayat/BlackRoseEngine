@@ -41,8 +41,12 @@ void AssetStore::AddTexture(const std::string& assetId, const std::string& fileP
 	auto textureAsset = new TextureAsset(texture, ppu);
 	if (assets.find(assetId) != assets.end()) {
 		delete assets[assetId].asset;
+		assets[assetId].type = AssetType::Texture;
+		assets[assetId].asset = textureAsset;
 	}
-	assets[assetId] = AssetHandle(AssetType::Texture, textureAsset);
+	else {
+		assets[assetId] = AssetHandle(AssetType::Texture, textureAsset);
+	}
 	Logger::Log("Loaded Texture Asset " + assetId);
 }
 
@@ -51,8 +55,12 @@ void AssetStore::LoadAnimation(const std::string& assetId, const std::string& fi
 	auto animation = AnimationImporter::LoadAnimation(filePath);
 	if (assets.find(assetId) != assets.end()) {
 		delete assets[assetId].asset;
+		assets[assetId].type = AssetType::Animation;
+		assets[assetId].asset = animation;
 	}
-	assets[assetId] = AssetHandle(AssetType::Animation, animation);
+	else {
+		assets[assetId] = AssetHandle(AssetType::Animation, animation);
+	}
 	Logger::Log("Loaded Animation Asset " + assetId);
 }
 

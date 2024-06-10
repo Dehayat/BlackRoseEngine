@@ -186,6 +186,9 @@
     <ClInclude Include="inc\Editor\GuidEditor.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="inc\Runtime\Physics\CollisionListener.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Editor\Editor.cpp">
@@ -252,6 +255,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\Runtime\Components\TransformComponent.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Runtime\Physics\CollisionListener.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

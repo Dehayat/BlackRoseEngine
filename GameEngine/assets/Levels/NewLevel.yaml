@@ -1,53 +1,13 @@
 - Type: Entity
-  Guid: 2378375965651511014
+  Guid:
+    name: ''
+    id: 3468108232482392604
   Transform:
     position:
-      - 0
-      - 2.2
+      - 1.354074
+      - 2.1
     scale:
       - 1
-      - 1
-    rotation: 0
-  Sprite:
-    sprite: sekiroIdle
-    layer: 0
-    color:
-      - 1
-      - 1
-      - 1
-      - 1
-  Player:
-    speed: 10
-    idleAnim: ''
-    runAnim: ''
-  PhysicsBody:
-    size:
-      - 0.5
-      - 1
-  Animation:
-    animation: sekiroIdleAnim
-  Script: {}
-- Type: Entity
-  Guid: 16695479920711999621
-  Transform:
-    position:
-      - 0
-      - 0
-    scale:
-      - 1
-      - 1
-    rotation: 0
-  Camera:
-    height: 5
-    startCamera: 1
-- Type: Entity
-  Guid: 7155225449082423115
-  Transform:
-    position:
-      - -0.207
-      - -1.693
-    scale:
-      - 8.6
       - 1
     rotation: 0
   Sprite:
@@ -58,21 +18,18 @@
       - 1
       - 1
       - 1
-  PhysicsBody:
-    size:
-      - 8
-      - 1.05
-    isStatic: 1
 - Type: Entity
-  Guid: 16504172705850045965
+  Guid:
+    name: Sekiro
+    id: 1706961204079769308
   Transform:
     position:
-      - -2.9703708
-      - 0.5962963
+      - -2.8066368
+      - 0.6114097
     scale:
       - 1
       - 1
-    rotation: 0
+    rotation: 359.98706
   Sprite:
     sprite: sekiroIdle
     layer: 0
@@ -81,10 +38,38 @@
       - 1
       - 1
       - 1
-  PhysicsBody:
-    size:
-      - 0.5
-      - 1
+  Player:
+    speed: 3.07
+    idleAnim: sekiroIdleAnim
+    runAnim: sekiroRunAnim
   Animation:
     animation: sekiroIdleAnim
   Script: {}
+- Type: Entity
+  Guid:
+    name: Camera
+    id: 11455113823770256278
+  Transform:
+    position:
+      - 0.4
+      - 1.4
+    scale:
+      - 1
+      - 1
+    rotation: 0
+  Camera:
+    height: 7
+    startCamera: 1
+- Type: Entity
+  Guid:
+    name: Pants
+    id: 16650142479781371041
+  Transform:
+    position:
+      - 4.082098
+      - 0.083676875
+    scale:
+      - 1
+      - 1
+    rotation: 0.051757812
+    parent: 1706961204079769308

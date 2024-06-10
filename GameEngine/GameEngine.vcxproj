@@ -178,6 +178,7 @@
     <ClInclude Include="inc\Runtime\Events\EventBus.h" />
     <ClInclude Include="inc\Runtime\Events\KeyPressedEvent.h" />
     <ClInclude Include="inc\Runtime\Input\InputSystem.h" />
+    <ClInclude Include="inc\Runtime\Physics\CollisionListener.h" />
     <ClInclude Include="inc\Runtime\Physics\Physics.h" />
     <ClInclude Include="inc\Runtime\Renderer\Renderer.h" />
     <ClInclude Include="inc\Runtime\Scripting\PlayerScript.h" />
@@ -188,6 +189,7 @@
     <ClInclude Include="inc\Tools\AssetManager.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\Runtime\Physics\CollisionListener.cpp" />
     <ClCompile Include="src\Runtime\Components\TransformComponent.cpp" />
     <ClCompile Include="src\Editor\LevelTreeEditor.cpp" />
     <ClCompile Include="src\Editor\Editor.cpp" />

@@ -38,13 +38,13 @@ struct PhysicsBodyComponent {
 			node["size"][1] >> size.y;
 		}
 		if (node.has_child("isStatic")) {
-			isStatic = true;
+			node["isStatic"] >> isStatic;
 		}
 		if (node.has_child("isSensor")) {
-			isSensor = true;
+			node["isSensor"] >> isSensor;
 		}
 		if (node.has_child("useGravity")) {
-			useGravity = true;
+			node["useGravity"] >> useGravity;
 		}
 
 		globalSize = vec2();

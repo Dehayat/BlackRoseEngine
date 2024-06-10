@@ -27,6 +27,14 @@ public:
 		}
 	}
 	virtual void OnEvent(entt::entity owner, const EntityEvent& entityEvent) override {
+
+		if (entityEvent.name == "EnteringSensor") {
+			Logger::Log("We did it boys");
+		}
+		if (entityEvent.name == "ExitingSensor") {
+			Logger::Log("You blew it!");
+		}
+
 		auto& registry = GETSYSTEM(Entities).GetRegistry();
 		int oldWalkDir = walkDir;
 		auto& trx = registry.get<TransformComponent>(owner);

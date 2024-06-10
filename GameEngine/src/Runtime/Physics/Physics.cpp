@@ -7,12 +7,17 @@
 
 #include "Systems.h"
 
+#include "Physics/CollisionListener.h"
+
 #include "Debugging/Logger.h"
+
 
 PhysicsSystem::PhysicsSystem(float gravityX, float gravityY)
 {
 	b2Vec2 gravity(gravityX, gravityY);
 	physicsWorld = std::make_unique<b2World>(gravity);
+	contactListener = std::make_unique<ContactListener>();
+	physicsWorld->SetContactListener(contactListener.get());
 	drawDebug = false;
 	debugDrawer = nullptr;
 	entt::registry& registry = GETSYSTEM(Entities).GetRegistry();
@@ -55,6 +60,7 @@ void PhysicsSystem::PhysicsBodyCreated(entt::registry& registry, entt::entity en
 	phys.fixture.isSensor = phys.isSensor;
 	body->CreateFixture(&phys.fixture);
 	phys.body = body;
+	phys.body->GetUserData().pointer = (uintptr_t)entity;
 	phys.body->SetTransform(b2Vec2(trx.globalPosition.x, trx.globalPosition.y), glm::radians(trx.globalRotation));
 }
 void PhysicsSystem::PhysicsBodyDestroyed(entt::registry& registry, entt::entity entity)

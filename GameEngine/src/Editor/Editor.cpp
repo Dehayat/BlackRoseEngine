@@ -139,12 +139,10 @@ void Editor::UpdateSelectTool()
 	auto& input = GETSYSTEM(InputSystem);
 	if (input.GetMouseButton(LEFT_BUTTON).justPressed) {
 		auto mousePos = input.GetMousePosition();
-		Logger::Log("Mouse::" + std::to_string(mousePos.x) + " , " + std::to_string(mousePos.y));
 		auto view = registry.view<const SpriteComponent>();
 		bool selected = false;
 		for (auto entity : view) {
 			auto& sprite = registry.get<SpriteComponent>(entity);
-			Logger::Log("entity::" + std::to_string(sprite.destRect.x) + " , " + std::to_string(sprite.destRect.y));
 			if (IsPointInsideRect(mousePos, sprite.destRect)) {
 				levelTreeEditor.SelectEntity(entity);
 				selected = true;

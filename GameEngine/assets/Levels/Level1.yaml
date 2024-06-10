@@ -1,16 +1,49 @@
 - Type: Entity
   Guid:
-    name: Pants
-    id: 16650142479781371041
+    name: Trigger
+    id: 14376357330784112978
   Transform:
     position:
-      - 4.082098
-      - 0.083676875
+      - 1.5718517
+      - 0.8037038
     scale:
       - 1
       - 1
-    rotation: 0.051757812
-    parent: 1706961204079769308
+    rotation: 0
+  PhysicsBody:
+    size:
+      - 1
+      - 1
+    isStatic: 1
+    isSensor: 1
+    useGravity: 0
+- Type: Entity
+  Guid:
+    name: Ground
+    id: 2039272245978519460
+  Transform:
+    position:
+      - -0.1081481
+      - -1.4466667
+    scale:
+      - 13.4
+      - 1.2
+    rotation: 0
+  Sprite:
+    sprite: block
+    layer: 0
+    color:
+      - 1
+      - 1
+      - 1
+      - 1
+  PhysicsBody:
+    size:
+      - 1
+      - 1
+    isStatic: 1
+    isSensor: 0
+    useGravity: 0
 - Type: Entity
   Guid:
     name: Camera
@@ -50,6 +83,13 @@
     speed: 3.07
     idleAnim: sekiroIdleAnim
     runAnim: sekiroRunAnim
+  PhysicsBody:
+    size:
+      - 1
+      - 2
+    isStatic: 0
+    isSensor: 0
+    useGravity: 1
   Animation:
     animation: sekiroIdleAnim
   Script: {}

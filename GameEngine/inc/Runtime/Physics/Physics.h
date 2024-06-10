@@ -25,18 +25,20 @@ public:
 	void DrawPoint(const b2Vec2& p, float size, const b2Color& color);
 };
 
+
 class PhysicsSystem
 {
 	DebugDraw* debugDrawer;
 	bool drawDebug;
 	std::unique_ptr<b2World> physicsWorld;
+	std::unique_ptr<b2ContactListener> contactListener;
 public:
 	PhysicsSystem(float gravityX, float gravityY);
 	~PhysicsSystem();
 	void PhysicsBodyCreated(entt::registry& registry, entt::entity entity);
 	void PhysicsBodyDestroyed(entt::registry& registry, entt::entity entity);
-	void CopyTransformToBody(PhysicsBodyComponent& phys, TransformComponent &trx);
-	void CopyBodyToTransform(PhysicsBodyComponent& phys, TransformComponent &trx);
+	void CopyTransformToBody(PhysicsBodyComponent& phys, TransformComponent& trx);
+	void CopyBodyToTransform(PhysicsBodyComponent& phys, TransformComponent& trx);
 	void Update();
 	b2World& GetWorld();
 

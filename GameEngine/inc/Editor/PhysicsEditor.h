@@ -39,5 +39,13 @@ public:
 			phys.fixture.isSensor = phys.isSensor;
 			phys.body->GetFixtureList()[0].SetSensor(phys.isSensor);
 		}
+		if (ImGui::Checkbox("Use Gravity", &phys.useGravity)) {
+			if (phys.useGravity) {
+				phys.body->SetGravityScale(1.0f);
+			}
+			else {
+				phys.body->SetGravityScale(0.0f);
+			}
+		}
 	}
 };

@@ -10,6 +10,7 @@ struct PhysicsBodyComponent {
 	vec2 size;
 	bool isStatic;
 	bool isSensor;
+	bool useGravity;
 
 	vec2 globalSize;
 	b2Body* body;
@@ -17,10 +18,11 @@ struct PhysicsBodyComponent {
 	b2FixtureDef fixture;
 	b2BodyDef bodyDef;
 
-	PhysicsBodyComponent(vec2 size = vec2(1.f, 1.f), bool isStatic = false, bool isSensor = false) {
+	PhysicsBodyComponent(vec2 size = vec2(1.f, 1.f), bool isStatic = false, bool isSensor = false, bool useGravity = true) {
 		this->size = size;
 		this->isStatic = isStatic;
 		this->isSensor = isSensor;
+		this->useGravity = useGravity;
 
 		this->body = nullptr;
 		globalSize = vec2();
@@ -30,15 +32,19 @@ struct PhysicsBodyComponent {
 		size = { 1.f,1.f };
 		this->isStatic = false;
 		this->isSensor = false;
+		this->useGravity = true;
 		if (node.is_map() && node.has_child("size")) {
 			node["size"][0] >> size.x;
 			node["size"][1] >> size.y;
 		}
-		if (node.is_map() && node.has_child("isStatic")) {
+		if (node.has_child("isStatic")) {
 			isStatic = true;
 		}
-		if (node.is_map() && node.has_child("isSensor")) {
+		if (node.has_child("isSensor")) {
 			isSensor = true;
+		}
+		if (node.has_child("useGravity")) {
+			useGravity = true;
 		}
 
 		globalSize = vec2();
@@ -50,11 +56,8 @@ struct PhysicsBodyComponent {
 		node["size"] |= ryml::SEQ;
 		node["size"].append_child() << size.x;
 		node["size"].append_child() << size.y;
-		if (isStatic) {
-			node["isStatic"] << isStatic;
-		}
-		if (isSensor) {
-			node["isSensor"] << isSensor;
-		}
+		node["isStatic"] << isStatic;
+		node["isSensor"] << isSensor;
+		node["useGravity"] << useGravity;
 	}
 };

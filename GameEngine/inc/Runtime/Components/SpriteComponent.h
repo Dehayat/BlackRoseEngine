@@ -15,12 +15,14 @@ struct SpriteComponent {
 	glm::vec4 color;
 
 	SDL_Rect* sourceRect;
+	SDL_FRect destRect;
 
 	SpriteComponent(std::string sprite = "block", int layer = 0, vec4 color = vec4(1, 1, 1, 1)) {
 		this->sprite = sprite;
 		this->layer = layer;
 		this->color = color;
 		sourceRect = nullptr;
+		destRect = SDL_FRect();
 	}
 	SpriteComponent(ryml::NodeRef node)
 	{
@@ -28,6 +30,7 @@ struct SpriteComponent {
 		this->color = vec4(1, 1, 1, 1);
 		this->layer = 0;
 		sourceRect = nullptr;
+		destRect = SDL_FRect();
 		if (node.is_map()) {
 			if (node.has_child("sprite")) {
 				node["sprite"] >> this->sprite;
@@ -47,6 +50,7 @@ struct SpriteComponent {
 	}
 	void Serialize(ryml::NodeRef node)
 	{
+		destRect = SDL_FRect();
 		node |= ryml::MAP;
 		node["sprite"] << sprite;
 		node["layer"] << layer;

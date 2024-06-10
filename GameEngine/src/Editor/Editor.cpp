@@ -118,7 +118,42 @@ void Editor::UpdateViewportControls()
 		}
 	}
 	if (selectedTool == Tools::SelectEntity) {
-		//TODO: implement select rendered entities
+		UpdateSelectTool();
+	}
+}
+
+static bool IsPointInsideRect(vec2 point, SDL_FRect rect) {
+	if (point.x<rect.x || point.x > rect.x + rect.w) {
+		return false;
+	}
+	if (point.y<rect.y|| point.y > rect.y + rect.h) {
+		return false;
+	}
+	return true;
+}
+
+void Editor::UpdateSelectTool()
+{
+	auto& entities = GETSYSTEM(Entities);
+	auto& registry = entities.GetRegistry();
+	auto& input = GETSYSTEM(InputSystem);
+	if (input.GetMouseButton(LEFT_BUTTON).justPressed) {
+		auto mousePos = input.GetMousePosition();
+		Logger::Log("Mouse::" + std::to_string(mousePos.x) + " , " + std::to_string(mousePos.y));
+		auto view = registry.view<const SpriteComponent>();
+		bool selected = false;
+		for (auto entity : view) {
+			auto& sprite = registry.get<SpriteComponent>(entity);
+			Logger::Log("entity::" + std::to_string(sprite.destRect.x) + " , " + std::to_string(sprite.destRect.y));
+			if (IsPointInsideRect(mousePos, sprite.destRect)) {
+				levelTreeEditor.SelectEntity(entity);
+				selected = true;
+				break;
+			}
+		}
+		if (!selected) {
+			levelTreeEditor.SelectEntity(NoEntity());
+		}
 	}
 }
 

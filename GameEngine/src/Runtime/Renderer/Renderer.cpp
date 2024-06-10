@@ -75,11 +75,11 @@ void RendererSystem::Render()
 
 
 
-	auto view2 = registry.view<const SpriteComponent, const TransformComponent>();
+	auto view2 = registry.view<SpriteComponent, const TransformComponent>();
 	for (auto entity : view2) {
 		int x = view2.size_hint();
 		const auto& pos = view2.get<TransformComponent>(entity);
-		const auto& sp = view2.get<SpriteComponent>(entity);
+		auto& sp = view2.get<SpriteComponent>(entity);
 		auto spriteHandle = assetStore.GetAsset(sp.sprite);
 		if (spriteHandle.type != AssetType::Texture) {
 			continue;
@@ -109,6 +109,7 @@ void RendererSystem::Render()
 			(float)spriteSizeX,
 			(float)spriteSizeY,
 		};
+		sp.destRect = player;
 		SDL_SetTextureColorMod(texture->texture, sp.color.r * 255, sp.color.g * 255, sp.color.b * 255);
 		SDL_SetTextureBlendMode(texture->texture, SDL_BLENDMODE_BLEND);
 		SDL_SetTextureAlphaMod(texture->texture, sp.color.a * 255);

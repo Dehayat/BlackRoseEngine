@@ -31,6 +31,7 @@ class Editor {
 	void RenderTools();
 	void EntityEditor();
 	void UpdateViewportControls();
+	void UpdateSelectTool();
 public:
 	Editor();
 	~Editor();

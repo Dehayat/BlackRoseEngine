@@ -30,7 +30,8 @@ public:
 	void InsertEntity(entt::entity antity);
 	void TransformDestroyed(entt::registry& registry, entt::entity entity);
 	void RemoveParent(entt::entity);
-	void SetParent(entt::entity child, entt::entity parent);
+	bool TrySetParent(entt::entity child, entt::entity parent);
+	bool IsChildOf(entt::entity entity, entt::entity child);
 	void Clear();
 	Node<entt::entity>* GetRoot();
 	void CleanTree();

@@ -106,14 +106,17 @@ void LevelTree::RemoveParent(entt::entity entity)
 	if (childTrx.hasParent) {
 		auto parent = childTrx.parent;
 		auto& parentTrx = registry.get<TransformComponent>(parent);
-		TransformSystem::MoveTransformToWorldSpace(childTrx);
 		childTrx.hasParent = false;
+		TransformSystem::MoveTransformToWorldSpace(childTrx);
 		root->AddChild(nodesMap[entity]);
 		Logger::Log("removing parent");
 	}
 }
-void LevelTree::SetParent(entt::entity child, entt::entity parent)
+bool LevelTree::TrySetParent(entt::entity child, entt::entity parent)
 {
+	if (IsChildOf(child, parent)) {
+		return false;
+	}
 	entt::registry& registry = GETSYSTEM(Entities).GetRegistry();
 	auto& transformSystem = GETSYSTEM(TransformSystem);
 	auto& childTrx = registry.get<TransformComponent>(child);
@@ -124,6 +127,23 @@ void LevelTree::SetParent(entt::entity child, entt::entity parent)
 	nodesMap[parent]->AddChild(node);
 	TransformSystem::MoveTransformToParentSpace(childTrx, parentTrx);
 	Logger::Log("setting parent");
+	return true;
+}
+bool LevelTree::IsChildOf(entt::entity entity, entt::entity child) {
+	auto node = nodesMap[entity];
+	auto childNode = nodesMap[child];
+
+	if (node->children.find(childNode) != node->children.end()) {
+		return true;
+	}
+	else {
+		for (auto childNode : node->children) {
+			if (IsChildOf(childNode->element, child)) {
+				return true;
+			}
+		}
+	}
+	return false;
 }
 void LevelTree::Clear() {
 	root->DeleteChildren();

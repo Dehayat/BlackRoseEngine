@@ -181,6 +181,7 @@
     <ClInclude Include="inc\Runtime\Physics\CollisionListener.h" />
     <ClInclude Include="inc\Runtime\Physics\Physics.h" />
     <ClInclude Include="inc\Runtime\Renderer\Renderer.h" />
+    <ClInclude Include="inc\Runtime\Scripting\OrbScript.h" />
     <ClInclude Include="inc\Runtime\Scripting\PlayerScript.h" />
     <ClInclude Include="inc\Runtime\Scripting\Script.h" />
     <ClInclude Include="inc\Runtime\Scripting\ScriptSystem.h" />

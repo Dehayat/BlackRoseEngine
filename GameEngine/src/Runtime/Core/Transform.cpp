@@ -41,10 +41,10 @@ void TransformSystem::TransformDestroyed(entt::registry& registry, entt::entity 
 }
 void TransformSystem::MoveTransformToWorldSpace(TransformComponent& trx)
 {
-	trx.position = TransformComponent::GetPosition(trx.matrixL2W);
-	trx.scale = TransformComponent::GetScale(trx.matrixL2W);
-	trx.rotation = TransformComponent::GetRotation(trx.matrixL2W);
-	trx.CalcMatrix();
+	trx.position = trx.globalPosition;
+	trx.scale = trx.globalScale;
+	trx.rotation = trx.globalRotation;
+	trx.UpdateGlobals();
 }
 void TransformSystem::MoveTransformToParentSpace(TransformComponent& child, TransformComponent& parent)
 {
@@ -53,6 +53,7 @@ void TransformSystem::MoveTransformToParentSpace(TransformComponent& child, Tran
 	child.position = TransformComponent::GetPosition(matrixtL2sL);
 	child.scale = TransformComponent::GetScale(matrixtL2sL);
 	child.rotation = TransformComponent::GetRotation(matrixtL2sL);
+	child.UpdateGlobals();
 }
 void TransformSystem::Update()
 {
@@ -110,7 +111,9 @@ void TransformSystem::SetParent(entt::entity entity, entt::entity parent)
 	Entities& entities = GETSYSTEM(Entities);
 	entt::registry& registry = entities.GetRegistry();
 	auto& child = registry.get<TransformComponent>(entity);
+	auto oldParent = NoEntity();
 	if (child.hasParent) {
+		oldParent = child.parent;
 		GETSYSTEM(LevelTree).RemoveParent(entity);
 		child.hasParent = false;
 		child.parent = NoEntity();
@@ -118,12 +121,19 @@ void TransformSystem::SetParent(entt::entity entity, entt::entity parent)
 	}
 
 	if (parent != NoEntity()) {
-		GETSYSTEM(LevelTree).SetParent(entity, parent);
-		child.parent = parent;
-		auto& parentTrx = registry.get<TransformComponent>(parent);
-		child.level = parentTrx.level + 1;
-		child.hasParent = true;
-		child.parentGUID = entities.GetEntityGuid(parent);
+		if (GETSYSTEM(LevelTree).TrySetParent(entity, parent)) {
+			child.parent = parent;
+			auto& parentTrx = registry.get<TransformComponent>(parent);
+			child.level = parentTrx.level + 1;
+			child.hasParent = true;
+			child.parentGUID = entities.GetEntityGuid(parent);
+		}
+		else {
+			if (oldParent != NoEntity()) {
+				GETSYSTEM(LevelTree).TrySetParent(entity, oldParent);
+			}
+		}
+
 	}
 	child.UpdateGlobals();
 }

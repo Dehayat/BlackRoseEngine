@@ -189,6 +189,9 @@
     <ClInclude Include="inc\Runtime\Physics\CollisionListener.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="inc\Runtime\Scripting\OrbScript.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Editor\Editor.cpp">

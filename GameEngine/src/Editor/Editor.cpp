@@ -146,7 +146,6 @@ void Editor::UpdateSelectTool()
 			if (IsPointInsideRect(mousePos, sprite.destRect)) {
 				levelTreeEditor.SelectEntity(entity);
 				selected = true;
-				break;
 			}
 		}
 		if (!selected) {

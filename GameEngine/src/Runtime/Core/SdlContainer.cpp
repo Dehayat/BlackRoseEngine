@@ -14,7 +14,7 @@ SdlContainer::SdlContainer(int windowWidth, int windowHeight, std::string window
 		SDL_WINDOW_SHOWN | SDL_WINDOW_ALLOW_HIGHDPI
 	);
 	renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
-	SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "2");
+	SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "0");
 }
 
 SdlContainer::~SdlContainer()

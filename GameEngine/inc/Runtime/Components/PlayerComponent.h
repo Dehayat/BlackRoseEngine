@@ -6,6 +6,8 @@ struct PlayerComponent {
 	float speed;
 	std::string idleAnim;
 	std::string runAnim;
+	std::string attackAnim;
+
 	PlayerComponent(float speed = 10) {
 		this->speed = speed;
 	}
@@ -23,6 +25,9 @@ struct PlayerComponent {
 		if (node.has_child("runAnim")) {
 			node["runAnim"] >> runAnim;
 		}
+		if (node.has_child("attackAnim")) {
+			node["attackAnim"] >> attackAnim;
+		}
 	}
 	void Serialize(ryml::NodeRef& node) {
 		node |= ryml::MAP;
@@ -31,5 +36,6 @@ struct PlayerComponent {
 		node["speed"] << speed;
 		node["idleAnim"] << idleAnim;
 		node["runAnim"] << runAnim;
+		node["attackAnim"] << attackAnim;
 	}
 };

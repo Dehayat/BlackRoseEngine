@@ -263,5 +263,8 @@
     <ClCompile Include="src\Runtime\Physics\CollisionListener.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\Runtime\Scripting\PlayerScript.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

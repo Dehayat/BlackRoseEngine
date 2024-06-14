@@ -190,6 +190,7 @@
     <ClInclude Include="inc\Tools\AssetManager.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\Runtime\Scripting\PlayerScript.cpp" />
     <ClCompile Include="src\Runtime\Physics\CollisionListener.cpp" />
     <ClCompile Include="src\Runtime\Components\TransformComponent.cpp" />
     <ClCompile Include="src\Editor\LevelTreeEditor.cpp" />

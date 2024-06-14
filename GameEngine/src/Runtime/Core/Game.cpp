@@ -95,7 +95,7 @@ void Game::LoadAssets()
 void Game::LoadLevel()
 {
 	LevelLoader& levelLoader = GETSYSTEM(LevelLoader);
-	levelLoader.LoadLevel("assets/Levels/Level1.yaml");
+	levelLoader.LoadLevel("wonder/level.yaml");
 }
 
 void Game::Update()

@@ -120,6 +120,12 @@ void InputSystem::Update() {
 				}
 			}
 		}
+		if (GetMouseButton(InputMouse::LEFT_BUTTON).justPressed) {
+			eventSystem.QueueEvent(EntityEvent(entity, "LeftMousePressed"));
+		}
+		if (GetMouseButton(InputMouse::LEFT_BUTTON).justReleased) {
+			eventSystem.QueueEvent(EntityEvent(entity, "LeftMouseReleased"));
+		}
 	}
 
 }

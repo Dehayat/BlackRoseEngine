@@ -1,0 +1,9 @@
+Texture sekiroAttack
+Size 64 64
+Frame 1 0.150000
+Frame 2 0.050000
+Frame 3 0.050000
+Frame 4 0.150000
+Frame 5 0.100000
+Event ShowHitBox 0.150000
+Event HideHitBox 0.250000

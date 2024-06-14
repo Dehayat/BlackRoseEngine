@@ -175,7 +175,7 @@ DebugDraw::DebugDraw() :matrix(1)
 {
 	SdlContainer& sdlRenderer = entt::locator<SdlContainer>::value();
 	this->renderer = sdlRenderer.GetRenderer();
-	SetFlags(15);
+	SetFlags(31);
 }
 void DebugDraw::SetMatrix(glm::mat3 worldToScreen)
 {

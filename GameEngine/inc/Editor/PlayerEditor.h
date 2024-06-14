@@ -34,5 +34,10 @@ public:
 			player.runAnim.reserve(21);
 		}
 		ImGui::InputText("run Animation", &player.runAnim[0], 21, ImGuiInputTextFlags_CallbackResize, ResizeStringCallback, &player.runAnim);
+
+		if (player.attackAnim.capacity() < 21) {
+			player.attackAnim.reserve(21);
+		}
+		ImGui::InputText("attack Animation", &player.attackAnim[0], 21, ImGuiInputTextFlags_CallbackResize, ResizeStringCallback, &player.attackAnim);
 	}
 };

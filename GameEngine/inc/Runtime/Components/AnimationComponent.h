@@ -108,7 +108,7 @@ struct AnimationComponent {
 	}
 
 	std::string PopEvent() {
-		auto& eventName = eventQueue.front();
+		auto eventName = eventQueue.front();
 		eventQueue.pop();
 		return eventName;
 	}

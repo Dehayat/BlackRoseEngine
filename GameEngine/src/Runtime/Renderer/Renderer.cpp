@@ -39,8 +39,31 @@ void RendererSystem::Render()
 		camPos = &registry.get<TransformComponent>(camera);
 		camHeight = registry.get<CameraComponent>(camera).height;
 	}
+	if (camPos == nullptr || !registry.get<CameraComponent>(camera).startCamera) {
+		auto view = registry.view<CameraComponent, TransformComponent>();
+		for (auto entity : view) {
+			auto& pos = view.get<TransformComponent>(entity);
+			auto& body = view.get<CameraComponent>(entity);
+			if (body.startCamera) {
+				SetCamera(entity);
+				break;
+			}
+		}
+	}
 	if (camPos == nullptr) {
-		Logger::Error("No Camera Assigned to renderer");
+		auto view = registry.view<CameraComponent, TransformComponent>();
+		for (auto entity : view) {
+			Logger::Error("No Starting Camera Assigned");
+			SetCamera(entity);
+			continue;
+		}
+	}
+	if (registry.valid(camera)) {
+		camPos = &registry.get<TransformComponent>(camera);
+		camHeight = registry.get<CameraComponent>(camera).height;
+	}
+	else {
+		Logger::Error("No Camera Found");
 		return;
 	}
 	auto camToWorldMatrix = glm::mat3(

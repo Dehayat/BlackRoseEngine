@@ -129,12 +129,19 @@ void Editor::UpdateGlobalControls()
 {
 	auto& entities = GETSYSTEM(Entities);
 	auto& input = GETSYSTEM(InputSystem);
+	auto& levelLoader = GETSYSTEM(LevelLoader);
 	if (GetSelectedEntity() != NoEntity()) {
 		if (input.GetKey(InputKey::DELETE).justReleased) {
 			if (levelTreeEditor.GetSelectedEntity() != NoEntity()) {
 				entities.DestroyEntity(levelTreeEditor.GetSelectedEntity());
 				levelTreeEditor.CleanTree();
 			}
+		}
+	}
+	if (input.GetKey(InputKey::LCTRL).isPressed || input.GetKey(InputKey::RCTRL).isPressed) {
+		if (input.GetKey(InputKey::N).justPressed) {
+			levelLoader.UnloadLevel();
+			levelTreeEditor.CleanTree();
 		}
 	}
 }

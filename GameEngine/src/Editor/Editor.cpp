@@ -82,6 +82,9 @@ void Editor::Update()
 	if (mouseInViewport) {
 		UpdateViewportControls();
 	}
+	if (!ImGui::IsAnyItemActive()) {
+		UpdateGlobalControls();
+	}
 }
 
 void Editor::UpdateViewportControls()
@@ -122,11 +125,25 @@ void Editor::UpdateViewportControls()
 	}
 }
 
+void Editor::UpdateGlobalControls()
+{
+	auto& entities = GETSYSTEM(Entities);
+	auto& input = GETSYSTEM(InputSystem);
+	if (GetSelectedEntity() != NoEntity()) {
+		if (input.GetKey(InputKey::DELETE).justReleased) {
+			if (levelTreeEditor.GetSelectedEntity() != NoEntity()) {
+				entities.DestroyEntity(levelTreeEditor.GetSelectedEntity());
+				levelTreeEditor.CleanTree();
+			}
+		}
+	}
+}
+
 static bool IsPointInsideRect(vec2 point, SDL_FRect rect) {
 	if (point.x<rect.x || point.x > rect.x + rect.w) {
 		return false;
 	}
-	if (point.y<rect.y|| point.y > rect.y + rect.h) {
+	if (point.y<rect.y || point.y > rect.y + rect.h) {
 		return false;
 	}
 	return true;

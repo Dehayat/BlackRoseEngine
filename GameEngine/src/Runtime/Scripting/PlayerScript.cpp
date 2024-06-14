@@ -1,5 +1,12 @@
 #include "Scripting/PlayerScript.h"
 
+#include "Transform.h"
+
+void PlayerScript::Setup(entt::entity owner)
+{
+	spriteEntity = GETSYSTEM(TransformSystem).GetChild(owner, "sprite");
+}
+
 void PlayerScript::Update(entt::entity owner) {
 	auto& timeSystem = GETSYSTEM(TimeSystem);
 	float dt = timeSystem.GetdeltaTime();
@@ -48,8 +55,8 @@ void PlayerScript::OnEvent(entt::entity owner, const EntityEvent& entityEvent) {
 		}
 	}
 	if (!isAttacking && entityEvent.name == "LeftMousePressed") {
-		if (registry.all_of<AnimationComponent, PlayerComponent>(owner)) {
-			auto& anim = registry.get<AnimationComponent>(owner);
+		if (spriteEntity != NoEntity() && registry.all_of<PlayerComponent>(owner) && registry.all_of<AnimationComponent>(spriteEntity)) {
+			auto& anim = registry.get<AnimationComponent>(spriteEntity);
 			auto& player = registry.get<PlayerComponent>(owner);
 			anim.Play(player.attackAnim);
 			isAttacking = true;
@@ -58,8 +65,8 @@ void PlayerScript::OnEvent(entt::entity owner, const EntityEvent& entityEvent) {
 	if (entityEvent.name == "AnimationFinished") {
 		if (isAttacking) {
 			isAttacking = false;
-			if (registry.all_of<AnimationComponent, PlayerComponent>(owner)) {
-				auto& anim = registry.get<AnimationComponent>(owner);
+			if (spriteEntity != NoEntity() && registry.all_of<PlayerComponent>(owner) && registry.all_of<AnimationComponent>(spriteEntity)) {
+				auto& anim = registry.get<AnimationComponent>(spriteEntity);
 				auto& player = registry.get<PlayerComponent>(owner);
 				anim.Play(player.idleAnim);
 				oldWalkDir = 0;
@@ -67,8 +74,8 @@ void PlayerScript::OnEvent(entt::entity owner, const EntityEvent& entityEvent) {
 		}
 	}
 	if (!isAttacking && oldWalkDir != walkDir) {
-		if (registry.all_of<AnimationComponent, PlayerComponent>(owner)) {
-			auto& anim = registry.get<AnimationComponent>(owner);
+		if (spriteEntity != NoEntity() && registry.all_of<PlayerComponent>(owner) && registry.all_of<AnimationComponent>(spriteEntity)) {
+			auto& anim = registry.get<AnimationComponent>(spriteEntity);
 			auto& player = registry.get<PlayerComponent>(owner);
 			if (walkDir == 0) {
 				anim.Play(player.idleAnim);

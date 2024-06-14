@@ -34,6 +34,10 @@ void TransformSystem::TransformCreated(entt::registry& registry, entt::entity en
 	GETSYSTEM(LevelTree).InsertEntity(entity);
 	trx.UpdateGlobals();
 }
+entt::entity TransformSystem::GetChild(entt::entity entity, const std::string& name)
+{
+	return GETSYSTEM(LevelTree).GetChild(entity, name);
+}
 void TransformSystem::TransformDestroyed(entt::registry& registry, entt::entity entity)
 {
 	auto& trx = registry.get<TransformComponent>(entity);

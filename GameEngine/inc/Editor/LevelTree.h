@@ -35,4 +35,5 @@ public:
 	void Clear();
 	Node<entt::entity>* GetRoot();
 	void CleanTree();
+	entt::entity GetChild(entt::entity entity, const std::string& name);
 };

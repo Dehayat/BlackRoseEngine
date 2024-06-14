@@ -168,6 +168,26 @@ void LevelTree::CleanTree()
 		}
 	}
 }
+entt::entity LevelTree::GetChild(entt::entity entity, const std::string& name)
+{
+	auto& registry = GETSYSTEM(Entities).GetRegistry();
+	if (!registry.valid(entity)) {
+		return NoEntity();
+	}
+	if (nodesMap.find(entity) == nodesMap.end()) {
+		return NoEntity();
+	}
+	auto node = nodesMap[entity];
+	for (auto child : node->children) {
+		if (!registry.valid(child->element)) {
+			continue;
+		}
+		if (registry.get<GUIDComponent>(child->element).name == name) {
+			return child->element;
+		}
+	}
+	return NoEntity();
+}
 Node<entt::entity>* LevelTree::AddEntity(entt::entity entity, Node<entt::entity>* parent) {
 	if (parent == nullptr) {
 		parent = root;

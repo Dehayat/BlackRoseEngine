@@ -29,6 +29,7 @@ public:
 	void SetParent(entt::entity entity, entt::entity parent);
 	void TransformCreated(entt::registry& registry, entt::entity);
 	void TransformDestroyed(entt::registry& registry, entt::entity);
+	entt::entity GetChild(entt::entity entity, const std::string& name);
 	static void MoveTransformToWorldSpace(TransformComponent& trx);
 	static void MoveTransformToParentSpace(TransformComponent& trx, TransformComponent& source);
 	static glm::mat3 CalcMatrix(TransformComponent& trx);

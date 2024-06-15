@@ -2,7 +2,6 @@
 #include "Scripting/Script.h"
 
 #include "Scripting/SpawnerScript.h"
-#include "Scripting/PlayerScript.h"
 
 #include <ryml/ryml.hpp>
 

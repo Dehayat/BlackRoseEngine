@@ -171,9 +171,6 @@
     <ClInclude Include="inc\Runtime\AssetStore\AssetPackage.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="inc\Runtime\Scripting\PlayerScript.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="inc\Editor\ScriptEditor.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -261,9 +258,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\Runtime\Physics\CollisionListener.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Runtime\Scripting\PlayerScript.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

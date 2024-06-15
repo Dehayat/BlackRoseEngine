@@ -23,6 +23,16 @@ void EntityEventSystem::Update()
 		if (scriptComponent != nullptr) {
 			scriptSystem.CallEvent(entityEvent);
 		}
+		else {
+			auto& trx = registry.get<TransformComponent>(entityEvent.entity);
+			if (trx.hasParent) {
+				auto parentScript = registry.try_get<ScriptComponent>(trx.parent);
+				if (parentScript != nullptr) {
+					auto parentEvent = EntityEvent(trx.parent, entityEvent.name);
+					scriptSystem.CallEvent(parentEvent);
+				}
+			}
+		}
 		eventQueue.pop();
 	}
 }

@@ -182,7 +182,6 @@
     <ClInclude Include="inc\Runtime\Physics\Physics.h" />
     <ClInclude Include="inc\Runtime\Renderer\Renderer.h" />
     <ClInclude Include="inc\Runtime\Scripting\OrbScript.h" />
-    <ClInclude Include="inc\Runtime\Scripting\PlayerScript.h" />
     <ClInclude Include="inc\Runtime\Scripting\Script.h" />
     <ClInclude Include="inc\Runtime\Scripting\ScriptSystem.h" />
     <ClInclude Include="inc\Runtime\Scripting\SpawnerScript.h" />
@@ -190,7 +189,6 @@
     <ClInclude Include="inc\Tools\AssetManager.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\Runtime\Scripting\PlayerScript.cpp" />
     <ClCompile Include="src\Runtime\Physics\CollisionListener.cpp" />
     <ClCompile Include="src\Runtime\Components\TransformComponent.cpp" />
     <ClCompile Include="src\Editor\LevelTreeEditor.cpp" />

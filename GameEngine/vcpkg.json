@@ -8,6 +8,7 @@
     "box2d",
     "sdl2-gfx",
     "ryml",
+    "sol2",
     {
       "name": "imgui",
       "features": [

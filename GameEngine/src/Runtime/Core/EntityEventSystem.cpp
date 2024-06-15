@@ -6,6 +6,8 @@
 
 #include "Systems.h"
 
+#include "Scripting/ScriptSystem.h"
+
 #include "Components/ScriptComponent.h"
 
 #include "Debugging/Logger.h"
@@ -13,12 +15,13 @@
 void EntityEventSystem::Update()
 {
 	auto& registry = GETSYSTEM(Entities).GetRegistry();
+	auto& scriptSystem = GETSYSTEM(ScriptSystem);
 
 	while (!eventQueue.empty()) {
 		auto& entityEvent = eventQueue.front();
 		auto scriptComponent = registry.try_get<ScriptComponent>(entityEvent.entity);
-		if (scriptComponent != nullptr && scriptComponent->script != nullptr) {
-			scriptComponent->script->OnEvent(entityEvent.entity, entityEvent);
+		if (scriptComponent != nullptr) {
+			scriptSystem.CallEvent(entityEvent);
 		}
 		eventQueue.pop();
 	}

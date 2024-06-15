@@ -7,42 +7,16 @@
 #include <ryml/ryml.hpp>
 
 struct ScriptComponent {
-	Script* script;
-	ScriptComponent(Script* script) {
-		this->script = script;
-	}
+	std::string scriptFile;
 	ScriptComponent() {
-		this->script = nullptr;
-		script = new PlayerScript();
+		scriptFile = "assets/Scripts/Player.lua";
 	}
-	~ScriptComponent() {
-		if (script != nullptr) {
-			delete script;
-		}
-	}
-	ScriptComponent(const ScriptComponent&) = delete;
-	ScriptComponent& operator=(const ScriptComponent&) = delete;
 
 	ScriptComponent(ryml::NodeRef& node)
 	{
-		//script = new Script();
-		//script = new SpawnerScript();
-		script = new PlayerScript();
-	}
-	ScriptComponent(ScriptComponent&& other) {
-		script = other.script;
-		other.script = nullptr;
+		scriptFile = "assets/Scripts/Player.lua";
 	}
 
-	ScriptComponent& operator=(ScriptComponent&& other) {
-		Script* temp = other.script;
-		other.script = nullptr;
-		if (script != nullptr) {
-			delete script;
-		}
-		script = temp;
-		return *this;
-	}
 	void Serialize(ryml::NodeRef& node)
 	{
 		node |= ryml::MAP;

@@ -267,4 +267,7 @@
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
+  <ItemGroup>
+    <None Include="assets\Scripts\Player.lua" />
+  </ItemGroup>
 </Project>

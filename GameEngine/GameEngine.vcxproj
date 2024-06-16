@@ -212,6 +212,9 @@
     <ClCompile Include="src\Runtime\Renderer\Renderer.cpp" />
     <ClCompile Include="src\Runtime\Scripting\ScriptSystem.cpp" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="assets\Scripts\Batman.lua" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

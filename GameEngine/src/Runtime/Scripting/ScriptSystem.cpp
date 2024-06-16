@@ -38,50 +38,43 @@ static void FaceDir(entt::entity entity, int dir) {
 
 void ScriptSystem::ScriptComponentCreated(entt::registry& registry, entt::entity entity)
 {
-	scriptStates[entity] = sol::state();
-	auto& state = scriptStates[entity];
-	state.open_libraries();
-	state.new_usertype<entt::entity>("entity");
-	state.set_function("get_child", GetChild);
-	state.set_function("move", Translate);
-	state.set_function("face", FaceDir);
-	state.set_function("play_anim", PlayAnimation);
-	state["no_entity"] = NoEntity();
 	if (registry.valid(entity) && registry.any_of<ScriptComponent>(entity)) {
 		auto& scriptComponent = registry.get<ScriptComponent>(entity);
-		for (auto script : scriptComponent.scripts) {
+		for (auto& script : scriptComponent.scripts) {
 			if (script != "") {
-				auto scriptAsset = GETSYSTEM(AssetStore).GetAsset(script);
-				if (scriptAsset.asset != nullptr) {
-					auto script = (ScriptAsset*)scriptAsset.asset;
-					state.script(script->script);
+				auto scriptAsset = (ScriptAsset*)GETSYSTEM(AssetStore).GetAsset(script).asset;
+				if (scriptAsset != nullptr) {
+					AddScript(entity, script, scriptAsset->script);
 				}
 			}
 		}
 	}
-	setupNextFrame.push(entity);
+	setupNextFrame.insert(entity);
 }
 
 void ScriptSystem::Update()
 {
 	entt::registry& registry = GETSYSTEM(Entities).GetRegistry();
-	while (!setupNextFrame.empty()) {
-		auto entity = setupNextFrame.front();
+	for (auto& entity : setupNextFrame) {
 		if (registry.valid(entity) && registry.any_of<ScriptComponent>(entity)) {
 			auto& scriptComponent = registry.get<ScriptComponent>(entity);
-			auto& state = scriptStates[entity];
-			state["setup"](entity);
+			for (auto script : scriptComponent.scripts) {
+				auto& state = scriptStates[entity][script];
+				state["setup"](entity);
+			}
 		}
-		setupNextFrame.pop();
 	}
+	setupNextFrame.clear();
 	auto view = registry.view<ScriptComponent>();
 	auto dt = GETSYSTEM(TimeSystem).GetdeltaTime();
 	for (auto entity : view) {
 		auto& scriptComponent = registry.get<ScriptComponent>(entity);
-		auto& state = scriptStates[entity];
-		sol::optional update = state["update"];
-		if (update) {
-			update.value()(entity, dt);
+		for (auto script : scriptComponent.scripts) {
+			auto& state = scriptStates[entity][script];
+			sol::optional update = state["update"];
+			if (update) {
+				update.value()(entity, dt);
+			}
 		}
 	}
 }
@@ -91,9 +84,43 @@ void ScriptSystem::CallEvent(EntityEvent eventData)
 	entt::registry& registry = GETSYSTEM(Entities).GetRegistry();
 	auto entity = eventData.entity;
 	auto& scriptComponent = registry.get<ScriptComponent>(entity);
-	auto& state = scriptStates[entity];
-	sol::optional eventCall = state["on_event"];
-	if (eventCall) {
-		eventCall.value()(entity, eventData.name);
+	for (auto script : scriptComponent.scripts) {
+		auto& state = scriptStates[entity][script];
+		sol::optional eventCall = state["on_event"];
+		if (eventCall) {
+			eventCall.value()(entity, eventData.name);
+		}
 	}
+}
+
+void ScriptSystem::AddScript(entt::entity entity, const std::string scriptName, const std::string script)
+{
+	scriptStates[entity];
+	scriptStates[entity][scriptName] = sol::state();
+	auto& state = scriptStates[entity][scriptName];
+	state.open_libraries();
+	state.new_usertype<entt::entity>("entity");
+	state.set_function("get_child", GetChild);
+	state.set_function("move", Translate);
+	state.set_function("face", FaceDir);
+	state.set_function("play_anim", PlayAnimation);
+	state["no_entity"] = NoEntity();
+	state.script(script);
+
+}
+
+void ScriptSystem::RefreshScript(entt::entity entity)
+{
+	auto& states = scriptStates[entity];
+	entt::registry& registry = GETSYSTEM(Entities).GetRegistry();
+	auto& scriptComponent = registry.get<ScriptComponent>(entity);
+	for (auto& script : scriptComponent.scripts) {
+		if (states.find(script) == states.end()) {
+			auto scriptAsset = (ScriptAsset*)GETSYSTEM(AssetStore).GetAsset(script).asset;
+			if (scriptAsset != nullptr) {
+				AddScript(entity, script, scriptAsset->script);
+			}
+		}
+	}
+	setupNextFrame.insert(entity);
 }

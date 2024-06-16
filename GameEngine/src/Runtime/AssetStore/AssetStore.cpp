@@ -118,7 +118,7 @@ void AssetStore::LoadPackage(const std::string& filePath)
 			case AssetType::Script:
 			{
 				auto metaData = (AssetMetaData*)(assetFile->metaData);
-				LoadAnimation(metaData->name, assetFile->filePath);
+				LoadScript(metaData->name, assetFile->filePath);
 				break;
 			}
 			default:

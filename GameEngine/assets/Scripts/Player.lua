@@ -14,9 +14,6 @@ function setup(me)
 end
 
 function update(me, dt)
-    print("update " .. me)
-    print(walkDir)
-
     if not is_attacking then
         if walkDir ~= 0 then
             move(me, walkDir*vars.speed * dt, 0)
@@ -25,7 +22,6 @@ function update(me, dt)
 end
 
 function on_event(me, event)
-    print(me .. " " .. event)
     if event == "LeftKeyReleased" or event == "RightKeyReleased" then
         walkDir = 0
     end

@@ -41,11 +41,6 @@
       - 1
       - 1
       - 1
-  Player:
-    speed: 2
-    idleAnim: ''
-    runAnim: ''
-    attackAnim: ''
   PhysicsBody:
     size:
       - 1
@@ -53,7 +48,8 @@
     isStatic: 0
     isSensor: 0
     useGravity: 1
-  Script: {}
+  Script:
+    script: ''
 - Type: Entity
   Guid:
     name: Sky
@@ -161,11 +157,6 @@
       - 1
       - 1
     rotation: 359.99707
-  Player:
-    speed: 2
-    idleAnim: sekiroIdleAnim
-    runAnim: sekiroRunAnim
-    attackAnim: sekiroAttackAnim
   PhysicsBody:
     size:
       - 1
@@ -173,4 +164,5 @@
     isStatic: 0
     isSensor: 0
     useGravity: 1
-  Script: {}
+  Script:
+    script: playerScript

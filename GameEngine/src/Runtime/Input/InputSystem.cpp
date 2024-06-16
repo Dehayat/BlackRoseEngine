@@ -7,7 +7,7 @@
 
 #include "Events/EntityEventSystem.h"
 
-#include "Components/PlayerComponent.h"
+#include "Components/ScriptComponent.h"
 
 #include "Systems.h"
 
@@ -100,7 +100,7 @@ void InputSystem::Update() {
 
 	entt::registry& registry = GETSYSTEM(Entities).GetRegistry();
 	auto& eventSystem = GETSYSTEM(EntityEventSystem);
-	auto view = registry.view<PlayerComponent>();
+	auto view = registry.view<ScriptComponent>();
 	for (auto entity : view) {
 		for (int i = 0; i < keyCount; i++) {
 			if (input.keys[i].justPressed) {

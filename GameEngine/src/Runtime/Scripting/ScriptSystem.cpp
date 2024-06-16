@@ -1,6 +1,8 @@
 #include "Scripting/ScriptSystem.h"
 
 #include "Entity.h"
+#include "AssetStore/AssetStore.h"
+#include "AssetStore/ScriptAsset.h"
 
 #include "Transform.h"
 #include "TimeSystem.h"
@@ -47,11 +49,15 @@ void ScriptSystem::ScriptComponentCreated(entt::registry& registry, entt::entity
 	state["no_entity"] = NoEntity();
 	if (registry.valid(entity) && registry.any_of<ScriptComponent>(entity)) {
 		auto& scriptComponent = registry.get<ScriptComponent>(entity);
-		if (scriptComponent.scriptFile != "") {
-			state.script_file(scriptComponent.scriptFile);
-			sol::optional setup = state["setup"];
-			if (setup) {
-				setupNextFrame.push(entity);
+		if (scriptComponent.script != "") {
+			auto scriptAsset = GETSYSTEM(AssetStore).GetAsset(scriptComponent.script);
+			if (scriptAsset.asset != nullptr) {
+				auto script = (ScriptAsset*)scriptAsset.asset;
+				state.script(script->script);
+				sol::optional setup = state["setup"];
+				if (setup) {
+					setupNextFrame.push(entity);
+				}
 			}
 		}
 	}
@@ -73,7 +79,7 @@ void ScriptSystem::Update()
 	auto dt = GETSYSTEM(TimeSystem).GetdeltaTime();
 	for (auto entity : view) {
 		auto& scriptComponent = registry.get<ScriptComponent>(entity);
-		if (scriptComponent.scriptFile != "") {
+		if (scriptComponent.script != "") {
 			auto& state = scriptStates[entity];
 			sol::optional update = state["update"];
 			if (update) {
@@ -88,7 +94,7 @@ void ScriptSystem::CallEvent(EntityEvent eventData)
 	entt::registry& registry = GETSYSTEM(Entities).GetRegistry();
 	auto entity = eventData.entity;
 	auto& scriptComponent = registry.get<ScriptComponent>(entity);
-	if (scriptComponent.scriptFile != "") {
+	if (scriptComponent.script != "") {
 		auto& state = scriptStates[entity];
 		sol::optional eventCall = state["on_event"];
 		if (eventCall) {

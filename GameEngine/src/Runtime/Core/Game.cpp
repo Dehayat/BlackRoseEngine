@@ -90,6 +90,7 @@ void Game::LoadAssets()
 {
 	AssetStore& assetStore = GETSYSTEM(AssetStore);
 	assetStore.LoadPackage("assets/Packages/a.pkg");
+	assetStore.LoadScript("playerScript", "assets/Scripts/player.lua");
 }
 
 void Game::LoadLevel()

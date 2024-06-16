@@ -15,7 +15,6 @@
 #include "Components/SpriteComponent.h"
 #include "Components/CameraComponent.h"
 #include "Components/GUIDComponent.h"
-#include "Components/PlayerComponent.h"
 #include "Components/AnimationComponent.h"
 #include "Components/ScriptComponent.h"
 
@@ -91,10 +90,6 @@ entt::entity LevelLoader::DeserializeEntity(entt::registry& registry, ryml::Node
 		auto n = node["Sprite"];
 		ComponentSer<SpriteComponent>::Deserialize(registry, n, entity);
 	}
-	if (node.has_child("Player")) {
-		auto n = node["Player"];
-		ComponentSer<PlayerComponent>::Deserialize(registry, n, entity);
-	}
 	if (node.has_child("Animation")) {
 		auto n = node["Animation"];
 		ComponentSer<AnimationComponent>::Deserialize(registry, n, entity);
@@ -162,11 +157,6 @@ void LevelLoader::SerializeEntity(entt::registry& registry, ryml::NodeRef& paren
 		auto componentNode = node.append_child();
 		componentNode.set_key("Camera");
 		registry.get<CameraComponent>(entity).Serialize(componentNode);
-	}
-	if (registry.any_of<PlayerComponent>(entity)) {
-		auto componentNode = node.append_child();
-		componentNode.set_key("Player");
-		registry.get<PlayerComponent>(entity).Serialize(componentNode);
 	}
 	if (registry.any_of<PhysicsBodyComponent>(entity)) {
 		auto componentNode = node.append_child();

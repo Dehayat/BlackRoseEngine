@@ -140,7 +140,6 @@
     <ClInclude Include="inc\Editor\LevelTree.h" />
     <ClInclude Include="inc\Editor\LevelTreeEditor.h" />
     <ClInclude Include="inc\Editor\PhysicsEditor.h" />
-    <ClInclude Include="inc\Editor\PlayerEditor.h" />
     <ClInclude Include="inc\Editor\RenderEditor.h" />
     <ClInclude Include="inc\Editor\ScriptEditor.h" />
     <ClInclude Include="inc\Editor\TransformEditor.h" />
@@ -152,13 +151,13 @@
     <ClInclude Include="inc\Runtime\AssetStore\AssetHandle.h" />
     <ClInclude Include="inc\Runtime\AssetStore\AssetPackage.h" />
     <ClInclude Include="inc\Runtime\AssetStore\AssetStore.h" />
+    <ClInclude Include="inc\Runtime\AssetStore\ScriptAsset.h" />
     <ClInclude Include="inc\Runtime\AssetStore\TextureAsset.h" />
     <ClInclude Include="inc\Runtime\Components\AnimationComponent.h" />
     <ClInclude Include="inc\Runtime\Components\CameraComponent.h" />
     <ClInclude Include="inc\Runtime\Components\Components.h" />
     <ClInclude Include="inc\Runtime\Components\GUIDComponent.h" />
     <ClInclude Include="inc\Runtime\Components\PhysicsBodyComponent.h" />
-    <ClInclude Include="inc\Runtime\Components\PlayerComponent.h" />
     <ClInclude Include="inc\Runtime\Components\ScriptComponent.h" />
     <ClInclude Include="inc\Runtime\Components\SpriteComponent.h" />
     <ClInclude Include="inc\Runtime\Components\TransformComponent.h" />
@@ -212,9 +211,6 @@
     <ClCompile Include="src\Runtime\Physics\Physics.cpp" />
     <ClCompile Include="src\Runtime\Renderer\Renderer.cpp" />
     <ClCompile Include="src\Runtime\Scripting\ScriptSystem.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="assets\Scripts\Player.lua" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

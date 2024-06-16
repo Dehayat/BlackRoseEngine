@@ -9,6 +9,8 @@
 
 #include "AssetStore/AssetPackage.h"
 
+#include "AssetStore/ScriptAsset.h"
+
 #include "Debugging/Logger.h"
 
 
@@ -64,6 +66,28 @@ void AssetStore::LoadAnimation(const std::string& assetId, const std::string& fi
 	Logger::Log("Loaded Animation Asset " + assetId);
 }
 
+void AssetStore::LoadScript(const std::string& assetId, const std::string& filePath)
+{
+	FileResource fileHandle = FileResource(filePath);
+	if (fileHandle.file == nullptr) {
+		Logger::Error("Couldn't load script file: " + filePath);
+		return;
+	}
+	std::string fileString = std::string("\0", SDL_RWsize(fileHandle.file));
+	SDL_RWread(fileHandle.file, &fileString[0], sizeof(fileString[0]), fileString.size());
+
+	auto script = new ScriptAsset(fileString);
+	if (assets.find(assetId) != assets.end()) {
+		delete assets[assetId].asset;
+		assets[assetId].type = AssetType::Script;
+		assets[assetId].asset = script;
+	}
+	else {
+		assets[assetId] = AssetHandle(AssetType::Script, script);
+	}
+	Logger::Log("Loaded Script Asset " + assetId);
+}
+
 AssetHandle AssetStore::GetAsset(const std::string& assetId) const
 {
 	if (assets.find(assetId) == assets.end()) {
@@ -88,6 +112,12 @@ void AssetStore::LoadPackage(const std::string& filePath)
 			case AssetType::Animation:
 			{
 				auto metaData = (AnimationMetaData*)(assetFile->metaData);
+				LoadAnimation(metaData->name, assetFile->filePath);
+				break;
+			}
+			case AssetType::Script:
+			{
+				auto metaData = (AssetMetaData*)(assetFile->metaData);
 				LoadAnimation(metaData->name, assetFile->filePath);
 				break;
 			}

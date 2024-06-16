@@ -1,5 +1,8 @@
 -- This is a lua comment
-print("hi")
+
+vars = {
+    speed = 5;
+}
 
 sprite_entity = no_entity
 is_attacking = false
@@ -16,7 +19,7 @@ function update(me, dt)
 
     if not is_attacking then
         if walkDir ~= 0 then
-            move(me, walkDir * dt, 0)
+            move(me, walkDir*vars.speed * dt, 0)
         end
     end
 end

@@ -3,7 +3,8 @@
 enum class AssetType {
 	Empty,
 	Texture,
-	Animation
+	Animation,
+	Script
 };
 
 class Asset {

@@ -84,9 +84,6 @@
     <ClInclude Include="inc\Runtime\Components\PhysicsBodyComponent.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="inc\Runtime\Components\PlayerComponent.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="inc\Runtime\Components\ScriptComponent.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -177,9 +174,6 @@
     <ClInclude Include="inc\Editor\LevelTreeEditor.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="inc\Editor\PlayerEditor.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="inc\Editor\GuidEditor.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -187,6 +181,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="inc\Runtime\Scripting\OrbScript.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="inc\Runtime\AssetStore\ScriptAsset.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -260,8 +257,5 @@
     <ClCompile Include="src\Runtime\Physics\CollisionListener.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="assets\Scripts\Player.lua" />
   </ItemGroup>
 </Project>

@@ -124,3 +124,14 @@ void ScriptSystem::RefreshScript(entt::entity entity)
 	}
 	setupNextFrame.insert(entity);
 }
+
+void ScriptSystem::RemoveScript(entt::entity entity, const std::string& removeScript)
+{
+	auto& states = scriptStates[entity];
+	entt::registry& registry = GETSYSTEM(Entities).GetRegistry();
+	auto& scriptComponent = registry.get<ScriptComponent>(entity);
+	if (scriptComponent.scripts.find(removeScript) != scriptComponent.scripts.end()) {
+		scriptComponent.scripts.erase(removeScript);
+		states.erase(removeScript);
+	}
+}

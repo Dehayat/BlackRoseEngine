@@ -25,9 +25,20 @@ public:
 	void Editor(entt::entity entity) {
 		auto& registry = GETSYSTEM(Entities).GetRegistry();
 		auto& scriptComp = registry.get<ScriptComponent>(entity);
-		if (scriptComp.script.capacity() < 21) {
-			scriptComp.script.reserve(21);
+		ImGui::Text("Scripts");
+		ImGui::Indent();
+		for (auto script : scriptComp.scripts) {
+			ImGui::Text(script.c_str());
 		}
-		ImGui::InputText("script", &scriptComp.script[0], 21, ImGuiInputTextFlags_CallbackResize, ResizeStringCallback, &scriptComp.script);
+		ImGui::Unindent();
+		ImGui::Separator();
+		static std::string scriptName = "";
+		if (scriptName.capacity() < 21) {
+			scriptName.reserve(21);
+		}
+		ImGui::InputText("script", &scriptName[0], 21, ImGuiInputTextFlags_CallbackResize, ResizeStringCallback, &scriptName);
+		if (ImGui::Button("AddScript")) {
+			scriptComp.scripts.insert(scriptName);
+		}
 	}
 };

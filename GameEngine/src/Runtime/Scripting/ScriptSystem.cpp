@@ -49,18 +49,17 @@ void ScriptSystem::ScriptComponentCreated(entt::registry& registry, entt::entity
 	state["no_entity"] = NoEntity();
 	if (registry.valid(entity) && registry.any_of<ScriptComponent>(entity)) {
 		auto& scriptComponent = registry.get<ScriptComponent>(entity);
-		if (scriptComponent.script != "") {
-			auto scriptAsset = GETSYSTEM(AssetStore).GetAsset(scriptComponent.script);
-			if (scriptAsset.asset != nullptr) {
-				auto script = (ScriptAsset*)scriptAsset.asset;
-				state.script(script->script);
-				sol::optional setup = state["setup"];
-				if (setup) {
-					setupNextFrame.push(entity);
+		for (auto script : scriptComponent.scripts) {
+			if (script != "") {
+				auto scriptAsset = GETSYSTEM(AssetStore).GetAsset(script);
+				if (scriptAsset.asset != nullptr) {
+					auto script = (ScriptAsset*)scriptAsset.asset;
+					state.script(script->script);
 				}
 			}
 		}
 	}
+	setupNextFrame.push(entity);
 }
 
 void ScriptSystem::Update()
@@ -79,12 +78,10 @@ void ScriptSystem::Update()
 	auto dt = GETSYSTEM(TimeSystem).GetdeltaTime();
 	for (auto entity : view) {
 		auto& scriptComponent = registry.get<ScriptComponent>(entity);
-		if (scriptComponent.script != "") {
-			auto& state = scriptStates[entity];
-			sol::optional update = state["update"];
-			if (update) {
-				update.value()(entity, dt);
-			}
+		auto& state = scriptStates[entity];
+		sol::optional update = state["update"];
+		if (update) {
+			update.value()(entity, dt);
 		}
 	}
 }
@@ -94,11 +91,9 @@ void ScriptSystem::CallEvent(EntityEvent eventData)
 	entt::registry& registry = GETSYSTEM(Entities).GetRegistry();
 	auto entity = eventData.entity;
 	auto& scriptComponent = registry.get<ScriptComponent>(entity);
-	if (scriptComponent.script != "") {
-		auto& state = scriptStates[entity];
-		sol::optional eventCall = state["on_event"];
-		if (eventCall) {
-			eventCall.value()(entity, eventData.name);
-		}
+	auto& state = scriptStates[entity];
+	sol::optional eventCall = state["on_event"];
+	if (eventCall) {
+		eventCall.value()(entity, eventData.name);
 	}
 }

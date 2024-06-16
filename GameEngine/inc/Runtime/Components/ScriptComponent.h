@@ -1,27 +1,39 @@
 #pragma once
 #include "Scripting/Script.h"
 
+#include <set>
+
 #include "Scripting/SpawnerScript.h"
 
 #include <ryml/ryml.hpp>
 
 struct ScriptComponent {
-	std::string script;
+	std::set<std::string> scripts;
 	ScriptComponent() {
-		script = "playerScript";
 	}
 
 	ScriptComponent(ryml::NodeRef& node)
 	{
-		script = "";
-		if (node.has_child("script")) {
-			node["script"] >> script;
+		if (node.has_child("scripts") && node["scripts"].is_seq()) {
+			auto child = node["scripts"].first_child();
+			for (int i = 0; i < node["scripts"].num_children(); i++) {
+				std::string script;
+				child >> script;
+				scripts.insert(script);
+				child = child.next_sibling();
+			}
 		}
 	}
 
 	void Serialize(ryml::NodeRef& node)
 	{
 		node |= ryml::MAP;
-		node["script"] << script;
+		auto child = node.append_child();
+		child.set_key("scripts");
+		child |= ryml::SEQ;
+		for (auto& script : scripts) {
+			auto scriptNode = child.append_child();
+			scriptNode << script;
+		}
 	}
 };

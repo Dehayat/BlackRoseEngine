@@ -2,13 +2,13 @@
 
 #include <entt/entt.hpp>
 
-#include "Entity.h"
-#include "AssetStore/AssetStore.h"
-#include "TimeSystem.h"
+#include "Core/Entity.h"
+#include "AssetPipline/AssetStore.h"
+#include "Core/TimeSystem.h"
 
 #include "Events/EntityEventSystem.h"
 
-#include "Systems.h"
+#include "Core/Systems.h"
 
 
 #include "Components/AnimationComponent.h"

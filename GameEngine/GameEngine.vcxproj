@@ -14,6 +14,83 @@
       <Platform>x64</Platform>
     </ProjectConfiguration>
   </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="src\Editor\AnimationEditor.h" />
+    <ClInclude Include="src\Editor\ComponentEditor.h" />
+    <ClInclude Include="src\Editor\Editor.h" />
+    <ClInclude Include="src\Editor\GuidEditor.h" />
+    <ClInclude Include="src\Editor\ImguiSystem.h" />
+    <ClInclude Include="src\Editor\LevelTree.h" />
+    <ClInclude Include="src\Editor\LevelTreeEditor.h" />
+    <ClInclude Include="src\Editor\PhysicsEditor.h" />
+    <ClInclude Include="src\Editor\RenderEditor.h" />
+    <ClInclude Include="src\Editor\ScriptEditor.h" />
+    <ClInclude Include="src\Editor\TransformEditor.h" />
+    <ClInclude Include="src\Runtime\Animation\AnimationImporter.h" />
+    <ClInclude Include="src\Runtime\Animation\AnimationSystem.h" />
+    <ClInclude Include="src\Runtime\AssetPipline\AnimationAsset.h" />
+    <ClInclude Include="src\Runtime\AssetPipline\AssetHandle.h" />
+    <ClInclude Include="src\Runtime\AssetPipline\AssetPackage.h" />
+    <ClInclude Include="src\Runtime\AssetPipline\AssetStore.h" />
+    <ClInclude Include="src\Runtime\AssetPipline\ScriptAsset.h" />
+    <ClInclude Include="src\Runtime\AssetPipline\TextureAsset.h" />
+    <ClInclude Include="src\Runtime\Components\AnimationComponent.h" />
+    <ClInclude Include="src\Runtime\Components\CameraComponent.h" />
+    <ClInclude Include="src\Runtime\Components\Components.h" />
+    <ClInclude Include="src\Runtime\Components\GUIDComponent.h" />
+    <ClInclude Include="src\Runtime\Components\PhysicsBodyComponent.h" />
+    <ClInclude Include="src\Runtime\Components\ScriptComponent.h" />
+    <ClInclude Include="src\Runtime\Components\SpriteComponent.h" />
+    <ClInclude Include="src\Runtime\Components\TransformComponent.h" />
+    <ClInclude Include="src\Runtime\Core\Entity.h" />
+    <ClInclude Include="src\Runtime\Core\FileResource.h" />
+    <ClInclude Include="src\Runtime\Core\Game.h" />
+    <ClInclude Include="src\Runtime\Events\AnimationEvent.h" />
+    <ClInclude Include="src\Runtime\Events\EntityEvent.h" />
+    <ClInclude Include="src\Runtime\Events\EntityEventSystem.h" />
+    <ClInclude Include="src\Runtime\Events\Event.h" />
+    <ClInclude Include="src\Runtime\Events\EventBus.h" />
+    <ClInclude Include="src\Runtime\Events\KeyPressedEvent.h" />
+    <ClInclude Include="src\Runtime\Levels\LevelLoader.h" />
+    <ClInclude Include="src\Runtime\Core\SdlContainer.h" />
+    <ClInclude Include="src\Runtime\Core\Systems.h" />
+    <ClInclude Include="src\Runtime\Core\TimeSystem.h" />
+    <ClInclude Include="src\Runtime\Core\Transform.h" />
+    <ClInclude Include="src\Runtime\Debugging\Logger.h" />
+    <ClInclude Include="src\Runtime\Input\InputSystem.h" />
+    <ClInclude Include="src\Runtime\Physics\CollisionListener.h" />
+    <ClInclude Include="src\Runtime\Physics\Physics.h" />
+    <ClInclude Include="src\Runtime\Renderer\Renderer.h" />
+    <ClInclude Include="src\Runtime\Scripting\OrbScript.h" />
+    <ClInclude Include="src\Runtime\Scripting\Script.h" />
+    <ClInclude Include="src\Runtime\Scripting\ScriptSystem.h" />
+    <ClInclude Include="src\Runtime\Scripting\SpawnerScript.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="src\Editor\Editor.cpp" />
+    <ClCompile Include="src\Editor\ImguiSystem.cpp" />
+    <ClCompile Include="src\Editor\LevelTree.cpp" />
+    <ClCompile Include="src\Editor\LevelTreeEditor.cpp" />
+    <ClCompile Include="src\Runtime\Animation\AnimationSystem.cpp" />
+    <ClCompile Include="src\Runtime\AssetPipline\AnimationAsset.cpp" />
+    <ClCompile Include="src\Runtime\AssetPipline\AnimationImporter.cpp" />
+    <ClCompile Include="src\Runtime\AssetPipline\AssetStore.cpp" />
+    <ClCompile Include="src\Runtime\Components\TransformComponent.cpp" />
+    <ClCompile Include="src\Runtime\Core\Entity.cpp" />
+    <ClCompile Include="src\Runtime\Core\EntityEventSystem.cpp" />
+    <ClCompile Include="src\Runtime\Core\Game.cpp" />
+    <ClCompile Include="src\Runtime\Core\Main.cpp" />
+    <ClCompile Include="src\Runtime\Core\SdlContainer.cpp" />
+    <ClCompile Include="src\Runtime\Core\TimeSystem.cpp" />
+    <ClCompile Include="src\Runtime\Core\Transform.cpp" />
+    <ClCompile Include="src\Runtime\Debugging\Logger.cpp" />
+    <ClCompile Include="src\Runtime\Input\InputSystem.cpp" />
+    <ClCompile Include="src\Runtime\Levels\LevelLoader.cpp" />
+    <ClCompile Include="src\Runtime\Physics\CollisionListener.cpp" />
+    <ClCompile Include="src\Runtime\Physics\Physics.cpp" />
+    <ClCompile Include="src\Runtime\Renderer\Renderer.cpp" />
+    <ClCompile Include="src\Runtime\Scripting\ScriptSystem.cpp" />
+  </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
@@ -59,20 +136,20 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
     <LibraryPath>$(LibraryPath)</LibraryPath>
-    <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath)</IncludePath>
-    <SourcePath>include;src;$(SourcePath)</SourcePath>
+    <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);$(ProjectDir)src;$(ProjectDir)src\Runtime</IncludePath>
+    <SourcePath>src;$(SourcePath)</SourcePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Editor|x64'">
     <LinkIncremental>true</LinkIncremental>
     <LibraryPath>$(LibraryPath)</LibraryPath>
-    <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath)</IncludePath>
-    <SourcePath>include;src;$(SourcePath)</SourcePath>
+    <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);$(ProjectDir)src;$(ProjectDir)src\Runtime</IncludePath>
+    <SourcePath>src;$(SourcePath)</SourcePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
     <LibraryPath>$(LibraryPath)</LibraryPath>
-    <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath)</IncludePath>
-    <SourcePath>include;src;$(SourcePath)</SourcePath>
+    <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);$(ProjectDir)src;$(ProjectDir)src\Runtime</IncludePath>
+    <SourcePath>src;$(SourcePath)</SourcePath>
   </PropertyGroup>
   <PropertyGroup Label="Vcpkg">
     <VcpkgEnableManifest>true</VcpkgEnableManifest>
@@ -128,93 +205,6 @@
       <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
-  <ItemGroup>
-    <ClInclude Include="inc\AssetStore\AnimationAsset.h" />
-    <ClInclude Include="inc\AssetStore\AssetHandle.h" />
-    <ClInclude Include="inc\AssetStore\TextureAsset.h" />
-    <ClInclude Include="inc\Editor\AnimationEditor.h" />
-    <ClInclude Include="inc\Editor\ComponentEditor.h" />
-    <ClInclude Include="inc\Editor\Editor.h" />
-    <ClInclude Include="inc\Editor\GuidEditor.h" />
-    <ClInclude Include="inc\Editor\ImguiSystem.h" />
-    <ClInclude Include="inc\Editor\LevelTree.h" />
-    <ClInclude Include="inc\Editor\LevelTreeEditor.h" />
-    <ClInclude Include="inc\Editor\PhysicsEditor.h" />
-    <ClInclude Include="inc\Editor\RenderEditor.h" />
-    <ClInclude Include="inc\Editor\ScriptEditor.h" />
-    <ClInclude Include="inc\Editor\TransformEditor.h" />
-    <ClInclude Include="inc\AssetStore\AssetStore.h" />
-    <ClInclude Include="inc\Events\CollisionEvent.h" />
-    <ClInclude Include="inc\Runtime\Animation\AnimationImporter.h" />
-    <ClInclude Include="inc\Runtime\Animation\AnimationSystem.h" />
-    <ClInclude Include="inc\Runtime\AssetStore\AnimationAsset.h" />
-    <ClInclude Include="inc\Runtime\AssetStore\AssetHandle.h" />
-    <ClInclude Include="inc\Runtime\AssetStore\AssetPackage.h" />
-    <ClInclude Include="inc\Runtime\AssetStore\AssetStore.h" />
-    <ClInclude Include="inc\Runtime\AssetStore\ScriptAsset.h" />
-    <ClInclude Include="inc\Runtime\AssetStore\TextureAsset.h" />
-    <ClInclude Include="inc\Runtime\Components\AnimationComponent.h" />
-    <ClInclude Include="inc\Runtime\Components\CameraComponent.h" />
-    <ClInclude Include="inc\Runtime\Components\Components.h" />
-    <ClInclude Include="inc\Runtime\Components\GUIDComponent.h" />
-    <ClInclude Include="inc\Runtime\Components\PhysicsBodyComponent.h" />
-    <ClInclude Include="inc\Runtime\Components\ScriptComponent.h" />
-    <ClInclude Include="inc\Runtime\Components\SpriteComponent.h" />
-    <ClInclude Include="inc\Runtime\Components\TransformComponent.h" />
-    <ClInclude Include="inc\Runtime\Core\Entity.h" />
-    <ClInclude Include="inc\Runtime\Core\FileResource.h" />
-    <ClInclude Include="inc\Runtime\Core\Game.h" />
-    <ClInclude Include="inc\Runtime\Core\LevelLoader.h" />
-    <ClInclude Include="inc\Runtime\Core\SdlContainer.h" />
-    <ClInclude Include="inc\Runtime\Core\Systems.h" />
-    <ClInclude Include="inc\Runtime\Core\TimeSystem.h" />
-    <ClInclude Include="inc\Runtime\Core\Transform.h" />
-    <ClInclude Include="inc\Runtime\Debugging\Logger.h" />
-    <ClInclude Include="inc\Runtime\Events\AnimationEvent.h" />
-    <ClInclude Include="inc\Runtime\Events\EntityEvent.h" />
-    <ClInclude Include="inc\Runtime\Events\EntityEventSystem.h" />
-    <ClInclude Include="inc\Runtime\Events\Event.h" />
-    <ClInclude Include="inc\Runtime\Events\EventBus.h" />
-    <ClInclude Include="inc\Runtime\Events\KeyPressedEvent.h" />
-    <ClInclude Include="inc\Runtime\Input\InputSystem.h" />
-    <ClInclude Include="inc\Runtime\Physics\CollisionListener.h" />
-    <ClInclude Include="inc\Runtime\Physics\Physics.h" />
-    <ClInclude Include="inc\Runtime\Renderer\Renderer.h" />
-    <ClInclude Include="inc\Runtime\Scripting\OrbScript.h" />
-    <ClInclude Include="inc\Runtime\Scripting\Script.h" />
-    <ClInclude Include="inc\Runtime\Scripting\ScriptSystem.h" />
-    <ClInclude Include="inc\Runtime\Scripting\SpawnerScript.h" />
-    <ClInclude Include="inc\Runtime\Structures\Tree.h" />
-    <ClInclude Include="inc\Tools\AssetManager.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClCompile Include="src\Runtime\Physics\CollisionListener.cpp" />
-    <ClCompile Include="src\Runtime\Components\TransformComponent.cpp" />
-    <ClCompile Include="src\Editor\LevelTreeEditor.cpp" />
-    <ClCompile Include="src\Editor\Editor.cpp" />
-    <ClCompile Include="src\Editor\ImguiSystem.cpp" />
-    <ClCompile Include="src\Editor\LevelTree.cpp" />
-    <ClCompile Include="src\Runtime\Animation\AnimationSystem.cpp" />
-    <ClCompile Include="src\Runtime\AssetStore\AnimationAsset.cpp" />
-    <ClCompile Include="src\Runtime\AssetStore\AnimationImporter.cpp" />
-    <ClCompile Include="src\Runtime\AssetStore\AssetStore.cpp" />
-    <ClCompile Include="src\Runtime\Core\Entity.cpp" />
-    <ClCompile Include="src\Runtime\Core\EntityEventSystem.cpp" />
-    <ClCompile Include="src\Runtime\Core\Game.cpp" />
-    <ClCompile Include="src\Runtime\Core\Main.cpp" />
-    <ClCompile Include="src\Runtime\Core\SdlContainer.cpp" />
-    <ClCompile Include="src\Runtime\Core\TimeSystem.cpp" />
-    <ClCompile Include="src\Runtime\Core\Transform.cpp" />
-    <ClCompile Include="src\Runtime\Debugging\Logger.cpp" />
-    <ClCompile Include="src\Runtime\Input\InputSystem.cpp" />
-    <ClCompile Include="src\Runtime\Levels\LevelLoader.cpp" />
-    <ClCompile Include="src\Runtime\Physics\Physics.cpp" />
-    <ClCompile Include="src\Runtime\Renderer\Renderer.cpp" />
-    <ClCompile Include="src\Runtime\Scripting\ScriptSystem.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="assets\Scripts\Batman.lua" />
-  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

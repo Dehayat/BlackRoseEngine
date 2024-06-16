@@ -1,7 +1,7 @@
 #pragma once
 #include <sdl2/SDL.h>
 
-#include <AssetStore/AssetHandle.h>
+#include "AssetPipline/AssetHandle.h"
 
 struct TextureAsset : Asset {
 	SDL_Texture* texture;

@@ -1,13 +1,13 @@
-#include "Transform.h"
+#include "Core/Transform.h"
 
 #include <SDL2/SDL2_gfxPrimitives.h>
 
-#include "SdlContainer.h"
-#include "Entity.h"
+#include "Core/SdlContainer.h"
+#include "Core/Entity.h"
 
 #include "Editor/LevelTree.h"
 
-#include "Systems.h"
+#include "Core/Systems.h"
 
 #include "Debugging/Logger.h"
 

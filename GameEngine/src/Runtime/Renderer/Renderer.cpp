@@ -3,8 +3,8 @@
 #include <ryml/ryml_std.hpp>
 #include <entt/entt.hpp>
 
-#include "SdlContainer.h"
-#include "AssetStore/AssetStore.h"
+#include "Core/SdlContainer.h"
+#include "AssetPipline/AssetStore.h"
 
 #include "Components/TransformComponent.h"
 #include "Components/SpriteComponent.h"

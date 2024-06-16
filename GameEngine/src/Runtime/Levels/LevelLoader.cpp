@@ -7,8 +7,8 @@
 #include <SDL2/SDL.h>
 #include <entt/entt.hpp>
 
-#include "Systems.h"
-#include "FileResource.h"
+#include "Core/Systems.h"
+#include "Core/FileResource.h"
 
 #include "Components/TransformComponent.h"
 #include "Components/PhysicsBodyComponent.h"

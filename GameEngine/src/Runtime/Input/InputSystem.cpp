@@ -2,14 +2,14 @@
 
 #include <entt/entt.hpp>
 
-#include "SdlContainer.h"
-#include "Entity.h"
+#include "Core/SdlContainer.h"
+#include "Core/Entity.h"
 
 #include "Events/EntityEventSystem.h"
 
 #include "Components/ScriptComponent.h"
 
-#include "Systems.h"
+#include "Core/Systems.h"
 
 #include "Events/EntityEvent.h"
 

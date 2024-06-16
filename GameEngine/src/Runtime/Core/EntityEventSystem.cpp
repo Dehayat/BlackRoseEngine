@@ -2,9 +2,9 @@
 
 #include <entt/entt.hpp>
 
-#include "Entity.h"
+#include "Core/Entity.h"
 
-#include "Systems.h"
+#include "Core/Systems.h"
 
 #include "Scripting/ScriptSystem.h"
 

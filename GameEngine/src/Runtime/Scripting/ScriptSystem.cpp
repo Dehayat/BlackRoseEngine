@@ -1,13 +1,13 @@
 #include "Scripting/ScriptSystem.h"
 
-#include "Entity.h"
-#include "AssetStore/AssetStore.h"
-#include "AssetStore/ScriptAsset.h"
+#include "Core/Entity.h"
+#include "AssetPipline/AssetStore.h"
+#include "AssetPipline/ScriptAsset.h"
 
-#include "Transform.h"
-#include "TimeSystem.h"
+#include "Core/Transform.h"
+#include "Core/TimeSystem.h"
 
-#include "Systems.h"
+#include "Core/Systems.h"
 
 #include "Components/ScriptComponent.h"
 #include "Components/AnimationComponent.h"

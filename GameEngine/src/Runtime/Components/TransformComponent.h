@@ -3,7 +3,7 @@
 #include <entt/entity/entity.hpp>
 #include <ryml/ryml.hpp>
 
-#include "Entity.h"
+#include "Core/Entity.h"
 
 #include "Components/Components.h"
 

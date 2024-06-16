@@ -5,7 +5,7 @@
 
 #include "Events/EventBus.h"
 
-#include "AssetStore/AnimationAsset.h"
+#include "AssetPipline/AnimationAsset.h"
 
 #include "Components/AnimationComponent.h"
 

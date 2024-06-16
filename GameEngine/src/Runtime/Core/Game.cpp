@@ -2,19 +2,19 @@
 
 #include <entt/entt.hpp>
 
-#include "Systems.h"
+#include "Core/Systems.h"
 #include "Debugging/Logger.h"
 
-#include "SdlContainer.h"
-#include "AssetStore/AssetStore.h"
-#include "Entity.h"
-#include "LevelLoader.h"
+#include "Core/SdlContainer.h"
+#include "AssetPipline/AssetStore.h"
+#include "Core/Entity.h"
+#include "Levels/LevelLoader.h"
 
-#include "Transform.h"
+#include "Core/Transform.h"
 #include "Physics/Physics.h"
 #include "Renderer/Renderer.h"
 #include "Input/InputSystem.h"
-#include "TimeSystem.h"
+#include "Core/TimeSystem.h"
 #include "Animation/AnimationSystem.h"
 #include "Events/EntityEventSystem.h"
 #include "Scripting/ScriptSystem.h"

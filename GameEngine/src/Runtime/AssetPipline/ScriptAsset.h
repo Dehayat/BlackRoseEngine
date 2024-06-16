@@ -1,7 +1,7 @@
 #pragma once
 #include <string>
 
-#include <AssetStore/AssetHandle.h>
+#include "AssetHandle.h"
 
 struct ScriptAsset : Asset {
 	std::string script;

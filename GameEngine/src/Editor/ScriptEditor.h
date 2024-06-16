@@ -2,9 +2,9 @@
 #pragma once
 #include <imgui.h>
 
-#include "Entity.h"
+#include "Core/Entity.h"
 
-#include "Systems.h"
+#include "Core/Systems.h"
 
 #include "Components/ScriptComponent.h"
 #include "Scripting/ScriptSystem.h"

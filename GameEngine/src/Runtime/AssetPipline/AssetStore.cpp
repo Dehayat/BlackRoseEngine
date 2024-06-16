@@ -1,15 +1,15 @@
-#include "AssetStore/AssetStore.h"
+#include "AssetStore.h"
 
 #include <sdl2/SDL_image.h>
 
 #include "Animation/AnimationImporter.h"
-#include "SdlContainer.h"
+#include "Core/SdlContainer.h"
 
-#include "Systems.h"
+#include "Core/Systems.h"
 
-#include "AssetStore/AssetPackage.h"
+#include "AssetPackage.h"
 
-#include "AssetStore/ScriptAsset.h"
+#include "ScriptAsset.h"
 
 #include "Debugging/Logger.h"
 

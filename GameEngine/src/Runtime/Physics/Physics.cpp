@@ -2,10 +2,10 @@
 
 #include <SDL2/SDL2_gfxPrimitives.h>
 
-#include "SdlContainer.h"
-#include "TimeSystem.h"
+#include "Core/SdlContainer.h"
+#include "Core/TimeSystem.h"
 
-#include "Systems.h"
+#include "Core/Systems.h"
 
 #include "Physics/CollisionListener.h"
 

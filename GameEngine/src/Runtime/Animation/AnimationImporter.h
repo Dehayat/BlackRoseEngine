@@ -2,7 +2,7 @@
 #pragma once
 #include <string>
 
-#include "AssetStore/AnimationAsset.h"
+#include "AssetPipline/AnimationAsset.h"
 
 class AnimationImporter {
 private:

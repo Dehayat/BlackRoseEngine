@@ -2,7 +2,7 @@
 
 #include <SDL2/SDL.h>
 
-#include "FileResource.h"
+#include "Core/FileResource.h"
 
 std::string AnimationImporter::ReadToEndOfLine(const std::string& fileString, int startPos) {
 	std::string line = "";

@@ -1,10 +1,10 @@
-#include "Entity.h"
+#include "Core/Entity.h"
 
 #include <entt/entt.hpp>
 
 #include "Components/GUIDComponent.h"
 
-#include "Systems.h"
+#include "Core/Systems.h"
 
 #include "Debugging/Logger.h"
 

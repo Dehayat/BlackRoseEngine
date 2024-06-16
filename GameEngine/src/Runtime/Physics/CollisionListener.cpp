@@ -3,11 +3,11 @@
 #include <box2d/box2d.h>
 #include <entt/entt.hpp>
 
-#include "Entity.h"
+#include "Core/Entity.h"
 
 #include "Events/EntityEventSystem.h"
 
-#include "Systems.h"
+#include "Core/Systems.h"
 
 void ContactListener::BeginContact(b2Contact* contact) {
 	auto entityA = entt::entity(contact->GetFixtureA()->GetBody()->GetUserData().pointer);

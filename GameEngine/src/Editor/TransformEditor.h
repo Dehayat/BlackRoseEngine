@@ -1,10 +1,10 @@
 #pragma once
 
-#include "Systems.h"
+#include "Core/Systems.h"
 
-#include "Entity.h"
+#include "Core/Entity.h"
 
-#include "Transform.h"
+#include "Core/Transform.h"
 
 #include "ComponentEditor.h"
 

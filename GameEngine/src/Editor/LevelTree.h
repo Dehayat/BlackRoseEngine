@@ -7,12 +7,12 @@
 
 #include "Structures/Tree.h"
 
-#include "Entity.h"
+#include "Core/Entity.h"
 
 #include "Components/GUIDComponent.h"
 #include "Components/TransformComponent.h"
 
-#include "Systems.h"
+#include "Core/Systems.h"
 
 class LevelTree {
 	Node<entt::entity>* root;

@@ -5,13 +5,13 @@
 #include <imgui.h>
 #include <ryml/ryml.hpp>
 
-#include "Entity.h"
+#include "Core/Entity.h"
 
-#include "AssetStore/AssetHandle.h"
-#include "AssetStore/AnimationAsset.h"
-#include "AssetStore/TextureAsset.h"
+#include "AssetHandle.h"
+#include "AnimationAsset.h"
+#include "TextureAsset.h"
 
-#include "FileResource.h"
+#include "Core/FileResource.h"
 
 #include "Debugging/Logger.h"
 

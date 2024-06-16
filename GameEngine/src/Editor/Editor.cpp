@@ -1,4 +1,4 @@
-#include "Editor/Editor.h"
+#include "Editor.h"
 
 #include <imgui.h>
 #include <imgui_impl_sdlrenderer2.h>h
@@ -6,14 +6,14 @@
 #include <imgui_impl_sdl2.h>
 #include <glm/glm.hpp>
 
-#include "SdlContainer.h"
-#include "LevelLoader.h"
-#include "AssetStore/AssetStore.h"
+#include "Core/SdlContainer.h"
+#include "Levels/LevelLoader.h"
+#include "AssetPipline/AssetStore.h"
 
 #include "Input/InputSystem.h"
 #include "Renderer/Renderer.h"
 
-#include "Systems.h"
+#include "Core/Systems.h"
 
 #include "Components/GUIDComponent.h"
 #include "Components/PhysicsBodyComponent.h"
@@ -31,11 +31,8 @@
 #include "Editor/AnimationEditor.h"
 #include "Editor/ScriptEditor.h"
 
-#include "Tools/AssetManager.h"
-
 Editor::Editor()
 {
-	CREATESYSTEM(AssetManager);
 	SetupImgui();
 	Reset();
 	isGameRunning = false;

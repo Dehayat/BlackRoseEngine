@@ -15,175 +15,154 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="inc\Events\CollisionEvent.h">
+    <ClInclude Include="src\Editor\AnimationEditor.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="inc\AssetStore\AssetStore.h">
+    <ClInclude Include="src\Editor\ComponentEditor.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="inc\Editor\LevelTree.h">
+    <ClInclude Include="src\Editor\Editor.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="inc\Editor\TransformEditor.h">
+    <ClInclude Include="src\Editor\GuidEditor.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="inc\Editor\PhysicsEditor.h">
+    <ClInclude Include="src\Editor\ImguiSystem.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="inc\Editor\RenderEditor.h">
+    <ClInclude Include="src\Editor\LevelTree.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="inc\AssetStore\AnimationAsset.h">
+    <ClInclude Include="src\Editor\LevelTreeEditor.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="inc\Editor\ComponentEditor.h">
+    <ClInclude Include="src\Editor\PhysicsEditor.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="inc\Editor\AnimationEditor.h">
+    <ClInclude Include="src\Editor\RenderEditor.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="inc\AssetStore\AssetHandle.h">
+    <ClInclude Include="src\Editor\ScriptEditor.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="inc\AssetStore\TextureAsset.h">
+    <ClInclude Include="src\Editor\TransformEditor.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="inc\Editor\ImguiSystem.h">
+    <ClInclude Include="src\Runtime\Animation\AnimationImporter.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="inc\Runtime\Animation\AnimationImporter.h">
+    <ClInclude Include="src\Runtime\Animation\AnimationSystem.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="inc\Runtime\Animation\AnimationSystem.h">
+    <ClInclude Include="src\Runtime\Components\AnimationComponent.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="inc\Runtime\AssetStore\AnimationAsset.h">
+    <ClInclude Include="src\Runtime\Components\CameraComponent.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="inc\Runtime\AssetStore\AssetHandle.h">
+    <ClInclude Include="src\Runtime\Components\Components.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="inc\Runtime\AssetStore\AssetStore.h">
+    <ClInclude Include="src\Runtime\Components\GUIDComponent.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="inc\Runtime\AssetStore\TextureAsset.h">
+    <ClInclude Include="src\Runtime\Components\PhysicsBodyComponent.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="inc\Runtime\Components\AnimationComponent.h">
+    <ClInclude Include="src\Runtime\Components\ScriptComponent.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="inc\Runtime\Components\CameraComponent.h">
+    <ClInclude Include="src\Runtime\Components\SpriteComponent.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="inc\Runtime\Components\Components.h">
+    <ClInclude Include="src\Runtime\Components\TransformComponent.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="inc\Runtime\Components\GUIDComponent.h">
+    <ClInclude Include="src\Runtime\Core\Entity.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="inc\Runtime\Components\PhysicsBodyComponent.h">
+    <ClInclude Include="src\Runtime\Core\FileResource.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="inc\Runtime\Components\ScriptComponent.h">
+    <ClInclude Include="src\Runtime\Core\Game.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="inc\Runtime\Components\SpriteComponent.h">
+    <ClInclude Include="src\Runtime\Levels\LevelLoader.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="inc\Runtime\Components\TransformComponent.h">
+    <ClInclude Include="src\Runtime\Core\SdlContainer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="inc\Runtime\Core\Entity.h">
+    <ClInclude Include="src\Runtime\Core\Systems.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="inc\Runtime\Core\FileResource.h">
+    <ClInclude Include="src\Runtime\Core\TimeSystem.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="inc\Runtime\Core\Game.h">
+    <ClInclude Include="src\Runtime\Core\Transform.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="inc\Runtime\Core\LevelLoader.h">
+    <ClInclude Include="src\Runtime\Debugging\Logger.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="inc\Runtime\Core\SdlContainer.h">
+    <ClInclude Include="src\Runtime\Input\InputSystem.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="inc\Runtime\Core\Systems.h">
+    <ClInclude Include="src\Runtime\Physics\CollisionListener.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="inc\Runtime\Core\TimeSystem.h">
+    <ClInclude Include="src\Runtime\Physics\Physics.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="inc\Runtime\Core\Transform.h">
+    <ClInclude Include="src\Runtime\Renderer\Renderer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="inc\Runtime\Events\AnimationEvent.h">
+    <ClInclude Include="src\Runtime\Scripting\OrbScript.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="inc\Runtime\Events\EntityEvent.h">
+    <ClInclude Include="src\Runtime\Scripting\Script.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="inc\Runtime\Events\EntityEventSystem.h">
+    <ClInclude Include="src\Runtime\Scripting\ScriptSystem.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="inc\Runtime\Events\Event.h">
+    <ClInclude Include="src\Runtime\Scripting\SpawnerScript.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="inc\Runtime\Events\EventBus.h">
+    <ClInclude Include="src\Runtime\AssetPipline\AnimationAsset.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="inc\Runtime\Events\KeyPressedEvent.h">
+    <ClInclude Include="src\Runtime\AssetPipline\AssetHandle.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="inc\Runtime\Input\InputSystem.h">
+    <ClInclude Include="src\Runtime\AssetPipline\AssetPackage.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="inc\Runtime\Physics\Physics.h">
+    <ClInclude Include="src\Runtime\AssetPipline\AssetStore.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="inc\Runtime\Renderer\Renderer.h">
+    <ClInclude Include="src\Runtime\AssetPipline\ScriptAsset.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="inc\Runtime\Scripting\Script.h">
+    <ClInclude Include="src\Runtime\AssetPipline\TextureAsset.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="inc\Runtime\Scripting\ScriptSystem.h">
+    <ClInclude Include="src\Runtime\Events\AnimationEvent.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="inc\Runtime\Scripting\SpawnerScript.h">
+    <ClInclude Include="src\Runtime\Events\EntityEvent.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="inc\Runtime\Structures\Tree.h">
+    <ClInclude Include="src\Runtime\Events\EntityEventSystem.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="inc\Editor\Editor.h">
+    <ClInclude Include="src\Runtime\Events\Event.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="inc\Runtime\Debugging\Logger.h">
+    <ClInclude Include="src\Runtime\Events\EventBus.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="inc\Tools\AssetManager.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="inc\Runtime\AssetStore\AssetPackage.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="inc\Editor\ScriptEditor.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="inc\Editor\LevelTreeEditor.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="inc\Editor\GuidEditor.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="inc\Runtime\Physics\CollisionListener.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="inc\Runtime\Scripting\OrbScript.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="inc\Runtime\AssetStore\ScriptAsset.h">
+    <ClInclude Include="src\Runtime\Events\KeyPressedEvent.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -197,16 +176,13 @@
     <ClCompile Include="src\Editor\LevelTree.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\Editor\LevelTreeEditor.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
     <ClCompile Include="src\Runtime\Animation\AnimationSystem.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\Runtime\AssetStore\AnimationAsset.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Runtime\AssetStore\AnimationImporter.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Runtime\AssetStore\AssetStore.cpp">
+    <ClCompile Include="src\Runtime\Components\TransformComponent.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\Runtime\Core\Entity.cpp">
@@ -230,7 +206,16 @@
     <ClCompile Include="src\Runtime\Core\Transform.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\Runtime\Debugging\Logger.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Runtime\Input\InputSystem.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
     <ClCompile Include="src\Runtime\Levels\LevelLoader.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Runtime\Physics\CollisionListener.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\Runtime\Physics\Physics.cpp">
@@ -242,23 +227,14 @@
     <ClCompile Include="src\Runtime\Scripting\ScriptSystem.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\Runtime\Input\InputSystem.cpp">
+    <ClCompile Include="src\Runtime\AssetPipline\AnimationAsset.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\Runtime\Debugging\Logger.cpp">
+    <ClCompile Include="src\Runtime\AssetPipline\AnimationImporter.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\Editor\LevelTreeEditor.cpp">
+    <ClCompile Include="src\Runtime\AssetPipline\AssetStore.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\Runtime\Components\TransformComponent.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Runtime\Physics\CollisionListener.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="assets\Scripts\Batman.lua" />
   </ItemGroup>
 </Project>

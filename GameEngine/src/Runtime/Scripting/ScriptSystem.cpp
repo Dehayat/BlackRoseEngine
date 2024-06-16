@@ -16,6 +16,7 @@ ScriptSystem::ScriptSystem()
 {
 	entt::registry& registry = GETSYSTEM(Entities).GetRegistry();
 	registry.on_construct<ScriptComponent>().connect<&ScriptSystem::ScriptComponentCreated>(this);
+	registry.on_destroy<ScriptComponent>().connect<&ScriptSystem::ScriptComponentDestroyed>(this);
 }
 
 static entt::entity GetChild(entt::entity entity, std::string childName) {
@@ -38,7 +39,7 @@ static void FaceDir(entt::entity entity, int dir) {
 
 void ScriptSystem::ScriptComponentCreated(entt::registry& registry, entt::entity entity)
 {
-	if (registry.valid(entity) && registry.any_of<ScriptComponent>(entity)) {
+	if (registry.any_of<ScriptComponent>(entity)) {
 		auto& scriptComponent = registry.get<ScriptComponent>(entity);
 		for (auto& script : scriptComponent.scripts) {
 			if (script != "") {
@@ -50,6 +51,14 @@ void ScriptSystem::ScriptComponentCreated(entt::registry& registry, entt::entity
 		}
 	}
 	setupNextFrame.insert(entity);
+}
+
+void ScriptSystem::ScriptComponentDestroyed(entt::registry& registry, entt::entity entity)
+{
+	if (registry.any_of<ScriptComponent>(entity)) {
+		auto& scriptComponent = registry.get<ScriptComponent>(entity);
+		scriptStates[entity].clear();
+	}
 }
 
 void ScriptSystem::Update()
@@ -69,7 +78,7 @@ void ScriptSystem::Update()
 	auto dt = GETSYSTEM(TimeSystem).GetdeltaTime();
 	for (auto entity : view) {
 		auto& scriptComponent = registry.get<ScriptComponent>(entity);
-		for (auto script : scriptComponent.scripts) {
+		for (auto& script : scriptComponent.scripts) {
 			auto& state = scriptStates[entity][script];
 			sol::optional update = state["update"];
 			if (update) {
@@ -84,7 +93,7 @@ void ScriptSystem::CallEvent(EntityEvent eventData)
 	entt::registry& registry = GETSYSTEM(Entities).GetRegistry();
 	auto entity = eventData.entity;
 	auto& scriptComponent = registry.get<ScriptComponent>(entity);
-	for (auto script : scriptComponent.scripts) {
+	for (auto& script : scriptComponent.scripts) {
 		auto& state = scriptStates[entity][script];
 		sol::optional eventCall = state["on_event"];
 		if (eventCall) {

@@ -12,7 +12,7 @@
     rotation: 359.99316
     parent: 7080749886744442335
   Sprite:
-    sprite: sekiroIdle
+    sprite: sekiroAttack
     layer: 0
     color:
       - 1
@@ -20,36 +20,7 @@
       - 1
       - 1
   Animation:
-    animation: sekiroIdleAnim
-- Type: Entity
-  Guid:
-    name: Character
-    id: 2522112930163336258
-  Transform:
-    position:
-      - 1.9512727
-      - -0.03464107
-    scale:
-      - 1
-      - 1
-    rotation: 359.95886
-  Sprite:
-    sprite: char
-    layer: 0
-    color:
-      - 1
-      - 1
-      - 1
-      - 1
-  PhysicsBody:
-    size:
-      - 1
-      - 2.9
-    isStatic: 0
-    isSensor: 0
-    useGravity: 1
-  Script:
-    scripts: []
+    animation: sekiroAttackAnim
 - Type: Entity
   Guid:
     name: Sky
@@ -151,7 +122,7 @@
     id: 7080749886744442335
   Transform:
     position:
-      - -2.6054323
+      - -4.825429
       - -0.4849744
     scale:
       - 1
@@ -166,5 +137,36 @@
     useGravity: 1
   Script:
     scripts:
-      - batmanScript
       - playerScript
+- Type: Entity
+  Guid:
+    name: Orb
+    id: 18421696202881871243
+  Transform:
+    position:
+      - 0.087729454
+      - -0.060259104
+    scale:
+      - 3
+      - 3
+    rotation: 0
+  Sprite:
+    sprite: OrbIdle
+    layer: 0
+    color:
+      - 1
+      - 1
+      - 1
+      - 1
+  PhysicsBody:
+    size:
+      - 1
+      - 1
+    isStatic: 1
+    isSensor: 1
+    useGravity: 0
+  Animation:
+    animation: OrbIdleAnim
+  Script:
+    scripts:
+      - batmanScript

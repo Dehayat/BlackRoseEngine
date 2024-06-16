@@ -50,9 +50,9 @@ public:
 		}
 		ImGui::InputText("script", &scriptName[0], 21, ImGuiInputTextFlags_CallbackResize, ResizeStringCallback, &scriptName);
 		if (ImGui::Button("AddScript")) {
-			scriptName = "";
 			scriptComp.scripts.insert(scriptName);
 			GETSYSTEM(ScriptSystem).RefreshScript(entity);
+			scriptName = "";
 		}
 	}
 };

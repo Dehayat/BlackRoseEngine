@@ -19,17 +19,19 @@ void EntityEventSystem::Update()
 
 	while (!eventQueue.empty()) {
 		auto& entityEvent = eventQueue.front();
-		auto scriptComponent = registry.try_get<ScriptComponent>(entityEvent.entity);
-		if (scriptComponent != nullptr) {
-			scriptSystem.CallEvent(entityEvent);
-		}
-		else {
-			auto& trx = registry.get<TransformComponent>(entityEvent.entity);
-			if (trx.hasParent) {
-				auto parentScript = registry.try_get<ScriptComponent>(trx.parent);
-				if (parentScript != nullptr) {
-					auto parentEvent = EntityEvent(trx.parent, entityEvent.name);
-					scriptSystem.CallEvent(parentEvent);
+		if (registry.valid(entityEvent.entity)) {
+			auto scriptComponent = registry.try_get<ScriptComponent>(entityEvent.entity);
+			if (scriptComponent != nullptr) {
+				scriptSystem.CallEvent(entityEvent);
+			}
+			else {
+				auto& trx = registry.get<TransformComponent>(entityEvent.entity);
+				if (trx.hasParent) {
+					auto parentScript = registry.try_get<ScriptComponent>(trx.parent);
+					if (parentScript != nullptr) {
+						auto parentEvent = EntityEvent(trx.parent, entityEvent.name);
+						scriptSystem.CallEvent(parentEvent);
+					}
 				}
 			}
 		}

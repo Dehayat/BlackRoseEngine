@@ -11,9 +11,10 @@ class ScriptSystem {
 private:
 	std::set<entt::entity> setupNextFrame;
 	std::unordered_map<entt::entity, std::unordered_map<std::string, sol::state>> scriptStates;
+	void ScriptComponentCreated(entt::registry& registry, entt::entity entity);
+	void ScriptComponentDestroyed(entt::registry& registry, entt::entity entity);
 public:
 	ScriptSystem();
-	void ScriptComponentCreated(entt::registry& registry, entt::entity entity);
 	void Update();
 	void CallEvent(EntityEvent eventData);
 	void AddScript(entt::entity entity, const std::string scriptName, const std::string script);

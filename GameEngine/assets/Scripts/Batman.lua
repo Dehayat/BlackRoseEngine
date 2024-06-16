@@ -1,10 +1,5 @@
-
-function setup(me)
-    print("I'm batman")
-end
-
 function on_event(me, event)
-    if event~="AnimationFinished" then
-        print("BatEvent");
+    if event=="SensorEntered" then
+        play_anim(me,"OrbExplodeAnim")
     end
 end

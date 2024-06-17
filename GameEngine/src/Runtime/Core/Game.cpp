@@ -3,6 +3,7 @@
 #include <entt/entt.hpp>
 
 #include "Core/Systems.h"
+#include "Core/Reflection.h"
 #include "Debugging/Logger.h"
 
 #include "Core/SdlContainer.h"
@@ -42,6 +43,7 @@ void Game::SetupBaseSystems() {
 	CREATESYSTEM(LevelLoader);
 	CREATESYSTEM(Entities);
 	CREATESYSTEM(AssetStore);
+	CREATESYSTEM(ReflectionSystem);
 }
 
 void Game::SetupLowLevelSystems()

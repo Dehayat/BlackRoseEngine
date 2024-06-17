@@ -5,6 +5,7 @@
 #include "Renderer/Renderer.h"
 
 #include "Core/Systems.h"
+#include "Core/Reflection.h"
 
 #include "Components/SpriteComponent.h"
 #include "Components/CameraComponent.h"
@@ -31,6 +32,9 @@ public:
 			sprite.sprite.reserve(21);
 		}
 		ImGui::InputText("sprite", &sprite.sprite[0], 21, ImGuiInputTextFlags_CallbackResize, ResizeStringCallback, &sprite.sprite);
+		ROSE_INIT_VARS(SpriteComponent);
+		Reflector<SpriteComponent> m;
+		Logger::Log(*(std::string*)m.GetVar(&sprite, "sprite"));
 	}
 };
 

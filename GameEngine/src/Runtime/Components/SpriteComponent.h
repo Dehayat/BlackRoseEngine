@@ -1,8 +1,9 @@
 #pragma once
-
 #include <string>
 #include <memory>
 #include<optional>
+
+#include "Core/Reflection.h"
 
 #include <SDL2/SDL_rect.h>
 #include <ryml/ryml.hpp>
@@ -60,4 +61,5 @@ struct SpriteComponent {
 		node["color"].append_child() << color.z;
 		node["color"].append_child() << color.w;
 	}
+	ROSE_EXPOSE_VARS(SpriteComponent,(sprite)(layer))
 };

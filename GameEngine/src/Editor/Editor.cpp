@@ -35,6 +35,7 @@ Editor::Editor()
 	SetupImgui();
 	Reset();
 	isGameRunning = false;
+	selectedTool = Tools::SelectEntity;
 }
 
 void Editor::SetupImgui()
@@ -137,6 +138,19 @@ void Editor::UpdateGlobalControls()
 			levelLoader.UnloadLevel();
 			levelTreeEditor.CleanTree();
 		}
+	}
+
+	if (input.GetKey(InputKey::C).justPressed) {
+		selectedTool = Tools::CreateEntity;
+	}
+	if (input.GetKey(InputKey::M).justPressed) {
+		selectedTool = Tools::MoveEntity;
+	}
+	if (input.GetKey(InputKey::S).justPressed) {
+		selectedTool = Tools::SelectEntity;
+	}
+	if (input.GetKey(InputKey::X).justPressed) {
+		selectedTool = Tools::NoTool;
 	}
 }
 
@@ -245,18 +259,13 @@ void Editor::RenderTools()
 	auto& input = GETSYSTEM(InputSystem);
 	auto& gameRenderer = GETSYSTEM(RendererSystem);
 	auto& levelLoader = GETSYSTEM(LevelLoader);
-	ImGui::BeginTable("Tools", 4);
+	ImGui::BeginTable("ToolBar", 3, ImGuiTableFlags_BordersInnerV);
 	ImGui::TableNextColumn();
-	if (ImGui::Button("Create")) {
-		selectedTool = Tools::CreateEntity;
-	}
-	if (ImGui::Button("Move")) {
-		selectedTool = Tools::MoveEntity;
-	}
-	if (ImGui::Button("Select")) {
-		selectedTool = Tools::SelectEntity;
-	}
-
+	ImGui::BeginTable("Tools", 3, ImGuiTableFlags_BordersInnerV);
+	ImGui::TableNextColumn();
+	RenderToolButton("Move", Tools::MoveEntity);
+	RenderToolButton("Select", Tools::SelectEntity);
+	RenderToolButton("Create", Tools::CreateEntity);
 	ImGui::TableNextColumn();
 	if (ImGui::Button("Delete")) {
 		if (levelTreeEditor.GetSelectedEntity() != NoEntity()) {
@@ -264,6 +273,22 @@ void Editor::RenderTools()
 			levelTreeEditor.CleanTree();
 		}
 	}
+
+	ImGui::TableNextColumn();
+	if (IsGameRunning()) {
+		if (ImGui::Button("Stop")) {
+			isGameRunning = false;
+		}
+	}
+	else {
+		if (ImGui::Button("Play")) {
+			isGameRunning = true;
+			selectedTool = Tools::NoTool;
+		}
+	}
+	ImGui::EndTable();
+
+	ImGui::TableNextColumn();
 	{
 		static char fileName[41] = "assets/packages/package.pkg";
 		if (ImGui::Button("Load Package")) {
@@ -303,19 +328,22 @@ void Editor::RenderTools()
 		ImGui::InputText("##L2", fileName2, 41);
 	}
 
-	ImGui::TableNextColumn();
-	if (IsGameRunning()) {
-		if (ImGui::Button("Stop")) {
-			isGameRunning = false;
-		}
-	}
-	else {
-		if (ImGui::Button("Play")) {
-			isGameRunning = true;
-		}
-	}
-
 	ImGui::EndTable();
+}
+
+void Editor::RenderToolButton(std::string name, Tools tool)
+{
+	bool isSelected = selectedTool == tool;
+	if (isSelected) {
+		auto activeColor = ImGui::GetStyleColorVec4(ImGuiCol_ButtonActive);
+		ImGui::PushStyleColor(ImGuiCol_Button, activeColor);
+	}
+	if (ImGui::Button(name.c_str())) {
+		selectedTool = tool;
+	}
+	if (isSelected) {
+		ImGui::PopStyleColor();
+	}
 }
 
 void Editor::EntityEditor()

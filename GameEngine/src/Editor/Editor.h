@@ -14,6 +14,7 @@ enum Tools {
 	CreateEntity,
 	MoveEntity,
 	DeleteEntity,
+	NoTool,
 };
 
 class Editor {
@@ -30,6 +31,7 @@ class Editor {
 	void PresentImGui();
 	void RenderImgui();
 	void RenderTools();
+	void RenderToolButton(std::string name, Tools tool);
 	void EntityEditor();
 	void UpdateViewportControls();
 	void UpdateGlobalControls();

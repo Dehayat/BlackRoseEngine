@@ -11,6 +11,15 @@ enum InputKey {
 	LCTRL,
 	RCTRL,
 	N,
+	Q,
+	W,
+	E,
+	C,
+	M,
+	S,
+	X,
+
+	COUNT
 };
 
 static int keys[] = {
@@ -22,8 +31,15 @@ static int keys[] = {
 	SDL_SCANCODE_LCTRL,
 	SDL_SCANCODE_RCTRL,
 	SDL_SCANCODE_N,
+	SDL_SCANCODE_Q,
+	SDL_SCANCODE_W,
+	SDL_SCANCODE_E,
+	SDL_SCANCODE_C,
+	SDL_SCANCODE_M,
+	SDL_SCANCODE_S,
+	SDL_SCANCODE_X,
 };
-const int keyCount = 8;
+const int keyCount = InputKey::COUNT;
 
 enum InputMouse {
 	LEFT_BUTTON,

@@ -56,7 +56,7 @@ public:
 				return;
 			}
 			TEditor editor = TEditor();
-			IComponentEditor* compEditor = static_cast<IComponentEditor*>(&editor);
+			IComponentEditor* compEditor = (IComponentEditor*)&editor;
 			if (ImGui::CollapsingHeader(componentName.c_str())) {
 				compEditor->Editor(entity);
 			}

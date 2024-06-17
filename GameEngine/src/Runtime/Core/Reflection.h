@@ -4,11 +4,17 @@
 #include <string>
 #include <type_traits>
 #include <typeinfo>
+#include <glm/glm.hpp>
 
 enum class InfoTypes {
 	INT,
 	BOOL,
-	STRING
+	STRING,
+	COLOR,
+	FLOAT,
+	VEC2,
+
+	UNKNOWN
 };
 
 class InfoBase {
@@ -27,6 +33,16 @@ protected:
 		if (type.hash_code() == typeid(bool).hash_code()) {
 			return InfoTypes::BOOL;
 		}
+		if (type.hash_code() == typeid(float).hash_code()) {
+			return InfoTypes::FLOAT;
+		}
+		if (type.hash_code() == typeid(glm::vec4).hash_code()) {
+			return InfoTypes::COLOR;
+		}
+		if (type.hash_code() == typeid(glm::vec2).hash_code()) {
+			return InfoTypes::VEC2;
+		}
+		return InfoTypes::UNKNOWN;
 	}
 
 public:

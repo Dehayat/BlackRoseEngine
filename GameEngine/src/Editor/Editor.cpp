@@ -31,6 +31,8 @@
 #include "Editor/AnimationEditor.h"
 #include "Editor/ScriptEditor.h"
 
+#include "DefaultEditor.h"
+
 Editor::Editor()
 {
 	SetupImgui();
@@ -326,9 +328,13 @@ void Editor::EntityEditor()
 	auto selectedEntity = levelTreeEditor.GetSelectedEntity();
 	if (levelTreeEditor.GetSelectedEntity() != entt::entity(-1)) {
 		RenderComponent<GUIDComponent, GuidEditor>(false, "Entity Info", selectedEntity);
-		RenderComponent<TransformComponent, TransformEditor>(false, "Transform Component", selectedEntity);
+		//RenderComponent<TransformComponent, TransformEditor>(false, "Transform Component", selectedEntity);
+		ROSE_INIT_VARS(TransformComponent);
+		RenderComponent<TransformComponent, DefaultComponentEditor<TransformComponent>>(true, "Transform Component", selectedEntity);
 		RenderComponent<PhysicsBodyComponent, PhysicsEditor>(true, "Physics Body Component", selectedEntity);
-		RenderComponent<SpriteComponent, SpriteEditor>(true, "Sprite Component", selectedEntity);
+		ROSE_INIT_VARS(SpriteComponent);
+		RenderComponent<SpriteComponent, DefaultComponentEditor<SpriteComponent>>(true, "Sprite Component", selectedEntity);
+		//RenderComponent<SpriteComponent, SpriteEditor>(true, "Sprite Component", selectedEntity);
 		RenderComponent<CameraComponent, CameraEditor>(true, "Camera Component", selectedEntity);
 		RenderComponent<AnimationComponent, AnimationEditor>(true, "Animation Component", selectedEntity);
 		RenderComponent<ScriptComponent, ScriptEditor>(true, "Script Component", selectedEntity);

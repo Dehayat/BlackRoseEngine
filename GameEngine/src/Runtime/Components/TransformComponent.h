@@ -5,6 +5,8 @@
 
 #include "Core/Entity.h"
 
+#include "Core/Reflection.h"
+
 #include "Components/Components.h"
 
 using namespace glm;
@@ -39,4 +41,6 @@ struct TransformComponent :IComponent {
 	void CalcMatrix();
 	void UpdateGlobals();
 	void UpdateLocals();
+
+	ROSE_EXPOSE_VARS(TransformComponent,(position)(scale)(rotation))
 };

@@ -17,6 +17,7 @@
   <ItemGroup>
     <ClInclude Include="src\Editor\AnimationEditor.h" />
     <ClInclude Include="src\Editor\ComponentEditor.h" />
+    <ClInclude Include="src\Editor\DefaultEditor.h" />
     <ClInclude Include="src\Editor\Editor.h" />
     <ClInclude Include="src\Editor\GuidEditor.h" />
     <ClInclude Include="src\Editor\ImguiSystem.h" />

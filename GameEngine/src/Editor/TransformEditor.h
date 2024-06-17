@@ -7,21 +7,22 @@
 #include "Core/Transform.h"
 
 #include "ComponentEditor.h"
+#include "Editor/DefaultEditor.h"
 
 class TransformEditor :public IComponentEditor {
 public:
 
 	void Editor(entt::entity entity)
 	{
-		auto& registry = GETSYSTEM(Entities).GetRegistry();
-		auto& trx = registry.get<TransformComponent>(entity);
-		ImGui::Text("Position");
-		ImGui::DragFloat("X Position", &trx.position.x, 0.2f);
-		ImGui::DragFloat("Y Position", &trx.position.y, 0.2f);
-		ImGui::Text("Scale");
-		ImGui::DragFloat("X Scale", &trx.scale.x, 0.2f);
-		ImGui::DragFloat("Y Scale", &trx.scale.y, 0.2f);
-		ImGui::DragFloat("Rotation", &trx.rotation, 5.f);
+		ROSE_INIT_VARS(TransformComponent);
+		DefaultComponentEditor<TransformComponent>::Render(entity);
+		//ImGui::Text("Position");
+		//ImGui::DragFloat("X Position", &trx.position.x, 0.2f);
+		//ImGui::DragFloat("Y Position", &trx.position.y, 0.2f);
+		//ImGui::Text("Scale");
+		//ImGui::DragFloat("X Scale", &trx.scale.x, 0.2f);
+		//ImGui::DragFloat("Y Scale", &trx.scale.y, 0.2f);
+		//ImGui::DragFloat("Rotation", &trx.rotation, 5.f);
 	}
 
 	static void SetParent(entt::registry& registry, TransformComponent& trx, entt::entity newParent)

@@ -3,11 +3,13 @@
 #include <memory>
 #include<optional>
 
-#include "Core/Reflection.h"
 
 #include <SDL2/SDL_rect.h>
 #include <ryml/ryml.hpp>
 #include <glm/glm.hpp>
+
+#include "Core/Reflection.h"
+
 using namespace glm;
 
 struct SpriteComponent {
@@ -61,5 +63,5 @@ struct SpriteComponent {
 		node["color"].append_child() << color.z;
 		node["color"].append_child() << color.w;
 	}
-	ROSE_EXPOSE_VARS(SpriteComponent,(sprite)(layer))
+	ROSE_EXPOSE_VARS(SpriteComponent, (sprite)(layer)(color))
 };

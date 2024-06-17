@@ -11,6 +11,8 @@
 #include "Components/CameraComponent.h"
 
 #include "Editor/ComponentEditor.h"
+#include "Editor/DefaultEditor.h"
+
 
 class SpriteEditor :public IComponentEditor {
 	static int ResizeStringCallback(ImGuiInputTextCallbackData* data)
@@ -24,17 +26,8 @@ class SpriteEditor :public IComponentEditor {
 	}
 public:
 	void Editor(entt::entity entity) {
-		auto& registry = GETSYSTEM(Entities).GetRegistry();
-		auto& sprite = registry.get<SpriteComponent>(entity);
-		ImGui::ColorEdit4("Color", (float*)(&sprite.color), ImGuiColorEditFlags_AlphaBar | ImGuiColorEditFlags_Float);
-		ImGui::InputInt("Layer", &sprite.layer);
-		if (sprite.sprite.capacity() < 21) {
-			sprite.sprite.reserve(21);
-		}
-		ImGui::InputText("sprite", &sprite.sprite[0], 21, ImGuiInputTextFlags_CallbackResize, ResizeStringCallback, &sprite.sprite);
 		ROSE_INIT_VARS(SpriteComponent);
-		Reflector<SpriteComponent> m;
-		Logger::Log(*(std::string*)m.GetVar(&sprite, "sprite"));
+		DefaultComponentEditor<SpriteComponent>::Render(entity);
 	}
 };
 

@@ -118,7 +118,7 @@ public:
 								}								   \
 							};
 
-//Macro expantion
+//Macro expansion
 //public:
 //	class TestComponentInfo :public InfoBase {
 //	public:

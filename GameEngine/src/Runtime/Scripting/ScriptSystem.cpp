@@ -64,12 +64,15 @@ void ScriptSystem::ScriptComponentDestroyed(entt::registry& registry, entt::enti
 void ScriptSystem::Update()
 {
 	entt::registry& registry = GETSYSTEM(Entities).GetRegistry();
-	for (auto& entity : setupNextFrame) {
+	for (auto entity : setupNextFrame) {
 		if (registry.valid(entity) && registry.any_of<ScriptComponent>(entity)) {
 			auto& scriptComponent = registry.get<ScriptComponent>(entity);
 			for (auto script : scriptComponent.scripts) {
 				auto& state = scriptStates[entity][script];
-				state["setup"](entity);
+				auto setup = state["setup"];
+				if (setup.valid()) {
+					setup(entity);
+				}
 			}
 		}
 	}
@@ -80,9 +83,9 @@ void ScriptSystem::Update()
 		auto& scriptComponent = registry.get<ScriptComponent>(entity);
 		for (auto& script : scriptComponent.scripts) {
 			auto& state = scriptStates[entity][script];
-			sol::optional update = state["update"];
-			if (update) {
-				update.value()(entity, dt);
+			auto update = state["update"];
+			if (update.valid()) {
+				update(entity, dt);
 			}
 		}
 	}
@@ -95,9 +98,9 @@ void ScriptSystem::CallEvent(EntityEvent eventData)
 	auto& scriptComponent = registry.get<ScriptComponent>(entity);
 	for (auto& script : scriptComponent.scripts) {
 		auto& state = scriptStates[entity][script];
-		sol::optional eventCall = state["on_event"];
-		if (eventCall) {
-			eventCall.value()(entity, eventData.name);
+		auto eventCall = state["on_event"];
+		if (eventCall.valid()) {
+			eventCall(entity, eventData.name);
 		}
 	}
 }

@@ -50,6 +50,7 @@ public:
 	{
 		auto& entities = GETSYSTEM(Entities);
 		auto& registry = entities.GetRegistry();
+
 		if (registry.any_of<TComponent>(entity)) {
 			if (removable && ImGui::Button(("Remove " + componentName).c_str())) {
 				registry.remove<TComponent>(entity);

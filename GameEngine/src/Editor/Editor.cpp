@@ -24,11 +24,9 @@
 #include "Components/ScriptComponent.h"
 
 
-#include "Editor/GuidEditor.h"
 #include "Editor/PhysicsEditor.h"
 #include "Editor/RenderEditor.h"
 #include "Editor/TransformEditor.h"
-#include "Editor/AnimationEditor.h"
 #include "Editor/ScriptEditor.h"
 
 #include "DefaultEditor.h"
@@ -330,12 +328,12 @@ void Editor::EntityEditor()
 	auto& registry = entities.GetRegistry();
 	auto selectedEntity = levelTreeEditor.GetSelectedEntity();
 	if (levelTreeEditor.GetSelectedEntity() != entt::entity(-1)) {
-		RenderComponent<GUIDComponent, GuidEditor>(false, "Entity Info", selectedEntity);
+		ROSE_DEFAULT_COMP_EDITOR(GUIDComponent, false);
 		ROSE_DEFAULT_COMP_EDITOR(TransformComponent, false);
 		RenderComponent<PhysicsBodyComponent, PhysicsEditor>(true, "Physics Body Component", selectedEntity);
 		ROSE_DEFAULT_COMP_EDITOR(SpriteComponent, true);
 		ROSE_DEFAULT_COMP_EDITOR(CameraComponent, true);
-		RenderComponent<AnimationComponent, AnimationEditor>(true, "Animation Component", selectedEntity);
+		ROSE_DEFAULT_COMP_EDITOR(AnimationComponent, true);
 		RenderComponent<ScriptComponent, ScriptEditor>(true, "Script Component", selectedEntity);
 	}
 }

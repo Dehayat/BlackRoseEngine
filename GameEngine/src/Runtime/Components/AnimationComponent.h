@@ -1,12 +1,13 @@
 #pragma once
 #include <string>
+#include <ryml/ryml.hpp>
+#include <SDL2/SDL_rect.h>
+
+#include "Core/Reflection.h"
 
 #include "Core/Systems.h"
 
 #include "AssetPipline/AssetStore.h"
-
-#include <ryml/ryml.hpp>
-#include <SDL2/SDL_rect.h>
 
 struct AnimationComponent {
 	std::string animation;
@@ -118,4 +119,5 @@ struct AnimationComponent {
 		Reset();
 	}
 
+	ROSE_EXPOSE_VARS(AnimationComponent,(animation))
 };

@@ -4,6 +4,8 @@
 #include <glm/glm.hpp>
 #include <ryml/ryml.hpp>
 
+#include "Core/Reflection.h"
+
 using namespace glm;
 
 struct PhysicsBodyComponent {
@@ -60,4 +62,6 @@ struct PhysicsBodyComponent {
 		node["isSensor"] << isSensor;
 		node["useGravity"] << useGravity;
 	}
+
+	ROSE_EXPOSE_VARS(PhysicsBodyComponent,(size)(isStatic)(isSensor)(useGravity))
 };

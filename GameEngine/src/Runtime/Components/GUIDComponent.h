@@ -2,6 +2,7 @@
 #include <string>
 
 #include "Core/Entity.h"
+#include "Core/Reflection.h"
 
 #include "Core/Systems.h"
 
@@ -39,4 +40,6 @@ struct GUIDComponent :IComponent {
 		node["name"] << this->name;
 		node["id"] << this->id;
 	}
+
+	ROSE_EXPOSE_VARS(GUIDComponent,(name))
 };

@@ -15,6 +15,8 @@
 #include "Components/SpriteComponent.h"
 
 AnimationPlayer::AnimationPlayer() {
+	entt::registry& registry = GETSYSTEM(Entities).GetRegistry();
+	registry.on_destroy<AnimationComponent>().connect<&AnimationPlayer::AnimationDestroyed>(this);
 }
 
 void AnimationPlayer::Update() {
@@ -49,5 +51,14 @@ void AnimationPlayer::Update() {
 		if (animationComponent.JustFinished()) {
 			eventSystem.QueueEvent(EntityEvent(entity, "AnimationFinished"));
 		}
+	}
+}
+
+void AnimationPlayer::AnimationDestroyed(entt::registry& registry, entt::entity entity)
+{
+	auto& spriteComponent = registry.get<SpriteComponent>(entity);
+	if (spriteComponent.sourceRect != nullptr) {
+		delete spriteComponent.sourceRect;
+		spriteComponent.sourceRect = nullptr;
 	}
 }

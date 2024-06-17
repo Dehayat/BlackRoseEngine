@@ -1,44 +1,15 @@
 #pragma once
-#include <imgui.h>
 #include <SDL2/SDL2_gfxPrimitives.h>
 
 #include "Renderer/Renderer.h"
 
-#include "Core/Systems.h"
 #include "Core/Reflection.h"
 
-#include "Components/SpriteComponent.h"
+#include "Components/TransformComponent.h"
 #include "Components/CameraComponent.h"
 
-#include "Editor/ComponentEditor.h"
-#include "Editor/DefaultEditor.h"
-
-
-class SpriteEditor :public IComponentEditor {
-	static int ResizeStringCallback(ImGuiInputTextCallbackData* data)
-	{
-		if (data->EventFlag == ImGuiInputTextFlags_CallbackResize)
-		{
-			auto str = (std::string*)(data->UserData);
-			str->resize(data->BufTextLen);
-		}
-		return 0;
-	}
+class CameraEditor {
 public:
-	void Editor(entt::entity entity) {
-		ROSE_INIT_VARS(SpriteComponent);
-		DefaultComponentEditor<SpriteComponent>::Render(entity);
-	}
-};
-
-class CameraEditor :public IComponentEditor {
-public:
-	void Editor(entt::entity entity) {
-		auto& registry = GETSYSTEM(Entities).GetRegistry();
-		auto& camera = registry.get<CameraComponent>(entity);
-		ImGui::DragFloat("Camera Height", &camera.height, 0.2f, 0.1f, 100.f);
-		ImGui::Checkbox("start Camera", &camera.startCamera);
-	}
 	static void DrawGizmos(SDL_Renderer* sdl, RendererSystem& renderer, const CameraComponent& camera, const TransformComponent& trx) {
 		int sizeX, sizeY;
 		SDL_GetRendererOutputSize(sdl, &sizeX, &sizeY);

@@ -2,6 +2,9 @@
 #include <string>
 #include <ryml/ryml.hpp>
 #include <glm/glm.hpp>
+
+#include "Core/Reflection.h"
+
 using namespace glm;
 
 struct CameraComponent {
@@ -42,4 +45,5 @@ struct CameraComponent {
 			node["startCamera"] << startCamera;
 		}
 	}
+	ROSE_EXPOSE_VARS(CameraComponent,(height)(startCamera))
 };

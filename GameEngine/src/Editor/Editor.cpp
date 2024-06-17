@@ -33,6 +33,9 @@
 
 #include "DefaultEditor.h"
 
+#define ROSE_DEFAULT_COMP_EDITOR(COMP,DEL)	ROSE_INIT_VARS(COMP);\
+											RenderComponent<COMP, DefaultComponentEditor<COMP>>(DEL, #COMP, selectedEntity)
+
 Editor::Editor()
 {
 	SetupImgui();
@@ -328,14 +331,10 @@ void Editor::EntityEditor()
 	auto selectedEntity = levelTreeEditor.GetSelectedEntity();
 	if (levelTreeEditor.GetSelectedEntity() != entt::entity(-1)) {
 		RenderComponent<GUIDComponent, GuidEditor>(false, "Entity Info", selectedEntity);
-		//RenderComponent<TransformComponent, TransformEditor>(false, "Transform Component", selectedEntity);
-		ROSE_INIT_VARS(TransformComponent);
-		RenderComponent<TransformComponent, DefaultComponentEditor<TransformComponent>>(true, "Transform Component", selectedEntity);
+		ROSE_DEFAULT_COMP_EDITOR(TransformComponent, false);
 		RenderComponent<PhysicsBodyComponent, PhysicsEditor>(true, "Physics Body Component", selectedEntity);
-		ROSE_INIT_VARS(SpriteComponent);
-		RenderComponent<SpriteComponent, DefaultComponentEditor<SpriteComponent>>(true, "Sprite Component", selectedEntity);
-		//RenderComponent<SpriteComponent, SpriteEditor>(true, "Sprite Component", selectedEntity);
-		RenderComponent<CameraComponent, CameraEditor>(true, "Camera Component", selectedEntity);
+		ROSE_DEFAULT_COMP_EDITOR(SpriteComponent, true);
+		ROSE_DEFAULT_COMP_EDITOR(CameraComponent, true);
 		RenderComponent<AnimationComponent, AnimationEditor>(true, "Animation Component", selectedEntity);
 		RenderComponent<ScriptComponent, ScriptEditor>(true, "Script Component", selectedEntity);
 	}

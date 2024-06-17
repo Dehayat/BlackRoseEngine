@@ -41,6 +41,9 @@ public:
 			if (m.GetType(varName) == InfoTypes::VEC2) {
 				ImGui::InputFloat2(varName.c_str(), (float*)m.GetVar(object, varName));
 			}
+			if (m.GetType(varName) == InfoTypes::BOOL) {
+				ImGui::Checkbox(varName.c_str(), (bool*)m.GetVar(object, varName));
+			}
 		}
 		ImGui::PopID();
 	}

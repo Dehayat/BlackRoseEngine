@@ -1,7 +1,7 @@
 #pragma once
 #include <SDL2/SDL.h>
 #include <glm/glm.hpp>
-#include <entt/entt.hpp>
+#include <entt/entity/entity.hpp>
 
 #include "Components/TransformComponent.h"
 

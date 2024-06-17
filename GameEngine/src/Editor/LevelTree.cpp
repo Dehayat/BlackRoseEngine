@@ -1,5 +1,7 @@
 #include "Editor/LevelTree.h"
 
+#include <entt/entity/registry.hpp>
+
 #include "Core/Transform.h"
 
 #include "Debugging/Logger.h"

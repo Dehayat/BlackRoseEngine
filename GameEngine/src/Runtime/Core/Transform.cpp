@@ -1,6 +1,7 @@
 #include "Core/Transform.h"
 
 #include <SDL2/SDL2_gfxPrimitives.h>
+#include <entt/entity/registry.hpp>
 
 #include "Core/SdlContainer.h"
 #include "Core/Entity.h"

@@ -1,9 +1,6 @@
 #pragma once
-#include <map>
-#include <vector>
 
-#include <entt/entt.hpp>
-#include <imgui.h>
+#include <entt/entity/entity.hpp>
 
 #include "Structures/Tree.h"
 

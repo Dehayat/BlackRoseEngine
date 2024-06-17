@@ -1,6 +1,6 @@
 #include "Core/Entity.h"
 
-#include <entt/entt.hpp>
+#include <entt/entity/registry.hpp>
 
 #include "Components/GUIDComponent.h"
 

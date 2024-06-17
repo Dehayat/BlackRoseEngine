@@ -3,8 +3,6 @@
 
 #include <SDL2/SDL.h>
 
-#include "Debugging/Logger.h"
-
 const float MAX_DT = FRAMETIME_MS / 1000.0 * 4;
 
 TimeSystem::TimeSystem()

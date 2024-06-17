@@ -1,10 +1,9 @@
 #include "Editor.h"
 
 #include <imgui.h>
-#include <imgui_impl_sdlrenderer2.h>h
+#include <imgui_impl_sdlrenderer2.h>
 
 #include <imgui_impl_sdl2.h>
-#include <glm/glm.hpp>
 
 #include "Core/SdlContainer.h"
 #include "Levels/LevelLoader.h"
@@ -23,10 +22,7 @@
 #include "Components/AnimationComponent.h"
 #include "Components/ScriptComponent.h"
 
-
 #include "Editor/PhysicsEditor.h"
-#include "Editor/RenderEditor.h"
-#include "Editor/TransformEditor.h"
 #include "Editor/ScriptEditor.h"
 
 #include "DefaultEditor.h"

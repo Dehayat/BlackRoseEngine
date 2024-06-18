@@ -35,7 +35,15 @@ void PhysicsSystem::PhysicsBodyCreated(entt::registry& registry, entt::entity en
 {
 	auto& phys = registry.get<PhysicsBodyComponent>(entity);
 	auto& trx = registry.get<TransformComponent>(entity);
-	if (!phys.isStatic)
+	if (phys.isStatic)
+	{
+		phys.bodyDef.type = b2_staticBody;
+	}
+	else if (phys.isSensor)
+	{
+		phys.bodyDef.type = b2_dynamicBody;
+	}
+	else
 	{
 		phys.bodyDef.type = b2_dynamicBody;
 	}
@@ -62,6 +70,12 @@ void PhysicsSystem::PhysicsBodyCreated(entt::registry& registry, entt::entity en
 	phys.body = body;
 	phys.body->GetUserData().pointer = (uintptr_t)entity;
 	phys.body->SetTransform(b2Vec2(trx.globalPosition.x, trx.globalPosition.y), glm::radians(trx.globalRotation));
+	if (phys.useGravity) {
+		phys.body->SetGravityScale(1.0f);
+	}
+	else {
+		phys.body->SetGravityScale(0.0f);
+	}
 }
 void PhysicsSystem::PhysicsBodyDestroyed(entt::registry& registry, entt::entity entity)
 {

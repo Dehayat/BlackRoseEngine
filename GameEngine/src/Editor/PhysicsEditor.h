@@ -28,16 +28,40 @@ public:
 			}
 		}
 		if (ImGui::Checkbox("Static", &phys.isStatic)) {
-			if (phys.isStatic) {
-				phys.body->SetType(b2BodyType::b2_staticBody);
+			if (phys.isStatic)
+			{
+				phys.bodyDef.type = b2_staticBody;
+				phys.body->SetType(phys.bodyDef.type);
 			}
-			else {
-				phys.body->SetType(b2BodyType::b2_dynamicBody);
+			else if (phys.isSensor)
+			{
+				phys.bodyDef.type = b2_dynamicBody;
+				phys.body->SetType(phys.bodyDef.type);
+			}
+			else
+			{
+				phys.bodyDef.type = b2_dynamicBody;
+				phys.body->SetType(phys.bodyDef.type);
 			}
 		}
 		if (ImGui::Checkbox("Sensor", &phys.isSensor)) {
 			phys.fixture.isSensor = phys.isSensor;
 			phys.body->GetFixtureList()[0].SetSensor(phys.isSensor);
+			if (phys.isStatic)
+			{
+				phys.bodyDef.type = b2_staticBody;
+				phys.body->SetType(phys.bodyDef.type);
+			}
+			else if (phys.isSensor)
+			{
+				phys.bodyDef.type = b2_dynamicBody;
+				phys.body->SetType(phys.bodyDef.type);
+			}
+			else
+			{
+				phys.bodyDef.type = b2_dynamicBody;
+				phys.body->SetType(phys.bodyDef.type);
+			}
 		}
 		if (ImGui::Checkbox("Use Gravity", &phys.useGravity)) {
 			if (phys.useGravity) {

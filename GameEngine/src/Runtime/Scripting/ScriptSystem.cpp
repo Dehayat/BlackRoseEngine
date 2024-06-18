@@ -36,6 +36,18 @@ static void FaceDir(entt::entity entity, int dir) {
 	transform.scale.x = glm::abs(transform.scale.x) * dir;
 	transform.UpdateGlobals();
 }
+static void DisableEntity(entt::entity entity) {
+	auto& phy = GETSYSTEM(Entities).GetRegistry().get<PhysicsBodyComponent>(entity);
+	if (phy.body->GetFixtureList() != nullptr) {
+		phy.body->DestroyFixture(phy.body->GetFixtureList());
+	}
+}
+static void EnableEntity(entt::entity entity) {
+	auto& phy = GETSYSTEM(Entities).GetRegistry().get<PhysicsBodyComponent>(entity);
+	if (phy.body->GetFixtureList() == nullptr) {
+		phy.body->CreateFixture(&phy.fixture);
+	}
+}
 
 void ScriptSystem::ScriptComponentCreated(entt::registry& registry, entt::entity entity)
 {
@@ -116,6 +128,8 @@ void ScriptSystem::AddScript(entt::entity entity, const std::string scriptName, 
 	state.set_function("move", Translate);
 	state.set_function("face", FaceDir);
 	state.set_function("play_anim", PlayAnimation);
+	state.set_function("disable", DisableEntity);
+	state.set_function("enable", EnableEntity);
 	state["no_entity"] = NoEntity();
 	state.script(script);
 

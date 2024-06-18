@@ -28,8 +28,10 @@ static void Translate(entt::entity entity, float x, float y) {
 	transform.UpdateLocals();
 }
 static void PlayAnimation(entt::entity entity, const std::string& animName) {
-	auto& anim = GETSYSTEM(Entities).GetRegistry().get<AnimationComponent>(entity);
-	anim.Play(animName);
+	if (GETSYSTEM(Entities).EntityExists(entity) && GETSYSTEM(Entities).GetRegistry().any_of<AnimationComponent>(entity)) {
+		auto& anim = GETSYSTEM(Entities).GetRegistry().get<AnimationComponent>(entity);
+		anim.Play(animName);
+	}
 }
 static void FaceDir(entt::entity entity, int dir) {
 	auto& transform = GETSYSTEM(Entities).GetRegistry().get<TransformComponent>(entity);

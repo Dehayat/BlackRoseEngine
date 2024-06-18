@@ -86,8 +86,6 @@ void Animator::PackageLoaderEditor()
 		}
 	}
 
-	//ImGui::SameLine();
-
 	for (auto package : assetPackages) {
 		if (ImGui::CollapsingHeader(Label("Package", package->guid).c_str())) {
 			ImGui::Indent();

@@ -42,7 +42,7 @@
     <ClInclude Include="src\Editor\TransformEditor.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\Runtime\Animation\AnimationImporter.h">
+    <ClInclude Include="src\Runtime\AssetPipline\AnimationImporter.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\Runtime\Animation\AnimationSystem.h">
@@ -160,6 +160,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\Editor\DefaultEditor.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Runtime\Core\Assert.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Runtime\Core\Log.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

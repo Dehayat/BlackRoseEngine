@@ -25,7 +25,7 @@
     <ClInclude Include="src\Editor\RenderEditor.h" />
     <ClInclude Include="src\Editor\ScriptEditor.h" />
     <ClInclude Include="src\Editor\TransformEditor.h" />
-    <ClInclude Include="src\Runtime\Animation\AnimationImporter.h" />
+    <ClInclude Include="src\Runtime\AssetPipline\AnimationImporter.h" />
     <ClInclude Include="src\Runtime\Animation\AnimationSystem.h" />
     <ClInclude Include="src\Runtime\AssetPipline\AnimationAsset.h" />
     <ClInclude Include="src\Runtime\AssetPipline\AssetHandle.h" />
@@ -41,9 +41,11 @@
     <ClInclude Include="src\Runtime\Components\ScriptComponent.h" />
     <ClInclude Include="src\Runtime\Components\SpriteComponent.h" />
     <ClInclude Include="src\Runtime\Components\TransformComponent.h" />
+    <ClInclude Include="src\Runtime\Core\Assert.h" />
     <ClInclude Include="src\Runtime\Core\Entity.h" />
     <ClInclude Include="src\Runtime\Core\FileResource.h" />
     <ClInclude Include="src\Runtime\Core\Game.h" />
+    <ClInclude Include="src\Runtime\Core\Log.h" />
     <ClInclude Include="src\Runtime\Core\Reflection.h" />
     <ClInclude Include="src\Runtime\Events\AnimationEvent.h" />
     <ClInclude Include="src\Runtime\Events\EntityEvent.h" />

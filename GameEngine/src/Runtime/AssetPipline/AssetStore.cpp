@@ -2,27 +2,24 @@
 
 #include <sdl2/SDL_image.h>
 
-#include "Animation/AnimationImporter.h"
+#include "AnimationImporter.h"
 #include "Core/SdlContainer.h"
 
 #include "Core/Systems.h"
+#include "Core/Log.h"
 
 #include "AssetPackage.h"
 
 #include "ScriptAsset.h"
 
-#include "Debugging/Logger.h"
-
 
 AssetStore::AssetStore()
 {
-	Logger::Log("Asset Store created");
 }
 
 AssetStore::~AssetStore()
 {
 	ClearAssets();
-	Logger::Log("Asset Store destroyed");
 }
 
 void AssetStore::ClearAssets()
@@ -49,7 +46,7 @@ void AssetStore::AddTexture(const std::string& assetId, const std::string& fileP
 	else {
 		assets[assetId] = AssetHandle(AssetType::Texture, textureAsset);
 	}
-	Logger::Log("Loaded Texture Asset " + assetId);
+	SDL_Log("Loaded Texture Asset %s", assetId.c_str());
 }
 
 void AssetStore::LoadAnimation(const std::string& assetId, const std::string& filePath)
@@ -63,16 +60,12 @@ void AssetStore::LoadAnimation(const std::string& assetId, const std::string& fi
 	else {
 		assets[assetId] = AssetHandle(AssetType::Animation, animation);
 	}
-	Logger::Log("Loaded Animation Asset " + assetId);
+	ROSE_LOG("Loaded Animation Asset %s", assetId.c_str());
 }
 
 void AssetStore::LoadScript(const std::string& assetId, const std::string& filePath)
 {
 	FileResource fileHandle = FileResource(filePath);
-	if (fileHandle.file == nullptr) {
-		Logger::Error("Couldn't load script file: " + filePath);
-		return;
-	}
 	std::string fileString = std::string("\0", SDL_RWsize(fileHandle.file));
 	SDL_RWread(fileHandle.file, &fileString[0], sizeof(fileString[0]), fileString.size());
 
@@ -85,7 +78,7 @@ void AssetStore::LoadScript(const std::string& assetId, const std::string& fileP
 	else {
 		assets[assetId] = AssetHandle(AssetType::Script, script);
 	}
-	Logger::Log("Loaded Script Asset " + assetId);
+	ROSE_LOG("Loaded Script Asset %s", assetId.c_str());
 }
 
 AssetHandle AssetStore::GetAsset(const std::string& assetId) const
@@ -128,7 +121,7 @@ void AssetStore::LoadPackage(const std::string& filePath)
 		delete pkg;
 	}
 	else {
-		Logger::Log("Failed to load asset package" + filePath);
+		ROSE_ERR("Failed to load asset package %s", filePath.c_str());
 	}
 
 }

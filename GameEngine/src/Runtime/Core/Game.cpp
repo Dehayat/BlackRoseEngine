@@ -1,13 +1,10 @@
 #include "Game.h"
 
-#include <entt/entt.hpp>
-
-#include <FileDialog.h>
-
 #include "Core/Systems.h"
 #include "Core/Reflection.h"
-#include "Debugging/Logger.h"
+#include "Core/Log.h"
 
+#include <FileDialog.h>
 #include "Core/SdlContainer.h"
 #include "AssetPipline/AssetStore.h"
 #include "Core/Entity.h"
@@ -28,7 +25,7 @@
 #endif
 
 Game::Game() {
-	Logger::Log("Game Constructed");
+	ROSE_LOG("Game constructed");
 	SetupBaseSystems();
 	SetupLowLevelSystems();
 #ifdef _EDITOR
@@ -37,12 +34,11 @@ Game::Game() {
 }
 
 Game::~Game() {
-	Logger::Log("Game Destructed");
+	ROSE_LOG("Game destrcuted");
 }
 
 void Game::SetupBaseSystems() {
 	CREATESYSTEM(FileDialog);
-
 	CREATESYSTEM(SdlContainer, 1200, (float)1200 * 9 / 16);
 	CREATESYSTEM(LevelLoader);
 	CREATESYSTEM(Entities);
@@ -57,14 +53,14 @@ void Game::SetupLowLevelSystems()
 	CREATESYSTEM(InputSystem);
 	CREATESYSTEM(RendererSystem);
 	CREATESYSTEM(AnimationPlayer);
-	TransformSystem& transformSystem = CREATESYSTEM(TransformSystem);
-	transformSystem.InitDebugDrawer();
-	PhysicsSystem& physics = CREATESYSTEM(PhysicsSystem, 0, -10);
-	physics.InitDebugDrawer();
 	CREATESYSTEM(EntityEventSystem);
 	CREATESYSTEM(ScriptSystem);
+	TransformSystem& transformSystem = CREATESYSTEM(TransformSystem);
+	PhysicsSystem& physics = CREATESYSTEM(PhysicsSystem, 0, -10);
 
 #ifdef _DEBUG
+	transformSystem.InitDebugDrawer();
+	physics.InitDebugDrawer();
 	physics.EnableDebug(true);
 	transformSystem.EnableDebug(true);
 #endif // !_DEBUG
@@ -146,15 +142,12 @@ void Game::Render()
 	renderer.Render();
 #ifdef _DEBUG
 	GETSYSTEM(PhysicsSystem).DebugRender(renderer.GetWorldToScreenMatrix());
-
-	TransformSystem& transformSystem = GETSYSTEM(TransformSystem);
-	transformSystem.GetDebugRenderer().SetMatrix(renderer.GetWorldToScreenMatrix());
-#ifndef _EDITOR
-	transformSystem.DebugRender(renderer.GetWorldToScreenMatrix(), NoEntity());
-#endif
 #endif // _DEBUG
 
 #ifdef _EDITOR
+	TransformSystem& transformSystem = GETSYSTEM(TransformSystem);
+	transformSystem.GetDebugRenderer().SetMatrix(renderer.GetWorldToScreenMatrix());
+	transformSystem.DebugRender(renderer.GetWorldToScreenMatrix(), NoEntity());
 	auto& editor = GETSYSTEM(Editor);
 	transformSystem.DebugRender(renderer.GetWorldToScreenMatrix(), editor.GetSelectedEntity());
 	editor.RenderGizmos();

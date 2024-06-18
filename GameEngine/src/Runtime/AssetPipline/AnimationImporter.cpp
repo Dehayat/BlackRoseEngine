@@ -1,8 +1,9 @@
-#include "Animation/AnimationImporter.h"
+#include "AnimationImporter.h"
 
 #include <SDL2/SDL.h>
 
 #include "Core/FileResource.h"
+#include "Core/Assert.h"
 
 std::string AnimationImporter::ReadToEndOfLine(const std::string& fileString, int startPos) {
 	std::string line = "";
@@ -26,6 +27,7 @@ std::string AnimationImporter::ReadToSpace(const std::string& fileString, int st
 
 Animation* AnimationImporter::LoadAnimation(const std::string& fileName) {
 	FileResource fileHandle = FileResource(fileName);
+	ROSE_ASSERT(fileHandle.file != nullptr);
 	std::string fileString = std::string("\0", SDL_RWsize(fileHandle.file));
 	SDL_RWread(fileHandle.file, &fileString[0], sizeof(fileString[0]), fileString.size());
 

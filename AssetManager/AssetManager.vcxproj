@@ -17,7 +17,6 @@
     <ClCompile Include="Editor.cpp" />
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="Main.cpp" />
-    <ClCompile Include="SdlContainer.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AssetManager.h" />
@@ -31,7 +30,6 @@
     <ClInclude Include="FileResource.h" />
     <ClInclude Include="Game.h" />
     <ClInclude Include="ScriptAsset.h" />
-    <ClInclude Include="SdlContainer.h" />
     <ClInclude Include="Systems.h" />
   </ItemGroup>
   <ItemGroup>

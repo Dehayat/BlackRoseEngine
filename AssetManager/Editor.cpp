@@ -7,7 +7,7 @@
 
 #include <FileDialog.h>
 
-#include "SdlContainer.h"
+#include "Core/SdlContainer.h"
 
 #include "Systems.h"
 

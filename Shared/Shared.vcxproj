@@ -145,12 +145,15 @@
     </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="include\Core\SdlContainer.h" />
     <ClInclude Include="include\FileDialog.h" />
     <ClInclude Include="src\FileDialog.h" />
     <ClInclude Include="src\framework.h" />
+    <ClInclude Include="src\Core\SdlContainer.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\FileDialog.cpp" />
+    <ClCompile Include="src\Core\SdlContainer.cpp" />
     <ClCompile Include="src\Shared.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

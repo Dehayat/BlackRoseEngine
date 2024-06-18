@@ -1,4 +1,4 @@
-#include "Core/SdlContainer.h"
+#include "SdlContainer.h"
 
 SdlContainer::SdlContainer(int windowWidth, int windowHeight, std::string windowName)
 {

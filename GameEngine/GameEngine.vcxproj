@@ -52,7 +52,6 @@
     <ClInclude Include="src\Runtime\Events\EventBus.h" />
     <ClInclude Include="src\Runtime\Events\KeyPressedEvent.h" />
     <ClInclude Include="src\Runtime\Levels\LevelLoader.h" />
-    <ClInclude Include="src\Runtime\Core\SdlContainer.h" />
     <ClInclude Include="src\Runtime\Core\Systems.h" />
     <ClInclude Include="src\Runtime\Core\TimeSystem.h" />
     <ClInclude Include="src\Runtime\Core\Transform.h" />
@@ -81,7 +80,6 @@
     <ClCompile Include="src\Runtime\Core\Game.cpp" />
     <ClCompile Include="src\Runtime\Core\Main.cpp" />
     <ClCompile Include="src\Runtime\Core\Reflection.cpp" />
-    <ClCompile Include="src\Runtime\Core\SdlContainer.cpp" />
     <ClCompile Include="src\Runtime\Core\TimeSystem.cpp" />
     <ClCompile Include="src\Runtime\Core\Transform.cpp" />
     <ClCompile Include="src\Runtime\Debugging\Logger.cpp" />

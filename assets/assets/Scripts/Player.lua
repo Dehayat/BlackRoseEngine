@@ -24,7 +24,6 @@ function update(me, dt)
 end
 
 function on_event(me, event)
-    print(event)
     if event == "disableHitBox" then
         disable(HitBox_entity)
     end

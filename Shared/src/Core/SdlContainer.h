@@ -2,6 +2,7 @@
 #include <string>
 
 #include <SDL2/SDL.h>
+#include <glm/glm.hpp>
 
 class SdlContainer
 {
@@ -13,6 +14,7 @@ public:
 	~SdlContainer();
 	SDL_Renderer* GetRenderer();
 	SDL_Window* GetWindow();
+	glm::ivec2 GetWindowSize();
 	bool ProcessEvents();
 };
 

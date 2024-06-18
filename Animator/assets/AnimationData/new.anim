@@ -1,0 +1,6 @@
+Texture sekiroRun
+Size 64 64
+Loop
+Frame 0 0.600000
+Frame 5 0.700000
+Event FootStep 0.610000

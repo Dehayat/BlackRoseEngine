@@ -1,0 +1,75 @@
+- Type: Entity
+  Guid:
+    name: ''
+    id: 3468108232482392604
+  Transform:
+    position:
+      - 1.354074
+      - 2.1
+    scale:
+      - 1
+      - 1
+    rotation: 0
+  Sprite:
+    sprite: block
+    layer: 0
+    color:
+      - 1
+      - 1
+      - 1
+      - 1
+- Type: Entity
+  Guid:
+    name: Sekiro
+    id: 1706961204079769308
+  Transform:
+    position:
+      - -2.8066368
+      - 0.6114097
+    scale:
+      - 1
+      - 1
+    rotation: 359.98706
+  Sprite:
+    sprite: sekiroIdle
+    layer: 0
+    color:
+      - 1
+      - 1
+      - 1
+      - 1
+  Player:
+    speed: 3.07
+    idleAnim: sekiroIdleAnim
+    runAnim: sekiroRunAnim
+  Animation:
+    animation: sekiroIdleAnim
+  Script: {}
+- Type: Entity
+  Guid:
+    name: Camera
+    id: 11455113823770256278
+  Transform:
+    position:
+      - 0.4
+      - 1.4
+    scale:
+      - 1
+      - 1
+    rotation: 0
+  Camera:
+    height: 7
+    startCamera: 1
+- Type: Entity
+  Guid:
+    name: Pants
+    id: 16650142479781371041
+  Transform:
+    position:
+      - 4.082098
+      - 0.083676875
+    scale:
+      - 1
+      - 1
+    rotation: 0.051757812
+    parent: 1706961204079769308

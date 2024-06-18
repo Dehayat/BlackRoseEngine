@@ -1,0 +1,9 @@
+Texture OrbIdle
+Size 32 32
+Loop
+Frame 0 0.15
+Frame 1 0.1
+Frame 2 0.05
+Frame 3 0.2
+Frame 4 0.1
+Frame 5 0.05

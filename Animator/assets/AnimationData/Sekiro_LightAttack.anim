@@ -1,0 +1,9 @@
+Texture Sekiro_LightAttack
+Size 64 64
+Frame 1 0.2
+Frame 2 0.032
+Frame 3 0.032
+Frame 4 0.066
+Frame 5 0.15
+Event ShowHitBox 0.2
+Event HideHitBox 0.264

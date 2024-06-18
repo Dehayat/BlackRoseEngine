@@ -1,0 +1,25 @@
+{
+    "name": "rose",
+    "version": "0.1.0",
+  "dependencies": [
+    "sdl2",
+    "entt",
+    "nativefiledialog",
+    "sdl2-gfx",
+    "ryml",
+    {
+      "name": "imgui",
+      "features": [
+        "sdl2-renderer-binding",
+        "opengl3-binding",
+        "sdl2-binding"
+      ]
+    },
+    {
+      "name": "sdl2-image",
+      "features": [
+        "libjpeg-turbo"
+      ]
+    }
+  ]
+}

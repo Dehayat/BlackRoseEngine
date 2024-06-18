@@ -118,11 +118,30 @@ struct AssetFile {
 		}
 	}
 	void Editor() {
-		ImGui::Text(std::to_string(guid).c_str());
-		if (filePath.capacity() < FILE_PATH_SIZE) {
-			filePath.reserve(FILE_PATH_SIZE);
+		ImGui::LabelText("Guid", std::to_string(guid).c_str());
+		ImGui::LabelText("File Path", filePath.c_str());
+		if (ImGui::Button("Change Asset File")) {
+			auto fileName = GETSYSTEM(FileDialog).OpenFile("anim,png,jpg,lua");
+			if (fileName != "") {
+				filePath = GETSYSTEM(FileDialog).GetRelativePath(std::filesystem::current_path().string(), fileName);
+				if (Asset::GetAssetFileType(filePath) != assetType) {
+					assetType = Asset::GetAssetFileType(filePath);
+					switch (assetType)
+					{
+					case AssetType::Texture:
+						metaData = new TextureMetaData();
+						break;
+					case AssetType::Animation:
+						metaData = new AnimationMetaData();
+						break;
+					default:
+						metaData = new AssetMetaData();
+						break;
+					}
+				}
+			}
 		}
-		ImGui::InputText("File Path", &filePath[0], FILE_PATH_SIZE, ImGuiInputTextFlags_CallbackResize, ResizeStringCallback, &filePath);
+		ImGui::SeparatorText(Asset::GetAssetTypeName(assetType).c_str());
 		if (metaData != nullptr) {
 			metaData->Editor();
 		}

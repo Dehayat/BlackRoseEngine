@@ -54,3 +54,17 @@ std::string FileDialog::OpenFile(const std::string& extension, const std::string
 		return "";
 	}
 }
+
+std::string FileDialog::GetRelativePath(const std::string& root, const std::string& path)
+{
+	auto rootPath = std::filesystem::path(root);
+	auto childPath = std::filesystem::path(path);
+	return std::filesystem::relative(path, rootPath).string();
+}
+
+std::string FileDialog::GetFileExtension(const std::string& fileName)
+{
+	auto filePath = std::filesystem::path(fileName);
+	return filePath.extension().string();
+}
+

@@ -5,6 +5,8 @@
 
 #include <imgui_impl_sdl2.h>
 
+#include <FileDialog.h>
+
 #include "SdlContainer.h"
 
 #include "Systems.h"
@@ -14,6 +16,7 @@
 Editor::Editor()
 {
 	CREATESYSTEM(AssetManager);
+	CREATESYSTEM(FileDialog);
 	SetupImgui();
 	isGameRunning = false;
 }

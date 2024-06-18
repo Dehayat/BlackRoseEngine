@@ -6,6 +6,7 @@
     "entt",
     "sdl2-gfx",
     "ryml",
+    "nativefiledialog",
     {
       "name": "imgui",
       "features": [

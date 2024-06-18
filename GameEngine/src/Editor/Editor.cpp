@@ -292,30 +292,28 @@ void Editor::RenderTools()
 
 	ImGui::TableNextColumn();
 	{
-		static char fileName[41] = "assets/packages/package.pkg";
 		if (ImGui::Button("Load Package")) {
-			AssetStore& assetStore = GETSYSTEM(AssetStore);
-			assetStore.LoadPackage(fileName);
+			auto fileName = GETSYSTEM(FileDialog).OpenFile("pkg");
+			if (fileName != "") {
+				AssetStore& assetStore = GETSYSTEM(AssetStore);
+				assetStore.LoadPackage(fileName);
+			}
 		}
 		ImGui::SameLine();
-		ImGui::InputText("##LP", fileName, 41);
 	}
 
 	ImGui::TableNextColumn();
 	auto view = registry.view<const GUIDComponent, TransformComponent>();
 	{
-		static char fileName[41] = "assets/Levels/Level.yaml";
 		if (ImGui::Button("Load Level")) {
-			auto fileNameNew = GETSYSTEM(FileDialog).OpenFile("yaml");
-			if (fileNameNew != "") {
+			auto fileName = GETSYSTEM(FileDialog).OpenFile("yaml");
+			if (fileName != "") {
 				levelLoader.UnloadLevel();
 				levelTreeEditor.CleanTree();
-				levelLoader.LoadLevel(fileNameNew);
+				levelLoader.LoadLevel(fileName);
 				GETSYSTEM(RendererSystem).InitLoaded();
 			}
 		}
-		ImGui::SameLine();
-		ImGui::InputText("##L1", fileName, 41);
 	}
 	{
 		if (ImGui::Button("Save Level")) {
@@ -325,12 +323,13 @@ void Editor::RenderTools()
 		}
 	}
 	{
-		static char fileName2[41] = "assets/Levels/NewLevel.yaml";
 		if (ImGui::Button("Save Level As")) {
-			levelLoader.SaveLevel(fileName2);
+			auto fileName = GETSYSTEM(FileDialog).SaveFile("yaml");
+			if (fileName != "") {
+				levelLoader.SaveLevel(fileName);
+			}
 		}
 		ImGui::SameLine();
-		ImGui::InputText("##L2", fileName2, 41);
 	}
 
 	ImGui::EndTable();

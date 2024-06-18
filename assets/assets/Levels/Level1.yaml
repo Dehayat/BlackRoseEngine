@@ -1,0 +1,224 @@
+- Type: Entity
+  Guid:
+    name: ''
+    id: 15621706528195846446
+  Transform:
+    position:
+      - 3.4053507
+      - 2.943479
+    scale:
+      - 1
+      - 1
+    rotation: 0
+  Sprite:
+    sprite: rose
+    layer: 0
+    color:
+      - 0.29834253
+      - 0.29834253
+      - 0.29834253
+      - 1
+  PhysicsBody:
+    size:
+      - 1
+      - 1
+    isStatic: 0
+    isSensor: 0
+    useGravity: 1
+- Type: Entity
+  Guid:
+    name: ''
+    id: 6526553357224851424
+  Transform:
+    position:
+      - -2.701056
+      - 3.0285676
+    scale:
+      - 1
+      - 1
+    rotation: 0
+  Sprite:
+    sprite: rose
+    layer: 0
+    color:
+      - 1
+      - 1
+      - 1
+      - 1
+  PhysicsBody:
+    size:
+      - 1
+      - 1
+    isStatic: 0
+    isSensor: 0
+    useGravity: 1
+- Type: Entity
+  Guid:
+    name: Orb
+    id: 14376357330784112978
+  Transform:
+    position:
+      - 3.972
+      - 0.004
+    scale:
+      - 2
+      - 2
+    rotation: 0
+  Sprite:
+    sprite: OrbIdle
+    layer: 0
+    color:
+      - 1
+      - 1
+      - 1
+      - 1
+  PhysicsBody:
+    size:
+      - 2.5
+      - 1
+    isStatic: 1
+    isSensor: 1
+    useGravity: 0
+  Animation:
+    animation: OrbIdleAnim
+  Script: {}
+- Type: Entity
+  Guid:
+    name: Ground
+    id: 2039272245978519460
+  Transform:
+    position:
+      - -0.1081481
+      - -1.847
+    scale:
+      - 1
+      - 1.2
+    rotation: 0
+  PhysicsBody:
+    size:
+      - 21.3
+      - 1
+    isStatic: 1
+    isSensor: 0
+    useGravity: 0
+- Type: Entity
+  Guid:
+    name: Camera
+    id: 11455113823770256278
+  Transform:
+    position:
+      - 2.2
+      - 1.6
+    scale:
+      - 1
+      - 1
+    rotation: 0.024536133
+  Camera:
+    height: 7.4
+    startCamera: 1
+- Type: Entity
+  Guid:
+    name: Sekiro
+    id: 1706961204079769308
+  Transform:
+    position:
+      - -0.79517376
+      - -0.23089217
+    scale:
+      - 1
+      - 1
+    rotation: 0.007446289
+  Sprite:
+    sprite: sekiroIdle
+    layer: 0
+    color:
+      - 1
+      - 1
+      - 1
+      - 1
+  Player:
+    speed: 3.07
+    idleAnim: sekiroIdleAnim
+    runAnim: sekiroRunAnim
+  PhysicsBody:
+    size:
+      - 1
+      - 2
+    isStatic: 0
+    isSensor: 0
+    useGravity: 1
+  Animation:
+    animation: sekiroIdleAnim
+  Script: {}
+- Type: Entity
+  Guid:
+    name: BG
+    id: 1423423853216968309
+  Transform:
+    position:
+      - 1.347
+      - 2.259
+    scale:
+      - 1.5
+      - 1.5
+    rotation: 0
+  Sprite:
+    sprite: BG
+    layer: -1
+    color:
+      - 1
+      - 1
+      - 1
+      - 1
+- Type: Entity
+  Guid:
+    name: ''
+    id: 8602827056993588228
+  Transform:
+    position:
+      - 9.380259
+      - 2.7267783
+    scale:
+      - 1
+      - 11.2
+    rotation: 0
+    parent: 14842652639292874294
+  PhysicsBody:
+    size:
+      - 1
+      - 1
+    isStatic: 1
+    isSensor: 0
+    useGravity: 0
+- Type: Entity
+  Guid:
+    name: ''
+    id: 2716337046726778665
+  Transform:
+    position:
+      - -4.9592943
+      - 2.7206376
+    scale:
+      - 1
+      - 1
+    rotation: 0
+    parent: 14842652639292874294
+  PhysicsBody:
+    size:
+      - 1
+      - 9.8
+    isStatic: 1
+    isSensor: 0
+    useGravity: 0
+- Type: Entity
+  Guid:
+    name: Walls
+    id: 14842652639292874294
+  Transform:
+    position:
+      - 0
+      - 0
+    scale:
+      - 1
+      - 1
+    rotation: 0

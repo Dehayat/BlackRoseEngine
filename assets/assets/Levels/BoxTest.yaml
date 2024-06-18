@@ -1,0 +1,36 @@
+- Type: Entity
+  Guid: 9142861991392567872
+  Transform:
+    position:
+      - 1.1111107
+      - 0.39629626
+    scale:
+      - 1
+      - 1
+    rotation: 0
+  Sprite:
+    sprite: block
+    layer: 0
+    color:
+      - 1
+      - 1
+      - 1
+      - 1
+  PhysicsBody:
+    size:
+      - 1
+      - 1
+    isStatic: 1
+- Type: Entity
+  Guid: 16695479920711999621
+  Transform:
+    position:
+      - 0
+      - 0
+    scale:
+      - 1
+      - 1
+    rotation: 0
+  Camera:
+    height: 5
+    startCamera: 1

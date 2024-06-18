@@ -25,6 +25,7 @@ class Editor {
 	bool mouseInViewport;
 	Tools selectedTool;
 	bool isGameRunning;
+	bool renameEntity;
 
 	void SetupImgui();
 	void CloseImgui();

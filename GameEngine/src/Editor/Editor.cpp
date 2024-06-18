@@ -127,18 +127,40 @@ void Editor::UpdateGlobalControls()
 	auto& entities = GETSYSTEM(Entities);
 	auto& input = GETSYSTEM(InputSystem);
 	auto& levelLoader = GETSYSTEM(LevelLoader);
+	if (input.GetKey(InputKey::LCTRL).isPressed || input.GetKey(InputKey::RCTRL).isPressed) {
+		if (input.GetKey(InputKey::N).justPressed) {
+			levelLoader.UnloadLevel();
+			levelTreeEditor.CleanTree();
+		}
+		if (input.GetKey(InputKey::O).justPressed) {
+			auto fileName = GETSYSTEM(FileDialog).OpenFile("yaml");
+			if (fileName != "") {
+				levelLoader.UnloadLevel();
+				levelTreeEditor.CleanTree();
+				levelLoader.LoadLevel(fileName);
+				GETSYSTEM(RendererSystem).InitLoaded();
+			}
+		}
+		if (input.GetKey(InputKey::S).justPressed) {
+			if (input.GetKey(InputKey::LSHIFT).isPressed || input.GetKey(InputKey::RSHIFT).isPressed) {
+				auto fileName = GETSYSTEM(FileDialog).SaveFile("yaml");
+				if (fileName != "") {
+					levelLoader.SaveLevel(fileName);
+				}
+			}
+			else {
+				levelLoader.SaveLevel(levelLoader.GetCurrentLevelFile());
+			}
+		}
+		return;
+	}
+
 	if (GetSelectedEntity() != NoEntity()) {
 		if (input.GetKey(InputKey::DELETE).justReleased) {
 			if (levelTreeEditor.GetSelectedEntity() != NoEntity()) {
 				entities.DestroyEntity(levelTreeEditor.GetSelectedEntity());
 				levelTreeEditor.CleanTree();
 			}
-		}
-	}
-	if (input.GetKey(InputKey::LCTRL).isPressed || input.GetKey(InputKey::RCTRL).isPressed) {
-		if (input.GetKey(InputKey::N).justPressed) {
-			levelLoader.UnloadLevel();
-			levelTreeEditor.CleanTree();
 		}
 	}
 

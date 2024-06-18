@@ -18,6 +18,10 @@ enum InputKey {
 	M,
 	S,
 	X,
+	O,
+	F2,
+	LSHIFT,
+	RSHIFT,
 
 	COUNT
 };
@@ -38,6 +42,10 @@ static int keys[] = {
 	SDL_SCANCODE_M,
 	SDL_SCANCODE_S,
 	SDL_SCANCODE_X,
+	SDL_SCANCODE_O,
+	SDL_SCANCODE_F2,
+	SDL_SCANCODE_LSHIFT,
+	SDL_SCANCODE_RSHIFT,
 };
 const int keyCount = InputKey::COUNT;
 

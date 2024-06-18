@@ -56,9 +56,11 @@ void AnimationPlayer::Update() {
 
 void AnimationPlayer::AnimationDestroyed(entt::registry& registry, entt::entity entity)
 {
-	auto& spriteComponent = registry.get<SpriteComponent>(entity);
-	if (spriteComponent.sourceRect != nullptr) {
-		delete spriteComponent.sourceRect;
-		spriteComponent.sourceRect = nullptr;
+	if (registry.any_of<SpriteComponent>(entity)) {
+		auto& spriteComponent = registry.get<SpriteComponent>(entity);
+		if (spriteComponent.sourceRect != nullptr) {
+			delete spriteComponent.sourceRect;
+			spriteComponent.sourceRect = nullptr;
+		}
 	}
 }

@@ -1,7 +1,7 @@
 -- This is a lua comment
 
 vars = {
-    speed = 5;
+    speed = 0.5;
 }
 
 sprite_entity = no_entity
@@ -26,7 +26,7 @@ function on_event(me, event)
         walkDir = 0
     end
     if is_attacking and event=="AnimationFinished" then
-        play_anim(sprite_entity,"sekiroIdleAnim")
+        play_anim(sprite_entity,"IdleAnim")
         is_attacking = false
     end
     if not is_attacking then
@@ -39,9 +39,9 @@ function on_event(me, event)
         end
         if sprite_entity ~=no_entity then
             if walkDir==0 then
-                play_anim(sprite_entity,"sekiroIdleAnim")
+                play_anim(sprite_entity,"IdleAnim")
             else
-                play_anim(sprite_entity,"sekiroRunAnim")
+                play_anim(sprite_entity,"WalkAnim")
             end
         end
         

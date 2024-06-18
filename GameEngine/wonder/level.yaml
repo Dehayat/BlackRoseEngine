@@ -5,14 +5,14 @@
   Transform:
     position:
       - 0
-      - 0
+      - -0.2
     scale:
       - 1
       - 1
     rotation: 359.99316
     parent: 7080749886744442335
   Sprite:
-    sprite: sekiroAttack
+    sprite: IdleAnimSprite
     layer: 0
     color:
       - 1
@@ -20,7 +20,7 @@
       - 1
       - 1
   Animation:
-    animation: sekiroAttackAnim
+    animation: IdleAnim
 - Type: Entity
   Guid:
     name: Sky
@@ -74,7 +74,7 @@
       - 1
     rotation: 0.024536133
   Camera:
-    height: 7.4
+    height: 5.4
     startCamera: 1
 - Type: Entity
   Guid:
@@ -122,12 +122,12 @@
     id: 7080749886744442335
   Transform:
     position:
-      - -4.825429
+      - -3.410429
       - -0.4849744
     scale:
       - 1
       - 1
-    rotation: 359.99707
+    rotation: 0.0029296875
   PhysicsBody:
     size:
       - 1

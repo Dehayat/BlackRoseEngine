@@ -2,6 +2,8 @@
 
 #include <entt/entt.hpp>
 
+#include <FileDialog.h>
+
 #include "Core/Systems.h"
 #include "Core/Reflection.h"
 #include "Debugging/Logger.h"
@@ -39,6 +41,8 @@ Game::~Game() {
 }
 
 void Game::SetupBaseSystems() {
+	CREATESYSTEM(FileDialog);
+
 	CREATESYSTEM(SdlContainer, 1200, (float)1200 * 9 / 16);
 	CREATESYSTEM(LevelLoader);
 	CREATESYSTEM(Entities);

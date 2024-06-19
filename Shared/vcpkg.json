@@ -4,7 +4,25 @@
   "dependencies": [
     "sdl2",
     "glm",
+    "entt",
+    "box2d",
+    "sdl2-gfx",
+    "ryml",
+    "sol2",
     "nativefiledialog",
-    "ryml"
+    {
+      "name": "imgui",
+      "features": [
+        "sdl2-renderer-binding",
+        "opengl3-binding",
+        "sdl2-binding"
+      ]
+    },
+    {
+      "name": "sdl2-image",
+      "features": [
+        "libjpeg-turbo"
+      ]
+    }
   ]
 }

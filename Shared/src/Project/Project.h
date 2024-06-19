@@ -1,7 +1,6 @@
 #pragma once
 #include <list>
 #include <string>
-
 #include <ryml/ryml.hpp>
 
 class Project {

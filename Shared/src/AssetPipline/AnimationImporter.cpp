@@ -2,8 +2,8 @@
 
 #include <SDL2/SDL.h>
 
-#include "Core/FileResource.h"
-#include "Core/Assert.h"
+#include "../Core/FileResource.h"
+#include "../Core/Assert.h"
 
 std::string AnimationImporter::ReadToEndOfLine(const std::string& fileString, int startPos) {
 	std::string line = "";

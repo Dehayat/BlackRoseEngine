@@ -1,8 +1,7 @@
 #pragma once
-#pragma once
 #include <string>
 
-#include "AssetPipline/AnimationAsset.h"
+#include "AnimationAsset.h"
 
 class AnimationImporter {
 private:

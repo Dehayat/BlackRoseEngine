@@ -3,10 +3,10 @@
 #include <sdl2/SDL_image.h>
 
 #include "AnimationImporter.h"
-#include "Core/SdlContainer.h"
+#include "../Core/SdlContainer.h"
 
-#include "Core/Systems.h"
-#include "Core/Log.h"
+#include "../Core/Systems.h"
+#include "../Core/Log.h"
 
 #include "AssetPackage.h"
 
@@ -19,21 +19,21 @@ AssetStore::AssetStore()
 
 AssetStore::~AssetStore()
 {
-	ClearAssets();
+	UnloadAllAssets();
 }
 
-void AssetStore::ClearAssets()
+void AssetStore::UnloadAllAssets()
 {
-
 	for (auto& asset : assets) {
 		delete asset.second.asset;
+		asset.second.asset = nullptr;
 	}
 	assets.clear();
 }
 
 void AssetStore::AddTexture(const std::string& assetId, const std::string& filePath, int ppu)
 {
-	SDL_Renderer* renderer = GETSYSTEM(SdlContainer).GetRenderer();
+	SDL_Renderer* renderer = ROSE_GETSYSTEM(SdlContainer).GetRenderer();
 	SDL_Surface* surface = IMG_Load(filePath.c_str());
 	SDL_Texture* texture = SDL_CreateTextureFromSurface(renderer, surface);
 	SDL_FreeSurface(surface);
@@ -46,7 +46,7 @@ void AssetStore::AddTexture(const std::string& assetId, const std::string& fileP
 	else {
 		assets[assetId] = AssetHandle(AssetType::Texture, textureAsset);
 	}
-	SDL_Log("Loaded Texture Asset %s", assetId.c_str());
+	ROSE_LOG("Loaded Texture Asset %s", assetId.c_str());
 }
 
 void AssetStore::LoadAnimation(const std::string& assetId, const std::string& filePath)

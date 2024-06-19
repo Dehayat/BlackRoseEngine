@@ -42,9 +42,6 @@
     <ClInclude Include="src\Editor\TransformEditor.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\Runtime\AssetPipline\AnimationImporter.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="src\Runtime\Animation\AnimationSystem.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -81,9 +78,6 @@
     <ClInclude Include="src\Runtime\Levels\LevelLoader.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\Runtime\Core\Systems.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="src\Runtime\Core\TimeSystem.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -115,24 +109,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\Runtime\Scripting\SpawnerScript.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Runtime\AssetPipline\AnimationAsset.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Runtime\AssetPipline\AssetHandle.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Runtime\AssetPipline\AssetPackage.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Runtime\AssetPipline\AssetStore.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Runtime\AssetPipline\ScriptAsset.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Runtime\AssetPipline\TextureAsset.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\Runtime\Events\AnimationEvent.h">
@@ -216,15 +192,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\Runtime\Scripting\ScriptSystem.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Runtime\AssetPipline\AnimationAsset.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Runtime\AssetPipline\AnimationImporter.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Runtime\AssetPipline\AssetStore.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\Runtime\Core\Reflection.cpp">

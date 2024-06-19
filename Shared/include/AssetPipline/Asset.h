@@ -15,9 +15,5 @@ class AssetHandle {
 public:
 	Asset* asset;
 	AssetType type;
-	AssetHandle(AssetType type = AssetType::Empty, Asset* asset = nullptr)
-		:type(type),
-		asset(asset)
-	{
-	}
+	AssetHandle(AssetType type = AssetType::Empty, Asset* asset = nullptr);
 };

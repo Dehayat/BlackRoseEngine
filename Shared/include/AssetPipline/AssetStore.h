@@ -5,7 +5,7 @@
 #include "AnimationAsset.h"
 #include "TextureAsset.h"
 
-#include "AssetHandle.h"
+#include "Asset.h"
 
 class AssetStore {
 private:
@@ -15,7 +15,7 @@ public:
 	AssetStore();
 	~AssetStore();
 
-	void ClearAssets();
+	void UnloadAllAssets();
 	void AddTexture(const std::string& assetId, const std::string& filePath, int ppu = 100);
 	void LoadAnimation(const std::string& assetId, const std::string& filePath);
 	void LoadScript(const std::string& assetId, const std::string& filePath);

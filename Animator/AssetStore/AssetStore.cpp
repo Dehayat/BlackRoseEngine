@@ -20,11 +20,11 @@ AssetStore::AssetStore()
 
 AssetStore::~AssetStore()
 {
-	ClearAssets();
+	UnloadAllAssets();
 	Logger::Log("Asset Store destroyed");
 }
 
-void AssetStore::ClearAssets()
+void AssetStore::UnloadAllAssets()
 {
 
 	for (auto& asset : assets) {

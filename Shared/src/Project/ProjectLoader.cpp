@@ -2,13 +2,26 @@
 
 #include <sstream>
 
+#include <ryml/ryml_std.hpp>
+
 #include "../Core/FileResource.h"
 #include "../Core/Log.h"
+#include "../Core/Systems.h"
 
 ProjectLoader::ProjectLoader()
 {
+	ROSE_CREATESYSTEM(AssetStore);
+	assetStore = &ROSE_GETSYSTEM(AssetStore);
 	loadedProject = nullptr;
 	loadedProjectPath = "";
+}
+
+ProjectLoader::~ProjectLoader()
+{
+	if (loadedProject != nullptr) {
+		UnloadProject();
+	}
+	assetStore = nullptr;
 }
 
 Project* ProjectLoader::LoadProject(const std::string& fileName)
@@ -26,7 +39,11 @@ Project* ProjectLoader::LoadProject(const std::string& fileName)
 	auto project = new Project(root);
 	loadedProject = project;
 	loadedProjectPath = fileName;
-	//TODO: Load pkgs,asset,level
+	for (auto& pkg : loadedProject->GetPkgFiles()) {
+		assetStore->LoadPackage(pkg);
+	}
+
+	//TODO: load start level
 	return loadedProject;
 }
 
@@ -55,7 +72,8 @@ void ProjectLoader::SaveProject()
 void ProjectLoader::UnloadProject()
 {
 	if (loadedProject != nullptr) {
-		//TODO: unload pkgs,assets,levels
+		//TODO: unload level
+		assetStore->UnloadAllAssets();
 		delete loadedProject;
 		ROSE_LOG("Project %s unloaded", loadedProjectPath.c_str());
 		loadedProject = nullptr;

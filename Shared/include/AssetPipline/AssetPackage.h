@@ -2,39 +2,39 @@
 #include <vector>
 #include <string>
 
-#include <imgui.h>
+//#include <imgui.h>
 #include <ryml/ryml.hpp>
 
-#include "Core/Entity.h"
+#include "../Core/Guid.h"
 
-#include "AssetHandle.h"
+#include "Asset.h"
 #include "AnimationAsset.h"
 #include "TextureAsset.h"
 
-#include "Core/FileResource.h"
+#include "../Core/FileResource.h"
 
-#include "Debugging/Logger.h"
+#include "../Core/Log.h"
 
-const int FILE_PATH_SIZE = 41;
+//const int FILE_PATH_SIZE = 41;
 
-static int ResizeStringCallback(ImGuiInputTextCallbackData* data)
-{
-	if (data->EventFlag == ImGuiInputTextFlags_CallbackResize)
-	{
-		auto str = (std::string*)(data->UserData);
-		str->resize(data->BufTextLen);
-	}
-	return 0;
-}
+//static int ResizeStringCallback(ImGuiInputTextCallbackData* data)
+//{
+//	if (data->EventFlag == ImGuiInputTextFlags_CallbackResize)
+//	{
+//		auto str = (std::string*)(data->UserData);
+//		str->resize(data->BufTextLen);
+//	}
+//	return 0;
+//}
 
 struct AssetMetaData {
 	std::string name;
-	virtual void Editor() {
-		if (name.capacity() < FILE_PATH_SIZE) {
-			name.reserve(FILE_PATH_SIZE);
-		}
-		ImGui::InputText("Name", &name[0], FILE_PATH_SIZE, ImGuiInputTextFlags_CallbackResize, ResizeStringCallback, &name);
-	}
+	//virtual void Editor() {
+	//	if (name.capacity() < FILE_PATH_SIZE) {
+	//		name.reserve(FILE_PATH_SIZE);
+	//	}
+	//	ImGui::InputText("Name", &name[0], FILE_PATH_SIZE, ImGuiInputTextFlags_CallbackResize, ResizeStringCallback, &name);
+	//}
 	virtual void Serialize(ryml::NodeRef& node)
 	{
 		node["name"] << name;
@@ -49,10 +49,10 @@ struct AssetMetaData {
 
 struct TextureMetaData :AssetMetaData {
 	int ppu;
-	void Editor() {
-		AssetMetaData::Editor();
-		ImGui::InputInt("Pixels Per Unit", &ppu);
-	}
+	//void Editor() {
+	//	AssetMetaData::Editor();
+	//	ImGui::InputInt("Pixels Per Unit", &ppu);
+	//}
 	void Serialize(ryml::NodeRef& node) {
 		AssetMetaData::Serialize(node);
 		node["ppu"] << ppu;
@@ -75,7 +75,7 @@ struct AnimationMetaData :AssetMetaData {
 struct AssetFile {
 	Guid guid;
 	AssetFile(AssetType assetType = AssetType::Empty) {
-		guid = GETSYSTEM(Entities).GenerateGuid();
+		guid = GuidGenerator::New();
 		filePath = "";
 		this->assetType = assetType;
 		switch (assetType)
@@ -116,16 +116,16 @@ struct AssetFile {
 			break;
 		}
 	}
-	void Editor() {
-		ImGui::Text(std::to_string(guid).c_str());
-		if (filePath.capacity() < FILE_PATH_SIZE) {
-			filePath.reserve(FILE_PATH_SIZE);
-		}
-		ImGui::InputText("File Path", &filePath[0], FILE_PATH_SIZE, ImGuiInputTextFlags_CallbackResize, ResizeStringCallback, &filePath);
-		if (metaData != nullptr) {
-			metaData->Editor();
-		}
-	}
+	//void Editor() {
+	//	ImGui::Text(std::to_string(guid).c_str());
+	//	if (filePath.capacity() < FILE_PATH_SIZE) {
+	//		filePath.reserve(FILE_PATH_SIZE);
+	//	}
+	//	ImGui::InputText("File Path", &filePath[0], FILE_PATH_SIZE, ImGuiInputTextFlags_CallbackResize, ResizeStringCallback, &filePath);
+	//	if (metaData != nullptr) {
+	//		metaData->Editor();
+	//	}
+	//}
 	void Serialize(ryml::NodeRef& parent) {
 		auto node = parent.append_child();
 		node |= ryml::MAP;
@@ -144,7 +144,7 @@ struct AssetPackage {
 	std::string filePath;
 	Guid guid;
 	AssetPackage() {
-		guid = GETSYSTEM(Entities).GenerateGuid();
+		guid = GuidGenerator::New();
 		filePath = "";
 	}
 	~AssetPackage() {
@@ -169,10 +169,10 @@ struct AssetPackage {
 		return std::find(assets.begin(), assets.end(), assetFile) != assets.end();
 	}
 	void Save() {
-		Logger::Log("Saving asset package");
+		ROSE_LOG("Saving asset package");
 		auto fileHandle = FileResource(filePath, "w+");
 		if (fileHandle.file == nullptr) {
-			Logger::Error("Couldnt create file " + filePath);
+			ROSE_ERR("Couldnt save asset package");
 			return;
 		}
 		auto tree = ryml::Tree();
@@ -194,7 +194,7 @@ struct AssetPackage {
 	bool Load(const std::string& filePath) {
 		auto fileHandle = FileResource(filePath);
 		if (fileHandle.file == nullptr) {
-			Logger::Error("File" + filePath + " not found");
+			ROSE_ERR("Couldn't load package");
 			return false;
 		}
 		std::string fileString = std::string("\0", SDL_RWsize(fileHandle.file));

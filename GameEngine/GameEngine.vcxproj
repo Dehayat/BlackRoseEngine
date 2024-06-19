@@ -25,14 +25,7 @@
     <ClInclude Include="src\Editor\RenderEditor.h" />
     <ClInclude Include="src\Editor\ScriptEditor.h" />
     <ClInclude Include="src\Editor\TransformEditor.h" />
-    <ClInclude Include="src\Runtime\AssetPipline\AnimationImporter.h" />
     <ClInclude Include="src\Runtime\Animation\AnimationSystem.h" />
-    <ClInclude Include="src\Runtime\AssetPipline\AnimationAsset.h" />
-    <ClInclude Include="src\Runtime\AssetPipline\AssetHandle.h" />
-    <ClInclude Include="src\Runtime\AssetPipline\AssetPackage.h" />
-    <ClInclude Include="src\Runtime\AssetPipline\AssetStore.h" />
-    <ClInclude Include="src\Runtime\AssetPipline\ScriptAsset.h" />
-    <ClInclude Include="src\Runtime\AssetPipline\TextureAsset.h" />
     <ClInclude Include="src\Runtime\Components\AnimationComponent.h" />
     <ClInclude Include="src\Runtime\Components\CameraComponent.h" />
     <ClInclude Include="src\Runtime\Components\Components.h" />
@@ -51,7 +44,6 @@
     <ClInclude Include="src\Runtime\Events\EventBus.h" />
     <ClInclude Include="src\Runtime\Events\KeyPressedEvent.h" />
     <ClInclude Include="src\Runtime\Levels\LevelLoader.h" />
-    <ClInclude Include="src\Runtime\Core\Systems.h" />
     <ClInclude Include="src\Runtime\Core\TimeSystem.h" />
     <ClInclude Include="src\Runtime\Core\Transform.h" />
     <ClInclude Include="src\Runtime\Debugging\Logger.h" />
@@ -70,9 +62,6 @@
     <ClCompile Include="src\Editor\LevelTree.cpp" />
     <ClCompile Include="src\Editor\LevelTreeEditor.cpp" />
     <ClCompile Include="src\Runtime\Animation\AnimationSystem.cpp" />
-    <ClCompile Include="src\Runtime\AssetPipline\AnimationAsset.cpp" />
-    <ClCompile Include="src\Runtime\AssetPipline\AnimationImporter.cpp" />
-    <ClCompile Include="src\Runtime\AssetPipline\AssetStore.cpp" />
     <ClCompile Include="src\Runtime\Components\TransformComponent.cpp" />
     <ClCompile Include="src\Runtime\Core\Entity.cpp" />
     <ClCompile Include="src\Runtime\Core\EntityEventSystem.cpp" />

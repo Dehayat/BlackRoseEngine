@@ -45,7 +45,6 @@
     <ClInclude Include="src\Runtime\Core\Entity.h" />
     <ClInclude Include="src\Runtime\Core\FileResource.h" />
     <ClInclude Include="src\Runtime\Core\Game.h" />
-    <ClInclude Include="src\Runtime\Core\Log.h" />
     <ClInclude Include="src\Runtime\Core\Reflection.h" />
     <ClInclude Include="src\Runtime\Events\AnimationEvent.h" />
     <ClInclude Include="src\Runtime\Events\EntityEvent.h" />

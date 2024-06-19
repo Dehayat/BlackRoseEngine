@@ -4,6 +4,7 @@
   "dependencies": [
     "sdl2",
     "glm",
-    "nativefiledialog"
+    "nativefiledialog",
+    "ryml"
   ]
 }

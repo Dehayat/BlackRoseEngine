@@ -2,13 +2,17 @@
 #include <list>
 #include <string>
 
+#include <ryml/ryml.hpp>
+
 class Project {
 	std::list<std::string> pksFiles;
 	std::list<std::string> levelFiles;
 	int startLevel;
 
 public:
+	Project(ryml::NodeRef& node);
 	Project();
+	void Serialize(ryml::NodeRef& node);
 	void AddPackage(std::string file);
 	void RemovePackage(std::string file);
 	void AddLevel(std::string file);

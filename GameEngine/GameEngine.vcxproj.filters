@@ -75,9 +75,6 @@
     <ClInclude Include="src\Runtime\Core\Entity.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\Runtime\Core\FileResource.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="src\Runtime\Core\Game.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -160,9 +157,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\Editor\DefaultEditor.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Runtime\Core\Assert.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

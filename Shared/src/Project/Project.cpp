@@ -1,10 +1,61 @@
 #include "Project.h"
 
+#include <ryml/ryml_std.hpp>
+
 #include "../Core/Log.h"
+
+Project::Project(ryml::NodeRef& node)
+{
+	startLevel = -1;
+	if (node.has_child("Levels")) {
+		auto levels = node["Levels"];
+		auto child = levels.first_child();
+		for (int i = 0; i < levels.num_children(); i++) {
+			std::string levelName;
+			child >> levelName;
+			AddLevel(levelName);
+		}
+	}
+	if (node.has_child("Packages")) {
+		auto pkgs = node["Packages"];
+		auto child = pkgs.first_child();
+		for (int i = 0; i < pkgs.num_children(); i++) {
+			std::string pkgName;
+			child >> pkgName;
+			AddPackage(pkgName);
+		}
+	}
+	if (node.has_child("StartLevel")) {
+		node["StartLevel"] >> startLevel;
+	}
+}
 
 Project::Project()
 {
 	startLevel = -1;
+}
+
+void Project::Serialize(ryml::NodeRef& node)
+{
+	node |= ryml::MAP;
+	auto pkgs = node.append_child();
+	pkgs.set_key("Packages");
+	pkgs |= ryml::SEQ;
+	for (auto& pkg : this->pksFiles) {
+		auto child = pkgs.append_child();
+		child << pkg;
+	}
+
+	auto levels = node.append_child();
+	levels.set_key("Levels");
+	levels |= ryml::SEQ;
+	for (auto& level : this->levelFiles) {
+		auto child = levels.append_child();
+		child << level;
+	}
+	if (startLevel != -1) {
+		node["StartLevel"] << startLevel;
+	}
 }
 
 void Project::AddPackage(std::string file)

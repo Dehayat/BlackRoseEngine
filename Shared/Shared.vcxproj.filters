@@ -108,10 +108,13 @@
     <ClInclude Include="include\Project\Project.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\Project\ProjectLoader.h">
+    <ClInclude Include="include\Core\Systems.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\Core\Systems.h">
+    <ClInclude Include="src\Reflection\Reflection.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Reflection\Reflection.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -153,6 +156,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\Project\Project.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Reflection\Reflection.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

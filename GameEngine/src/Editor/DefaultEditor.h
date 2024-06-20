@@ -5,7 +5,7 @@
 
 #include "Core/Systems.h"
 
-#include "Core/Reflection.h"
+#include "Reflection/Reflection.h"
 
 #include "ComponentEditor.h"
 

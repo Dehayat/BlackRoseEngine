@@ -5,7 +5,7 @@
 
 #include "Core/Entity.h"
 
-#include "Core/Reflection.h"
+#include "Reflection/Reflection.h"
 
 #include "Components/Components.h"
 

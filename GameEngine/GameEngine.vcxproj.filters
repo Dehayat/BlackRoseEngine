@@ -129,9 +129,6 @@
     <ClInclude Include="src\Runtime\Events\KeyPressedEvent.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\Runtime\Core\Reflection.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="src\Editor\DefaultEditor.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -195,9 +192,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\Runtime\Scripting\ScriptSystem.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Runtime\Core\Reflection.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

@@ -39,12 +39,6 @@
     <ClInclude Include="src\Core\FileResource.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\AssetPipline\AnimationAsset.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\AssetPipline\AnimationImporter.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="src\AssetPipline\Asset.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -84,16 +78,31 @@
     <ClInclude Include="include\Core\Guid.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\AssetPipline\AnimationAsset.h">
+    <ClInclude Include="include\Project\Project.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Core\Systems.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Reflection\Reflection.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Reflection\Reflection.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\AssetPipline\AnimationAsset.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\AssetPipline\AnimationImporter.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\AssetPipline\Asset.h">
+    <ClInclude Include="include\AssetPipline\AnimationAsset.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\AssetPipline\AssetPackage.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\AssetPipline\Asset.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\AssetPipline\AssetStore.h">
@@ -105,16 +114,7 @@
     <ClInclude Include="include\AssetPipline\TextureAsset.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\Project\Project.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Core\Systems.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Reflection\Reflection.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Reflection\Reflection.h">
+    <ClInclude Include="src\AssetPipline\AnimationImporter.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

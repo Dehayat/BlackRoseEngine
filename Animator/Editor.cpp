@@ -7,7 +7,7 @@
 
 #include "Core/SdlContainer.h"
 
-#include "Systems.h"
+#include "Core/Systems.h"
 
 #include "Animator.h"
 
@@ -15,15 +15,16 @@
 
 Editor::Editor()
 {
-	CREATESYSTEM(Animator);
-	CREATESYSTEM(FileDialog);
+	ROSE_CREATESYSTEM(Animator);
+	ROSE_CREATESYSTEM(FileDialog);
+	ROSE_CREATESYSTEM(ReflectionSystem);
 	SetupImgui();
 	isGameRunning = false;
 }
 
 void Editor::SetupImgui()
 {
-	auto& sdl = GETSYSTEM(SdlContainer);
+	auto& sdl = ROSE_GETSYSTEM(SdlContainer);
 	SDL_RenderSetVSync(sdl.GetRenderer(), 1);
 
 	window = sdl.GetWindow();
@@ -78,7 +79,7 @@ bool Editor::ProcessEvents()
 void Editor::RenderEditor()
 {
 	RenderImgui();
-	auto& animator = GETSYSTEM(Animator);
+	auto& animator = ROSE_GETSYSTEM(Animator);
 	animator.Render();
 
 	PresentImGui();

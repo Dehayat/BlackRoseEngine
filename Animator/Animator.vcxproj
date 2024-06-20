@@ -77,30 +77,16 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="AnimationAsset.cpp" />
-    <ClCompile Include="AnimationImporter.cpp" />
     <ClCompile Include="Animator.cpp" />
-    <ClInclude Include="Animator.h" />
-    <ClCompile Include="AssetStore\AssetStore.cpp" />
-    <ClCompile Include="Debugging\Logger.cpp" />
     <ClCompile Include="Editor.cpp" />
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="Main.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AnimationComponent.h" />
-    <ClInclude Include="AnimationImporter.h" />
-    <ClInclude Include="AssetStore\AnimationAsset.h" />
-    <ClInclude Include="AssetStore\AssetHandle.h" />
-    <ClInclude Include="AssetStore\AssetPackage.h" />
-    <ClInclude Include="AssetStore\AssetStore.h" />
-    <ClInclude Include="AssetStore\TextureAsset.h" />
-    <ClInclude Include="Debugging\Logger.h" />
+    <ClInclude Include="Animator.h" />
     <ClInclude Include="Editor.h" />
-    <ClInclude Include="Entity.h" />
-    <ClInclude Include="FileResource.h" />
     <ClInclude Include="Game.h" />
-    <ClInclude Include="Systems.h" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Shared\Shared.vcxproj">

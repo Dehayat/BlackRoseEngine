@@ -123,5 +123,28 @@ void AssetStore::LoadPackage(const std::string& filePath)
 	else {
 		ROSE_ERR("Failed to load asset package %s", filePath.c_str());
 	}
+}
 
+
+AssetHandle AssetStore::NewAnimation(const std::string& assetId)
+{
+	auto animation = new Animation(32, 32, "", false);
+	if (assets.find(assetId) != assets.end()) {
+		delete assets[assetId].asset;
+		assets[assetId].type = AssetType::Animation;
+		assets[assetId].asset = animation;
+	}
+	else {
+		assets[assetId] = AssetHandle(AssetType::Animation, animation);
+	}
+	ROSE_LOG("Created new Animation Asset %s", assetId.c_str());
+	return assets[assetId];
+}
+
+void AssetStore::SaveAnimation(const std::string& assetId, const std::string& filePath)
+{
+	auto animation = (Animation*)GetAsset(assetId).asset;
+	if (animation != nullptr) {
+		bool saved = AnimationImporter::SaveAnimation(animation, filePath);
+	}
 }

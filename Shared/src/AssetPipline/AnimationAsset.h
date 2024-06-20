@@ -4,38 +4,51 @@
 #include <queue>
 
 #include "Asset.h"
+#include "../Reflection/Reflection.h"
+#include "../Core/Guid.h"
 
 #include <SDL2/SDL_rect.h>
 
 class Frame {
 
 public:
-	const int framePosition = 0;
-	const float frameDuration = 0;
+	int framePosition = 0;
+	float frameDuration = 0;
+	Guid id;
+	Frame(int framePosition = 0, float frameDuration = 0) {
+		this->framePosition = framePosition;
+		this->frameDuration = frameDuration;
+		id = GuidGenerator::New();
+	}
 };
 
 class AnimationEventData {
 
 public:
-	const float eventTime = 0;
-	const std::string eventName;
+	float eventTime = 0;
+	std::string eventName;
+	Guid id;
+	AnimationEventData(float eventTime = 0, std::string eventName = "NewAction") {
+		this->eventTime = eventTime;
+		this->eventName = eventName;
+		id = GuidGenerator::New();
+	}
 };
 
 class Animation :public Asset {
-
-private:
-	const int spriteFrameWidth;
-	const int spriteFrameHeight;
-
+	int spriteFrameWidth;
+	int spriteFrameHeight;
+	std::string texture;
+	bool isLooping;
 
 public:
-	const std::string texture;
-	const bool isLooping;
 	std::vector<Frame*> frames;
 	std::vector<AnimationEventData*> animationEvents;
 
-	Animation(int spriteWidth, int spriteHeight, std::string spriteTexture, bool isLooping = false);
+	Animation(int spriteWidth = 1, int spriteHeight = 1, std::string spriteTexture = "", bool isLooping = false);
 	SDL_Rect GetSourceRect(int frame);
 	void AddFrame(Frame* frame);
 	void AddEvent(AnimationEventData* animationEvent);
+
+	ROSE_EXPOSE_VARS(Animation, (spriteFrameWidth)(spriteFrameHeight)(texture)(isLooping))
 };

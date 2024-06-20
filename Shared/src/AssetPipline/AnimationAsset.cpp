@@ -1,4 +1,5 @@
 #include "AnimationAsset.h"
+#include "../Core/Log.h"
 
 
 Animation::Animation(int spriteWidth, int spriteHeight, std::string spriteTexture, bool isLooping)
@@ -9,6 +10,10 @@ Animation::Animation(int spriteWidth, int spriteHeight, std::string spriteTextur
 }
 
 SDL_Rect Animation::GetSourceRect(int frame) {
+	if (frame >= frames.size()) {
+		ROSE_ERR("frame outside animation bounds");
+		return SDL_Rect();
+	}
 	SDL_Rect rect{
 		frames[frame]->framePosition * spriteFrameWidth,
 		0,

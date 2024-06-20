@@ -21,4 +21,6 @@ public:
 	void LoadScript(const std::string& assetId, const std::string& filePath);
 	AssetHandle GetAsset(const std::string& assetId) const;
 	void LoadPackage(const std::string& filePath);
+	AssetHandle NewAnimation(const std::string& assetId);
+	void SaveAnimation(const std::string& assetId, const std::string& filePath);
 };

@@ -1,13 +1,26 @@
 #include "Animator.h"
 
 #include <filesystem>
+#include "Core/Systems.h"
+#include "Core/Log.h"
 
-#include <FileDialog.h>
+#include "FileDialog.h"
 
-#include "AssetStore/AssetStore.h"
+#include "AssetPipline/AssetStore.h"
 
+static int ResizeStringCallback(ImGuiInputTextCallbackData* data)
+{
+	if (data->EventFlag == ImGuiInputTextFlags_CallbackResize)
+	{
+		auto str = (std::string*)(data->UserData);
+		str->resize(data->BufTextLen);
+	}
+	return 0;
+}
 
 Animator::Animator() :maxDt(0.0166) {
+	ROSE_CREATESYSTEM(ReflectionSystem);
+	ROSE_CREATESYSTEM(AssetStore);
 	selectedAsset = nullptr;
 	animationHandle = AssetHandle();
 	player = AnimationComponent("animationFile");
@@ -20,6 +33,8 @@ Animator::Animator() :maxDt(0.0166) {
 	scrollToEvent = false;
 	lastTime = 0;
 	selectedAnimation = nullptr;
+	ROSE_INIT_VARS(Animation);
+	animationReader = ROSE_GETSYSTEM(ReflectionSystem).GetInfo<Animation>();
 }
 
 AssetPackage* Animator::GetPackage(const std::string& filePath) {
@@ -34,7 +49,7 @@ AssetPackage* Animator::GetPackage(const std::string& filePath) {
 void Animator::Render()
 {
 	int w, h;
-	auto window = GETSYSTEM(SdlContainer).GetWindow();
+	auto window = ROSE_GETSYSTEM(SdlContainer).GetWindow();
 	SDL_GetWindowSize(window, &w, &h);
 	ImGui::Begin("Package Loader", nullptr, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoCollapse);
 	ImGui::SetWindowSize(ImVec2(w / 4, h));
@@ -69,27 +84,28 @@ void Animator::PackageLoaderEditor()
 		if (fileName != "") {
 			auto pkg = GetPackage(fileName);
 			if (pkg != nullptr) {
-				Logger::Log("Reloading Asset Package");
+				ROSE_LOG("Reloading Asset Package");
 				assetPackages.erase(std::find(assetPackages.begin(), assetPackages.end(), pkg));
 				delete pkg;
 			}
 			pkg = new AssetPackage();
 			if (pkg->Load(fileName)) {
 				assetPackages.push_back(pkg);
-				GETSYSTEM(AssetStore).LoadPackage(fileName);
-				Logger::Log("Asset package Opened");
+				ROSE_GETSYSTEM(AssetStore).LoadPackage(fileName);
+				ROSE_LOG("Asset package Opened");
 			}
 			else {
 				delete pkg;
-				Logger::Log("Failed to open asset package " + std::string(fileName));
+				ROSE_LOG("Failed to open asset package %s", fileName.c_str());
 			}
 		}
 	}
 
 	for (auto package : assetPackages) {
-		if (ImGui::CollapsingHeader(Label("Package", package->guid).c_str())) {
+		ImGui::PushID(package->guid);
+		if (ImGui::CollapsingHeader("Package")) {
 			ImGui::Indent();
-			if (ImGui::Button(Label("Close", package->guid).c_str())) {
+			if (ImGui::Button("Close")) {
 				if (selectedAsset != nullptr && package->ContainsAsset(selectedAsset)) {
 					selectedAsset = nullptr;
 				}
@@ -98,7 +114,7 @@ void Animator::PackageLoaderEditor()
 				continue;
 			}
 			ImGui::SeparatorText("Animations");
-			if (ImGui::BeginListBox(Label("Animations", package->guid).c_str())) {
+			if (ImGui::BeginListBox("Animations")) {
 				for (auto assetFile : package->assets) {
 					if (assetFile->assetType != AssetType::Animation) {
 						continue;
@@ -114,7 +130,7 @@ void Animator::PackageLoaderEditor()
 				ImGui::EndListBox();
 			}
 			ImGui::SeparatorText("Textures");
-			if (ImGui::BeginListBox(Label("Textures", package->guid).c_str())) {
+			if (ImGui::BeginListBox("Textures")) {
 				for (auto assetFile : package->assets) {
 					if (assetFile->assetType != AssetType::Texture) {
 						continue;
@@ -125,7 +141,8 @@ void Animator::PackageLoaderEditor()
 						if (ImGui::IsMouseDoubleClicked(0)) {
 							auto animation = (Animation*)animationHandle.asset;
 							if (animation != nullptr) {
-								animation->texture = selectedAsset->metaData->name;
+								auto texture = (std::string*)animationReader->GetVar(animation, "texture");
+								*texture = selectedAsset->metaData->name;
 							}
 						}
 					}
@@ -134,6 +151,7 @@ void Animator::PackageLoaderEditor()
 			}
 			ImGui::Unindent();
 		}
+		ImGui::PopID();
 	}
 	if (selectedAsset != nullptr) {
 		auto animation = (Animation*)animationHandle.asset;
@@ -143,11 +161,12 @@ void Animator::PackageLoaderEditor()
 			auto buttonSize = ImGui::CalcTextSize("Use as Sprite Atlas");
 			ImGui::SetCursorPosX((windowWidth - buttonSize.x) * 0.5f);
 			if (ImGui::Button("Set Texture as Sprite Atlas")) {
-				animation->texture = selectedAsset->metaData->name;
+				auto texture = (std::string*)animationReader->GetVar(animation, "texture");
+				*texture = selectedAsset->metaData->name;
 			}
 		}
 		if (ImGui::BeginChild("Preview", ImVec2(280, 280), false, ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse)) {
-			auto asset = (TextureAsset*)(GETSYSTEM(AssetStore).GetAsset(selectedAsset->metaData->name).asset);
+			auto asset = (TextureAsset*)(ROSE_GETSYSTEM(AssetStore).GetAsset(selectedAsset->metaData->name).asset);
 			auto windowWidth = ImGui::GetWindowSize().x;
 			auto windowHeight = ImGui::GetWindowSize().y;
 
@@ -165,7 +184,7 @@ void Animator::AnimationAssetEditor(ImVec2 size)
 		auto saveFileName = SaveFile("anim");
 		if (saveFileName != "") {
 			animationFile = saveFileName;
-			animationHandle = GETSYSTEM(AssetStore).NewAnimation("animationFile");
+			animationHandle = ROSE_GETSYSTEM(AssetStore).NewAnimation("animationFile");
 		}
 	}
 
@@ -173,8 +192,8 @@ void Animator::AnimationAssetEditor(ImVec2 size)
 		auto openFileName = OpenFile("anim");
 		if (openFileName != "") {
 			animationFile = openFileName;
-			GETSYSTEM(AssetStore).LoadAnimation("animationFile", animationFile);
-			animationHandle = GETSYSTEM(AssetStore).GetAsset("animationFile");
+			ROSE_GETSYSTEM(AssetStore).LoadAnimation("animationFile", animationFile);
+			animationHandle = ROSE_GETSYSTEM(AssetStore).GetAsset("animationFile");
 		}
 	}
 	if (loadSelectedAnimaiton) {
@@ -182,25 +201,28 @@ void Animator::AnimationAssetEditor(ImVec2 size)
 			loadSelectedAnimaiton = false;
 		}
 		animationFile = selectedAnimation->filePath;
-		GETSYSTEM(AssetStore).LoadAnimation("animationFile", animationFile);
-		animationHandle = GETSYSTEM(AssetStore).GetAsset("animationFile");
+		ROSE_GETSYSTEM(AssetStore).LoadAnimation("animationFile", animationFile);
+		animationHandle = ROSE_GETSYSTEM(AssetStore).GetAsset("animationFile");
 	}
 	if (animationHandle.asset != nullptr)
 	{
 		ImGui::SeparatorText("Animation File");
 		ImGui::Text(animationFile.c_str());
 		if (ImGui::Button("Save")) {
-			GETSYSTEM(AssetStore).SaveAnimation("animationFile", animationFile);
+			ROSE_GETSYSTEM(AssetStore).SaveAnimation("animationFile", animationFile);
 		}
 		auto animation = (Animation*)animationHandle.asset;
-		if (animation->texture == "") {
+		auto texture = (std::string*)animationReader->GetVar(animation, "texture");
+		auto spriteFrameWidth = (int*)animationReader->GetVar(animation, "spriteFrameWidth");
+		auto isLooping = (bool*)animationReader->GetVar(animation, "isLooping");
+		if (*texture == "") {
 			ImGui::LabelText("Sprite atlas", "-Select from package-");
 		}
 		else {
-			ImGui::LabelText("Sprite atlas", animation->texture.c_str());
+			ImGui::LabelText("Sprite atlas", texture->c_str());
 		}
-		ImGui::InputInt2("Sprite size##spriteSizeInput", &animation->spriteFrameWidth);
-		ImGui::Checkbox("Loop", &animation->isLooping);
+		ImGui::InputInt2("Sprite size##spriteSizeInput", spriteFrameWidth);
+		ImGui::Checkbox("Loop", isLooping);
 		static float frameDuration = 0.1f;
 		if (ImGui::CollapsingHeader("Generate Frames from Atlas")) {
 			ImGui::Indent();
@@ -498,23 +520,24 @@ void Animator::RenderFrameImage(Frame* frame, int id, float fullWidth)
 	fullWidth -= 20;
 	auto animation = (Animation*)animationHandle.asset;
 	auto sourceRect = SDL_Rect(animation->GetSourceRect(id));
-	auto texture = (TextureAsset*)GETSYSTEM(AssetStore).GetAsset(animation->texture).asset;
+	auto texture = (std::string*)animationReader->GetVar(animation, "texture");
+	auto textureAsset = (TextureAsset*)ROSE_GETSYSTEM(AssetStore).GetAsset(*texture).asset;
 	int texW, texH;
-	if (texture == nullptr) {
+	if (textureAsset == nullptr) {
 		ImGui::Button("Sprite Not Found", ImVec2(fullWidth * (frame->frameDuration / animationDuration), 100));
 		return;
 	}
-	SDL_QueryTexture(texture->texture, nullptr, nullptr, &texW, &texH);
+	SDL_QueryTexture(textureAsset->texture, nullptr, nullptr, &texW, &texH);
 	auto uv0 = ImVec2((float)sourceRect.x / texW, (float)sourceRect.y / texH);
 	auto uv1 = ImVec2(((float)sourceRect.x + sourceRect.w) / texW, ((float)sourceRect.y + sourceRect.h) / texH);
 	auto borderColor = ImVec4(0.5, 0.5, 0.5, 1);
 	if (selectedFrame == id) {
 		borderColor = ImVec4(0.7, 0.7, 0.3, 1);
 	}
-	if (texture != nullptr && texture->texture != nullptr) {
+	if (textureAsset != nullptr && textureAsset->texture != nullptr) {
 		auto windowWidth = ImGui::GetWindowSize().x;
 		auto windowHeight = ImGui::GetWindowSize().y;
-		ImGui::Image(texture->texture, ImVec2(fullWidth * (frame->frameDuration / animationDuration), 100), uv0, uv1, ImVec4(1, 1, 1, 1), borderColor);
+		ImGui::Image(textureAsset->texture, ImVec2(fullWidth * (frame->frameDuration / animationDuration), 100), uv0, uv1, ImVec4(1, 1, 1, 1), borderColor);
 	}
 	else {
 		ImGui::Button("Sprite Not Found", ImVec2(fullWidth * (frame->frameDuration / animationDuration), 100));
@@ -530,8 +553,10 @@ void Animator::AnimationViewportEditor(ImVec2 size)
 	auto animation = (Animation*)animationHandle.asset;
 	if (animation != nullptr) {
 		auto sourceRect = SDL_Rect(animation->GetSourceRect(player.currentFrame));
-		auto texture = (TextureAsset*)GETSYSTEM(AssetStore).GetAsset(animation->texture).asset;
-		if (texture != nullptr) {
+		auto texture = (std::string*)animationReader->GetVar(animation, "texture");
+
+		auto textureAsset = (TextureAsset*)ROSE_GETSYSTEM(AssetStore).GetAsset(*texture).asset;
+		if (textureAsset != nullptr) {
 			if (isPlaying) {
 
 				auto dt = (SDL_GetTicks64() - lastTime) / 1000.0f;
@@ -554,25 +579,27 @@ void Animator::AnimationViewportEditor(ImVec2 size)
 				}
 			}
 			int texW, texH;
-			SDL_QueryTexture(texture->texture, nullptr, nullptr, &texW, &texH);
+			SDL_QueryTexture(textureAsset->texture, nullptr, nullptr, &texW, &texH);
 			auto uv0 = ImVec2((float)sourceRect.x / texW, (float)sourceRect.y / texH);
 			auto uv1 = ImVec2(((float)sourceRect.x + sourceRect.w) / texW, ((float)sourceRect.y + sourceRect.h) / texH);
-			if (texture != nullptr && texture->texture != nullptr) {
+			if (textureAsset != nullptr && textureAsset->texture != nullptr) {
 				auto windowWidth = ImGui::GetWindowSize().x;
 				auto windowHeight = ImGui::GetWindowSize().y;
+
+				auto spriteFrameWidth = (int*)animationReader->GetVar(animation, "spriteFrameWidth");
 
 				auto maxImgSize = 370;
 
 				auto imgHeight = maxImgSize;
-				auto imgWidth = imgHeight * animation->spriteFrameWidth / texH;
+				auto imgWidth = imgHeight * (*spriteFrameWidth) / texH;
 				if (imgWidth > maxImgSize) {
 					imgWidth = maxImgSize;
-					imgHeight = imgWidth * texH / animation->spriteFrameWidth;
+					imgHeight = imgWidth * texH / *spriteFrameWidth;
 				}
 
 				ImGui::SetCursorPosX((windowWidth - imgWidth) * 0.5f);
 				ImGui::SetCursorPosY((windowHeight - imgHeight) * 0.5f);
-				ImGui::Image(texture->texture, ImVec2(imgWidth, imgHeight), uv0, uv1, ImVec4(1, 1, 1, 1), ImVec4(1, 1, 1, 1));
+				ImGui::Image(textureAsset->texture, ImVec2(imgWidth, imgHeight), uv0, uv1, ImVec4(1, 1, 1, 1), ImVec4(1, 1, 1, 1));
 			}
 			else {
 				ImGui::Text("sprite atlas texture not loaded");
@@ -594,41 +621,41 @@ bool Animator::IsAssetSelected() {
 void Animator::GenerateFramesFromAtlas(float frameDuration)
 {
 	auto animation = (Animation*)animationHandle.asset;
-	auto texture = (TextureAsset*)GETSYSTEM(AssetStore).GetAsset(animation->texture).asset;
-	if (animation != nullptr && texture != nullptr) {
+	auto texture = (std::string*)animationReader->GetVar(animation, "texture");
+	auto textureAsset = (TextureAsset*)ROSE_GETSYSTEM(AssetStore).GetAsset(*texture).asset;
+	if (animation != nullptr && textureAsset != nullptr) {
 		int texW, texH;
-		SDL_QueryTexture(texture->texture, nullptr, nullptr, &texW, &texH);
+		SDL_QueryTexture(textureAsset->texture, nullptr, nullptr, &texW, &texH);
 		animation->frames.clear();
 		int posX = 0;
 		int i = 0;
-		while (posX + animation->spriteFrameWidth <= texW) {
+		auto spriteFrameWidth = (int*)animationReader->GetVar(animation, "spriteFrameWidth");
+		while (posX + *spriteFrameWidth <= texW) {
 			animation->AddFrame(new Frame(i, frameDuration));
-			posX += animation->spriteFrameWidth;
+			posX += *spriteFrameWidth;
 			i++;
 		}
 	}
 }
 
-void Animator::RenderSelectedAsset() {
-	selectedAsset->Editor();
-}
-
 int Animator::GetFrameCount() {
 	auto animation = (Animation*)animationHandle.asset;
-	auto texture = (TextureAsset*)GETSYSTEM(AssetStore).GetAsset(animation->texture).asset;
-	if (texture != nullptr && texture->texture != nullptr) {
+	auto texture = (std::string*)animationReader->GetVar(animation, "texture");
+	auto textureAsset = (TextureAsset*)ROSE_GETSYSTEM(AssetStore).GetAsset(*texture).asset;
+	auto spriteFrameWidth = (int*)animationReader->GetVar(animation, "spriteFrameWidth");
+	if (textureAsset != nullptr && textureAsset->texture != nullptr) {
 		int texW, texH;
-		SDL_QueryTexture(texture->texture, nullptr, nullptr, &texW, &texH);
-		return texW / animation->spriteFrameWidth;
+		SDL_QueryTexture(textureAsset->texture, nullptr, nullptr, &texW, &texH);
+		return texW / (*spriteFrameWidth);
 	}
 	return 50;
 }
 std::string Animator::SaveFile(const std::string& extension)
 {
-	return GETSYSTEM(FileDialog).SaveFile(extension);
+	return ROSE_GETSYSTEM(FileDialog).SaveFile(extension);
 }
 
 std::string Animator::OpenFile(const std::string& extension)
 {
-	return GETSYSTEM(FileDialog).OpenFile(extension);
+	return ROSE_GETSYSTEM(FileDialog).OpenFile(extension);
 }

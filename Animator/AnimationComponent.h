@@ -2,10 +2,10 @@
 #include <string>
 #include <queue>
 
-#include "Systems.h"
+#include "Core/Systems.h"
 
-#include "AssetStore/AssetStore.h"
-#include "AssetStore/AnimationAsset.h"
+#include "AssetPipline/AssetStore.h"
+#include "AssetPipline/AnimationAsset.h"
 
 #include <SDL2/SDL_rect.h>
 
@@ -38,7 +38,7 @@ struct AnimationComponent {
 
 	void SetTime(float t) {
 		currentAnimationTime = t;
-		AssetStore& assetStore = GETSYSTEM(AssetStore);
+		AssetStore& assetStore = ROSE_GETSYSTEM(AssetStore);
 		auto animationHandle = assetStore.GetAsset(animation);
 		auto animationAsset = static_cast<Animation*>(animationHandle.asset);
 		if (animationAsset == nullptr || animationAsset->frames.size() == 0) {
@@ -64,7 +64,7 @@ struct AnimationComponent {
 	}
 
 	void Update(float dt) {
-		AssetStore& assetStore = GETSYSTEM(AssetStore);
+		AssetStore& assetStore = ROSE_GETSYSTEM(AssetStore);
 		auto animationHandle = assetStore.GetAsset(animation);
 		if (animationHandle.type != AssetType::Animation) {
 			return;
@@ -133,7 +133,7 @@ struct AnimationComponent {
 	}
 
 	float GetAnimationDuration() {
-		AssetStore& assetStore = GETSYSTEM(AssetStore);
+		AssetStore& assetStore = ROSE_GETSYSTEM(AssetStore);
 		auto animationHandle = assetStore.GetAsset(animation);
 		auto animationAsset = static_cast<Animation*>(animationHandle.asset);
 		if (animationAsset == nullptr) {

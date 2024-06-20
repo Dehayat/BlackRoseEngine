@@ -1,26 +1,24 @@
 #include "Game.h"
 
-#include "Debugging/Logger.h"
+#include "Core/Log.h"
 #include "Core/SdlContainer.h"
-#include "Entity.h"
-#include "AssetStore/AssetStore.h"
-#include "Systems.h"
+#include "AssetPipline/AssetStore.h"
+#include "Core/Systems.h"
 #include "Editor.h"
 
 Game::Game() {
-	Logger::Log("Game Constructed");
+	ROSE_LOG("Game Constructed");
 	SetupBaseSystems();
-	CREATESYSTEM(Editor);
+	ROSE_CREATESYSTEM(Editor);
 }
 
 Game::~Game() {
-	Logger::Log("Game Destructed");
+	ROSE_LOG("Game Destructed");
 }
 
 void Game::SetupBaseSystems() {
-	CREATESYSTEM(SdlContainer, 1200, (float)1200 * 9 / 16);
-	CREATESYSTEM(Entities);
-	CREATESYSTEM(AssetStore);
+	ROSE_CREATESYSTEM(SdlContainer, 1200, (float)1200 * 9 / 16);
+	ROSE_CREATESYSTEM(AssetStore);
 	isRunning = false;
 }
 
@@ -36,15 +34,15 @@ void Game::Run()
 
 void Game::Update()
 {
-	bool exitGame = GETSYSTEM(Editor).ProcessEvents();
+	bool exitGame = ROSE_GETSYSTEM(Editor).ProcessEvents();
 	if (exitGame) {
 		isRunning = false;
 	}
-	bool isGameRunning = GETSYSTEM(Editor).IsGameRunning();
+	bool isGameRunning = ROSE_GETSYSTEM(Editor).IsGameRunning();
 }
 
 void Game::Render()
 {
-	auto& editor = GETSYSTEM(Editor);
+	auto& editor = ROSE_GETSYSTEM(Editor);
 	editor.RenderEditor();
 }

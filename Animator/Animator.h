@@ -4,17 +4,12 @@
 
 #include <imgui.h>
 
-#include "AssetStore/AssetPackage.h"
-
+#include "AssetPipline/AssetPackage.h"
 #include "Core/SdlContainer.h"
+#include "Core/Log.h"
+#include "Reflection/Reflection.h"
 
 #include "AnimationComponent.h"
-
-#include "Debugging/Logger.h"
-
-static std::string Label(const std::string& label, Guid guid) {
-	return label + "##" + std::to_string(guid);
-}
 
 class Animator {
 
@@ -34,6 +29,7 @@ class Animator {
 	const float maxDt;
 	bool loadSelectedAnimaiton = false;
 	std::string animationFile;
+	InfoBase* animationReader;
 
 public:
 	Animator();
@@ -47,7 +43,6 @@ public:
 	void AnimationPlayerEditor(ImVec2 size);
 	void AnimationViewportEditor(ImVec2 size);
 	bool IsAssetSelected();
-	void RenderSelectedAsset();
 	int RenderFrame(Frame* frame, int id);
 	int RenderEvent(AnimationEventData* eventData, int id);
 	void RenderFrameImage(Frame* frame, int id, float fullWidth);

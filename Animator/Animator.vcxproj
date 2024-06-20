@@ -77,16 +77,16 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="Animator.cpp" />
-    <ClCompile Include="Editor.cpp" />
-    <ClCompile Include="Game.cpp" />
-    <ClCompile Include="Main.cpp" />
+    <ClCompile Include="src\Animator.cpp" />
+    <ClCompile Include="src\Editor.cpp" />
+    <ClCompile Include="src\Game.cpp" />
+    <ClCompile Include="src\Main.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="AnimationComponent.h" />
-    <ClInclude Include="Animator.h" />
-    <ClInclude Include="Editor.h" />
-    <ClInclude Include="Game.h" />
+    <ClInclude Include="src\AnimationComponent.h" />
+    <ClInclude Include="src\Animator.h" />
+    <ClInclude Include="src\Editor.h" />
+    <ClInclude Include="src\Game.h" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Shared\Shared.vcxproj">

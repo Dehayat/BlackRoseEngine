@@ -53,7 +53,7 @@ struct AnimationComponent {
 	}
 
 	void Update(float dt) {
-		AssetStore& assetStore = GETSYSTEM(AssetStore);
+		AssetStore& assetStore = ROSE_GETSYSTEM(AssetStore);
 		auto animationHandle = assetStore.GetAsset(animation);
 		if (animationHandle.type != AssetType::Animation) {
 			return;

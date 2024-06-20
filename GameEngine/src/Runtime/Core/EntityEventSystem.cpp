@@ -14,8 +14,8 @@
 
 void EntityEventSystem::Update()
 {
-	auto& registry = GETSYSTEM(Entities).GetRegistry();
-	auto& scriptSystem = GETSYSTEM(ScriptSystem);
+	auto& registry = ROSE_GETSYSTEM(Entities).GetRegistry();
+	auto& scriptSystem = ROSE_GETSYSTEM(ScriptSystem);
 
 	while (!eventQueue.empty()) {
 		auto& entityEvent = eventQueue.front();

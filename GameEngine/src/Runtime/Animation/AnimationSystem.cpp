@@ -15,15 +15,15 @@
 #include "Components/SpriteComponent.h"
 
 AnimationPlayer::AnimationPlayer() {
-	entt::registry& registry = GETSYSTEM(Entities).GetRegistry();
+	entt::registry& registry = ROSE_GETSYSTEM(Entities).GetRegistry();
 	registry.on_destroy<AnimationComponent>().connect<&AnimationPlayer::AnimationDestroyed>(this);
 }
 
 void AnimationPlayer::Update() {
-	float dt = GETSYSTEM(TimeSystem).GetdeltaTime();
-	Entities& entities = GETSYSTEM(Entities);
-	AssetStore& assetStore = GETSYSTEM(AssetStore);
-	EntityEventSystem& eventSystem = GETSYSTEM(EntityEventSystem);
+	float dt = ROSE_GETSYSTEM(TimeSystem).GetdeltaTime();
+	Entities& entities = ROSE_GETSYSTEM(Entities);
+	AssetStore& assetStore = ROSE_GETSYSTEM(AssetStore);
+	EntityEventSystem& eventSystem = ROSE_GETSYSTEM(EntityEventSystem);
 	entt::registry& registry = entities.GetRegistry();
 	auto view = registry.view<AnimationComponent, SpriteComponent>();
 	for (auto entity : view) {

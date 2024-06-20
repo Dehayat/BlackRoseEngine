@@ -21,11 +21,11 @@ public:
 		currentTime = 0;
 	}
 	virtual void Update(entt::entity owner) override {
-		auto& timeSystem = GETSYSTEM(TimeSystem);
+		auto& timeSystem = ROSE_GETSYSTEM(TimeSystem);
 		currentTime += timeSystem.GetdeltaTime();
 		if (currentTime > spawnDelay) {
 			currentTime = 0;
-			auto& entities = GETSYSTEM(Entities);
+			auto& entities = ROSE_GETSYSTEM(Entities);
 			auto entity = entities.CreateEntity();
 			entities.GetRegistry().emplace<TransformComponent>(entity);
 			entities.GetRegistry().emplace<PhysicsBodyComponent>(entity);

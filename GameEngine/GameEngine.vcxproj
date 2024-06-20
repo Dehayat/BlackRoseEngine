@@ -55,6 +55,7 @@
     <ClInclude Include="src\Runtime\Scripting\Script.h" />
     <ClInclude Include="src\Runtime\Scripting\ScriptSystem.h" />
     <ClInclude Include="src\Runtime\Scripting\SpawnerScript.h" />
+    <ClInclude Include="src\Runtime\Structures\Tree.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Editor\Editor.cpp" />

@@ -29,7 +29,7 @@ InputSystem::~InputSystem()
 }
 
 void InputSystem::Update() {
-	SDL_Window* window = GETSYSTEM(SdlContainer).GetWindow();
+	SDL_Window* window = ROSE_GETSYSTEM(SdlContainer).GetWindow();
 	auto keyArray = SDL_GetKeyboardState(nullptr);
 	for (int i = 0; i < keyCount; i++) {
 		if (keyArray[keys[i]] == 1) {
@@ -98,8 +98,8 @@ void InputSystem::Update() {
 	}
 	input.mousePosition = mousePos;
 
-	entt::registry& registry = GETSYSTEM(Entities).GetRegistry();
-	auto& eventSystem = GETSYSTEM(EntityEventSystem);
+	entt::registry& registry = ROSE_GETSYSTEM(Entities).GetRegistry();
+	auto& eventSystem = ROSE_GETSYSTEM(EntityEventSystem);
 	auto view = registry.view<ScriptComponent>();
 	for (auto entity : view) {
 		for (int i = 0; i < keyCount; i++) {

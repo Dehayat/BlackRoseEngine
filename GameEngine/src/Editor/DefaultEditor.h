@@ -53,13 +53,13 @@ template<typename T>
 class DefaultComponentEditor :IComponentEditor {
 public:
 	static void Render(entt::entity entity) {
-		T& component = GETSYSTEM(Entities).GetRegistry().get<T>(entity);
+		T& component = ROSE_GETSYSTEM(Entities).GetRegistry().get<T>(entity);
 		DefaultTypeEditor<T>::Render((int)entity, &component);
 	}
 
 	void Editor(entt::entity entity) override
 	{
-		T& component = GETSYSTEM(Entities).GetRegistry().get<T>(entity);
+		T& component = ROSE_GETSYSTEM(Entities).GetRegistry().get<T>(entity);
 		DefaultTypeEditor<T>::Render((int)entity, &component);
 	}
 };

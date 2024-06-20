@@ -14,38 +14,38 @@
 
 ScriptSystem::ScriptSystem()
 {
-	entt::registry& registry = GETSYSTEM(Entities).GetRegistry();
+	entt::registry& registry = ROSE_GETSYSTEM(Entities).GetRegistry();
 	registry.on_construct<ScriptComponent>().connect<&ScriptSystem::ScriptComponentCreated>(this);
 	registry.on_destroy<ScriptComponent>().connect<&ScriptSystem::ScriptComponentDestroyed>(this);
 }
 
 static entt::entity GetChild(entt::entity entity, std::string childName) {
-	return GETSYSTEM(TransformSystem).GetChild(entity, childName);
+	return ROSE_GETSYSTEM(TransformSystem).GetChild(entity, childName);
 }
 static void Translate(entt::entity entity, float x, float y) {
-	auto& transform = GETSYSTEM(Entities).GetRegistry().get<TransformComponent>(entity);
+	auto& transform = ROSE_GETSYSTEM(Entities).GetRegistry().get<TransformComponent>(entity);
 	transform.globalPosition += glm::vec2(x, y);
 	transform.UpdateLocals();
 }
 static void PlayAnimation(entt::entity entity, const std::string& animName) {
-	if (GETSYSTEM(Entities).EntityExists(entity) && GETSYSTEM(Entities).GetRegistry().any_of<AnimationComponent>(entity)) {
-		auto& anim = GETSYSTEM(Entities).GetRegistry().get<AnimationComponent>(entity);
+	if (ROSE_GETSYSTEM(Entities).EntityExists(entity) && ROSE_GETSYSTEM(Entities).GetRegistry().any_of<AnimationComponent>(entity)) {
+		auto& anim = ROSE_GETSYSTEM(Entities).GetRegistry().get<AnimationComponent>(entity);
 		anim.Play(animName);
 	}
 }
 static void FaceDir(entt::entity entity, int dir) {
-	auto& transform = GETSYSTEM(Entities).GetRegistry().get<TransformComponent>(entity);
+	auto& transform = ROSE_GETSYSTEM(Entities).GetRegistry().get<TransformComponent>(entity);
 	transform.scale.x = glm::abs(transform.scale.x) * dir;
 	transform.UpdateGlobals();
 }
 static void DisableEntity(entt::entity entity) {
-	auto& phy = GETSYSTEM(Entities).GetRegistry().get<PhysicsBodyComponent>(entity);
+	auto& phy = ROSE_GETSYSTEM(Entities).GetRegistry().get<PhysicsBodyComponent>(entity);
 	if (phy.body->GetFixtureList() != nullptr) {
 		phy.body->DestroyFixture(phy.body->GetFixtureList());
 	}
 }
 static void EnableEntity(entt::entity entity) {
-	auto& phy = GETSYSTEM(Entities).GetRegistry().get<PhysicsBodyComponent>(entity);
+	auto& phy = ROSE_GETSYSTEM(Entities).GetRegistry().get<PhysicsBodyComponent>(entity);
 	if (phy.body->GetFixtureList() == nullptr) {
 		phy.body->CreateFixture(&phy.fixture);
 	}
@@ -57,7 +57,7 @@ void ScriptSystem::ScriptComponentCreated(entt::registry& registry, entt::entity
 		auto& scriptComponent = registry.get<ScriptComponent>(entity);
 		for (auto& script : scriptComponent.scripts) {
 			if (script != "") {
-				auto scriptAsset = (ScriptAsset*)GETSYSTEM(AssetStore).GetAsset(script).asset;
+				auto scriptAsset = (ScriptAsset*)ROSE_GETSYSTEM(AssetStore).GetAsset(script).asset;
 				if (scriptAsset != nullptr) {
 					AddScript(entity, script, scriptAsset->script);
 				}
@@ -77,7 +77,7 @@ void ScriptSystem::ScriptComponentDestroyed(entt::registry& registry, entt::enti
 
 void ScriptSystem::Update()
 {
-	entt::registry& registry = GETSYSTEM(Entities).GetRegistry();
+	entt::registry& registry = ROSE_GETSYSTEM(Entities).GetRegistry();
 	for (auto entity : setupNextFrame) {
 		if (registry.valid(entity) && registry.any_of<ScriptComponent>(entity)) {
 			auto& scriptComponent = registry.get<ScriptComponent>(entity);
@@ -92,7 +92,7 @@ void ScriptSystem::Update()
 	}
 	setupNextFrame.clear();
 	auto view = registry.view<ScriptComponent>();
-	auto dt = GETSYSTEM(TimeSystem).GetdeltaTime();
+	auto dt = ROSE_GETSYSTEM(TimeSystem).GetdeltaTime();
 	for (auto entity : view) {
 		auto& scriptComponent = registry.get<ScriptComponent>(entity);
 		for (auto& script : scriptComponent.scripts) {
@@ -107,7 +107,7 @@ void ScriptSystem::Update()
 
 void ScriptSystem::CallEvent(EntityEvent eventData)
 {
-	entt::registry& registry = GETSYSTEM(Entities).GetRegistry();
+	entt::registry& registry = ROSE_GETSYSTEM(Entities).GetRegistry();
 	auto entity = eventData.entity;
 	auto& scriptComponent = registry.get<ScriptComponent>(entity);
 	for (auto& script : scriptComponent.scripts) {
@@ -140,11 +140,11 @@ void ScriptSystem::AddScript(entt::entity entity, const std::string scriptName, 
 void ScriptSystem::RefreshScript(entt::entity entity)
 {
 	auto& states = scriptStates[entity];
-	entt::registry& registry = GETSYSTEM(Entities).GetRegistry();
+	entt::registry& registry = ROSE_GETSYSTEM(Entities).GetRegistry();
 	auto& scriptComponent = registry.get<ScriptComponent>(entity);
 	for (auto& script : scriptComponent.scripts) {
 		if (states.find(script) == states.end()) {
-			auto scriptAsset = (ScriptAsset*)GETSYSTEM(AssetStore).GetAsset(script).asset;
+			auto scriptAsset = (ScriptAsset*)ROSE_GETSYSTEM(AssetStore).GetAsset(script).asset;
 			if (scriptAsset != nullptr) {
 				AddScript(entity, script, scriptAsset->script);
 			}
@@ -156,7 +156,7 @@ void ScriptSystem::RefreshScript(entt::entity entity)
 void ScriptSystem::RemoveScript(entt::entity entity, const std::string& removeScript)
 {
 	auto& states = scriptStates[entity];
-	entt::registry& registry = GETSYSTEM(Entities).GetRegistry();
+	entt::registry& registry = ROSE_GETSYSTEM(Entities).GetRegistry();
 	auto& scriptComponent = registry.get<ScriptComponent>(entity);
 	if (scriptComponent.scripts.find(removeScript) != scriptComponent.scripts.end()) {
 		scriptComponent.scripts.erase(removeScript);

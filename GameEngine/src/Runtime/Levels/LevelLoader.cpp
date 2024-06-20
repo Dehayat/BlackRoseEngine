@@ -29,7 +29,7 @@ LevelLoader::~LevelLoader()
 }
 void LevelLoader::LoadLevel(const std::string& fileName)
 {
-	auto& registry = GETSYSTEM(Entities).GetRegistry();
+	auto& registry = ROSE_GETSYSTEM(Entities).GetRegistry();
 	auto fileHandle = FileResource(fileName);
 	if (fileHandle.file == nullptr) {
 		Logger::Error("File" + fileName + " not found");
@@ -57,7 +57,7 @@ void LevelLoader::DeserializeLevel(entt::registry& registry, ryml::NodeRef& node
 entt::entity LevelLoader::DeserializeEntity(entt::registry& registry, ryml::NodeRef& node)
 {
 	entt::entity entity;
-	auto& entities = GETSYSTEM(Entities);
+	auto& entities = ROSE_GETSYSTEM(Entities);
 	auto guid = entities.GenerateGuid();
 	if (node.has_child("Guid")) {
 		if (node["Guid"].is_map()) {

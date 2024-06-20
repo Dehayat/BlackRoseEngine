@@ -17,7 +17,7 @@ TransformSystem::TransformSystem()
 	debugDrawer = nullptr;
 	drawDebug = false;
 
-	entt::registry& registry = GETSYSTEM(Entities).GetRegistry();
+	entt::registry& registry = ROSE_GETSYSTEM(Entities).GetRegistry();
 	registry.on_construct<TransformComponent>().connect<&TransformSystem::TransformCreated>(this);
 	registry.on_destroy<TransformComponent>().connect<&TransformSystem::TransformDestroyed>(this);
 }
@@ -31,18 +31,18 @@ TransformSystem::~TransformSystem()
 void TransformSystem::TransformCreated(entt::registry& registry, entt::entity entity)
 {
 	auto& trx = registry.get<TransformComponent>(entity);
-	auto& entities = GETSYSTEM(Entities);
-	GETSYSTEM(LevelTree).InsertEntity(entity);
+	auto& entities = ROSE_GETSYSTEM(Entities);
+	ROSE_GETSYSTEM(LevelTree).InsertEntity(entity);
 	trx.UpdateGlobals();
 }
 entt::entity TransformSystem::GetChild(entt::entity entity, const std::string& name)
 {
-	return GETSYSTEM(LevelTree).GetChild(entity, name);
+	return ROSE_GETSYSTEM(LevelTree).GetChild(entity, name);
 }
 void TransformSystem::TransformDestroyed(entt::registry& registry, entt::entity entity)
 {
 	auto& trx = registry.get<TransformComponent>(entity);
-	GETSYSTEM(LevelTree).TransformDestroyed(registry, entity);
+	ROSE_GETSYSTEM(LevelTree).TransformDestroyed(registry, entity);
 }
 void TransformSystem::MoveTransformToWorldSpace(TransformComponent& trx)
 {
@@ -62,7 +62,7 @@ void TransformSystem::MoveTransformToParentSpace(TransformComponent& child, Tran
 }
 void TransformSystem::Update()
 {
-	entt::registry& registry = GETSYSTEM(Entities).GetRegistry();
+	entt::registry& registry = ROSE_GETSYSTEM(Entities).GetRegistry();
 
 	registry.sort<TransformComponent>([](const auto& lhs, const auto& rhs) {
 		return lhs.level < rhs.level;
@@ -113,20 +113,20 @@ void TransformSystem::DebugRender(glm::mat3 viewMatrix, entt::entity selectedEnt
 }
 void TransformSystem::SetParent(entt::entity entity, entt::entity parent)
 {
-	Entities& entities = GETSYSTEM(Entities);
+	Entities& entities = ROSE_GETSYSTEM(Entities);
 	entt::registry& registry = entities.GetRegistry();
 	auto& child = registry.get<TransformComponent>(entity);
 	auto oldParent = NoEntity();
 	if (child.hasParent) {
 		oldParent = child.parent;
-		GETSYSTEM(LevelTree).RemoveParent(entity);
+		ROSE_GETSYSTEM(LevelTree).RemoveParent(entity);
 		child.hasParent = false;
 		child.parent = NoEntity();
 		child.level = 0;
 	}
 
 	if (parent != NoEntity()) {
-		if (GETSYSTEM(LevelTree).TrySetParent(entity, parent)) {
+		if (ROSE_GETSYSTEM(LevelTree).TrySetParent(entity, parent)) {
 			child.parent = parent;
 			auto& parentTrx = registry.get<TransformComponent>(parent);
 			child.level = parentTrx.level + 1;
@@ -135,7 +135,7 @@ void TransformSystem::SetParent(entt::entity entity, entt::entity parent)
 		}
 		else {
 			if (oldParent != NoEntity()) {
-				GETSYSTEM(LevelTree).TrySetParent(entity, oldParent);
+				ROSE_GETSYSTEM(LevelTree).TrySetParent(entity, oldParent);
 			}
 		}
 

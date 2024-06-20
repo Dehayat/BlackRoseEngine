@@ -20,7 +20,7 @@ PhysicsSystem::PhysicsSystem(float gravityX, float gravityY)
 	physicsWorld->SetContactListener(contactListener.get());
 	drawDebug = false;
 	debugDrawer = nullptr;
-	entt::registry& registry = GETSYSTEM(Entities).GetRegistry();
+	entt::registry& registry = ROSE_GETSYSTEM(Entities).GetRegistry();
 	registry.on_construct<PhysicsBodyComponent>().connect<&PhysicsSystem::PhysicsBodyCreated>(this);
 	registry.on_destroy<PhysicsBodyComponent>().connect<&PhysicsSystem::PhysicsBodyDestroyed>(this);
 }
@@ -139,7 +139,7 @@ void PhysicsSystem::Update()
 		CopyTransformToBody(body, pos);
 	}
 
-	TimeSystem& timeSystem = GETSYSTEM(TimeSystem);
+	TimeSystem& timeSystem = ROSE_GETSYSTEM(TimeSystem);
 	float timeStep = timeSystem.GetdeltaTime();
 	int velocityIterations = 10;
 	int positionIterations = 12;

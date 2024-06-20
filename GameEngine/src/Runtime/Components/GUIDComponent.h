@@ -13,7 +13,7 @@ struct GUIDComponent :IComponent {
 	Guid id;
 	std::string name;
 	GUIDComponent() {
-		this->id = GETSYSTEM(Entities).GenerateGuid();
+		this->id = ROSE_GETSYSTEM(Entities).GenerateGuid();
 		name = "";
 	}
 	GUIDComponent(Guid id) {
@@ -22,7 +22,7 @@ struct GUIDComponent :IComponent {
 	}
 	GUIDComponent(ryml::NodeRef& node)
 	{
-		this->id = GETSYSTEM(Entities).GenerateGuid();
+		this->id = ROSE_GETSYSTEM(Entities).GenerateGuid();
 		name = "";
 		if (node.has_child("id"))
 		{

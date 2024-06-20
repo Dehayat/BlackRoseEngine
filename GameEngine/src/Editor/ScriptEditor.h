@@ -24,7 +24,7 @@ class ScriptEditor :public IComponentEditor {
 
 public:
 	void Editor(entt::entity entity) {
-		auto& registry = GETSYSTEM(Entities).GetRegistry();
+		auto& registry = ROSE_GETSYSTEM(Entities).GetRegistry();
 		auto& scriptComp = registry.get<ScriptComponent>(entity);
 		ImGui::Text("Scripts");
 		std::string removeScript = "";
@@ -41,7 +41,7 @@ public:
 			ImGui::EndChild();
 		}
 		if (removeScript != "") {
-			GETSYSTEM(ScriptSystem).RemoveScript(entity, removeScript);
+			ROSE_GETSYSTEM(ScriptSystem).RemoveScript(entity, removeScript);
 		}
 		ImGui::Separator();
 		static std::string scriptName = "";
@@ -51,7 +51,7 @@ public:
 		ImGui::InputText("script", &scriptName[0], 21, ImGuiInputTextFlags_CallbackResize, ResizeStringCallback, &scriptName);
 		if (ImGui::Button("AddScript")) {
 			scriptComp.scripts.insert(scriptName);
-			GETSYSTEM(ScriptSystem).RefreshScript(entity);
+			ROSE_GETSYSTEM(ScriptSystem).RefreshScript(entity);
 			scriptName = "";
 		}
 	}

@@ -29,7 +29,7 @@ Game::Game() {
 	SetupBaseSystems();
 	SetupLowLevelSystems();
 #ifdef _EDITOR
-	CREATESYSTEM(Editor);
+	ROSE_CREATESYSTEM(Editor);
 #endif
 }
 
@@ -38,28 +38,30 @@ Game::~Game() {
 }
 
 void Game::SetupBaseSystems() {
-	CREATESYSTEM(FileDialog);
-	CREATESYSTEM(SdlContainer, 1200, (float)1200 * 9 / 16);
-	CREATESYSTEM(LevelLoader);
-	CREATESYSTEM(Entities);
-	CREATESYSTEM(AssetStore);
-	CREATESYSTEM(ReflectionSystem);
+	ROSE_CREATESYSTEM(FileDialog);
+	ROSE_CREATESYSTEM(SdlContainer, 1200, (float)1200 * 9 / 16);
+	ROSE_CREATESYSTEM(LevelLoader);
+	ROSE_CREATESYSTEM(Entities);
+	ROSE_CREATESYSTEM(AssetStore);
+	ROSE_CREATESYSTEM(ReflectionSystem);
 }
 
 void Game::SetupLowLevelSystems()
 {
-	CREATESYSTEM(LevelTree);
-	CREATESYSTEM(TimeSystem);
-	CREATESYSTEM(InputSystem);
-	CREATESYSTEM(RendererSystem);
-	CREATESYSTEM(AnimationPlayer);
-	CREATESYSTEM(EntityEventSystem);
-	CREATESYSTEM(ScriptSystem);
-	TransformSystem& transformSystem = CREATESYSTEM(TransformSystem);
-	PhysicsSystem& physics = CREATESYSTEM(PhysicsSystem, 0, -10);
+	ROSE_CREATESYSTEM(LevelTree);
+	ROSE_CREATESYSTEM(TimeSystem);
+	ROSE_CREATESYSTEM(InputSystem);
+	ROSE_CREATESYSTEM(RendererSystem);
+	ROSE_CREATESYSTEM(AnimationPlayer);
+	ROSE_CREATESYSTEM(EntityEventSystem);
+	ROSE_CREATESYSTEM(ScriptSystem);
+	ROSE_CREATESYSTEM(TransformSystem);
+	ROSE_CREATESYSTEM(PhysicsSystem, 0, -10);
 
 #ifdef _DEBUG
+	TransformSystem& transformSystem = ROSE_GETSYSTEM(TransformSystem);
 	transformSystem.InitDebugDrawer();
+	PhysicsSystem& physics = ROSE_GETSYSTEM(PhysicsSystem);
 	physics.InitDebugDrawer();
 	physics.EnableDebug(true);
 	transformSystem.EnableDebug(true);
@@ -82,73 +84,73 @@ void Game::Setup()
 {
 	LoadAssets();
 	LoadLevel();
-	GETSYSTEM(RendererSystem).InitLoaded();
+	ROSE_GETSYSTEM(RendererSystem).InitLoaded();
 #ifdef _EDITOR
-	GETSYSTEM(Editor).Reset();
+	ROSE_GETSYSTEM(Editor).Reset();
 #endif
 }
 
 void Game::LoadAssets()
 {
-	AssetStore& assetStore = GETSYSTEM(AssetStore);
+	AssetStore& assetStore = ROSE_GETSYSTEM(AssetStore);
 	assetStore.LoadPackage("assets/Packages/a.pkg");
 }
 
 void Game::LoadLevel()
 {
-	LevelLoader& levelLoader = GETSYSTEM(LevelLoader);
+	LevelLoader& levelLoader = ROSE_GETSYSTEM(LevelLoader);
 	levelLoader.LoadLevel("wonder/level.yaml");
 }
 
 void Game::Update()
 {
 #ifdef _EDITOR
-	bool exitGame = GETSYSTEM(Editor).ProcessEvents();
+	bool exitGame = ROSE_GETSYSTEM(Editor).ProcessEvents();
 #else
-	bool exitGame = GETSYSTEM(SdlContainer).ProcessEvents();
+	bool exitGame = ROSE_GETSYSTEM(SdlContainer).ProcessEvents();
 #endif
 	if (exitGame) {
 		isRunning = false;
 	}
 #ifdef _EDITOR
-	GETSYSTEM(Editor).Update();
-	bool isGameRunning = GETSYSTEM(Editor).IsGameRunning();
-	GETSYSTEM(TimeSystem).Update();
-	GETSYSTEM(TransformSystem).Update();
-	GETSYSTEM(InputSystem).Update();
+	ROSE_GETSYSTEM(Editor).Update();
+	bool isGameRunning = ROSE_GETSYSTEM(Editor).IsGameRunning();
+	ROSE_GETSYSTEM(TimeSystem).Update();
+	ROSE_GETSYSTEM(TransformSystem).Update();
+	ROSE_GETSYSTEM(InputSystem).Update();
 	if (isGameRunning) {
-		GETSYSTEM(PhysicsSystem).Update();
+		ROSE_GETSYSTEM(PhysicsSystem).Update();
 	}
-	GETSYSTEM(AnimationPlayer).Update();
+	ROSE_GETSYSTEM(AnimationPlayer).Update();
 	if (isGameRunning) {
-		GETSYSTEM(EntityEventSystem).Update();
-		GETSYSTEM(ScriptSystem).Update();
+		ROSE_GETSYSTEM(EntityEventSystem).Update();
+		ROSE_GETSYSTEM(ScriptSystem).Update();
 	}
 #else
-	GETSYSTEM(TimeSystem).Update();
-	GETSYSTEM(TransformSystem).Update();
-	GETSYSTEM(InputSystem).Update();
-	GETSYSTEM(PhysicsSystem).Update();
-	GETSYSTEM(AnimationPlayer).Update();
-	GETSYSTEM(EntityEventSystem).Update();
-	GETSYSTEM(ScriptSystem).Update();
+	ROSE_GETSYSTEM(TimeSystem).Update();
+	ROSE_GETSYSTEM(TransformSystem).Update();
+	ROSE_GETSYSTEM(InputSystem).Update();
+	ROSE_GETSYSTEM(PhysicsSystem).Update();
+	ROSE_GETSYSTEM(AnimationPlayer).Update();
+	ROSE_GETSYSTEM(EntityEventSystem).Update();
+	ROSE_GETSYSTEM(ScriptSystem).Update();
 #endif
 }
 
 void Game::Render()
 {
 
-	RendererSystem& renderer = GETSYSTEM(RendererSystem);
+	RendererSystem& renderer = ROSE_GETSYSTEM(RendererSystem);
 	renderer.Render();
 #ifdef _DEBUG
-	GETSYSTEM(PhysicsSystem).DebugRender(renderer.GetWorldToScreenMatrix());
+	ROSE_GETSYSTEM(PhysicsSystem).DebugRender(renderer.GetWorldToScreenMatrix());
 #endif // _DEBUG
 
 #ifdef _EDITOR
-	TransformSystem& transformSystem = GETSYSTEM(TransformSystem);
+	TransformSystem& transformSystem = ROSE_GETSYSTEM(TransformSystem);
 	transformSystem.GetDebugRenderer().SetMatrix(renderer.GetWorldToScreenMatrix());
 	transformSystem.DebugRender(renderer.GetWorldToScreenMatrix(), NoEntity());
-	auto& editor = GETSYSTEM(Editor);
+	auto& editor = ROSE_GETSYSTEM(Editor);
 	transformSystem.DebugRender(renderer.GetWorldToScreenMatrix(), editor.GetSelectedEntity());
 	editor.RenderGizmos();
 	editor.RenderEditor();

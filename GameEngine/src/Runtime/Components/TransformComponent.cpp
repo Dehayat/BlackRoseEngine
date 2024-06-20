@@ -98,7 +98,7 @@ void TransformComponent::CalcMatrix()
 	matrixL2W = matS * matR * matT;
 	if (hasParent)
 	{
-		entt::registry& registry = GETSYSTEM(Entities).GetRegistry();
+		entt::registry& registry = ROSE_GETSYSTEM(Entities).GetRegistry();
 		auto matrixP2W = registry.get<TransformComponent>(parent).matrixL2W;
 		matrixL2W = matrixL2W * matrixP2W;
 	}
@@ -113,7 +113,7 @@ void TransformComponent::UpdateGlobals()
 	globalRotation = glm::mod(globalRotation + 360, 360.0f);
 	scaleSign = vec2(sign(scale.x), sign(scale.y));
 	if (hasParent) {
-		auto& pTrx = GETSYSTEM(Entities).GetRegistry().get<TransformComponent>(parent);
+		auto& pTrx = ROSE_GETSYSTEM(Entities).GetRegistry().get<TransformComponent>(parent);
 		scaleSign = pTrx.scaleSign * scaleSign;
 	}
 }
@@ -123,7 +123,7 @@ void TransformComponent::UpdateLocals()
 	globalRotation = glm::mod(globalRotation + 360, 360.0f);
 	if (hasParent)
 	{
-		auto& pTrx = GETSYSTEM(Entities).GetRegistry().get<TransformComponent>(parent);
+		auto& pTrx = ROSE_GETSYSTEM(Entities).GetRegistry().get<TransformComponent>(parent);
 		auto matW2P = inverse(pTrx.matrixL2W);
 
 		position = GetPosition(matW2P, globalPosition);

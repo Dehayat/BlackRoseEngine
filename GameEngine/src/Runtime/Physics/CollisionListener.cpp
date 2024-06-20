@@ -12,7 +12,7 @@
 void ContactListener::BeginContact(b2Contact* contact) {
 	auto entityA = entt::entity(contact->GetFixtureA()->GetBody()->GetUserData().pointer);
 	auto entityB = entt::entity(contact->GetFixtureB()->GetBody()->GetUserData().pointer);
-	auto& events = GETSYSTEM(EntityEventSystem);
+	auto& events = ROSE_GETSYSTEM(EntityEventSystem);
 	if (contact->GetFixtureB()->IsSensor()) {
 		events.QueueEvent(EntityEvent(entityA, "EnteringSensor"));
 		events.QueueEvent(EntityEvent(entityB, "SensorEntered"));
@@ -26,7 +26,7 @@ void ContactListener::BeginContact(b2Contact* contact) {
 void ContactListener::EndContact(b2Contact* contact) {
 	auto entityA = entt::entity(contact->GetFixtureA()->GetBody()->GetUserData().pointer);
 	auto entityB = entt::entity(contact->GetFixtureB()->GetBody()->GetUserData().pointer);
-	auto& events = GETSYSTEM(EntityEventSystem);
+	auto& events = ROSE_GETSYSTEM(EntityEventSystem);
 	if (contact->GetFixtureB()->IsSensor()) {
 		events.QueueEvent(EntityEvent(entityA, "ExitingSensor"));
 		events.QueueEvent(EntityEvent(entityB, "SensorExited"));

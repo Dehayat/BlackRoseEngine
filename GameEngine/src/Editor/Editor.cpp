@@ -42,7 +42,7 @@ Editor::Editor()
 
 void Editor::SetupImgui()
 {
-	auto& sdl = GETSYSTEM(SdlContainer);
+	auto& sdl = ROSE_GETSYSTEM(SdlContainer);
 	SDL_RenderSetVSync(sdl.GetRenderer(), 1);
 
 	window = sdl.GetWindow();
@@ -86,10 +86,10 @@ void Editor::Update()
 
 void Editor::UpdateViewportControls()
 {
-	auto& entities = GETSYSTEM(Entities);
+	auto& entities = ROSE_GETSYSTEM(Entities);
 	auto& registry = entities.GetRegistry();
-	auto& input = GETSYSTEM(InputSystem);
-	auto& gameRenderer = GETSYSTEM(RendererSystem);
+	auto& input = ROSE_GETSYSTEM(InputSystem);
+	auto& gameRenderer = ROSE_GETSYSTEM(RendererSystem);
 	if (selectedTool == Tools::CreateEntity) {
 		auto mousePos = glm::vec3(input.GetMousePosition(), 1) * gameRenderer.GetScreenToWorldMatrix();
 		if (input.GetMouseButton(LEFT_BUTTON).justPressed) {
@@ -124,26 +124,26 @@ void Editor::UpdateViewportControls()
 
 void Editor::UpdateGlobalControls()
 {
-	auto& entities = GETSYSTEM(Entities);
-	auto& input = GETSYSTEM(InputSystem);
-	auto& levelLoader = GETSYSTEM(LevelLoader);
+	auto& entities = ROSE_GETSYSTEM(Entities);
+	auto& input = ROSE_GETSYSTEM(InputSystem);
+	auto& levelLoader = ROSE_GETSYSTEM(LevelLoader);
 	if (input.GetKey(InputKey::LCTRL).isPressed || input.GetKey(InputKey::RCTRL).isPressed) {
 		if (input.GetKey(InputKey::N).justPressed) {
 			levelLoader.UnloadLevel();
 			levelTreeEditor.CleanTree();
 		}
 		if (input.GetKey(InputKey::O).justPressed) {
-			auto fileName = GETSYSTEM(FileDialog).OpenFile("yaml");
+			auto fileName = ROSE_GETSYSTEM(FileDialog).OpenFile("yaml");
 			if (fileName != "") {
 				levelLoader.UnloadLevel();
 				levelTreeEditor.CleanTree();
 				levelLoader.LoadLevel(fileName);
-				GETSYSTEM(RendererSystem).InitLoaded();
+				ROSE_GETSYSTEM(RendererSystem).InitLoaded();
 			}
 		}
 		if (input.GetKey(InputKey::S).justPressed) {
 			if (input.GetKey(InputKey::LSHIFT).isPressed || input.GetKey(InputKey::RSHIFT).isPressed) {
-				auto fileName = GETSYSTEM(FileDialog).SaveFile("yaml");
+				auto fileName = ROSE_GETSYSTEM(FileDialog).SaveFile("yaml");
 				if (fileName != "") {
 					levelLoader.SaveLevel(fileName);
 				}
@@ -190,9 +190,9 @@ static bool IsPointInsideRect(vec2 point, SDL_FRect rect) {
 
 void Editor::UpdateSelectTool()
 {
-	auto& entities = GETSYSTEM(Entities);
+	auto& entities = ROSE_GETSYSTEM(Entities);
 	auto& registry = entities.GetRegistry();
-	auto& input = GETSYSTEM(InputSystem);
+	auto& input = ROSE_GETSYSTEM(InputSystem);
 	if (input.GetMouseButton(LEFT_BUTTON).justPressed) {
 		auto mousePos = input.GetMousePosition();
 		auto view = registry.view<const SpriteComponent>();
@@ -278,11 +278,11 @@ bool Editor::IsGameRunning()
 
 void Editor::RenderTools()
 {
-	auto& entities = GETSYSTEM(Entities);
+	auto& entities = ROSE_GETSYSTEM(Entities);
 	auto& registry = entities.GetRegistry();
-	auto& input = GETSYSTEM(InputSystem);
-	auto& gameRenderer = GETSYSTEM(RendererSystem);
-	auto& levelLoader = GETSYSTEM(LevelLoader);
+	auto& input = ROSE_GETSYSTEM(InputSystem);
+	auto& gameRenderer = ROSE_GETSYSTEM(RendererSystem);
+	auto& levelLoader = ROSE_GETSYSTEM(LevelLoader);
 	ImGui::BeginTable("ToolBar", 3, ImGuiTableFlags_BordersInnerV);
 	ImGui::TableNextColumn();
 	ImGui::BeginTable("Tools", 3, ImGuiTableFlags_BordersInnerV);
@@ -315,9 +315,9 @@ void Editor::RenderTools()
 	ImGui::TableNextColumn();
 	{
 		if (ImGui::Button("Load Package")) {
-			auto fileName = GETSYSTEM(FileDialog).OpenFile("pkg");
+			auto fileName = ROSE_GETSYSTEM(FileDialog).OpenFile("pkg");
 			if (fileName != "") {
-				AssetStore& assetStore = GETSYSTEM(AssetStore);
+				AssetStore& assetStore = ROSE_GETSYSTEM(AssetStore);
 				assetStore.LoadPackage(fileName);
 			}
 		}
@@ -328,12 +328,12 @@ void Editor::RenderTools()
 	auto view = registry.view<const GUIDComponent, TransformComponent>();
 	{
 		if (ImGui::Button("Load Level")) {
-			auto fileName = GETSYSTEM(FileDialog).OpenFile("yaml");
+			auto fileName = ROSE_GETSYSTEM(FileDialog).OpenFile("yaml");
 			if (fileName != "") {
 				levelLoader.UnloadLevel();
 				levelTreeEditor.CleanTree();
 				levelLoader.LoadLevel(fileName);
-				GETSYSTEM(RendererSystem).InitLoaded();
+				ROSE_GETSYSTEM(RendererSystem).InitLoaded();
 			}
 		}
 	}
@@ -346,7 +346,7 @@ void Editor::RenderTools()
 	}
 	{
 		if (ImGui::Button("Save Level As")) {
-			auto fileName = GETSYSTEM(FileDialog).SaveFile("yaml");
+			auto fileName = ROSE_GETSYSTEM(FileDialog).SaveFile("yaml");
 			if (fileName != "") {
 				levelLoader.SaveLevel(fileName);
 			}
@@ -374,7 +374,7 @@ void Editor::RenderToolButton(std::string name, Tools tool)
 
 void Editor::EntityEditor()
 {
-	auto& entities = GETSYSTEM(Entities);
+	auto& entities = ROSE_GETSYSTEM(Entities);
 	auto& registry = entities.GetRegistry();
 	auto selectedEntity = levelTreeEditor.GetSelectedEntity();
 	if (levelTreeEditor.GetSelectedEntity() != entt::entity(-1)) {

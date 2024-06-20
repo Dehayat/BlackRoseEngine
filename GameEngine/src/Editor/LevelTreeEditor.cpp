@@ -76,10 +76,10 @@ void LevelTreeEditor::EditorChildren(entt::registry& registry, Node<entt::entity
 
 void LevelTreeEditor::Editor()
 {
-	auto& registry = GETSYSTEM(Entities).GetRegistry();
+	auto& registry = ROSE_GETSYSTEM(Entities).GetRegistry();
 	ShowEntity(registry);
-	auto& levelTree = GETSYSTEM(LevelTree);
-	auto& transform = GETSYSTEM(TransformSystem);
+	auto& levelTree = ROSE_GETSYSTEM(LevelTree);
+	auto& transform = ROSE_GETSYSTEM(TransformSystem);
 	for (auto node : levelTree.GetRoot()->children) {
 		EditorChildren(registry, node);
 	}
@@ -103,5 +103,5 @@ void LevelTreeEditor::SelectEntity(entt::entity entity)
 
 void LevelTreeEditor::CleanTree()
 {
-	GETSYSTEM(LevelTree).CleanTree();
+	ROSE_GETSYSTEM(LevelTree).CleanTree();
 }

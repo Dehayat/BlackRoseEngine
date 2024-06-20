@@ -19,7 +19,7 @@ void LevelTree::InsertEntity(entt::entity entity)
 		Logger::Error("trying to add entity that already exists in levelTree");
 		return;
 	}
-	auto& entities = GETSYSTEM(Entities);
+	auto& entities = ROSE_GETSYSTEM(Entities);
 	auto& registry = entities.GetRegistry();
 	auto& trx = registry.get<TransformComponent>(entity);
 	trx.level = 0;
@@ -35,15 +35,15 @@ void LevelTree::InsertEntity(entt::entity entity)
 		waitingForParent[trx.parentGUID].push_back(node);
 	}
 
-	auto& transformSystem = GETSYSTEM(TransformSystem);
+	auto& transformSystem = ROSE_GETSYSTEM(TransformSystem);
 	trx.CalcMatrix();
 
-	auto guid = GETSYSTEM(Entities).GetEntityGuid(entity);
+	auto guid = ROSE_GETSYSTEM(Entities).GetEntityGuid(entity);
 	ConnectWaitingChildren(node, guid);
 }
 Node<entt::entity>* LevelTree::TryGetParent(TransformComponent& trx)
 {
-	auto& entities = GETSYSTEM(Entities);
+	auto& entities = ROSE_GETSYSTEM(Entities);
 	if (entities.EntityExists(trx.parent)) {
 		trx.parentGUID = entities.GetEntityGuid(trx.parent);
 	}
@@ -60,7 +60,7 @@ Node<entt::entity>* LevelTree::TryGetParent(TransformComponent& trx)
 }
 void LevelTree::ConnectWaitingChildren(Node<entt::entity>* parentNode, Guid parentGuid)
 {
-	auto& entities = GETSYSTEM(Entities);
+	auto& entities = ROSE_GETSYSTEM(Entities);
 	auto& registry = entities.GetRegistry();
 	if (waitingForParent.find(parentGuid) != waitingForParent.end()) {
 		Logger::Log("found parent");
@@ -76,7 +76,7 @@ void LevelTree::ConnectWaitingChildren(Node<entt::entity>* parentNode, Guid pare
 }
 void LevelTree::UpdateChildrenRecursive(entt::registry& registry, Node<entt::entity>* parent)
 {
-	auto& transform = GETSYSTEM(TransformSystem);
+	auto& transform = ROSE_GETSYSTEM(TransformSystem);
 	auto& parentTrx = registry.get<TransformComponent>(parent->element);
 	for (auto child : parent->children) {
 		auto entity = child->element;
@@ -93,7 +93,7 @@ void LevelTree::TransformDestroyed(entt::registry& registry, entt::entity entity
 		return;
 	}
 	auto node = nodesMap[entity];
-	auto& entities = GETSYSTEM(Entities);
+	auto& entities = ROSE_GETSYSTEM(Entities);
 	for (auto child : node->children) {
 		entities.DestroyEntity(child->element);
 	}
@@ -102,8 +102,8 @@ void LevelTree::TransformDestroyed(entt::registry& registry, entt::entity entity
 }
 void LevelTree::RemoveParent(entt::entity entity)
 {
-	entt::registry& registry = GETSYSTEM(Entities).GetRegistry();
-	auto& transformSystem = GETSYSTEM(TransformSystem);
+	entt::registry& registry = ROSE_GETSYSTEM(Entities).GetRegistry();
+	auto& transformSystem = ROSE_GETSYSTEM(TransformSystem);
 	auto& childTrx = registry.get<TransformComponent>(entity);
 	if (childTrx.hasParent) {
 		auto parent = childTrx.parent;
@@ -119,8 +119,8 @@ bool LevelTree::TrySetParent(entt::entity child, entt::entity parent)
 	if (IsChildOf(child, parent)) {
 		return false;
 	}
-	entt::registry& registry = GETSYSTEM(Entities).GetRegistry();
-	auto& transformSystem = GETSYSTEM(TransformSystem);
+	entt::registry& registry = ROSE_GETSYSTEM(Entities).GetRegistry();
+	auto& transformSystem = ROSE_GETSYSTEM(TransformSystem);
 	auto& childTrx = registry.get<TransformComponent>(child);
 	auto& parentTrx = registry.get<TransformComponent>(parent);
 	childTrx.hasParent = true;
@@ -157,7 +157,7 @@ Node<entt::entity>* LevelTree::GetRoot()
 }
 void LevelTree::CleanTree()
 {
-	auto& entities = GETSYSTEM(Entities);
+	auto& entities = ROSE_GETSYSTEM(Entities);
 	for (auto& node : nodesMap) {
 		std::vector<Node<entt::entity>*> remove;
 		for (auto child : node.second->children) {
@@ -172,7 +172,7 @@ void LevelTree::CleanTree()
 }
 entt::entity LevelTree::GetChild(entt::entity entity, const std::string& name)
 {
-	auto& registry = GETSYSTEM(Entities).GetRegistry();
+	auto& registry = ROSE_GETSYSTEM(Entities).GetRegistry();
 	if (!registry.valid(entity)) {
 		return NoEntity();
 	}

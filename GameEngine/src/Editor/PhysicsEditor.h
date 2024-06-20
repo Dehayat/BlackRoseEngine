@@ -10,8 +10,8 @@
 class PhysicsEditor :public IComponentEditor {
 public:
 	void Editor(entt::entity entity) {
-		auto& registry = GETSYSTEM(Entities).GetRegistry();
-		auto& physics = GETSYSTEM(PhysicsSystem);
+		auto& registry = ROSE_GETSYSTEM(Entities).GetRegistry();
+		auto& physics = ROSE_GETSYSTEM(PhysicsSystem);
 		auto& trx = registry.get<TransformComponent>(entity);
 		auto& phys = registry.get<PhysicsBodyComponent>(entity);
 		physics.CopyTransformToBody(phys, trx);

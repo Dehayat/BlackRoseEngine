@@ -10,13 +10,13 @@
 
 Entities::Entities()
 {
-	CREATESYSTEM(entt::registry);
+	ROSE_CREATESYSTEM(entt::registry);
 	gen = std::mt19937_64(rd());
 }
 
 entt::registry& Entities::GetRegistry()
 {
-	return GETSYSTEM(entt::registry);
+	return ROSE_GETSYSTEM(entt::registry);
 }
 
 entt::entity Entities::GetEntity(Guid guid)

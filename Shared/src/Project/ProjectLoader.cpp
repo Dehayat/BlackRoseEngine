@@ -42,8 +42,6 @@ Project* ProjectLoader::LoadProject(const std::string& fileName)
 	for (auto& pkg : loadedProject->GetPkgFiles()) {
 		assetStore->LoadPackage(pkg);
 	}
-
-	//TODO: load start level
 	return loadedProject;
 }
 
@@ -72,7 +70,6 @@ void ProjectLoader::SaveProject()
 void ProjectLoader::UnloadProject()
 {
 	if (loadedProject != nullptr) {
-		//TODO: unload level
 		assetStore->UnloadAllAssets();
 		delete loadedProject;
 		ROSE_LOG("Project %s unloaded", loadedProjectPath.c_str());

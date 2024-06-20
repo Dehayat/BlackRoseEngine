@@ -35,17 +35,38 @@ Game::Game() {
 }
 
 Game::~Game() {
+
+	ROSE_DESTROYSYSTEM(Editor);
+
+	ROSE_DESTROYSYSTEM(PhysicsSystem, 0, -10);
+	ROSE_DESTROYSYSTEM(TransformSystem);
+	ROSE_DESTROYSYSTEM(ScriptSystem);
+	ROSE_DESTROYSYSTEM(EntityEventSystem);
+	ROSE_DESTROYSYSTEM(AnimationPlayer);
+	ROSE_DESTROYSYSTEM(RendererSystem);
+	ROSE_DESTROYSYSTEM(InputSystem);
+	ROSE_DESTROYSYSTEM(TimeSystem);
+	ROSE_DESTROYSYSTEM(LevelTree);
+
+	ROSE_DESTROYSYSTEM(ProjectLoader);
+	ROSE_DESTROYSYSTEM(AssetStore);
+	ROSE_DESTROYSYSTEM(LevelLoader);
+	ROSE_DESTROYSYSTEM(Entities);
+	ROSE_DESTROYSYSTEM(ReflectionSystem);
+	ROSE_DESTROYSYSTEM(FileDialog);
+	ROSE_DESTROYSYSTEM(SdlContainer, 1200, (float)1200 * 9 / 16);
+
 	ROSE_LOG("Game destrcuted");
 }
 
 void Game::SetupBaseSystems() {
-	ROSE_CREATESYSTEM(FileDialog);
 	ROSE_CREATESYSTEM(SdlContainer, 1200, (float)1200 * 9 / 16);
-	ROSE_CREATESYSTEM(ProjectLoader);
-	ROSE_CREATESYSTEM(LevelLoader);
-	ROSE_CREATESYSTEM(Entities);
-	ROSE_CREATESYSTEM(AssetStore);
+	ROSE_CREATESYSTEM(FileDialog);
 	ROSE_CREATESYSTEM(ReflectionSystem);
+	ROSE_CREATESYSTEM(Entities);
+	ROSE_CREATESYSTEM(LevelLoader);
+	ROSE_CREATESYSTEM(AssetStore);
+	ROSE_CREATESYSTEM(ProjectLoader);
 }
 
 void Game::SetupLowLevelSystems()
@@ -110,7 +131,7 @@ void Game::Update()
 #endif
 	if (exitGame) {
 		isRunning = false;
-}
+	}
 #ifdef _EDITOR
 	ROSE_GETSYSTEM(Editor).Update();
 	bool isGameRunning = ROSE_GETSYSTEM(Editor).IsGameRunning();

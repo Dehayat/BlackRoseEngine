@@ -5,8 +5,7 @@ private:
 	bool isRunning;
 	void SetupBaseSystems();
 	void SetupLowLevelSystems();
-	void LoadAssets();
-	void LoadLevel();
+	void LoadProject();
 	void Setup();
 	void Update();
 	void Render();

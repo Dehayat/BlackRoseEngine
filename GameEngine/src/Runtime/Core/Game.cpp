@@ -84,22 +84,16 @@ void Game::Run()
 
 void Game::Setup()
 {
-	LoadAssets();
-	LoadLevel();
+	LoadProject();
 	ROSE_GETSYSTEM(RendererSystem).InitLoaded();
 #ifdef _EDITOR
 	ROSE_GETSYSTEM(Editor).Reset();
 #endif
 }
 
-void Game::LoadAssets()
+void Game::LoadProject()
 {
-	ROSE_GETSYSTEM(ProjectLoader).LoadProject("p.pro");
-}
-
-void Game::LoadLevel()
-{
-	auto project = ROSE_GETSYSTEM(ProjectLoader).GetCurrentProject();
+	auto project = ROSE_GETSYSTEM(ProjectLoader).LoadProject("p.pro");
 	auto startLevelIndex = project->GetStartLevel();
 	if (startLevelIndex != -1) {
 		LevelLoader& levelLoader = ROSE_GETSYSTEM(LevelLoader);

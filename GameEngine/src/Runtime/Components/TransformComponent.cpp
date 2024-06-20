@@ -4,7 +4,7 @@
 
 #include "Core/Systems.h"
 
-#include "Debugging/Logger.h"
+#include "Core/Log.h"
 
 using namespace glm;
 

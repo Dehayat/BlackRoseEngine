@@ -2,17 +2,17 @@
 
 #include "Events/EntityEvent.h"
 
-#include "Debugging/Logger.h"
+#include "Core/Log.h"
 
 class Script {
 public:
 	virtual void Setup(entt::entity owner) {
-		//Logger::Log("Setup Script");
+		//ROSE_LOG("Setup Script");
 	}
 	virtual void Update(entt::entity owner) {
-		//Logger::Log("Update Script");
+		//ROSE_LOG("Update Script");
 	}
 	virtual void OnEvent(entt::entity owner, const EntityEvent& entityEvent) {
-		//Logger::Log(entityEvent.name);
+		//ROSE_LOG(entityEvent.name);
 	}
 };

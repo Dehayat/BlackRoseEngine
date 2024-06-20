@@ -9,7 +9,7 @@
 
 #include "Physics/CollisionListener.h"
 
-#include "Debugging/Logger.h"
+#include "Core/Log.h"
 
 
 PhysicsSystem::PhysicsSystem(float gravityX, float gravityY)
@@ -84,13 +84,13 @@ void PhysicsSystem::PhysicsBodyDestroyed(entt::registry& registry, entt::entity 
 }
 void PhysicsSystem::CopyTransformToBody(PhysicsBodyComponent& phys, TransformComponent& trx)
 {
-	//Logger::Log("PosX: " + std::to_string(trx.globalPosition.x));
-	//Logger::Log("PosY: " + std::to_string(trx.globalPosition.y));
-	//Logger::Log("Rot: " + std::to_string(trx.globalRotation));
+	//ROSE_LOG("PosX: " + std::to_string(trx.globalPosition.x));
+	//ROSE_LOG("PosY: " + std::to_string(trx.globalPosition.y));
+	//ROSE_LOG("Rot: " + std::to_string(trx.globalRotation));
 
-	//Logger::Log("->PosX: " + std::to_string(phys.body->GetPosition().x));
-	//Logger::Log("->PosY: " + std::to_string(phys.body->GetPosition().y));
-	//Logger::Log("->Rot: " + std::to_string(glm::degrees(phys.body->GetAngle())));
+	//ROSE_LOG("->PosX: " + std::to_string(phys.body->GetPosition().x));
+	//ROSE_LOG("->PosY: " + std::to_string(phys.body->GetPosition().y));
+	//ROSE_LOG("->Rot: " + std::to_string(glm::degrees(phys.body->GetAngle())));
 
 	auto globalScale = glm::abs(trx.globalScale);
 	if (globalScale.x < 0.01)
@@ -119,13 +119,13 @@ void PhysicsSystem::CopyBodyToTransform(PhysicsBodyComponent& phys, TransformCom
 	trx.UpdateLocals();
 	trx.UpdateGlobals();
 
-	//Logger::Log("PosX: " + std::to_string(trx.globalPosition.x));
-	//Logger::Log("PosY: " + std::to_string(trx.globalPosition.y));
-	//Logger::Log("Rot: " + std::to_string(trx.globalRotation));
+	//ROSE_LOG("PosX: " + std::to_string(trx.globalPosition.x));
+	//ROSE_LOG("PosY: " + std::to_string(trx.globalPosition.y));
+	//ROSE_LOG("Rot: " + std::to_string(trx.globalRotation));
 
-	//Logger::Log("->PosX: " + std::to_string(phys.body->GetPosition().x));
-	//Logger::Log("->PosY: " + std::to_string(phys.body->GetPosition().y));
-	//Logger::Log("->Rot: " + std::to_string(glm::degrees(phys.body->GetAngle())));
+	//ROSE_LOG("->PosX: " + std::to_string(phys.body->GetPosition().x));
+	//ROSE_LOG("->PosY: " + std::to_string(phys.body->GetPosition().y));
+	//ROSE_LOG("->Rot: " + std::to_string(glm::degrees(phys.body->GetAngle())));
 }
 void PhysicsSystem::Update()
 {
@@ -167,7 +167,7 @@ void PhysicsSystem::EnableDebug(bool enable)
 {
 	if (debugDrawer == nullptr)
 	{
-		Logger::Error("No Physics Debug Drawer attached");
+		ROSE_ERR("No Physics Debug Drawer attached");
 	}
 	else {
 		drawDebug = enable;

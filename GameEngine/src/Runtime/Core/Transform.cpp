@@ -10,7 +10,7 @@
 
 #include "Core/Systems.h"
 
-#include "Debugging/Logger.h"
+#include "Core/Log.h"
 
 TransformSystem::TransformSystem()
 {
@@ -92,7 +92,7 @@ void TransformSystem::InitDebugDrawer()
 void TransformSystem::EnableDebug(bool enable)
 {
 	if (debugDrawer == nullptr) {
-		Logger::Error("No Transform Debug Drawer attached");
+		ROSE_ERR("No Transform Debug Drawer attached");
 	}
 	else {
 		drawDebug = enable;

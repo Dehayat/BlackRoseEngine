@@ -4,7 +4,7 @@
 
 #include "Core/Transform.h"
 
-#include "Debugging/Logger.h"
+#include "Core/Log.h"
 
 LevelTree::LevelTree() {
 	root = new Node<entt::entity>(NoEntity());
@@ -16,7 +16,7 @@ LevelTree::~LevelTree() {
 void LevelTree::InsertEntity(entt::entity entity)
 {
 	if (nodesMap.find(entity) != nodesMap.end()) {
-		Logger::Error("trying to add entity that already exists in levelTree");
+		ROSE_ERR("trying to add entity that already exists in levelTree");
 		return;
 	}
 	auto& entities = ROSE_GETSYSTEM(Entities);
@@ -52,7 +52,7 @@ Node<entt::entity>* LevelTree::TryGetParent(TransformComponent& trx)
 	}
 	if (entities.EntityExists(trx.parent)) {
 		if (nodesMap.find(trx.parent) != nodesMap.end()) {
-			Logger::Log("parent of new entity not found in levelTree");
+			ROSE_LOG("parent of new entity not found in levelTree");
 			return nodesMap[trx.parent];
 		}
 	}
@@ -63,7 +63,7 @@ void LevelTree::ConnectWaitingChildren(Node<entt::entity>* parentNode, Guid pare
 	auto& entities = ROSE_GETSYSTEM(Entities);
 	auto& registry = entities.GetRegistry();
 	if (waitingForParent.find(parentGuid) != waitingForParent.end()) {
-		Logger::Log("found parent");
+		ROSE_LOG("found parent");
 		for (auto child : waitingForParent[parentGuid]) {
 			parentNode->AddChild(child);
 			auto& childTrx = registry.get<TransformComponent>(child->element);
@@ -89,7 +89,7 @@ void LevelTree::UpdateChildrenRecursive(entt::registry& registry, Node<entt::ent
 void LevelTree::TransformDestroyed(entt::registry& registry, entt::entity entity)
 {
 	if (nodesMap.find(entity) == nodesMap.end()) {
-		Logger::Error("trying to delete entity that doesnt exist in levelTree");
+		ROSE_ERR("trying to delete entity that doesnt exist in levelTree");
 		return;
 	}
 	auto node = nodesMap[entity];
@@ -111,7 +111,7 @@ void LevelTree::RemoveParent(entt::entity entity)
 		childTrx.hasParent = false;
 		TransformSystem::MoveTransformToWorldSpace(childTrx);
 		root->AddChild(nodesMap[entity]);
-		Logger::Log("removing parent");
+		ROSE_LOG("removing parent");
 	}
 }
 bool LevelTree::TrySetParent(entt::entity child, entt::entity parent)
@@ -128,7 +128,7 @@ bool LevelTree::TrySetParent(entt::entity child, entt::entity parent)
 	auto node = nodesMap[child];
 	nodesMap[parent]->AddChild(node);
 	TransformSystem::MoveTransformToParentSpace(childTrx, parentTrx);
-	Logger::Log("setting parent");
+	ROSE_LOG("setting parent");
 	return true;
 }
 bool LevelTree::IsChildOf(entt::entity entity, entt::entity child) {

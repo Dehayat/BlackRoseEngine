@@ -19,7 +19,7 @@
 #include "Components/AnimationComponent.h"
 #include "Components/ScriptComponent.h"
 
-#include "Debugging/Logger.h"
+#include "Core/Log.h"
 
 
 LevelLoader::LevelLoader()
@@ -33,7 +33,7 @@ void LevelLoader::LoadLevel(const std::string& fileName)
 	auto& registry = ROSE_GETSYSTEM(Entities).GetRegistry();
 	auto fileHandle = FileResource(fileName);
 	if (fileHandle.file == nullptr) {
-		Logger::Error("File" + fileName + " not found");
+		ROSE_ERR("File %s not found", fileName.c_str());
 		return;
 	}
 	std::string fileString = std::string("\0", SDL_RWsize(fileHandle.file));
@@ -107,7 +107,7 @@ void LevelLoader::SaveLevel(const std::string& fileName)
 	entt::registry& registry = entities.GetRegistry();
 	auto fileHandle = FileResource(fileName, "w+");
 	if (fileHandle.file == nullptr) {
-		Logger::Error("Couldnt create file " + fileName);
+		ROSE_ERR("Couldnt create file %s" ,fileName.c_str());
 		return;
 	}
 	auto tree = ryml::Tree();

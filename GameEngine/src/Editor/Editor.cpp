@@ -93,7 +93,7 @@ void Editor::UpdateViewportControls()
 	if (selectedTool == Tools::CreateEntity) {
 		auto mousePos = glm::vec3(input.GetMousePosition(), 1) * gameRenderer.GetScreenToWorldMatrix();
 		if (input.GetMouseButton(LEFT_BUTTON).justPressed) {
-			Logger::Log("entity created");
+			ROSE_LOG("entity created");
 			createdEntity = entities.CreateEntity();
 			levelTreeEditor.SelectEntity(createdEntity);
 			registry.emplace<TransformComponent>(createdEntity, glm::vec2(mousePos.x, mousePos.y), glm::vec2(1, 1), 0);

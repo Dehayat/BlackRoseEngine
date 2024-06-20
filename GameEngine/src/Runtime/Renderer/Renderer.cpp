@@ -11,7 +11,7 @@
 #include "Components/CameraComponent.h"
 
 
-#include "Debugging/Logger.h"
+#include "Core/Log.h"
 
 RendererSystem::RendererSystem()
 {
@@ -53,7 +53,7 @@ void RendererSystem::Render()
 	if (camPos == nullptr) {
 		auto view = registry.view<CameraComponent, TransformComponent>();
 		for (auto entity : view) {
-			Logger::Error("No Starting Camera Assigned");
+			ROSE_ERR("No Starting Camera Assigned");
 			SetCamera(entity);
 			continue;
 		}
@@ -63,7 +63,7 @@ void RendererSystem::Render()
 		camHeight = registry.get<CameraComponent>(camera).height;
 	}
 	else {
-		Logger::Error("No Camera Found");
+		ROSE_ERR("No Camera Found");
 		return;
 	}
 	auto camToWorldMatrix = glm::mat3(

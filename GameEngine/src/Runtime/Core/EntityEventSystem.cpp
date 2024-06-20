@@ -10,7 +10,7 @@
 
 #include "Components/ScriptComponent.h"
 
-#include "Debugging/Logger.h"
+#include "Core/Log.h"
 
 void EntityEventSystem::Update()
 {

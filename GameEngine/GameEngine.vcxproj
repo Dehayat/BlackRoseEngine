@@ -45,7 +45,6 @@
     <ClInclude Include="src\Runtime\Levels\LevelLoader.h" />
     <ClInclude Include="src\Runtime\Core\TimeSystem.h" />
     <ClInclude Include="src\Runtime\Core\Transform.h" />
-    <ClInclude Include="src\Runtime\Debugging\Logger.h" />
     <ClInclude Include="src\Runtime\Input\InputSystem.h" />
     <ClInclude Include="src\Runtime\Physics\CollisionListener.h" />
     <ClInclude Include="src\Runtime\Physics\Physics.h" />
@@ -69,7 +68,6 @@
     <ClCompile Include="src\Runtime\Core\Main.cpp" />
     <ClCompile Include="src\Runtime\Core\TimeSystem.cpp" />
     <ClCompile Include="src\Runtime\Core\Transform.cpp" />
-    <ClCompile Include="src\Runtime\Debugging\Logger.cpp" />
     <ClCompile Include="src\Runtime\Input\InputSystem.cpp" />
     <ClCompile Include="src\Runtime\Levels\LevelLoader.cpp" />
     <ClCompile Include="src\Runtime\Physics\CollisionListener.cpp" />

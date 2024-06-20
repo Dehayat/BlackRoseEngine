@@ -38,10 +38,10 @@ public:
 class Animation :public Asset {
 	int spriteFrameWidth;
 	int spriteFrameHeight;
-	std::string texture;
-	bool isLooping;
 
 public:
+	std::string texture;
+	bool isLooping;
 	std::vector<Frame*> frames;
 	std::vector<AnimationEventData*> animationEvents;
 

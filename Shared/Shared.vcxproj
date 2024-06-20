@@ -57,15 +57,15 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <PublicIncludeDirectories>C:\Users\ciboc\OneDrive\Documents\Study\From\BlackRoseEngine\Shared\include;$(PublicIncludeDirectories)</PublicIncludeDirectories>
+    <PublicIncludeDirectories>C:\Users\ciboc\OneDrive\Documents\Study\From\BlackRoseEngine\Shared\src;$(PublicIncludeDirectories)</PublicIncludeDirectories>
     <AllProjectIncludesArePublic>false</AllProjectIncludesArePublic>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Editor|x64'">
-    <PublicIncludeDirectories>C:\Users\ciboc\OneDrive\Documents\Study\From\BlackRoseEngine\Shared\include;$(PublicIncludeDirectories)</PublicIncludeDirectories>
+    <PublicIncludeDirectories>C:\Users\ciboc\OneDrive\Documents\Study\From\BlackRoseEngine\Shared\src;$(PublicIncludeDirectories)</PublicIncludeDirectories>
     <AllProjectIncludesArePublic>false</AllProjectIncludesArePublic>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <PublicIncludeDirectories>C:\Users\ciboc\OneDrive\Documents\Study\From\BlackRoseEngine\Shared\include;$(PublicIncludeDirectories)</PublicIncludeDirectories>
+    <PublicIncludeDirectories>C:\Users\ciboc\OneDrive\Documents\Study\From\BlackRoseEngine\Shared\src;$(PublicIncludeDirectories)</PublicIncludeDirectories>
     <AllProjectIncludesArePublic>false</AllProjectIncludesArePublic>
   </PropertyGroup>
   <PropertyGroup Label="Vcpkg">
@@ -148,22 +148,6 @@
     </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="include\AssetPipline\AnimationAsset.h" />
-    <ClInclude Include="include\AssetPipline\AnimationImporter.h" />
-    <ClInclude Include="include\AssetPipline\Asset.h" />
-    <ClInclude Include="include\AssetPipline\AssetPackage.h" />
-    <ClInclude Include="include\AssetPipline\AssetStore.h" />
-    <ClInclude Include="include\AssetPipline\ScriptAsset.h" />
-    <ClInclude Include="include\AssetPipline\TextureAsset.h" />
-    <ClInclude Include="include\Core\Assert.h" />
-    <ClInclude Include="include\Core\FileResource.h" />
-    <ClInclude Include="include\Core\Guid.h" />
-    <ClInclude Include="include\Core\Log.h" />
-    <ClInclude Include="include\Core\SdlContainer.h" />
-    <ClInclude Include="include\Core\Systems.h" />
-    <ClInclude Include="include\FileDialog.h" />
-    <ClInclude Include="include\Project\Project.h" />
-    <ClInclude Include="include\Reflection\Reflection.h" />
     <ClInclude Include="src\AssetPipline\AnimationAsset.h" />
     <ClInclude Include="src\AssetPipline\AnimationImporter.h" />
     <ClInclude Include="src\AssetPipline\Asset.h" />

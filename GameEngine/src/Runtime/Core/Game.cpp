@@ -8,6 +8,7 @@
 #include "Core/SdlContainer.h"
 #include "AssetPipline/AssetStore.h"
 #include "Core/Entity.h"
+#include "Project/ProjectLoader.h"
 #include "Levels/LevelLoader.h"
 
 #include "Core/Transform.h"
@@ -40,6 +41,7 @@ Game::~Game() {
 void Game::SetupBaseSystems() {
 	ROSE_CREATESYSTEM(FileDialog);
 	ROSE_CREATESYSTEM(SdlContainer, 1200, (float)1200 * 9 / 16);
+	ROSE_CREATESYSTEM(ProjectLoader);
 	ROSE_CREATESYSTEM(LevelLoader);
 	ROSE_CREATESYSTEM(Entities);
 	ROSE_CREATESYSTEM(AssetStore);
@@ -92,14 +94,17 @@ void Game::Setup()
 
 void Game::LoadAssets()
 {
-	AssetStore& assetStore = ROSE_GETSYSTEM(AssetStore);
-	assetStore.LoadPackage("assets/Packages/a.pkg");
+	ROSE_GETSYSTEM(ProjectLoader).LoadProject("p.pro");
 }
 
 void Game::LoadLevel()
 {
-	LevelLoader& levelLoader = ROSE_GETSYSTEM(LevelLoader);
-	levelLoader.LoadLevel("wonder/level.yaml");
+	auto project = ROSE_GETSYSTEM(ProjectLoader).GetCurrentProject();
+	auto startLevelIndex = project->GetStartLevel();
+	if (startLevelIndex != -1) {
+		LevelLoader& levelLoader = ROSE_GETSYSTEM(LevelLoader);
+		levelLoader.LoadLevel(project->GetLevelFile(startLevelIndex));
+	}
 }
 
 void Game::Update()
@@ -111,7 +116,7 @@ void Game::Update()
 #endif
 	if (exitGame) {
 		isRunning = false;
-	}
+}
 #ifdef _EDITOR
 	ROSE_GETSYSTEM(Editor).Update();
 	bool isGameRunning = ROSE_GETSYSTEM(Editor).IsGameRunning();

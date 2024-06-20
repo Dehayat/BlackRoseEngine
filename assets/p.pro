@@ -1,3 +1,5 @@
 Packages:
   - assets/Packages/a.pkg
-Levels: []
+Levels:
+  - wonder/level.yaml
+StartLevel: 0

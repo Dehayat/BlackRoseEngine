@@ -1,5 +1,7 @@
 #include "Project.h"
 
+#include <set>
+
 #include <ryml/ryml_std.hpp>
 
 #include "../Core/Log.h"
@@ -37,21 +39,29 @@ Project::Project()
 
 void Project::Serialize(ryml::NodeRef& node)
 {
+	std::set<std::string> used;
 	node |= ryml::MAP;
 	auto pkgs = node.append_child();
 	pkgs.set_key("Packages");
 	pkgs |= ryml::SEQ;
 	for (auto& pkg : this->pksFiles) {
-		auto child = pkgs.append_child();
-		child << pkg;
+		if (used.find(pkg) == used.end()) {
+			auto child = pkgs.append_child();
+			child << pkg;
+			used.insert(pkg);
+		}
 	}
+	used.clear();
 
 	auto levels = node.append_child();
 	levels.set_key("Levels");
 	levels |= ryml::SEQ;
 	for (auto& level : this->levelFiles) {
-		auto child = levels.append_child();
-		child << level;
+		if (used.find(level) == used.end()) {
+			auto child = levels.append_child();
+			child << level;
+			used.insert(level);
+		}
 	}
 	if (startLevel != -1) {
 		node["StartLevel"] << startLevel;

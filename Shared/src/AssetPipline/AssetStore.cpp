@@ -102,12 +102,6 @@ void AssetStore::LoadPackage(const std::string& filePath)
 				AddTexture(metaData->name, assetFile->filePath, metaData->ppu);
 				break;
 			}
-			case AssetType::Animation:
-			{
-				auto metaData = (AnimationMetaData*)(assetFile->metaData);
-				LoadAnimation(metaData->name, assetFile->filePath);
-				break;
-			}
 			case AssetType::Script:
 			{
 				auto metaData = (AssetMetaData*)(assetFile->metaData);

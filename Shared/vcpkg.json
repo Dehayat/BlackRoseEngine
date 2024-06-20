@@ -5,10 +5,8 @@
     "sdl2",
     "glm",
     "entt",
-    "box2d",
     "sdl2-gfx",
     "ryml",
-    "sol2",
     "nativefiledialog",
     {
       "name": "imgui",

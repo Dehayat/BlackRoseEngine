@@ -11,26 +11,14 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="AnimationAsset.cpp" />
-    <ClCompile Include="AssetStore\AssetHandle.cpp" />
-    <ClCompile Include="Debugging\Logger.cpp" />
     <ClCompile Include="Editor.cpp" />
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="Main.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AssetManager.h" />
-    <ClInclude Include="AssetStore\AnimationAsset.h" />
-    <ClInclude Include="AssetStore\AssetHandle.h" />
-    <ClInclude Include="AssetStore\AssetPackage.h" />
-    <ClInclude Include="AssetStore\TextureAsset.h" />
-    <ClInclude Include="Debugging\Logger.h" />
     <ClInclude Include="Editor.h" />
-    <ClInclude Include="Entity.h" />
-    <ClInclude Include="FileResource.h" />
     <ClInclude Include="Game.h" />
-    <ClInclude Include="ScriptAsset.h" />
-    <ClInclude Include="Systems.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="imgui.ini" />

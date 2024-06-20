@@ -1,4 +1,5 @@
 #pragma once
+#include <string>
 
 enum class AssetType {
 	Empty,
@@ -8,7 +9,9 @@ enum class AssetType {
 };
 
 class Asset {
-
+public:
+	static std::string GetAssetTypeName(AssetType type);
+	static AssetType GetAssetFileType(const std::string& file);
 };
 
 class AssetHandle {

@@ -9,21 +9,21 @@
 
 #include "Core/SdlContainer.h"
 
-#include "Systems.h"
+#include "Core/Systems.h"
 
 #include "AssetManager.h"
 
 Editor::Editor()
 {
-	CREATESYSTEM(AssetManager);
-	CREATESYSTEM(FileDialog);
+	ROSE_CREATESYSTEM(AssetManager);
+	ROSE_CREATESYSTEM(FileDialog);
 	SetupImgui();
 	isGameRunning = false;
 }
 
 void Editor::SetupImgui()
 {
-	auto& sdl = GETSYSTEM(SdlContainer);
+	auto& sdl = ROSE_GETSYSTEM(SdlContainer);
 	SDL_RenderSetVSync(sdl.GetRenderer(), 1);
 
 	window = sdl.GetWindow();
@@ -81,7 +81,7 @@ void Editor::RenderEditor()
 
 	int w, h;
 	SDL_GetWindowSize(window, &w, &h);
-	auto& assetManager = GETSYSTEM(AssetManager);
+	auto& assetManager = ROSE_GETSYSTEM(AssetManager);
 	ImGui::Begin("Asset Manager", nullptr, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoCollapse);
 	ImGui::SetWindowSize(ImVec2(w / 2, h));
 	ImGui::SetWindowPos(ImVec2(0, 0));

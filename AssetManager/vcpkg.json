@@ -2,6 +2,7 @@
     "name": "rose",
     "version": "0.1.0",
   "dependencies": [
+    "glm",
     "sdl2",
     "entt",
     "sdl2-gfx",
@@ -13,6 +14,12 @@
         "sdl2-renderer-binding",
         "opengl3-binding",
         "sdl2-binding"
+      ]
+    },
+    {
+      "name": "sdl2-image",
+      "features": [
+        "libjpeg-turbo"
       ]
     }
   ]

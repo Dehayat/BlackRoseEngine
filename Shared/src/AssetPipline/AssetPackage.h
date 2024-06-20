@@ -66,12 +66,6 @@ struct TextureMetaData :AssetMetaData {
 	}
 };
 
-struct AnimationMetaData :AssetMetaData {
-	AnimationMetaData() {}
-	AnimationMetaData(ryml::NodeRef& node) :AssetMetaData(node) {
-	}
-};
-
 struct AssetFile {
 	Guid guid;
 	AssetFile(AssetType assetType = AssetType::Empty) {
@@ -82,9 +76,6 @@ struct AssetFile {
 		{
 		case AssetType::Texture:
 			metaData = new TextureMetaData();
-			break;
-		case AssetType::Animation:
-			metaData = new AnimationMetaData();
 			break;
 		default:
 			metaData = new AssetMetaData();
@@ -107,9 +98,6 @@ struct AssetFile {
 		{
 		case AssetType::Texture:
 			metaData = new TextureMetaData(node);
-			break;
-		case AssetType::Animation:
-			metaData = new AnimationMetaData(node);
 			break;
 		default:
 			metaData = new AssetMetaData(node);

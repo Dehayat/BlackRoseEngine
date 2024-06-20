@@ -5,11 +5,25 @@
 
 #include <imgui.h>
 
-#include <FileDialog.h>
+#include "FileDialog.h"
+#include "Core/Log.h"
+#include "Core/Guid.h"
 
-#include "AssetStore/AssetPackage.h"
+#include "AssetPipline/AssetPackage.h"
 
-#include "Debugging/Logger.h"
+const int FILE_PATH_SIZE = 41;
+
+static int ResizeStringCallback(ImGuiInputTextCallbackData* data)
+{
+	if (data->EventFlag == ImGuiInputTextFlags_CallbackResize)
+	{
+		auto str = (std::string*)(data->UserData);
+		str->resize(data->BufTextLen);
+	}
+	return 0;
+}
+
+
 
 static std::string Label(const std::string& label, Guid guid) {
 	return label + "##" + std::to_string(guid);
@@ -39,27 +53,27 @@ public:
 	void Render()
 	{
 		if (ImGui::Button("New Asset Package")) {
-			auto fileName = GETSYSTEM(FileDialog).SaveFile("pkg");
+			auto fileName = ROSE_GETSYSTEM(FileDialog).SaveFile("pkg");
 			if (fileName != "") {
 				assetPackages.push_back(new AssetPackage());
 			}
 		}
 		if (ImGui::Button("Open Asset Package")) {
-			auto fileName = GETSYSTEM(FileDialog).OpenFile("pkg");
+			auto fileName = ROSE_GETSYSTEM(FileDialog).OpenFile("pkg");
 			if (fileName != "") {
 
 				if (PackageIsLoaded(fileName)) {
-					Logger::Log("Asset package already Open");
+					ROSE_LOG("Asset package already Open");
 				}
 				else {
 					auto pkg = new AssetPackage();
 					if (pkg->Load(fileName)) {
 						assetPackages.push_back(pkg);
-						Logger::Log("Asset package Opened");
+						ROSE_LOG("Asset package Opened");
 					}
 					else {
 						delete pkg;
-						Logger::Log("Failed to open asset package " + std::string(fileName));
+						ROSE_LOG("Failed to open asset package %s", fileName.c_str());
 					}
 				}
 			}
@@ -77,7 +91,7 @@ public:
 				}
 				ImGui::SameLine();
 				if (ImGui::Button("Save As")) {
-					auto fileName = GETSYSTEM(FileDialog).SaveFile("pkg");
+					auto fileName = ROSE_GETSYSTEM(FileDialog).SaveFile("pkg");
 					if (fileName != "") {
 						package->filePath = fileName;
 						package->Save();
@@ -92,7 +106,7 @@ public:
 					delete package;
 				}
 				if (ImGui::Button("Add Asset")) {
-					auto fileName = GETSYSTEM(FileDialog).OpenFile("anim,lua,png,jpg");
+					auto fileName = ROSE_GETSYSTEM(FileDialog).OpenFile("anim,lua,png,jpg");
 					if (fileName != "") {
 						AddAssetToPackage(package, fileName);
 					}
@@ -103,10 +117,10 @@ public:
 					if (IsAssetSelected() && package->ContainsAsset(selectedAsset)) {
 						package->RemoveAsset(selectedAsset);
 						selectedAsset = nullptr;
-						Logger::Log("Asset removed from Package");
+						ROSE_LOG("Asset removed from Package");
 					}
 					else {
-						Logger::Log("Asset not found in Package");
+						ROSE_LOG("Asset not found in Package");
 					}
 				}
 				ImGui::PopStyleColor();
@@ -131,12 +145,51 @@ public:
 	{
 		auto assetType = Asset::GetAssetFileType(assetFileName);
 		auto asset = package->AddAsset(assetType);
-		asset->filePath = GETSYSTEM(FileDialog).GetRelativePath(std::filesystem::current_path().string(), assetFileName);
+		asset->filePath = ROSE_GETSYSTEM(FileDialog).GetRelativePath(std::filesystem::current_path().string(), assetFileName);
 	}
 	bool IsAssetSelected() {
 		return selectedAsset != nullptr;
 	}
+	void MetaDataEditor(AssetMetaData* metaData) {
+		if (metaData->name.capacity() < FILE_PATH_SIZE) {
+			metaData->name.reserve(FILE_PATH_SIZE);
+		}
+		ImGui::InputText("Name", &(metaData->name)[0], FILE_PATH_SIZE, ImGuiInputTextFlags_CallbackResize, ResizeStringCallback, &metaData->name);
+
+	}
+	void TextureMetaDataEditor(TextureMetaData* metaData) {
+		ImGui::InputInt("Pixels Per Unit", &metaData->ppu);
+	}
 	void RenderSelectedAsset() {
-		selectedAsset->Editor();
+		ImGui::PushID(selectedAsset->guid);
+		ImGui::LabelText("Guid", std::to_string(selectedAsset->guid).c_str());
+		ImGui::LabelText("File Path", selectedAsset->filePath.c_str());
+		if (ImGui::Button("Change Asset File")) {
+			auto fileName = ROSE_GETSYSTEM(FileDialog).OpenFile("anim,png,jpg,lua");
+			if (fileName != "") {
+				selectedAsset->filePath = ROSE_GETSYSTEM(FileDialog).GetRelativePath(std::filesystem::current_path().string(), fileName);
+				if (Asset::GetAssetFileType(selectedAsset->filePath) != selectedAsset->assetType) {
+					selectedAsset->assetType = Asset::GetAssetFileType(selectedAsset->filePath);
+					switch (selectedAsset->assetType)
+					{
+					case AssetType::Texture:
+						selectedAsset->metaData = new TextureMetaData();
+						break;
+					default:
+						selectedAsset->metaData = new AssetMetaData();
+						break;
+					}
+				}
+			}
+		}
+		ImGui::SeparatorText(Asset::GetAssetTypeName(selectedAsset->assetType).c_str());
+		MetaDataEditor(selectedAsset->metaData);
+		switch (selectedAsset->assetType)
+		{
+		case AssetType::Texture:
+			TextureMetaDataEditor((TextureMetaData*)selectedAsset->metaData);
+			break;
+		}
+		ImGui::PopID();
 	}
 };

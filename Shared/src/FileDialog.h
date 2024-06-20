@@ -10,4 +10,5 @@ public:
 	std::string OpenFile(const std::string& extension, const std::string& path = "");
 	std::string GetRelativePath(const std::string& root, const std::string& path);
 	std::string GetFileExtension(const std::string& fileName);
+	std::string GetFileDirectory(const std::string& fileName);
 };

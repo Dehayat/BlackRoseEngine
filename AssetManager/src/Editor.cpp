@@ -5,18 +5,18 @@
 
 #include <imgui_impl_sdl2.h>
 
-#include <FileDialog.h>
-
 #include "Core/SdlContainer.h"
 
 #include "Core/Systems.h"
 
+#include "ProjectManager.h"
 #include "AssetManager.h"
 
 Editor::Editor()
 {
+	ROSE_CREATESYSTEM(ProjectLoader);
+	ROSE_CREATESYSTEM(ProjectManager);
 	ROSE_CREATESYSTEM(AssetManager);
-	ROSE_CREATESYSTEM(FileDialog);
 	SetupImgui();
 	isGameRunning = false;
 }
@@ -40,6 +40,9 @@ void Editor::SetupImgui()
 
 Editor::~Editor()
 {
+	ROSE_DESTROYSYSTEM(ProjectLoader);
+	ROSE_DESTROYSYSTEM(AssetManager);
+	ROSE_DESTROYSYSTEM(ProjectManager);
 	CloseImgui();
 }
 
@@ -81,17 +84,29 @@ void Editor::RenderEditor()
 
 	int w, h;
 	SDL_GetWindowSize(window, &w, &h);
-	auto& assetManager = ROSE_GETSYSTEM(AssetManager);
-	ImGui::Begin("Asset Manager", nullptr, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoCollapse);
-	ImGui::SetWindowSize(ImVec2(w / 2, h));
+
+	auto& projectManager = ROSE_GETSYSTEM(ProjectManager);
+	ImGui::Begin("Project Manager", nullptr, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoCollapse);
+	ImGui::SetWindowSize(ImVec2(w / 3, h));
 	ImGui::SetWindowPos(ImVec2(0, 0));
-	assetManager.Render();
+	projectManager.Render();
 	ImGui::End();
 
-	if (assetManager.IsAssetSelected()) {
-		ImGui::Begin("Asset Editor", nullptr, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoCollapse);
-		ImGui::SetWindowSize(ImVec2(w / 2, h));
-		ImGui::SetWindowPos(ImVec2(w / 2, 0));
+	auto& assetManager = ROSE_GETSYSTEM(AssetManager);
+	if (projectManager.GetCurrentPackage() != nullptr)
+	{
+		ImGui::Begin("Package Manager", nullptr, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoCollapse);
+		ImGui::SetWindowSize(ImVec2(w / 3, h));
+		ImGui::SetWindowPos(ImVec2(w / 3, 0));
+		assetManager.Render();
+		ImGui::End();
+	}
+
+	if (assetManager.IsAssetSelected())
+	{
+		ImGui::Begin("Asset Manager", nullptr, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoCollapse);
+		ImGui::SetWindowSize(ImVec2(w / 3, h));
+		ImGui::SetWindowPos(ImVec2(w / 3 * 2, 0));
 		assetManager.RenderSelectedAsset();
 		ImGui::End();
 	}

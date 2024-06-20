@@ -6,4 +6,5 @@
 										entt::locator<SYSTEM>::emplace<SYSTEM>(__VA_ARGS__);	\
 									}															\
 									static_assert(true, "")
+#define ROSE_DESTROYSYSTEM(SYSTEM,...)	entt::locator<SYSTEM>::reset()
 #define ROSE_GETSYSTEM(SYSTEM) entt::locator<SYSTEM>::value()

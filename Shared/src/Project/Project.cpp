@@ -1,10 +1,13 @@
 #include "Project.h"
 
 #include <set>
+#include <filesystem>
 
 #include <ryml/ryml_std.hpp>
 
 #include "../Core/Log.h"
+#include "../Core/Systems.h"
+#include "../FileDialog.h"
 
 Project::Project(ryml::NodeRef& node)
 {
@@ -16,6 +19,7 @@ Project::Project(ryml::NodeRef& node)
 			std::string levelName;
 			child >> levelName;
 			AddLevel(levelName);
+			child = child.next_sibling();
 		}
 	}
 	if (node.has_child("Packages")) {
@@ -25,6 +29,7 @@ Project::Project(ryml::NodeRef& node)
 			std::string pkgName;
 			child >> pkgName;
 			AddPackage(pkgName);
+			child = child.next_sibling();
 		}
 	}
 	if (node.has_child("StartLevel")) {
@@ -70,17 +75,22 @@ void Project::Serialize(ryml::NodeRef& node)
 
 void Project::AddPackage(std::string file)
 {
-	pksFiles.push_back(file);
+	//TODO: change this so it leads to project path instead
+	auto relativePath = ROSE_GETSYSTEM(FileDialog).GetRelativePath(std::filesystem::current_path().string(), file);
+	pksFiles.push_back(relativePath);
 }
 
 void Project::RemovePackage(std::string file)
 {
-	pksFiles.remove(file);
+	auto relativePath = ROSE_GETSYSTEM(FileDialog).GetRelativePath(std::filesystem::current_path().string(), file);
+	pksFiles.remove(relativePath);
 }
 
 void Project::AddLevel(std::string file)
 {
-	levelFiles.push_back(file);
+	//TODO: change this so it leads to project path instead
+	auto relativePath = ROSE_GETSYSTEM(FileDialog).GetRelativePath(std::filesystem::current_path().string(), file);
+	levelFiles.push_back(relativePath);
 	if (startLevel == -1) {
 		startLevel = 0;
 	}
@@ -88,7 +98,8 @@ void Project::AddLevel(std::string file)
 
 void Project::RemoveLevel(std::string file)
 {
-	levelFiles.remove(file);
+	auto relativePath = ROSE_GETSYSTEM(FileDialog).GetRelativePath(std::filesystem::current_path().string(), file);
+	levelFiles.remove(relativePath);
 	if (levelFiles.empty()) {
 		startLevel = -1;
 	}

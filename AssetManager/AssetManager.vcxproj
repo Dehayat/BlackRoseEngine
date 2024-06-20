@@ -19,6 +19,7 @@
     <ClInclude Include="src\AssetManager.h" />
     <ClInclude Include="src\Editor.h" />
     <ClInclude Include="src\Game.h" />
+    <ClInclude Include="src\ProjectManager.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="imgui.ini" />

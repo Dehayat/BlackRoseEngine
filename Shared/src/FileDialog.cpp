@@ -67,4 +67,10 @@ std::string FileDialog::GetFileExtension(const std::string& fileName)
 	auto filePath = std::filesystem::path(fileName);
 	return filePath.extension().string();
 }
+std::string FileDialog::GetFileDirectory(const std::string& fileName)
+{
+	auto filePath = std::filesystem::path(fileName);
+	return filePath.parent_path().string();
+}
+
 

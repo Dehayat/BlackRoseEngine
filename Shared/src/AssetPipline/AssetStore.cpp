@@ -12,7 +12,6 @@
 
 #include "ScriptAsset.h"
 
-
 AssetStore::AssetStore()
 {
 }

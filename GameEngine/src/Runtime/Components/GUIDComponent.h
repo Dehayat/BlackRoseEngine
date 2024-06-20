@@ -2,6 +2,7 @@
 #include <string>
 
 #include "Core/Entity.h"
+#include "Core/Guid.h"
 #include "Reflection/Reflection.h"
 
 #include "Core/Systems.h"
@@ -13,7 +14,7 @@ struct GUIDComponent :IComponent {
 	Guid id;
 	std::string name;
 	GUIDComponent() {
-		this->id = ROSE_GETSYSTEM(Entities).GenerateGuid();
+		this->id = GuidGenerator::New();
 		name = "";
 	}
 	GUIDComponent(Guid id) {
@@ -22,7 +23,7 @@ struct GUIDComponent :IComponent {
 	}
 	GUIDComponent(ryml::NodeRef& node)
 	{
-		this->id = ROSE_GETSYSTEM(Entities).GenerateGuid();
+		this->id = GuidGenerator::New();
 		name = "";
 		if (node.has_child("id"))
 		{

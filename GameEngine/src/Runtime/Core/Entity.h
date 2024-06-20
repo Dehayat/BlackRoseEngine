@@ -1,10 +1,9 @@
 #pragma once
 #include <unordered_map>
-#include <random>
+#include "Core/Guid.h"
 
 #include <entt/entity/entity.hpp>
 
-typedef std::uint64_t Guid;
 typedef std::unordered_map <Guid, entt::entity> EntityMap;
 typedef std::unordered_map <entt::entity, Guid> GuidMap;
 
@@ -16,9 +15,6 @@ class Entities {
 private:
 	EntityMap allEntities;
 	GuidMap allEntityGuids;
-	std::random_device rd;
-	std::mt19937_64 gen;
-	std::uniform_int_distribution<Guid> dis;
 
 public:
 	Entities();
@@ -33,7 +29,4 @@ public:
 	entt::entity CreateEntity(Guid guid);
 	entt::entity CreateEntityWithoutGuidComponent(Guid guid);
 	void DestroyEntity(entt::entity entity);
-	Guid GenerateGuid() {
-		return dis(gen);
-	}
 };

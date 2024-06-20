@@ -8,6 +8,7 @@
 #include <entt/entt.hpp>
 
 #include "Core/Systems.h"
+#include "Core/Guid.h"
 #include "Core/FileResource.h"
 
 #include "Components/TransformComponent.h"
@@ -58,7 +59,7 @@ entt::entity LevelLoader::DeserializeEntity(entt::registry& registry, ryml::Node
 {
 	entt::entity entity;
 	auto& entities = ROSE_GETSYSTEM(Entities);
-	auto guid = entities.GenerateGuid();
+	auto guid = GuidGenerator::New();
 	if (node.has_child("Guid")) {
 		if (node["Guid"].is_map()) {
 			auto guidNode = node["Guid"];

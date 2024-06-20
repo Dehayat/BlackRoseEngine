@@ -11,7 +11,6 @@
 Entities::Entities()
 {
 	ROSE_CREATESYSTEM(entt::registry);
-	gen = std::mt19937_64(rd());
 }
 
 entt::registry& Entities::GetRegistry()
@@ -75,7 +74,7 @@ void Entities::AddEntity(Guid guid, entt::entity entity)
 
 entt::entity Entities::CreateEntity()
 {
-	auto guid = GenerateGuid();
+	auto guid = GuidGenerator::New();
 	return CreateEntity(guid);
 }
 entt::entity Entities::CreateEntity(Guid guid)

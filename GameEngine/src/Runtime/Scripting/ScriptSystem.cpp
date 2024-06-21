@@ -6,6 +6,7 @@
 
 #include "Core/Transform.h"
 #include "Core/TimeSystem.h"
+#include "Core/DisableSystem.h"
 
 #include "Core/Systems.h"
 
@@ -108,6 +109,10 @@ void ScriptSystem::Update()
 	auto dt = ROSE_GETSYSTEM(TimeSystem).GetdeltaTime();
 	for(auto entity : view)
 	{
+		if(!ROSE_GETSYSTEM(DisableSystem).IsEnabled(entity))
+		{
+			continue;
+		}
 		auto& scriptComponent = registry.get<ScriptComponent>(entity);
 		for(auto& script : scriptComponent.scripts)
 		{

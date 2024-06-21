@@ -18,10 +18,10 @@ public:
 		auto& disable = ROSE_GETSYSTEM(DisableSystem);
 		auto& trx = registry.get<TransformComponent>(entity);
 		auto& phys = registry.get<PhysicsBodyComponent>(entity);
-		if (disable.JustDisabled(entity)) {
+		if (!disable.IsEnabled(entity) && phys.body != nullptr) {
 			physics.RemoveBody(phys);
 		}
-		if (disable.JustEnabled(entity)) {
+		if (disable.IsEnabled(entity) && phys.body == nullptr) {
 			physics.AddBody(entity, phys);
 		}
 		if (phys.body != nullptr)

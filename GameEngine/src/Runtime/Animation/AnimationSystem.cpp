@@ -1,10 +1,9 @@
 #include "Animation/AnimationSystem.h"
 
-#include <entt/entt.hpp>
-
 #include "Core/Entity.h"
 #include "AssetPipline/AssetStore.h"
 #include "Core/TimeSystem.h"
+#include "Core/DisableSystem.h"
 
 #include "Events/EntityEventSystem.h"
 
@@ -27,15 +26,21 @@ void AnimationPlayer::Update() {
 	entt::registry& registry = entities.GetRegistry();
 	auto view = registry.view<AnimationComponent, SpriteComponent>();
 	for (auto entity : view) {
+		if (!ROSE_GETSYSTEM(DisableSystem).IsEnabled(entity))
+		{
+			continue;
+		}
 		auto& animationComponent = view.get<AnimationComponent>(entity);
 		auto& spriteComponent = view.get<SpriteComponent>(entity);
-		if (spriteComponent.sourceRect != nullptr) {
+		if (spriteComponent.sourceRect != nullptr)
+		{
 			delete spriteComponent.sourceRect;
 			spriteComponent.sourceRect = nullptr;
 		}
 		animationComponent.Update(dt);
 		auto animationHandle = assetStore.GetAsset(animationComponent.animation);
-		if (animationHandle.type != AssetType::Animation) {
+		if (animationHandle.type != AssetType::Animation)
+		{
 			continue;
 		}
 		auto animation = static_cast<Animation*>(animationHandle.asset);
@@ -44,11 +49,13 @@ void AnimationPlayer::Update() {
 		}
 		spriteComponent.sprite = animation->texture;
 		spriteComponent.sourceRect = new SDL_Rect(animation->GetSourceRect(animationComponent.currentFrame));
-		while (animationComponent.IsEventQueued()) {
+		while (animationComponent.IsEventQueued())
+		{
 			std::string eventName = animationComponent.PopEvent();
 			eventSystem.QueueEvent(EntityEvent(entity, eventName));
 		}
-		if (animationComponent.JustFinished()) {
+		if (animationComponent.JustFinished())
+		{
 			eventSystem.QueueEvent(EntityEvent(entity, "AnimationFinished"));
 		}
 	}

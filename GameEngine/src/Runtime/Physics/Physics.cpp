@@ -27,7 +27,7 @@ PhysicsSystem::PhysicsSystem(float gravityX, float gravityY)
 }
 PhysicsSystem::~PhysicsSystem()
 {
-	if (debugDrawer != nullptr)
+	if(debugDrawer != nullptr)
 	{
 		delete debugDrawer;
 	}
@@ -36,15 +36,13 @@ void PhysicsSystem::PhysicsBodyCreated(entt::registry& registry, entt::entity en
 {
 	auto& phys = registry.get<PhysicsBodyComponent>(entity);
 	auto& trx = registry.get<TransformComponent>(entity);
-	if (phys.isStatic)
+	if(phys.isStatic)
 	{
 		phys.bodyDef.type = b2_staticBody;
-	}
-	else if (phys.isSensor)
+	} else if(phys.isSensor)
 	{
 		phys.bodyDef.type = b2_dynamicBody;
-	}
-	else
+	} else
 	{
 		phys.bodyDef.type = b2_dynamicBody;
 	}
@@ -52,11 +50,11 @@ void PhysicsSystem::PhysicsBodyCreated(entt::registry& registry, entt::entity en
 
 	b2Body* body = GetWorld().CreateBody(&phys.bodyDef);
 	auto globalScale = glm::abs(trx.globalScale);
-	if (globalScale.x < 0.01)
+	if(globalScale.x < 0.01)
 	{
 		globalScale.x = 0.01;
 	}
-	if (globalScale.y < 0.01)
+	if(globalScale.y < 0.01)
 	{
 		globalScale.y = 0.01;
 	}
@@ -71,10 +69,11 @@ void PhysicsSystem::PhysicsBodyCreated(entt::registry& registry, entt::entity en
 	phys.body = body;
 	phys.body->GetUserData().pointer = (uintptr_t)entity;
 	phys.body->SetTransform(b2Vec2(trx.globalPosition.x, trx.globalPosition.y), glm::radians(trx.globalRotation));
-	if (phys.useGravity) {
+	if(phys.useGravity)
+	{
 		phys.body->SetGravityScale(1.0f);
-	}
-	else {
+	} else
+	{
 		phys.body->SetGravityScale(0.0f);
 	}
 }
@@ -94,16 +93,16 @@ void PhysicsSystem::CopyTransformToBody(PhysicsBodyComponent& phys, TransformCom
 	//ROSE_LOG("->Rot: " + std::to_string(glm::degrees(phys.body->GetAngle())));
 
 	auto globalScale = glm::abs(trx.globalScale);
-	if (globalScale.x < 0.01)
+	if(globalScale.x < 0.01)
 	{
 		globalScale.x = 0.01;
 	}
-	if (globalScale.y < 0.01)
+	if(globalScale.y < 0.01)
 	{
 		globalScale.y = 0.01;
 	}
 	auto newSize = vec2(phys.size.x * globalScale.x, phys.size.y * globalScale.y);
-	if (phys.globalSize != newSize)
+	if(phys.globalSize != newSize)
 	{
 		phys.body->DestroyFixture(&phys.body->GetFixtureList()[0]);
 		phys.globalSize = newSize;
@@ -130,14 +129,16 @@ void PhysicsSystem::CopyBodyToTransform(PhysicsBodyComponent& phys, TransformCom
 }
 void PhysicsSystem::RemoveBody(PhysicsBodyComponent& phys)
 {
-	if (phys.body != nullptr) {
+	if(phys.body != nullptr)
+	{
 		GetWorld().DestroyBody(phys.body);
 	}
 	phys.body = nullptr;
 }
 void PhysicsSystem::AddBody(entt::entity entity, PhysicsBodyComponent& phys)
 {
-	if (phys.body != nullptr) {
+	if(phys.body != nullptr)
+	{
 		return;
 	}
 	entt::registry& registry = ROSE_GETSYSTEM(Entities).GetRegistry();
@@ -148,10 +149,11 @@ void PhysicsSystem::AddBody(entt::entity entity, PhysicsBodyComponent& phys)
 	phys.body = body;
 	phys.body->GetUserData().pointer = (uintptr_t)entity;
 	phys.body->SetTransform(b2Vec2(trx.globalPosition.x, trx.globalPosition.y), glm::radians(trx.globalRotation));
-	if (phys.useGravity) {
+	if(phys.useGravity)
+	{
 		phys.body->SetGravityScale(1.0f);
-	}
-	else {
+	} else
+	{
 		phys.body->SetGravityScale(0.0f);
 	}
 }
@@ -160,17 +162,20 @@ void PhysicsSystem::Update()
 	Entities& entities = ROSE_GETSYSTEM(Entities);
 	entt::registry& registry = entities.GetRegistry();
 	auto phView = registry.view<PhysicsBodyComponent, TransformComponent>();
-	for (auto entity : phView)
+	for(auto entity : phView)
 	{
 		auto& pos = phView.get<TransformComponent>(entity);
 		auto& body = phView.get<PhysicsBodyComponent>(entity);
-		if (ROSE_GETSYSTEM(DisableSystem).JustDisabled(entity)) {
+		if(!ROSE_GETSYSTEM(DisableSystem).IsEnabled(entity) && body.body != nullptr)
+		{
 			RemoveBody(body);
 		}
-		if (!ROSE_GETSYSTEM(DisableSystem).IsEnabled(entity)) {
+		if(!ROSE_GETSYSTEM(DisableSystem).IsEnabled(entity))
+		{
 			continue;
 		}
-		if (ROSE_GETSYSTEM(DisableSystem).JustEnabled(entity)) {
+		if(ROSE_GETSYSTEM(DisableSystem).IsEnabled(entity) && body.body == nullptr)
+		{
 			AddBody(entity, body);
 		}
 		CopyTransformToBody(body, pos);
@@ -183,9 +188,10 @@ void PhysicsSystem::Update()
 
 	physicsWorld->Step(timeStep, velocityIterations, positionIterations);
 
-	for (auto entity : phView)
+	for(auto entity : phView)
 	{
-		if (!ROSE_GETSYSTEM(DisableSystem).IsEnabled(entity)) {
+		if(!ROSE_GETSYSTEM(DisableSystem).IsEnabled(entity))
+		{
 			continue;
 		}
 		auto& pos = phView.get<TransformComponent>(entity);
@@ -205,11 +211,11 @@ void PhysicsSystem::InitDebugDrawer()
 }
 void PhysicsSystem::EnableDebug(bool enable)
 {
-	if (debugDrawer == nullptr)
+	if(debugDrawer == nullptr)
 	{
 		ROSE_ERR("No Physics Debug Drawer attached");
-	}
-	else {
+	} else
+	{
 		drawDebug = enable;
 	}
 }
@@ -220,12 +226,13 @@ DebugDraw* PhysicsSystem::GetDebug()
 void PhysicsSystem::DebugRender(glm::mat3 viewMatrix)
 {
 	debugDrawer->SetMatrix(viewMatrix);
-	if (drawDebug) {
+	if(drawDebug)
+	{
 		physicsWorld->DebugDraw();
 	}
 }
 
-DebugDraw::DebugDraw() :matrix(1)
+DebugDraw::DebugDraw():matrix(1)
 {
 	SdlContainer& sdlRenderer = entt::locator<SdlContainer>::value();
 	this->renderer = sdlRenderer.GetRenderer();
@@ -241,14 +248,16 @@ void DebugDraw::DrawPolygon(const b2Vec2* vertices, int32 vertexCount, const b2C
 	std::unique_ptr<Sint16[]> vx(new Sint16[vertexCount]);
 	std::unique_ptr<Sint16[]> vy(new Sint16[vertexCount]);
 
-	for (int i = 0; i < vertexCount; i++) {
+	for(int i = 0; i < vertexCount; i++)
+	{
 		glm::vec3 pos = glm::vec3(vertices[i].x, vertices[i].y, 1);
 		pos = pos * matrix;
 		b2Vec2 nextVertex;
-		if (i == vertexCount - 1) {
+		if(i == vertexCount - 1)
+		{
 			nextVertex = vertices[0];
-		}
-		else {
+		} else
+		{
 			nextVertex = vertices[i + 1];
 		}
 		glm::vec3 nextPos = glm::vec3(vertices[i].x, vertices[i].y, 1);
@@ -264,14 +273,16 @@ void DebugDraw::DrawSolidPolygon(const b2Vec2* vertices, int32 vertexCount, cons
 	std::unique_ptr<Sint16[]> vx(new Sint16[vertexCount]);
 	std::unique_ptr<Sint16[]> vy(new Sint16[vertexCount]);
 
-	for (int i = 0; i < vertexCount; i++) {
+	for(int i = 0; i < vertexCount; i++)
+	{
 		glm::vec3 pos = glm::vec3(vertices[i].x, vertices[i].y, 1);
 		pos = pos * matrix;
 		b2Vec2 nextVertex;
-		if (i == vertexCount - 1) {
+		if(i == vertexCount - 1)
+		{
 			nextVertex = vertices[0];
-		}
-		else {
+		} else
+		{
 			nextVertex = vertices[i + 1];
 		}
 		glm::vec3 nextPos = glm::vec3(vertices[i].x, vertices[i].y, 1);

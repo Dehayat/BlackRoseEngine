@@ -1,7 +1,6 @@
 #pragma once
 #include <string>
 
-#include "Core/Entity.h"
 #include "Core/Guid.h"
 #include "Reflection/Reflection.h"
 

@@ -11,6 +11,7 @@
 
 #include "Components/ScriptComponent.h"
 #include "Components/AnimationComponent.h"
+#include "Components/GUIDComponent.h"
 
 ScriptSystem::ScriptSystem()
 {
@@ -19,46 +20,53 @@ ScriptSystem::ScriptSystem()
 	registry.on_destroy<ScriptComponent>().connect<&ScriptSystem::ScriptComponentDestroyed>(this);
 }
 
-static entt::entity GetChild(entt::entity entity, std::string childName) {
+static entt::entity GetChild(entt::entity entity, std::string childName)
+{
 	return ROSE_GETSYSTEM(TransformSystem).GetChild(entity, childName);
 }
-static void Translate(entt::entity entity, float x, float y) {
+static void Translate(entt::entity entity, float x, float y)
+{
 	auto& transform = ROSE_GETSYSTEM(Entities).GetRegistry().get<TransformComponent>(entity);
 	transform.globalPosition += glm::vec2(x, y);
 	transform.UpdateLocals();
 }
-static void PlayAnimation(entt::entity entity, const std::string& animName) {
-	if (ROSE_GETSYSTEM(Entities).EntityExists(entity) && ROSE_GETSYSTEM(Entities).GetRegistry().any_of<AnimationComponent>(entity)) {
+static void PlayAnimation(entt::entity entity, const std::string& animName)
+{
+	if(ROSE_GETSYSTEM(Entities).EntityExists(entity) && ROSE_GETSYSTEM(Entities).GetRegistry().any_of<AnimationComponent>(entity))
+	{
 		auto& anim = ROSE_GETSYSTEM(Entities).GetRegistry().get<AnimationComponent>(entity);
 		anim.Play(animName);
 	}
 }
-static void FaceDir(entt::entity entity, int dir) {
+static void FaceDir(entt::entity entity, int dir)
+{
 	auto& transform = ROSE_GETSYSTEM(Entities).GetRegistry().get<TransformComponent>(entity);
 	transform.scale.x = glm::abs(transform.scale.x) * dir;
 	transform.UpdateGlobals();
 }
-static void DisableEntity(entt::entity entity) {
-	auto& phy = ROSE_GETSYSTEM(Entities).GetRegistry().get<PhysicsBodyComponent>(entity);
-	if (phy.body->GetFixtureList() != nullptr) {
-		phy.body->DestroyFixture(phy.body->GetFixtureList());
-	}
+static void DisableEntity(entt::entity entity)
+{
+	auto& guid = ROSE_GETSYSTEM(Entities).GetRegistry().get<GUIDComponent>(entity);
+	guid.enabled = false;
 }
-static void EnableEntity(entt::entity entity) {
-	auto& phy = ROSE_GETSYSTEM(Entities).GetRegistry().get<PhysicsBodyComponent>(entity);
-	if (phy.body->GetFixtureList() == nullptr) {
-		phy.body->CreateFixture(&phy.fixture);
-	}
+static void EnableEntity(entt::entity entity)
+{
+	auto& guid = ROSE_GETSYSTEM(Entities).GetRegistry().get<GUIDComponent>(entity);
+	guid.enabled = true;
 }
 
 void ScriptSystem::ScriptComponentCreated(entt::registry& registry, entt::entity entity)
 {
-	if (registry.any_of<ScriptComponent>(entity)) {
+	if(registry.any_of<ScriptComponent>(entity))
+	{
 		auto& scriptComponent = registry.get<ScriptComponent>(entity);
-		for (auto& script : scriptComponent.scripts) {
-			if (script != "") {
+		for(auto& script : scriptComponent.scripts)
+		{
+			if(script != "")
+			{
 				auto scriptAsset = (ScriptAsset*)ROSE_GETSYSTEM(AssetStore).GetAsset(script).asset;
-				if (scriptAsset != nullptr) {
+				if(scriptAsset != nullptr)
+				{
 					AddScript(entity, script, scriptAsset->script);
 				}
 			}
@@ -69,7 +77,8 @@ void ScriptSystem::ScriptComponentCreated(entt::registry& registry, entt::entity
 
 void ScriptSystem::ScriptComponentDestroyed(entt::registry& registry, entt::entity entity)
 {
-	if (registry.any_of<ScriptComponent>(entity)) {
+	if(registry.any_of<ScriptComponent>(entity))
+	{
 		auto& scriptComponent = registry.get<ScriptComponent>(entity);
 		scriptStates[entity].clear();
 	}
@@ -78,13 +87,17 @@ void ScriptSystem::ScriptComponentDestroyed(entt::registry& registry, entt::enti
 void ScriptSystem::Update()
 {
 	entt::registry& registry = ROSE_GETSYSTEM(Entities).GetRegistry();
-	for (auto entity : setupNextFrame) {
-		if (registry.valid(entity) && registry.any_of<ScriptComponent>(entity)) {
+	for(auto entity : setupNextFrame)
+	{
+		if(registry.valid(entity) && registry.any_of<ScriptComponent>(entity))
+		{
 			auto& scriptComponent = registry.get<ScriptComponent>(entity);
-			for (auto script : scriptComponent.scripts) {
+			for(auto script : scriptComponent.scripts)
+			{
 				auto& state = scriptStates[entity][script];
 				auto setup = state["setup"];
-				if (setup.valid()) {
+				if(setup.valid())
+				{
 					setup(entity);
 				}
 			}
@@ -93,12 +106,15 @@ void ScriptSystem::Update()
 	setupNextFrame.clear();
 	auto view = registry.view<ScriptComponent>();
 	auto dt = ROSE_GETSYSTEM(TimeSystem).GetdeltaTime();
-	for (auto entity : view) {
+	for(auto entity : view)
+	{
 		auto& scriptComponent = registry.get<ScriptComponent>(entity);
-		for (auto& script : scriptComponent.scripts) {
+		for(auto& script : scriptComponent.scripts)
+		{
 			auto& state = scriptStates[entity][script];
 			auto update = state["update"];
-			if (update.valid()) {
+			if(update.valid())
+			{
 				update(entity, dt);
 			}
 		}
@@ -110,10 +126,12 @@ void ScriptSystem::CallEvent(EntityEvent eventData)
 	entt::registry& registry = ROSE_GETSYSTEM(Entities).GetRegistry();
 	auto entity = eventData.entity;
 	auto& scriptComponent = registry.get<ScriptComponent>(entity);
-	for (auto& script : scriptComponent.scripts) {
+	for(auto& script : scriptComponent.scripts)
+	{
 		auto& state = scriptStates[entity][script];
 		auto eventCall = state["on_event"];
-		if (eventCall.valid()) {
+		if(eventCall.valid())
+		{
 			eventCall(entity, eventData.name);
 		}
 	}
@@ -142,10 +160,13 @@ void ScriptSystem::RefreshScript(entt::entity entity)
 	auto& states = scriptStates[entity];
 	entt::registry& registry = ROSE_GETSYSTEM(Entities).GetRegistry();
 	auto& scriptComponent = registry.get<ScriptComponent>(entity);
-	for (auto& script : scriptComponent.scripts) {
-		if (states.find(script) == states.end()) {
+	for(auto& script : scriptComponent.scripts)
+	{
+		if(states.find(script) == states.end())
+		{
 			auto scriptAsset = (ScriptAsset*)ROSE_GETSYSTEM(AssetStore).GetAsset(script).asset;
-			if (scriptAsset != nullptr) {
+			if(scriptAsset != nullptr)
+			{
 				AddScript(entity, script, scriptAsset->script);
 			}
 		}
@@ -158,7 +179,8 @@ void ScriptSystem::RemoveScript(entt::entity entity, const std::string& removeSc
 	auto& states = scriptStates[entity];
 	entt::registry& registry = ROSE_GETSYSTEM(Entities).GetRegistry();
 	auto& scriptComponent = registry.get<ScriptComponent>(entity);
-	if (scriptComponent.scripts.find(removeScript) != scriptComponent.scripts.end()) {
+	if(scriptComponent.scripts.find(removeScript) != scriptComponent.scripts.end())
+	{
 		scriptComponent.scripts.erase(removeScript);
 		states.erase(removeScript);
 	}

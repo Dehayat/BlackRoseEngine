@@ -148,8 +148,8 @@ void Game::Update()
 	}
 	ROSE_GETSYSTEM(AnimationPlayer).Update();
 	if (isGameRunning) {
-		ROSE_GETSYSTEM(EntityEventSystem).Update();
 		ROSE_GETSYSTEM(ScriptSystem).Update();
+		ROSE_GETSYSTEM(EntityEventSystem).Update();
 	}
 #else
 	ROSE_GETSYSTEM(TimeSystem).Update();

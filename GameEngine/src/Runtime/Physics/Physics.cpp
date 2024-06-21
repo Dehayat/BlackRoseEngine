@@ -4,6 +4,7 @@
 
 #include "Core/SdlContainer.h"
 #include "Core/TimeSystem.h"
+#include "Core/DisableSystem.h"
 
 #include "Core/Systems.h"
 
@@ -127,15 +128,51 @@ void PhysicsSystem::CopyBodyToTransform(PhysicsBodyComponent& phys, TransformCom
 	//ROSE_LOG("->PosY: " + std::to_string(phys.body->GetPosition().y));
 	//ROSE_LOG("->Rot: " + std::to_string(glm::degrees(phys.body->GetAngle())));
 }
+void PhysicsSystem::RemoveBody(PhysicsBodyComponent& phys)
+{
+	if (phys.body != nullptr) {
+		GetWorld().DestroyBody(phys.body);
+	}
+	phys.body = nullptr;
+}
+void PhysicsSystem::AddBody(entt::entity entity, PhysicsBodyComponent& phys)
+{
+	if (phys.body != nullptr) {
+		return;
+	}
+	entt::registry& registry = ROSE_GETSYSTEM(Entities).GetRegistry();
+	auto& trx = registry.get<TransformComponent>(entity);
+	b2Body* body = GetWorld().CreateBody(&phys.bodyDef);
+	phys.shape.SetAsBox(phys.globalSize.x / 2, phys.globalSize.y / 2);
+	body->CreateFixture(&phys.fixture);
+	phys.body = body;
+	phys.body->GetUserData().pointer = (uintptr_t)entity;
+	phys.body->SetTransform(b2Vec2(trx.globalPosition.x, trx.globalPosition.y), glm::radians(trx.globalRotation));
+	if (phys.useGravity) {
+		phys.body->SetGravityScale(1.0f);
+	}
+	else {
+		phys.body->SetGravityScale(0.0f);
+	}
+}
 void PhysicsSystem::Update()
 {
-	Entities& entities = entt::locator<Entities>::value();
+	Entities& entities = ROSE_GETSYSTEM(Entities);
 	entt::registry& registry = entities.GetRegistry();
 	auto phView = registry.view<PhysicsBodyComponent, TransformComponent>();
 	for (auto entity : phView)
 	{
 		auto& pos = phView.get<TransformComponent>(entity);
 		auto& body = phView.get<PhysicsBodyComponent>(entity);
+		if (ROSE_GETSYSTEM(DisableSystem).JustDisabled(entity)) {
+			RemoveBody(body);
+		}
+		if (!ROSE_GETSYSTEM(DisableSystem).IsEnabled(entity)) {
+			continue;
+		}
+		if (ROSE_GETSYSTEM(DisableSystem).JustEnabled(entity)) {
+			AddBody(entity, body);
+		}
 		CopyTransformToBody(body, pos);
 	}
 
@@ -148,6 +185,9 @@ void PhysicsSystem::Update()
 
 	for (auto entity : phView)
 	{
+		if (!ROSE_GETSYSTEM(DisableSystem).IsEnabled(entity)) {
+			continue;
+		}
 		auto& pos = phView.get<TransformComponent>(entity);
 		auto& body = phView.get<PhysicsBodyComponent>(entity);
 		CopyBodyToTransform(body, pos);

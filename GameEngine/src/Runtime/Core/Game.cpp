@@ -16,6 +16,7 @@
 #include "Renderer/Renderer.h"
 #include "Input/InputSystem.h"
 #include "Core/TimeSystem.h"
+#include "Core/DisableSystem.h"
 #include "Animation/AnimationSystem.h"
 #include "Events/EntityEventSystem.h"
 #include "Scripting/ScriptSystem.h"
@@ -35,10 +36,11 @@ Game::Game() {
 }
 
 Game::~Game() {
-
+#ifdef _EDITOR
 	ROSE_DESTROYSYSTEM(Editor);
+#endif // _EDITOR
 
-	ROSE_DESTROYSYSTEM(PhysicsSystem, 0, -10);
+	ROSE_DESTROYSYSTEM(PhysicsSystem);
 	ROSE_DESTROYSYSTEM(TransformSystem);
 	ROSE_DESTROYSYSTEM(ScriptSystem);
 	ROSE_DESTROYSYSTEM(EntityEventSystem);
@@ -47,6 +49,7 @@ Game::~Game() {
 	ROSE_DESTROYSYSTEM(InputSystem);
 	ROSE_DESTROYSYSTEM(TimeSystem);
 	ROSE_DESTROYSYSTEM(LevelTree);
+	ROSE_DESTROYSYSTEM(DisableSystem);
 
 	ROSE_DESTROYSYSTEM(ProjectLoader);
 	ROSE_DESTROYSYSTEM(AssetStore);
@@ -54,7 +57,7 @@ Game::~Game() {
 	ROSE_DESTROYSYSTEM(Entities);
 	ROSE_DESTROYSYSTEM(ReflectionSystem);
 	ROSE_DESTROYSYSTEM(FileDialog);
-	ROSE_DESTROYSYSTEM(SdlContainer, 1200, (float)1200 * 9 / 16);
+	ROSE_DESTROYSYSTEM(SdlContainer);
 
 	ROSE_LOG("Game destrcuted");
 }
@@ -71,6 +74,7 @@ void Game::SetupBaseSystems() {
 
 void Game::SetupLowLevelSystems()
 {
+	ROSE_CREATESYSTEM(DisableSystem);
 	ROSE_CREATESYSTEM(LevelTree);
 	ROSE_CREATESYSTEM(TimeSystem);
 	ROSE_CREATESYSTEM(InputSystem);
@@ -136,6 +140,7 @@ void Game::Update()
 	ROSE_GETSYSTEM(Editor).Update();
 	bool isGameRunning = ROSE_GETSYSTEM(Editor).IsGameRunning();
 	ROSE_GETSYSTEM(TimeSystem).Update();
+	ROSE_GETSYSTEM(DisableSystem).Update();
 	ROSE_GETSYSTEM(TransformSystem).Update();
 	ROSE_GETSYSTEM(InputSystem).Update();
 	if (isGameRunning) {
@@ -148,6 +153,7 @@ void Game::Update()
 	}
 #else
 	ROSE_GETSYSTEM(TimeSystem).Update();
+	ROSE_GETSYSTEM(DisableSystem).Update();
 	ROSE_GETSYSTEM(TransformSystem).Update();
 	ROSE_GETSYSTEM(InputSystem).Update();
 	ROSE_GETSYSTEM(PhysicsSystem).Update();

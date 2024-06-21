@@ -34,6 +34,7 @@
     <ClInclude Include="src\Runtime\Components\ScriptComponent.h" />
     <ClInclude Include="src\Runtime\Components\SpriteComponent.h" />
     <ClInclude Include="src\Runtime\Components\TransformComponent.h" />
+    <ClInclude Include="src\Runtime\Core\DisableSystem.h" />
     <ClInclude Include="src\Runtime\Core\Entity.h" />
     <ClInclude Include="src\Runtime\Core\Game.h" />
     <ClInclude Include="src\Runtime\Events\AnimationEvent.h" />
@@ -62,6 +63,7 @@
     <ClCompile Include="src\Editor\LevelTreeEditor.cpp" />
     <ClCompile Include="src\Runtime\Animation\AnimationSystem.cpp" />
     <ClCompile Include="src\Runtime\Components\TransformComponent.cpp" />
+    <ClCompile Include="src\Runtime\Core\DisableSystem.cpp" />
     <ClCompile Include="src\Runtime\Core\Entity.cpp" />
     <ClCompile Include="src\Runtime\Core\EntityEventSystem.cpp" />
     <ClCompile Include="src\Runtime\Core\Game.cpp" />

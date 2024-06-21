@@ -39,6 +39,8 @@ public:
 	void PhysicsBodyDestroyed(entt::registry& registry, entt::entity entity);
 	void CopyTransformToBody(PhysicsBodyComponent& phys, TransformComponent& trx);
 	void CopyBodyToTransform(PhysicsBodyComponent& phys, TransformComponent& trx);
+	void RemoveBody(PhysicsBodyComponent& phys);
+	void AddBody(entt::entity entity, PhysicsBodyComponent& phys);
 	void Update();
 	b2World& GetWorld();
 

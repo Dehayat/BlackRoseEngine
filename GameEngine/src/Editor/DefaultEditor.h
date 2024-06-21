@@ -1,6 +1,8 @@
 #pragma once
 #include <imgui.h>
 
+#include "ImguiHelper.h"
+
 #include "Core/Entity.h"
 
 #include "Core/Systems.h"
@@ -11,15 +13,6 @@
 
 template<typename T>
 class DefaultTypeEditor {
-	static int ResizeStringCallback(ImGuiInputTextCallbackData* data)
-	{
-		if (data->EventFlag == ImGuiInputTextFlags_CallbackResize)
-		{
-			auto str = (std::string*)(data->UserData);
-			str->resize(data->BufTextLen);
-		}
-		return 0;
-	}
 public:
 	static void Render(int entity, T* object) {
 		Reflector<T> m;
@@ -30,7 +23,7 @@ public:
 			}
 			if (m.GetType(varName) == InfoTypes::STRING) {
 				auto& str = *(std::string*)m.GetVar(object, varName);
-				ImGui::InputText(varName.c_str(), &str[0], 21, ImGuiInputTextFlags_CallbackResize, ResizeStringCallback, &str);
+				Imgui_InputText(varName.c_str(), str, 30);
 			}
 			if (m.GetType(varName) == InfoTypes::COLOR) {
 				ImGui::ColorEdit4(varName.c_str(), (float*)m.GetVar(object, varName), ImGuiColorEditFlags_AlphaBar | ImGuiColorEditFlags_Float);

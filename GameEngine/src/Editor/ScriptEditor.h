@@ -2,6 +2,8 @@
 #pragma once
 #include <imgui.h>
 
+#include "ImguiHelper.h"
+
 #include "Core/Entity.h"
 
 #include "Core/Systems.h"
@@ -12,16 +14,6 @@
 #include "Editor/ComponentEditor.h"
 
 class ScriptEditor :public IComponentEditor {
-	static int ResizeStringCallback(ImGuiInputTextCallbackData* data)
-	{
-		if (data->EventFlag == ImGuiInputTextFlags_CallbackResize)
-		{
-			auto str = (std::string*)(data->UserData);
-			str->resize(data->BufTextLen);
-		}
-		return 0;
-	}
-
 public:
 	void Editor(entt::entity entity) {
 		auto& registry = ROSE_GETSYSTEM(Entities).GetRegistry();
@@ -48,7 +40,8 @@ public:
 		if (scriptName.capacity() < 21) {
 			scriptName.reserve(21);
 		}
-		ImGui::InputText("script", &scriptName[0], 21, ImGuiInputTextFlags_CallbackResize, ResizeStringCallback, &scriptName);
+
+		Imgui_InputText("script", scriptName, 30);
 		if (ImGui::Button("AddScript")) {
 			scriptComp.scripts.insert(scriptName);
 			ROSE_GETSYSTEM(ScriptSystem).RefreshScript(entity);

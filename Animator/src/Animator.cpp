@@ -5,18 +5,10 @@
 #include "Core/Log.h"
 
 #include "FileDialog.h"
+#include "ImguiHelper.h"
 
 #include "AssetPipline/AssetStore.h"
 
-static int ResizeStringCallback(ImGuiInputTextCallbackData* data)
-{
-	if (data->EventFlag == ImGuiInputTextFlags_CallbackResize)
-	{
-		auto str = (std::string*)(data->UserData);
-		str->resize(data->BufTextLen);
-	}
-	return 0;
-}
 
 Animator::Animator() :maxDt(0.0166) {
 	ROSE_CREATESYSTEM(ReflectionSystem);
@@ -486,7 +478,7 @@ int Animator::RenderEvent(AnimationEventData* eventData, int index)
 		ImGui::Text("Event");
 		ImGui::SameLine();
 		ImGui::PushItemWidth(100);
-		ImGui::InputText(("##" + std::to_string(eventData->id)).c_str(), &eventData->eventName[0], 31, ImGuiInputTextFlags_CallbackResize, ResizeStringCallback, &eventData->eventName);
+		Imgui_InputText(("##" + std::to_string(eventData->id)).c_str(), eventData->eventName, 30);
 		ImGui::SameLine();
 		if (ImGui::Button(("Align##" + std::to_string(eventData->id)).c_str(), ImVec2(50, 0))) {
 			eventData->eventTime = currentAnimationTime;

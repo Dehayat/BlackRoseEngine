@@ -1,0 +1,14 @@
+{
+    "name": "rose",
+    "version": "0.1.0",
+  "dependencies": [
+    {
+      "name": "imgui",
+      "features": [
+        "sdl2-renderer-binding",
+        "opengl3-binding",
+        "sdl2-binding"
+      ]
+    }
+  ]
+}

@@ -5,25 +5,15 @@
 
 #include <imgui.h>
 
+#include "ImguiHelper.h"
+
 #include "FileDialog.h"
 #include "Core/Log.h"
 #include "Core/Guid.h"
 
 #include "AssetPipline/AssetPackage.h"
 
-const int FILE_PATH_SIZE = 41;
-
-static int ResizeStringCallback(ImGuiInputTextCallbackData* data)
-{
-	if (data->EventFlag == ImGuiInputTextFlags_CallbackResize)
-	{
-		auto str = (std::string*)(data->UserData);
-		str->resize(data->BufTextLen);
-	}
-	return 0;
-}
-
-
+const int FILE_PATH_SIZE = 40;
 
 static std::string Label(const std::string& label, Guid guid)
 {
@@ -119,7 +109,7 @@ public:
 		{
 			metaData->name.reserve(FILE_PATH_SIZE);
 		}
-		ImGui::InputText("Name", &(metaData->name)[0], FILE_PATH_SIZE, ImGuiInputTextFlags_CallbackResize, ResizeStringCallback, &metaData->name);
+		Imgui_InputText("Name", metaData->name, FILE_PATH_SIZE);
 
 	}
 	void TextureMetaDataEditor(TextureMetaData* metaData)

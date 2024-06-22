@@ -19,6 +19,7 @@
 #include "Components/GUIDComponent.h"
 #include "Components/AnimationComponent.h"
 #include "Components/ScriptComponent.h"
+#include "Components/SendEventsToParentComponent.h"
 
 #include "Core/Log.h"
 
@@ -33,7 +34,8 @@ void LevelLoader::LoadLevel(const std::string& fileName)
 {
 	auto& registry = ROSE_GETSYSTEM(Entities).GetRegistry();
 	auto fileHandle = FileResource(fileName);
-	if (fileHandle.file == nullptr) {
+	if(fileHandle.file == nullptr)
+	{
 		ROSE_ERR("File %s not found", fileName.c_str());
 		return;
 	}
@@ -47,9 +49,12 @@ void LevelLoader::LoadLevel(const std::string& fileName)
 void LevelLoader::DeserializeLevel(entt::registry& registry, ryml::NodeRef& node)
 {
 	auto child = node.first_child();
-	for (int i = 0; i < node.num_children(); i++) {
-		if (child.is_map() && child.has_child("Type")) {
-			if (child["Type"] == "Entity") {
+	for(int i = 0; i < node.num_children(); i++)
+	{
+		if(child.is_map() && child.has_child("Type"))
+		{
+			if(child["Type"] == "Entity")
+			{
 				DeserializeEntity(registry, child);
 			}
 		}
@@ -61,44 +66,57 @@ entt::entity LevelLoader::DeserializeEntity(entt::registry& registry, ryml::Node
 	entt::entity entity;
 	auto& entities = ROSE_GETSYSTEM(Entities);
 	auto guid = GuidGenerator::New();
-	if (node.has_child("Guid")) {
-		if (node["Guid"].is_map()) {
+	if(node.has_child("Guid"))
+	{
+		if(node["Guid"].is_map())
+		{
 			auto guidNode = node["Guid"];
 			guidNode["id"] >> guid;
 			entity = entities.CreateEntityWithoutGuidComponent(guid);
 			ComponentSer<GUIDComponent>::Deserialize(registry, guidNode, entity);
-		}
-		else {
+		} else
+		{
 			node["Guid"] >> guid;
 			entity = entities.CreateEntity(guid);
 		}
-	}
-	else {
+	} else
+	{
 		entity = entities.CreateEntity();
 	}
-	if (node.has_child("Transform")) {
+	if(node.has_child("Transform"))
+	{
 		auto trx = node["Transform"];
 		ComponentSer<TransformComponent>::Deserialize(registry, trx, entity);
 	}
-	if (node.has_child("PhysicsBody")) {
+	if(node.has_child("PhysicsBody"))
+	{
 		auto phy = node["PhysicsBody"];
 		ComponentSer<PhysicsBodyComponent>::Deserialize(registry, phy, entity);
 	}
-	if (node.has_child("Camera")) {
+	if(node.has_child("Camera"))
+	{
 		auto n = node["Camera"];
 		ComponentSer<CameraComponent>::Deserialize(registry, n, entity);
 	}
-	if (node.has_child("Sprite")) {
+	if(node.has_child("Sprite"))
+	{
 		auto n = node["Sprite"];
 		ComponentSer<SpriteComponent>::Deserialize(registry, n, entity);
 	}
-	if (node.has_child("Animation")) {
+	if(node.has_child("Animation"))
+	{
 		auto n = node["Animation"];
 		ComponentSer<AnimationComponent>::Deserialize(registry, n, entity);
 	}
-	if (node.has_child("Script")) {
+	if(node.has_child("Script"))
+	{
 		auto n = node["Script"];
 		ComponentSer<ScriptComponent>::Deserialize(registry, n, entity);
+	}
+	if(node.has_child("SendEventsToParent"))
+	{
+		auto n = node["SendEventsToParent"];
+		ComponentSer<SendEventsToParentComponent>::Deserialize(registry, n, entity);
 	}
 	return entity;
 }
@@ -107,8 +125,9 @@ void LevelLoader::SaveLevel(const std::string& fileName)
 	Entities& entities = entt::locator<Entities>::value();
 	entt::registry& registry = entities.GetRegistry();
 	auto fileHandle = FileResource(fileName, "w+");
-	if (fileHandle.file == nullptr) {
-		ROSE_ERR("Couldnt create file %s" ,fileName.c_str());
+	if(fileHandle.file == nullptr)
+	{
+		ROSE_ERR("Couldnt create file %s", fileName.c_str());
 		return;
 	}
 	auto tree = ryml::Tree();
@@ -130,7 +149,8 @@ void LevelLoader::SerializeLevel(entt::registry& registry, ryml::NodeRef& node)
 {
 	node |= ryml::SEQ;
 	auto view = registry.view<GUIDComponent>();
-	for (auto entity : view) {
+	for(auto entity : view)
+	{
 		SerializeEntity(registry, node, entity);
 	}
 }
@@ -140,39 +160,52 @@ void LevelLoader::SerializeEntity(entt::registry& registry, ryml::NodeRef& paren
 	node |= ryml::MAP;
 	node["Type"] << "Entity";
 
-	if (registry.any_of<GUIDComponent>(entity)) {
+	if(registry.any_of<GUIDComponent>(entity))
+	{
 		auto componentNode = node.append_child();
 		componentNode.set_key("Guid");
 		registry.get<GUIDComponent>(entity).Serialize(componentNode);
 	}
-	if (registry.any_of<TransformComponent>(entity)) {
+	if(registry.any_of<TransformComponent>(entity))
+	{
 		auto componentNode = node.append_child();
 		componentNode.set_key("Transform");
 		registry.get<TransformComponent>(entity).Serialize(componentNode);
 	}
-	if (registry.any_of<SpriteComponent>(entity)) {
+	if(registry.any_of<SpriteComponent>(entity))
+	{
 		auto componentNode = node.append_child();
 		componentNode.set_key("Sprite");
 		registry.get<SpriteComponent>(entity).Serialize(componentNode);
 	}
-	if (registry.any_of<CameraComponent>(entity)) {
+	if(registry.any_of<CameraComponent>(entity))
+	{
 		auto componentNode = node.append_child();
 		componentNode.set_key("Camera");
 		registry.get<CameraComponent>(entity).Serialize(componentNode);
 	}
-	if (registry.any_of<PhysicsBodyComponent>(entity)) {
+	if(registry.any_of<PhysicsBodyComponent>(entity))
+	{
 		auto componentNode = node.append_child();
 		componentNode.set_key("PhysicsBody");
 		registry.get<PhysicsBodyComponent>(entity).Serialize(componentNode);
 	}
-	if (registry.any_of<AnimationComponent>(entity)) {
+	if(registry.any_of<AnimationComponent>(entity))
+	{
 		auto componentNode = node.append_child();
 		componentNode.set_key("Animation");
 		registry.get<AnimationComponent>(entity).Serialize(componentNode);
 	}
-	if (registry.any_of<ScriptComponent>(entity)) {
+	if(registry.any_of<ScriptComponent>(entity))
+	{
 		auto componentNode = node.append_child();
 		componentNode.set_key("Script");
 		registry.get<ScriptComponent>(entity).Serialize(componentNode);
+	}
+	if(registry.any_of<SendEventsToParentComponent>(entity))
+	{
+		auto componentNode = node.append_child();
+		componentNode.set_key("SendEventsToParent");
+		registry.get<SendEventsToParentComponent>(entity).Serialize(componentNode);
 	}
 }

@@ -32,6 +32,7 @@
     <ClInclude Include="src\Runtime\Components\GUIDComponent.h" />
     <ClInclude Include="src\Runtime\Components\PhysicsBodyComponent.h" />
     <ClInclude Include="src\Runtime\Components\ScriptComponent.h" />
+    <ClInclude Include="src\Runtime\Components\SendEventsToParentComponent.h" />
     <ClInclude Include="src\Runtime\Components\SpriteComponent.h" />
     <ClInclude Include="src\Runtime\Components\TransformComponent.h" />
     <ClInclude Include="src\Runtime\Core\DisableSystem.h" />

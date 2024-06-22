@@ -9,6 +9,7 @@
 #include "Scripting/ScriptSystem.h"
 
 #include "Components/ScriptComponent.h"
+#include "Components/SendEventsToParentComponent.h"
 
 #include "Core/Log.h"
 
@@ -17,20 +18,28 @@ void EntityEventSystem::Update()
 	auto& registry = ROSE_GETSYSTEM(Entities).GetRegistry();
 	auto& scriptSystem = ROSE_GETSYSTEM(ScriptSystem);
 
-	while (!eventQueue.empty()) {
+	while(!eventQueue.empty())
+	{
 		auto& entityEvent = eventQueue.front();
-		if (registry.valid(entityEvent.entity)) {
+		if(registry.valid(entityEvent.entity))
+		{
 			auto scriptComponent = registry.try_get<ScriptComponent>(entityEvent.entity);
-			if (scriptComponent != nullptr) {
+			if(scriptComponent != nullptr)
+			{
 				scriptSystem.CallEvent(entityEvent);
-			}
-			else {
-				auto& trx = registry.get<TransformComponent>(entityEvent.entity);
-				if (trx.hasParent) {
-					auto parentScript = registry.try_get<ScriptComponent>(trx.parent);
-					if (parentScript != nullptr) {
-						auto parentEvent = EntityEvent(trx.parent, entityEvent.name);
-						scriptSystem.CallEvent(parentEvent);
+			} else
+			{
+				if(registry.any_of<SendEventsToParentComponent>(entityEvent.entity))
+				{
+					auto& trx = registry.get<TransformComponent>(entityEvent.entity);
+					if(trx.hasParent)
+					{
+						auto parentScript = registry.try_get<ScriptComponent>(trx.parent);
+						if(parentScript != nullptr)
+						{
+							entityEvent._callEventFrom = trx.parent;
+							scriptSystem.CallEvent(entityEvent);
+						}
 					}
 				}
 			}

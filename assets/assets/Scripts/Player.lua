@@ -24,25 +24,25 @@ function update(me, dt)
 end
 
 function on_event(me, event)
-    if event == "disableHitBox" then
+    if event.name == "disableHitBox" then
         disable(HitBox_entity)
     end
-    if event == "enableHitBox" then
+    if event.name == "enableHitBox" then
         enable(HitBox_entity)
     end
-    if event == "LeftKeyReleased" or event == "RightKeyReleased" then
+    if event.name == "LeftKeyReleased" or event.name == "RightKeyReleased" then
         WalkDir = 0
     end
-    if Is_attacking and event=="AnimationFinished" then
+    if Is_attacking and event.name=="AnimationFinished" then
         play_anim(Sprite_entity,"IdleAnim")
         Is_attacking = false
     end
     if not Is_attacking then
-        if event == "RightKeyPressed" then
+        if event.name == "RightKeyPressed" then
             WalkDir = 1
             play_anim(Sprite_entity,"WalkAnim")
             --face(me,WalkDir)
-        elseif event == "LeftKeyPressed" then
+        elseif event.name == "LeftKeyPressed" then
             WalkDir = -1
             play_anim(Sprite_entity,"WalkBackAnim")
             --face(me,WalkDir)
@@ -53,7 +53,7 @@ function on_event(me, event)
             end
         end
         
-        if event == "LeftMousePressed" and Sprite_entity~=no_entity then
+        if event.name == "LeftMousePressed" and Sprite_entity~=no_entity then
             play_anim(Sprite_entity,"AttackAnim")
             Is_attacking = true;
         end

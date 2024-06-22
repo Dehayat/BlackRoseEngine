@@ -2,11 +2,20 @@
 #include <string>
 
 #include "Events/Event.h"
-#include "entt/entity/entity.hpp"
+#include <Core/Entity.h>
 
-struct EntityEvent :public Event {
+
+struct EntityEvent: public Event
+{
+	entt::entity _callEventFrom;
 	const entt::entity entity;
 	const std::string name;
 
-	EntityEvent(entt::entity entity, const std::string& eventName) :entity(entity), name(eventName) {}
+	entt::entity target;
+
+	EntityEvent(entt::entity entity, const std::string& eventName):entity(entity), name(eventName)
+	{
+		_callEventFrom = entity;
+		target = NoEntity();
+	}
 };

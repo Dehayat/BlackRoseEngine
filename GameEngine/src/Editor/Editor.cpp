@@ -23,6 +23,7 @@
 #include "Components/CameraComponent.h"
 #include "Components/AnimationComponent.h"
 #include "Components/ScriptComponent.h"
+#include "Components/SendEventsToParentComponent.h"
 
 #include "Editor/PhysicsEditor.h"
 #include "Editor/ScriptEditor.h"
@@ -76,10 +77,12 @@ void Editor::CloseImgui()
 
 void Editor::Update()
 {
-	if (mouseInViewport) {
+	if(mouseInViewport)
+	{
 		UpdateViewportControls();
 	}
-	if (!ImGui::IsAnyItemActive()) {
+	if(!ImGui::IsAnyItemActive())
+	{
 		UpdateGlobalControls();
 	}
 }
@@ -90,34 +93,43 @@ void Editor::UpdateViewportControls()
 	auto& registry = entities.GetRegistry();
 	auto& input = ROSE_GETSYSTEM(InputSystem);
 	auto& gameRenderer = ROSE_GETSYSTEM(RendererSystem);
-	if (selectedTool == Tools::CreateEntity) {
+	if(selectedTool == Tools::CreateEntity)
+	{
 		auto mousePos = glm::vec3(input.GetMousePosition(), 1) * gameRenderer.GetScreenToWorldMatrix();
-		if (input.GetMouseButton(LEFT_BUTTON).justPressed) {
+		if(input.GetMouseButton(LEFT_BUTTON).justPressed)
+		{
 			ROSE_LOG("entity created");
 			createdEntity = entities.CreateEntity();
 			levelTreeEditor.SelectEntity(createdEntity);
 			registry.emplace<TransformComponent>(createdEntity, glm::vec2(mousePos.x, mousePos.y), glm::vec2(1, 1), 0);
 		}
-		if (createdEntity != entt::entity(-1)) {
-			if (input.GetMouseButton(LEFT_BUTTON).justReleased) {
+		if(createdEntity != entt::entity(-1))
+		{
+			if(input.GetMouseButton(LEFT_BUTTON).justReleased)
+			{
 				createdEntity = entt::entity(-1);
 			}
-			if (input.GetMouseButton(LEFT_BUTTON).isPressed) {
+			if(input.GetMouseButton(LEFT_BUTTON).isPressed)
+			{
 				registry.get<TransformComponent>(createdEntity).globalPosition = glm::vec2(mousePos.x, mousePos.y);
 				registry.get<TransformComponent>(createdEntity).UpdateLocals();
 			}
 		}
 	}
-	if (selectedTool == Tools::MoveEntity) {
+	if(selectedTool == Tools::MoveEntity)
+	{
 		auto mousePos = glm::vec3(input.GetMousePosition(), 1) * gameRenderer.GetScreenToWorldMatrix();
-		if (levelTreeEditor.GetSelectedEntity() != entt::entity(-1)) {
-			if (input.GetMouseButton(LEFT_BUTTON).isPressed) {
+		if(levelTreeEditor.GetSelectedEntity() != entt::entity(-1))
+		{
+			if(input.GetMouseButton(LEFT_BUTTON).isPressed)
+			{
 				registry.get<TransformComponent>(levelTreeEditor.GetSelectedEntity()).globalPosition = glm::vec2(mousePos.x, mousePos.y);
 				registry.get<TransformComponent>(levelTreeEditor.GetSelectedEntity()).UpdateLocals();
 			}
 		}
 	}
-	if (selectedTool == Tools::SelectEntity) {
+	if(selectedTool == Tools::SelectEntity)
+	{
 		UpdateSelectTool();
 	}
 }
@@ -127,62 +139,79 @@ void Editor::UpdateGlobalControls()
 	auto& entities = ROSE_GETSYSTEM(Entities);
 	auto& input = ROSE_GETSYSTEM(InputSystem);
 	auto& levelLoader = ROSE_GETSYSTEM(LevelLoader);
-	if (input.GetKey(InputKey::LCTRL).isPressed || input.GetKey(InputKey::RCTRL).isPressed) {
-		if (input.GetKey(InputKey::N).justPressed) {
+	if(input.GetKey(InputKey::LCTRL).isPressed || input.GetKey(InputKey::RCTRL).isPressed)
+	{
+		if(input.GetKey(InputKey::N).justPressed)
+		{
 			levelLoader.UnloadLevel();
 			levelTreeEditor.CleanTree();
 		}
-		if (input.GetKey(InputKey::O).justPressed) {
+		if(input.GetKey(InputKey::O).justPressed)
+		{
 			auto fileName = ROSE_GETSYSTEM(FileDialog).OpenFile("yaml");
-			if (fileName != "") {
+			if(fileName != "")
+			{
 				levelLoader.UnloadLevel();
 				levelTreeEditor.CleanTree();
 				levelLoader.LoadLevel(fileName);
 				ROSE_GETSYSTEM(RendererSystem).InitLoaded();
 			}
 		}
-		if (input.GetKey(InputKey::S).justPressed) {
-			if (input.GetKey(InputKey::LSHIFT).isPressed || input.GetKey(InputKey::RSHIFT).isPressed) {
+		if(input.GetKey(InputKey::S).justPressed)
+		{
+			if(input.GetKey(InputKey::LSHIFT).isPressed || input.GetKey(InputKey::RSHIFT).isPressed)
+			{
 				auto fileName = ROSE_GETSYSTEM(FileDialog).SaveFile("yaml");
-				if (fileName != "") {
+				if(fileName != "")
+				{
 					levelLoader.SaveLevel(fileName);
 				}
-			}
-			else {
+			} else
+			{
 				levelLoader.SaveLevel(levelLoader.GetCurrentLevelFile());
 			}
 		}
 		return;
 	}
 
-	if (GetSelectedEntity() != NoEntity()) {
-		if (input.GetKey(InputKey::DELETE).justReleased) {
-			if (levelTreeEditor.GetSelectedEntity() != NoEntity()) {
+	if(GetSelectedEntity() != NoEntity())
+	{
+		if(input.GetKey(InputKey::DELETE).justReleased)
+		{
+			if(levelTreeEditor.GetSelectedEntity() != NoEntity())
+			{
 				entities.DestroyEntity(levelTreeEditor.GetSelectedEntity());
 				levelTreeEditor.CleanTree();
 			}
 		}
 	}
 
-	if (input.GetKey(InputKey::C).justPressed) {
+	if(input.GetKey(InputKey::C).justPressed)
+	{
 		selectedTool = Tools::CreateEntity;
 	}
-	if (input.GetKey(InputKey::M).justPressed) {
+	if(input.GetKey(InputKey::M).justPressed)
+	{
 		selectedTool = Tools::MoveEntity;
 	}
-	if (input.GetKey(InputKey::S).justPressed) {
+	if(input.GetKey(InputKey::S).justPressed)
+	{
 		selectedTool = Tools::SelectEntity;
 	}
-	if (input.GetKey(InputKey::X).justPressed) {
+	if(input.GetKey(InputKey::X).justPressed)
+	{
 		selectedTool = Tools::NoTool;
 	}
 }
 
-static bool IsPointInsideRect(vec2 point, SDL_FRect rect) {
-	if (point.x<rect.x || point.x > rect.x + rect.w) {
+static bool IsPointInsideRect(vec2 point, SDL_FRect rect)
+{
+	if(point.x<rect.x || point.x > rect.x + rect.w)
+	{
 		return false;
 	}
-	if (point.y<rect.y || point.y > rect.y + rect.h) {
+	if(point.y<rect.y || point.y > rect.y + rect.h)
+	{
 		return false;
 	}
 	return true;
@@ -193,18 +222,22 @@ void Editor::UpdateSelectTool()
 	auto& entities = ROSE_GETSYSTEM(Entities);
 	auto& registry = entities.GetRegistry();
 	auto& input = ROSE_GETSYSTEM(InputSystem);
-	if (input.GetMouseButton(LEFT_BUTTON).justPressed) {
+	if(input.GetMouseButton(LEFT_BUTTON).justPressed)
+	{
 		auto mousePos = input.GetMousePosition();
 		auto view = registry.view<const SpriteComponent>();
 		bool selected = false;
-		for (auto entity : view) {
+		for(auto entity : view)
+		{
 			auto& sprite = registry.get<SpriteComponent>(entity);
-			if (IsPointInsideRect(mousePos, sprite.destRect)) {
+			if(IsPointInsideRect(mousePos, sprite.destRect))
+			{
 				levelTreeEditor.SelectEntity(entity);
 				selected = true;
 			}
 		}
-		if (!selected) {
+		if(!selected)
+		{
 			levelTreeEditor.SelectEntity(NoEntity());
 		}
 	}
@@ -214,14 +247,16 @@ bool Editor::ProcessEvents()
 {
 	bool exit = false;
 	SDL_Event sdlEvent;
-	while (SDL_PollEvent(&sdlEvent)) {
-		switch (sdlEvent.type)
+	while(SDL_PollEvent(&sdlEvent))
+	{
+		switch(sdlEvent.type)
 		{
 		case SDL_QUIT:
 			exit = true;
 			break;
 		case SDL_KEYDOWN:
-			if (sdlEvent.key.keysym.sym == SDLK_ESCAPE) {
+			if(sdlEvent.key.keysym.sym == SDLK_ESCAPE)
+			{
 				exit = true;
 			}
 			break;
@@ -291,21 +326,26 @@ void Editor::RenderTools()
 	RenderToolButton("Select", Tools::SelectEntity);
 	RenderToolButton("Create", Tools::CreateEntity);
 	ImGui::TableNextColumn();
-	if (ImGui::Button("Delete")) {
-		if (levelTreeEditor.GetSelectedEntity() != NoEntity()) {
+	if(ImGui::Button("Delete"))
+	{
+		if(levelTreeEditor.GetSelectedEntity() != NoEntity())
+		{
 			entities.DestroyEntity(levelTreeEditor.GetSelectedEntity());
 			levelTreeEditor.CleanTree();
 		}
 	}
 
 	ImGui::TableNextColumn();
-	if (IsGameRunning()) {
-		if (ImGui::Button("Stop")) {
+	if(IsGameRunning())
+	{
+		if(ImGui::Button("Stop"))
+		{
 			isGameRunning = false;
 		}
-	}
-	else {
-		if (ImGui::Button("Play")) {
+	} else
+	{
+		if(ImGui::Button("Play"))
+		{
 			isGameRunning = true;
 			selectedTool = Tools::NoTool;
 		}
@@ -314,9 +354,11 @@ void Editor::RenderTools()
 
 	ImGui::TableNextColumn();
 	{
-		if (ImGui::Button("Load Package")) {
+		if(ImGui::Button("Load Package"))
+		{
 			auto fileName = ROSE_GETSYSTEM(FileDialog).OpenFile("pkg");
-			if (fileName != "") {
+			if(fileName != "")
+			{
 				AssetStore& assetStore = ROSE_GETSYSTEM(AssetStore);
 				assetStore.LoadPackage(fileName);
 			}
@@ -327,9 +369,11 @@ void Editor::RenderTools()
 	ImGui::TableNextColumn();
 	auto view = registry.view<const GUIDComponent, TransformComponent>();
 	{
-		if (ImGui::Button("Load Level")) {
+		if(ImGui::Button("Load Level"))
+		{
 			auto fileName = ROSE_GETSYSTEM(FileDialog).OpenFile("yaml");
-			if (fileName != "") {
+			if(fileName != "")
+			{
 				levelLoader.UnloadLevel();
 				levelTreeEditor.CleanTree();
 				levelLoader.LoadLevel(fileName);
@@ -338,16 +382,20 @@ void Editor::RenderTools()
 		}
 	}
 	{
-		if (ImGui::Button("Save Level")) {
-			if (levelLoader.GetCurrentLevelFile() != "") {
+		if(ImGui::Button("Save Level"))
+		{
+			if(levelLoader.GetCurrentLevelFile() != "")
+			{
 				levelLoader.SaveLevel(levelLoader.GetCurrentLevelFile());
 			}
 		}
 	}
 	{
-		if (ImGui::Button("Save Level As")) {
+		if(ImGui::Button("Save Level As"))
+		{
 			auto fileName = ROSE_GETSYSTEM(FileDialog).SaveFile("yaml");
-			if (fileName != "") {
+			if(fileName != "")
+			{
 				levelLoader.SaveLevel(fileName);
 			}
 		}
@@ -360,14 +408,17 @@ void Editor::RenderTools()
 void Editor::RenderToolButton(std::string name, Tools tool)
 {
 	bool isSelected = selectedTool == tool;
-	if (isSelected) {
+	if(isSelected)
+	{
 		auto activeColor = ImGui::GetStyleColorVec4(ImGuiCol_ButtonActive);
 		ImGui::PushStyleColor(ImGuiCol_Button, activeColor);
 	}
-	if (ImGui::Button(name.c_str())) {
+	if(ImGui::Button(name.c_str()))
+	{
 		selectedTool = tool;
 	}
-	if (isSelected) {
+	if(isSelected)
+	{
 		ImGui::PopStyleColor();
 	}
 }
@@ -377,7 +428,8 @@ void Editor::EntityEditor()
 	auto& entities = ROSE_GETSYSTEM(Entities);
 	auto& registry = entities.GetRegistry();
 	auto selectedEntity = levelTreeEditor.GetSelectedEntity();
-	if (levelTreeEditor.GetSelectedEntity() != entt::entity(-1)) {
+	if(levelTreeEditor.GetSelectedEntity() != entt::entity(-1))
+	{
 		ROSE_DEFAULT_COMP_EDITOR(GUIDComponent, false);
 		ROSE_DEFAULT_COMP_EDITOR(TransformComponent, false);
 		RenderComponent<PhysicsBodyComponent, PhysicsEditor>(true, "Physics Body Component", selectedEntity);
@@ -385,6 +437,7 @@ void Editor::EntityEditor()
 		ROSE_DEFAULT_COMP_EDITOR(CameraComponent, true);
 		ROSE_DEFAULT_COMP_EDITOR(AnimationComponent, true);
 		RenderComponent<ScriptComponent, ScriptEditor>(true, "Script Component", selectedEntity);
+		ROSE_DEFAULT_COMP_EDITOR(SendEventsToParentComponent, true);
 	}
 }
 

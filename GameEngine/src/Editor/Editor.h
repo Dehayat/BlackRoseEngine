@@ -8,7 +8,8 @@
 #include "Editor/LevelTreeEditor.h"
 #include "Editor/ComponentEditor.h"
 
-enum Tools {
+enum Tools
+{
 	//Entity Tools
 	SelectEntity,
 	CreateEntity,
@@ -17,7 +18,8 @@ enum Tools {
 	NoTool,
 };
 
-class Editor {
+class Editor
+{
 	SDL_Window* window;
 	SDL_Renderer* renderer;
 	LevelTreeEditor levelTreeEditor;
@@ -55,19 +57,27 @@ public:
 		auto& entities = ROSE_GETSYSTEM(Entities);
 		auto& registry = entities.GetRegistry();
 
-		if (registry.any_of<TComponent>(entity)) {
-			if (removable && ImGui::Button(("Remove " + componentName).c_str())) {
-				registry.remove<TComponent>(entity);
-				return;
-			}
+		if(registry.any_of<TComponent>(entity))
+		{
 			TEditor editor = TEditor();
 			IComponentEditor* compEditor = (IComponentEditor*)&editor;
-			if (ImGui::CollapsingHeader(componentName.c_str())) {
+			if(ImGui::CollapsingHeader(componentName.c_str()))
+			{
+				ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.5, 0.2, 0.2, 1));
+				auto contentSize = ImGui::GetContentRegionAvail();
+				if(removable && ImGui::Button("Remove Component", {contentSize.x,0}))
+				{
+					registry.remove<TComponent>(entity);
+					return;
+				}
+				ImGui::Separator();
+				ImGui::PopStyleColor();
 				compEditor->Editor(entity);
 			}
-		}
-		else {
-			if (ImGui::Button(("Add " + componentName).c_str())) {
+		} else
+		{
+			if(ImGui::Button(("Add " + componentName).c_str()))
+			{
 				registry.emplace<TComponent>(entity);
 			}
 		}

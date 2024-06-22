@@ -135,6 +135,9 @@
     <ClInclude Include="src\Runtime\Core\DisableSystem.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="src\Runtime\Components\SendEventsToParentComponent.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Editor\Editor.cpp">

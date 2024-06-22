@@ -25,6 +25,10 @@ static entt::entity GetChild(entt::entity entity, std::string childName)
 {
 	return ROSE_GETSYSTEM(TransformSystem).GetChild(entity, childName);
 }
+static std::string GetEntityName(entt::entity entity)
+{
+	return ROSE_GETSYSTEM(Entities).GetRegistry().get<GUIDComponent>(entity).name;
+}
 static void Translate(entt::entity entity, float x, float y)
 {
 	auto& transform = ROSE_GETSYSTEM(Entities).GetRegistry().get<TransformComponent>(entity);
@@ -129,7 +133,7 @@ void ScriptSystem::Update()
 void ScriptSystem::CallEvent(EntityEvent eventData)
 {
 	entt::registry& registry = ROSE_GETSYSTEM(Entities).GetRegistry();
-	auto entity = eventData.entity;
+	auto entity = eventData._callEventFrom;
 	auto& scriptComponent = registry.get<ScriptComponent>(entity);
 	for(auto& script : scriptComponent.scripts)
 	{
@@ -137,7 +141,7 @@ void ScriptSystem::CallEvent(EntityEvent eventData)
 		auto eventCall = state["on_event"];
 		if(eventCall.valid())
 		{
-			eventCall(entity, eventData.name);
+			eventCall(entity, eventData);
 		}
 	}
 }
@@ -149,12 +153,18 @@ void ScriptSystem::AddScript(entt::entity entity, const std::string scriptName, 
 	auto& state = scriptStates[entity][scriptName];
 	state.open_libraries();
 	state.new_usertype<entt::entity>("entity");
+	state.new_usertype<EntityEvent>("EntityEvent",
+		"name", &EntityEvent::name,
+		"entity", &EntityEvent::entity,
+		"target", &EntityEvent::target
+	);
 	state.set_function("get_child", GetChild);
 	state.set_function("move", Translate);
 	state.set_function("face", FaceDir);
 	state.set_function("play_anim", PlayAnimation);
 	state.set_function("disable", DisableEntity);
 	state.set_function("enable", EnableEntity);
+	state.set_function("get_name", GetEntityName);
 	state["no_entity"] = NoEntity();
 	state.script(script);
 

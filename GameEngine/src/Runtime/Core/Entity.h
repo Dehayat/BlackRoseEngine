@@ -9,7 +9,7 @@ typedef std::unordered_map <entt::entity, Guid> GuidMap;
 
 inline static entt::entity NoEntity()
 {
-	return entt::entity(-1);
+	return entt::null;
 }
 
 class Entities

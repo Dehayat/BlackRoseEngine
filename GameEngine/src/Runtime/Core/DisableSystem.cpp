@@ -39,11 +39,9 @@ void DisableSystem::Update()
 			if (isNowEnabled) {
 
 				enableChange[entity] = stateChange::JUST_ENABLED;
-				ROSE_LOG("entity %d just enabled", entity);
 			}
 			else {
 				enableChange[entity] = stateChange::JUST_DISABLED;
-				ROSE_LOG("entity %d just disabled", entity);
 			}
 		}
 	}

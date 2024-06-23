@@ -1,151 +1,25 @@
 - Type: Entity
   Guid:
-    name: sprite
-    id: 13877881093963810337
+    name: hitBox
+    id: 1948778227449772205
     enabled: 1
   Transform:
     position:
-      - 0
-      - -0.2
+      - 1.0585613
+      - 0.19991305
     scale:
       - 1
       - 1
-    rotation: 359.99316
+    rotation: 359.99707
     parent: 7080749886744442335
-  Sprite:
-    sprite: AttackAnimSprite
-    layer: 0
-    color:
-      - 1
-      - 1
-      - 1
-      - 1
-  Animation:
-    animation: AttackAnim
-  SendEventsToParent: []
-- Type: Entity
-  Guid:
-    name: Sky
-    id: 17755008135140164245
-    enabled: 1
-  Transform:
-    position:
-      - -1.5357747
-      - 2.2412677
-    scale:
-      - 20
-      - 7.2
-    rotation: 0
-  Sprite:
-    sprite: blockWhite
-    layer: -5
-    color:
-      - 0.54943377
-      - 0.73438346
-      - 0.7955801
-      - 1
-- Type: Entity
-  Guid:
-    name: Fence
-    id: 7701378215136539364
-    enabled: 1
-  Transform:
-    position:
-      - -0.9210129
-      - 0.09
-    scale:
-      - 15.2
-      - 2.4
-    rotation: 0
-  Sprite:
-    sprite: blockWhite
-    layer: -3
-    color:
-      - 0.488874
-      - 0.5907928
-      - 0.61878455
-      - 1
-- Type: Entity
-  Guid:
-    name: Camera
-    id: 11455113823770256278
-    enabled: 1
-  Transform:
-    position:
-      - 0
-      - 0
-    scale:
-      - 1
-      - 1
-    rotation: 0.024536133
-  Camera:
-    height: 5.4
-    startCamera: 1
-- Type: Entity
-  Guid:
-    name: ''
-    id: 7471548560990152175
-    enabled: 1
-  Transform:
-    position:
-      - 0
-      - -0.6
-    scale:
-      - 50
-      - 3.8
-    rotation: 0
-    parent: 478155528516082714
-  Sprite:
-    sprite: blockWhite
-    layer: -2
-    color:
-      - 0.37569058
-      - 0.37569058
-      - 0.37569058
-      - 1
-- Type: Entity
-  Guid:
-    name: Ground
-    id: 478155528516082714
-    enabled: 1
-  Transform:
-    position:
-      - 0.00076293945
-      - -2
-    scale:
-      - 1
-      - 1
-    rotation: 0
-  PhysicsBody:
-    size:
-      - 50
-      - 1
-    isStatic: 1
-    isSensor: 0
-    useGravity: 0
-- Type: Entity
-  Guid:
-    name: Player
-    id: 7080749886744442335
-    enabled: 1
-  Transform:
-    position:
-      - -3.410429
-      - -0.4849744
-    scale:
-      - 1
-      - 1
-    rotation: 0.0029296875
   PhysicsBody:
     size:
       - 1
-      - 2
+      - 1
     isStatic: 0
-    isSensor: 0
-    useGravity: 1
-  Script:
-    scripts:
-      - playerScript
+    isSensor: 1
+    useGravity: 0
+  SendEventsToParent: []
 - Type: Entity
   Guid:
     name: Orb
@@ -181,23 +55,149 @@
       - batmanScript
 - Type: Entity
   Guid:
-    name: hitBox
-    id: 1948778227449772205
+    name: Player
+    id: 7080749886744442335
     enabled: 1
   Transform:
     position:
-      - 1.0585613
-      - 0.19991305
+      - -3.410429
+      - -0.4849744
     scale:
       - 1
       - 1
-    rotation: 359.99707
-    parent: 7080749886744442335
+    rotation: 0.0029296875
   PhysicsBody:
     size:
       - 1
-      - 1
+      - 2
     isStatic: 0
-    isSensor: 1
+    isSensor: 0
+    useGravity: 1
+  Script:
+    scripts:
+      - playerScript
+- Type: Entity
+  Guid:
+    name: Ground
+    id: 478155528516082714
+    enabled: 1
+  Transform:
+    position:
+      - 0.00076293945
+      - -2
+    scale:
+      - 1
+      - 1
+    rotation: 0
+  PhysicsBody:
+    size:
+      - 50
+      - 1
+    isStatic: 1
+    isSensor: 0
     useGravity: 0
+- Type: Entity
+  Guid:
+    name: ''
+    id: 7471548560990152175
+    enabled: 1
+  Transform:
+    position:
+      - 0
+      - -0.6
+    scale:
+      - 50
+      - 3.8
+    rotation: 0
+    parent: 478155528516082714
+  Sprite:
+    sprite: blockWhite
+    layer: -2
+    color:
+      - 0.37569058
+      - 0.37569058
+      - 0.37569058
+      - 1
+- Type: Entity
+  Guid:
+    name: Camera
+    id: 11455113823770256278
+    enabled: 1
+  Transform:
+    position:
+      - 0
+      - 0
+    scale:
+      - 1
+      - 1
+    rotation: 0.024536133
+  Camera:
+    height: 5.4
+    startCamera: 1
+- Type: Entity
+  Guid:
+    name: Fence
+    id: 7701378215136539364
+    enabled: 1
+  Transform:
+    position:
+      - -0.9210129
+      - 0.09
+    scale:
+      - 15.2
+      - 2.4
+    rotation: 0
+  Sprite:
+    sprite: blockWhite
+    layer: -3
+    color:
+      - 0.488874
+      - 0.5907928
+      - 0.61878455
+      - 1
+- Type: Entity
+  Guid:
+    name: Sky
+    id: 17755008135140164245
+    enabled: 1
+  Transform:
+    position:
+      - -1.5357747
+      - 2.2412677
+    scale:
+      - 20
+      - 7.2
+    rotation: 0
+  Sprite:
+    sprite: blockWhite
+    layer: -5
+    color:
+      - 0.54943377
+      - 0.73438346
+      - 0.7955801
+      - 1
+- Type: Entity
+  Guid:
+    name: sprite
+    id: 13877881093963810337
+    enabled: 1
+  Transform:
+    position:
+      - 0
+      - -0.2
+    scale:
+      - 1
+      - 1
+    rotation: 359.99316
+    parent: 7080749886744442335
+  Sprite:
+    sprite: AttackAnimSprite
+    layer: 0
+    color:
+      - 1
+      - 1
+      - 1
+      - 1
+  Animation:
+    animation: AttackAnim
   SendEventsToParent: []

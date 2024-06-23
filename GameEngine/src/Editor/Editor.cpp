@@ -39,6 +39,7 @@ Editor::Editor()
 	Reset();
 	isGameRunning = false;
 	selectedTool = Tools::SelectEntity;
+	gizmosSetting = Gizmos::ALL;
 }
 
 void Editor::SetupImgui()
@@ -202,6 +203,18 @@ void Editor::UpdateGlobalControls()
 	{
 		selectedTool = Tools::NoTool;
 	}
+	if(input.GetKey(InputKey::G).justPressed)
+	{
+		gizmosSetting = (Gizmos)(gizmosSetting + 1);
+		if(gizmosSetting > Gizmos::ALL)
+		{
+			gizmosSetting = Gizmos::NONE;
+		}
+	}
+}
+Gizmos Editor::GetGizmos()
+{
+	return gizmosSetting;
 }
 
 static bool IsPointInsideRect(vec2 point, SDL_FRect rect)

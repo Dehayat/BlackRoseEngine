@@ -18,6 +18,14 @@ enum Tools
 	NoTool,
 };
 
+enum Gizmos
+{
+	NONE = 0,
+	TRANSFORM,
+	PHYSICS,
+	ALL
+};
+
 class Editor
 {
 	SDL_Window* window;
@@ -26,6 +34,7 @@ class Editor
 	entt::entity createdEntity;
 	bool mouseInViewport;
 	Tools selectedTool;
+	Gizmos gizmosSetting;
 	bool isGameRunning;
 	bool renameEntity;
 
@@ -49,6 +58,7 @@ public:
 	void RenderEditor();
 	entt::entity GetSelectedEntity();
 	bool IsGameRunning();
+	Gizmos GetGizmos();
 
 
 	template<typename TComponent, typename TEditor>

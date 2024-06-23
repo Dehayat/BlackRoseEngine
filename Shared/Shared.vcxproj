@@ -180,7 +180,6 @@
     <ClCompile Include="src\Project\Project.cpp" />
     <ClCompile Include="src\Project\ProjectLoader.cpp" />
     <ClCompile Include="src\Reflection\Reflection.cpp" />
-    <ClCompile Include="src\Shared.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

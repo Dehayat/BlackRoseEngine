@@ -151,7 +151,6 @@
     <ClInclude Include="src\ImguiHelper.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\EditorUtils.cpp" />
     <ClCompile Include="src\ImguiHelper.cpp" />
   </ItemGroup>
   <ItemGroup>

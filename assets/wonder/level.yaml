@@ -2,7 +2,7 @@
   Guid:
     name: hitBox
     id: 1948778227449772205
-    enabled: 1
+    enabled: 0
   Transform:
     position:
       - 1.0585613
@@ -60,7 +60,7 @@
     enabled: 1
   Transform:
     position:
-      - -3.410429
+      - -3.4019287
       - -0.4849744
     scale:
       - 1
@@ -191,7 +191,7 @@
     rotation: 359.99316
     parent: 7080749886744442335
   Sprite:
-    sprite: AttackAnimSprite
+    sprite: IdleAnimSprite
     layer: 0
     color:
       - 1
@@ -199,5 +199,36 @@
       - 1
       - 1
   Animation:
-    animation: AttackAnim
+    animation: IdleAnim
   SendEventsToParent: []
+- Type: Entity
+  Guid:
+    name: box
+    id: 5346231925711097807
+    enabled: 1
+  Transform:
+    position:
+      - -0.78377867
+      - -0.5163357
+    scale:
+      - 1
+      - 1
+    rotation: 0
+  Sprite:
+    sprite: blockWhite
+    layer: 0
+    color:
+      - 0.83425415
+      - 0.47935048
+      - 0.47935048
+      - 1
+  PhysicsBody:
+    size:
+      - 1
+      - 1
+    isStatic: 0
+    isSensor: 0
+    useGravity: 0
+  Script:
+    scripts:
+      - hittableScript

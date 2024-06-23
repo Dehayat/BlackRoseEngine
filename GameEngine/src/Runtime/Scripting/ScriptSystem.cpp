@@ -1,5 +1,7 @@
 #include "Scripting/ScriptSystem.h"
 
+#include <set>
+
 #include "Core/Entity.h"
 #include "AssetPipline/AssetStore.h"
 #include "AssetPipline/ScriptAsset.h"
@@ -59,6 +61,11 @@ static void EnableEntity(entt::entity entity)
 	auto& guid = ROSE_GETSYSTEM(Entities).GetRegistry().get<GUIDComponent>(entity);
 	guid.enabled = true;
 }
+static std::set<entt::entity> destroyCalls;
+static void DestroyEntity(entt::entity entity)
+{
+	destroyCalls.insert(entity);
+}
 
 void ScriptSystem::ScriptComponentCreated(entt::registry& registry, entt::entity entity)
 {
@@ -113,13 +120,21 @@ void ScriptSystem::Update()
 	auto dt = ROSE_GETSYSTEM(TimeSystem).GetdeltaTime();
 	for(auto entity : view)
 	{
-		if(!ROSE_GETSYSTEM(DisableSystem).IsEnabled(entity))
+		if(destroyCalls.find(entity) != destroyCalls.end())
+		{
+			continue;
+		}
+		if(ROSE_GETSYSTEM(DisableSystem).IsDisabled(entity))
 		{
 			continue;
 		}
 		auto& scriptComponent = registry.get<ScriptComponent>(entity);
 		for(auto& script : scriptComponent.scripts)
 		{
+			if(destroyCalls.find(entity) != destroyCalls.end())
+			{
+				break;
+			}
 			auto& state = scriptStates[entity][script];
 			auto update = state["update"];
 			if(update.valid())
@@ -128,6 +143,11 @@ void ScriptSystem::Update()
 			}
 		}
 	}
+	for(auto entity : destroyCalls)
+	{
+		ROSE_GETSYSTEM(Entities).DestroyEntity(entity);
+	}
+	destroyCalls.clear();
 }
 
 void ScriptSystem::CallEvent(EntityEvent eventData)
@@ -165,6 +185,7 @@ void ScriptSystem::AddScript(entt::entity entity, const std::string scriptName, 
 	state.set_function("disable", DisableEntity);
 	state.set_function("enable", EnableEntity);
 	state.set_function("get_name", GetEntityName);
+	state.set_function("destroy", DestroyEntity);
 	state["no_entity"] = NoEntity();
 	state.script(script);
 

@@ -38,16 +38,16 @@ public:
 	void Render()
 	{
 		auto package = ROSE_GETSYSTEM(ProjectManager).GetCurrentPackage();
-		if (package == nullptr) {
-			return;
-		}
 		ImGui::PushID(package->guid);
 
 		ImGui::SeparatorText(package->filePath.c_str());
-		if (ImGui::BeginListBox("Assets", ImVec2(0, 500))) {
-			for (auto assetFile : package->assets) {
+		if(ImGui::BeginListBox("Assets", ImVec2(0, 500)))
+		{
+			for(auto assetFile : package->assets)
+			{
 				bool selected = selectedAsset == assetFile;
-				if (ImGui::Selectable((assetFile->metaData->name + " :" + std::to_string(assetFile->guid)).c_str(), &selected, ImGuiSelectableFlags_AllowDoubleClick)) {
+				if(ImGui::Selectable((assetFile->metaData->name + " :" + std::to_string(assetFile->guid)).c_str(), &selected, ImGuiSelectableFlags_AllowDoubleClick))
+				{
 					selectedAsset = assetFile;
 				}
 			}
@@ -55,10 +55,12 @@ public:
 		}
 
 
-		if (package->filePath.capacity() < 31) {
+		if(package->filePath.capacity() < 31)
+		{
 			package->filePath.reserve(31);
 		}
-		if (ImGui::Button("Save")) {
+		if(ImGui::Button("Save"))
+		{
 			package->Save();
 		}
 		//TODO: fix save as button
@@ -70,23 +72,24 @@ public:
 		//		package->Save();
 		//	}
 		//}
-		if (ImGui::Button("Add Asset"))
+		if(ImGui::Button("Add Asset"))
 		{
 			auto fileName = ROSE_GETSYSTEM(FileDialog).OpenFile("anim,lua,png,jpg");
-			if (fileName != "") {
+			if(fileName != "")
+			{
 				AddAssetToPackage(package, fileName);
 			}
 		}
 		ImGui::SameLine();
 		ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.4, 0.2, 0.2, 1));
-		if (ImGui::Button("Remove Selected Asset")) {
-			if (IsAssetSelected() && package->ContainsAsset(selectedAsset))
+		if(ImGui::Button("Remove Selected Asset"))
+		{
+			if(IsAssetSelected() && package->ContainsAsset(selectedAsset))
 			{
 				package->RemoveAsset(selectedAsset);
 				selectedAsset = nullptr;
 				ROSE_LOG("Asset removed from Package");
-			}
-			else
+			} else
 			{
 				ROSE_LOG("Asset not found in Package");
 			}
@@ -100,12 +103,17 @@ public:
 		auto asset = package->AddAsset(assetType);
 		asset->filePath = ROSE_GETSYSTEM(FileDialog).GetRelativePath(std::filesystem::current_path().string(), assetFileName);
 	}
-	bool IsAssetSelected() {
+	bool IsAssetSelected()
+	{
+		if(ROSE_GETSYSTEM(ProjectManager).GetCurrentPackage() == nullptr)
+		{
+			selectedAsset = nullptr;
+		}
 		return selectedAsset != nullptr;
 	}
 	void MetaDataEditor(AssetMetaData* metaData)
 	{
-		if (metaData->name.capacity() < FILE_PATH_SIZE)
+		if(metaData->name.capacity() < FILE_PATH_SIZE)
 		{
 			metaData->name.reserve(FILE_PATH_SIZE);
 		}
@@ -121,16 +129,16 @@ public:
 		ImGui::PushID(selectedAsset->guid);
 		ImGui::LabelText("Guid", std::to_string(selectedAsset->guid).c_str());
 		ImGui::LabelText("File Path", selectedAsset->filePath.c_str());
-		if (ImGui::Button("Change Asset File"))
+		if(ImGui::Button("Change Asset File"))
 		{
 			auto fileName = ROSE_GETSYSTEM(FileDialog).OpenFile("anim,png,jpg,lua");
-			if (fileName != "")
+			if(fileName != "")
 			{
 				selectedAsset->filePath = ROSE_GETSYSTEM(FileDialog).GetRelativePath(std::filesystem::current_path().string(), fileName);
-				if (Asset::GetAssetFileType(selectedAsset->filePath) != selectedAsset->assetType)
+				if(Asset::GetAssetFileType(selectedAsset->filePath) != selectedAsset->assetType)
 				{
 					selectedAsset->assetType = Asset::GetAssetFileType(selectedAsset->filePath);
-					switch (selectedAsset->assetType)
+					switch(selectedAsset->assetType)
 					{
 					case AssetType::Texture:
 						selectedAsset->metaData = new TextureMetaData();
@@ -144,7 +152,7 @@ public:
 		}
 		ImGui::SeparatorText(Asset::GetAssetTypeName(selectedAsset->assetType).c_str());
 		MetaDataEditor(selectedAsset->metaData);
-		switch (selectedAsset->assetType)
+		switch(selectedAsset->assetType)
 		{
 		case AssetType::Texture:
 			TextureMetaDataEditor((TextureMetaData*)selectedAsset->metaData);

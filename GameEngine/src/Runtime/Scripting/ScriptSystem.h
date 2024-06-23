@@ -7,7 +7,8 @@
 
 #include "Events/EntityEvent.h"
 
-class ScriptSystem {
+class ScriptSystem
+{
 private:
 	std::set<entt::entity> setupNextFrame;
 	std::unordered_map<entt::entity, std::unordered_map<std::string, sol::state>> scriptStates;

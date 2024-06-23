@@ -12,35 +12,42 @@ void DisableSystem::Update()
 {
 	entt::registry& registry = ROSE_GETSYSTEM(Entities).GetRegistry();
 
-	registry.sort<TransformComponent>([](const auto& lhs, const auto& rhs) {
-		return lhs.level < rhs.level;
+	registry.sort<TransformComponent>([](const auto& lhs, const auto& rhs)
+		{
+			return lhs.level < rhs.level;
 		});
 	auto view3 = registry.view<GUIDComponent, TransformComponent>();
-	for (auto entity : view3) {
+	for(auto entity : view3)
+	{
 		bool wasEnabled = IsEnabled(entity);
 		auto& guid = view3.get<GUIDComponent>(entity);
 		auto& trx = view3.get<TransformComponent>(entity);
-		if (guid.enabled) {
+		if(guid.enabled)
+		{
 			isEnabled[entity] = true;
-		}
-		else {
+		} else
+		{
 			isEnabled[entity] = false;
 		}
-		if (trx.hasParent) {
-			if (isEnabled[trx.parent] == false) {
+		if(trx.hasParent)
+		{
+			if(isEnabled[trx.parent] == false)
+			{
 				isEnabled[entity] = false;
 			}
 		}
 		bool isNowEnabled = IsEnabled(entity);
-		if (isNowEnabled == wasEnabled) {
+		if(isNowEnabled == wasEnabled)
+		{
 			enableChange[entity] = stateChange::NOTHING;
-		}
-		else {
-			if (isNowEnabled) {
+		} else
+		{
+			if(isNowEnabled)
+			{
 
 				enableChange[entity] = stateChange::JUST_ENABLED;
-			}
-			else {
+			} else
+			{
 				enableChange[entity] = stateChange::JUST_DISABLED;
 			}
 		}
@@ -49,15 +56,25 @@ void DisableSystem::Update()
 
 bool DisableSystem::IsEnabled(entt::entity entity)
 {
-	if (isEnabled.find(entity) != isEnabled.end()) {
+	if(isEnabled.find(entity) != isEnabled.end())
+	{
 		return isEnabled[entity];
+	}
+	return false;
+}
+bool DisableSystem::IsDisabled(entt::entity entity)
+{
+	if(isEnabled.find(entity) != isEnabled.end())
+	{
+		return !isEnabled[entity];
 	}
 	return false;
 }
 
 bool DisableSystem::JustEnabled(entt::entity entity)
 {
-	if (enableChange.find(entity) != enableChange.end()) {
+	if(enableChange.find(entity) != enableChange.end())
+	{
 		return enableChange[entity] == stateChange::JUST_ENABLED;
 	}
 	return false;
@@ -65,7 +82,8 @@ bool DisableSystem::JustEnabled(entt::entity entity)
 
 bool DisableSystem::JustDisabled(entt::entity entity)
 {
-	if (enableChange.find(entity) != enableChange.end()) {
+	if(enableChange.find(entity) != enableChange.end())
+	{
 		return enableChange[entity] == stateChange::JUST_DISABLED;
 	}
 	return false;

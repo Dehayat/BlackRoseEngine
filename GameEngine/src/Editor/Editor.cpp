@@ -274,6 +274,7 @@ void Editor::RenderGizmos()
 
 void Editor::RenderEditor()
 {
+	levelTreeEditor.CleanTree();
 	RenderImgui();
 
 	int w, h;

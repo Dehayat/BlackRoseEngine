@@ -50,4 +50,5 @@ public:
 	void GenerateFramesFromAtlas(float frameDuration);
 	std::string SaveFile(const std::string& extension);
 	std::string OpenFile(const std::string& extension);
+	void PreviewImage(TextureAsset* textureAsset);
 };

@@ -9,6 +9,7 @@
 
 #include "AssetPipline/AssetStore.h"
 
+static bool isDark = true;
 
 Animator::Animator():maxDt(0.0166)
 {
@@ -183,6 +184,11 @@ void Animator::PackageLoaderEditor()
 				*texture = selectedAsset->metaData->name;
 			}
 		}
+
+		if(!isDark)
+		{
+			ImGui::PushStyleColor(ImGuiCol_ChildBg, ImVec4(0.8, 0.8, 0.8, 1));
+		}
 		if(ImGui::BeginChild("Preview", ImVec2(280, 280), false, ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse))
 		{
 			auto asset = (TextureAsset*)(ROSE_GETSYSTEM(AssetStore).GetAsset(selectedAsset->metaData->name).asset);
@@ -191,9 +197,39 @@ void Animator::PackageLoaderEditor()
 
 			ImGui::SetCursorPosX((windowWidth - 260) * 0.5f);
 			ImGui::SetCursorPosY((windowHeight - 260) * 0.5f);
-			ImGui::Image(asset->texture, ImVec2(260, 260), ImVec2(0, 0), ImVec2(1, 1), ImVec4(1, 1, 1, 1), ImVec4(0.5, 0.5, 0.5, 0.8));
+			PreviewImage(asset);
+		}
+
+		if(!isDark)
+		{
+			ImGui::PopStyleColor();
 		}
 		ImGui::EndChild();
+	}
+}
+
+void Animator::PreviewImage(TextureAsset* textureAsset)
+{
+	int texW, texH;
+	SDL_QueryTexture(textureAsset->texture, nullptr, nullptr, &texW, &texH);
+	if(textureAsset != nullptr && textureAsset->texture != nullptr)
+	{
+		auto windowWidth = ImGui::GetWindowSize().x;
+		auto windowHeight = ImGui::GetWindowSize().y;
+
+		auto maxImgSize = 260;
+
+		auto imgHeight = maxImgSize;
+		auto imgWidth = imgHeight * (texW) / texH;
+		if(imgWidth > maxImgSize)
+		{
+			imgWidth = maxImgSize;
+			imgHeight = imgWidth * texH / texW;
+		}
+
+		ImGui::SetCursorPosX((windowWidth - imgWidth) * 0.5f);
+		ImGui::SetCursorPosY((windowHeight - imgHeight) * 0.5f);
+		ImGui::Image(textureAsset->texture, ImVec2(imgWidth, imgHeight), ImVec2(0, 0), ImVec2(1, 1), ImVec4(1, 1, 1, 1), ImVec4(0.5, 0.5, 0.5, 0.8));
 	}
 }
 
@@ -607,11 +643,11 @@ void Animator::RenderFrameImage(Frame* frame, int id, float fullWidth)
 	{
 		borderColor = ImVec4(0.7, 0.7, 0.3, 1);
 	}
-	if(textureAsset != nullptr && textureAsset->texture != nullptr)
-	{
-		auto windowWidth = ImGui::GetWindowSize().x;
-		auto windowHeight = ImGui::GetWindowSize().y;
-		ImGui::Image(textureAsset->texture, ImVec2(fullWidth * (frame->frameDuration / animationDuration), 100), uv0, uv1, ImVec4(1, 1, 1, 1), borderColor);
+		if(textureAsset != nullptr && textureAsset->texture != nullptr)
+		{
+			auto windowWidth = ImGui::GetWindowSize().x;
+			auto windowHeight = ImGui::GetWindowSize().y;
+			ImGui::Image(textureAsset->texture, ImVec2(fullWidth * (frame->frameDuration / animationDuration), 100), uv0, uv1, ImVec4(1, 1, 1, 1), borderColor);
 	} else
 	{
 		ImGui::Button("Sprite Not Found", ImVec2(fullWidth * (frame->frameDuration / animationDuration), 100));
@@ -623,9 +659,9 @@ void Animator::RenderFrameImage(Frame* frame, int id, float fullWidth)
 	}
 }
 
+
 void Animator::AnimationViewportEditor(ImVec2 size)
 {
-	static bool isDark = true;
 	if(!isDark)
 	{
 		ImGui::PushStyleColor(ImGuiCol_ChildBg, ImVec4(0.8, 0.8, 0.8, 1));
@@ -650,7 +686,6 @@ void Animator::AnimationViewportEditor(ImVec2 size)
 		{
 			if(isPlaying)
 			{
-
 				auto dt = (SDL_GetTicks64() - lastTime) / 1000.0f;
 				if(dt > maxDt)
 				{

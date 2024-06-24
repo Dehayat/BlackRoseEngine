@@ -13,6 +13,10 @@
 
 #include "Input/InputSystem.h"
 #include "Renderer/Renderer.h"
+#include "Core/Transform.h"
+#include "Animation/AnimationSystem.h"
+#include "Events/EntityEventSystem.h"
+#include "Scripting/ScriptSystem.h"
 
 #include "Core/Systems.h"
 
@@ -33,7 +37,31 @@
 #define ROSE_DEFAULT_COMP_EDITOR(COMP,DEL)	ROSE_INIT_VARS(COMP);\
 											RenderComponent<COMP, DefaultComponentEditor<COMP>>(DEL, #COMP, selectedEntity)
 
-Editor::Editor()
+
+
+void Editor::Run()
+{
+	Setup();
+
+#ifdef _DEBUG
+	TransformSystem& transformSystem = ROSE_GETSYSTEM(TransformSystem);
+	transformSystem.InitDebugDrawer();
+	PhysicsSystem& physics = ROSE_GETSYSTEM(PhysicsSystem);
+	physics.InitDebugDrawer();
+	physics.EnableDebug(true);
+	transformSystem.EnableDebug(true);
+#endif // !_DEBUG
+
+	isRunning = true;
+	while(isRunning)
+	{
+		Update();
+		Render();
+	}
+}
+
+
+Editor::Editor():BaseGame()
 {
 	SetupImgui();
 	Reset();
@@ -78,6 +106,27 @@ void Editor::CloseImgui()
 
 void Editor::Update()
 {
+	bool exitGame = ProcessEvents();
+	if(exitGame)
+	{
+		isRunning = false;
+	}
+	bool isGameRunning = IsGameRunning();
+	ROSE_GETSYSTEM(TimeSystem).Update();
+	ROSE_GETSYSTEM(DisableSystem).Update();
+	ROSE_GETSYSTEM(TransformSystem).Update();
+	ROSE_GETSYSTEM(InputSystem).Update();
+	if(isGameRunning)
+	{
+		ROSE_GETSYSTEM(PhysicsSystem).Update();
+	}
+	ROSE_GETSYSTEM(AnimationPlayer).Update();
+	if(isGameRunning)
+	{
+		ROSE_GETSYSTEM(ScriptSystem).Update();
+		ROSE_GETSYSTEM(EntityEventSystem).Update();
+	}
+
 	if(mouseInViewport)
 	{
 		UpdateViewportControls();
@@ -86,6 +135,25 @@ void Editor::Update()
 	{
 		UpdateGlobalControls();
 	}
+}
+void Editor::Render()
+{
+
+	RendererSystem& renderer = ROSE_GETSYSTEM(RendererSystem);
+	renderer.Render();
+	TransformSystem& transformSystem = ROSE_GETSYSTEM(TransformSystem);
+	transformSystem.GetDebugRenderer().SetMatrix(renderer.GetWorldToScreenMatrix());
+	if(GetGizmos() == Gizmos::TRANSFORM || GetGizmos() == Gizmos::ALL)
+	{
+		transformSystem.DebugRender(renderer.GetWorldToScreenMatrix(), GetSelectedEntity());
+	}
+	if(GetGizmos() == Gizmos::PHYSICS || GetGizmos() == Gizmos::ALL)
+	{
+		ROSE_GETSYSTEM(PhysicsSystem).DebugRender(renderer.GetWorldToScreenMatrix());
+	}
+	RenderGizmos();
+	RenderEditor();
+	renderer.Present();
 }
 
 void Editor::UpdateViewportControls()

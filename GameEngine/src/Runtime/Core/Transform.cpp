@@ -143,12 +143,10 @@ void TransformSystem::SetParent(entt::entity entity, entt::entity parent)
 	child.UpdateGlobals();
 }
 
-#ifdef _DEBUG
 DebugDrawTransform& TransformSystem::GetDebugRenderer()
 {
 	return *debugDrawer;
 }
-#endif // _DEBUG
 
 DebugDrawTransform::DebugDrawTransform() :matrix(1)
 {

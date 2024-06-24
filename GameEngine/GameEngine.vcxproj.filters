@@ -138,6 +138,12 @@
     <ClInclude Include="src\Runtime\Components\SendEventsToParentComponent.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="src\Application\Application.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Runtime\Core\BaseGame.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Editor\Editor.cpp">
@@ -167,7 +173,7 @@
     <ClCompile Include="src\Runtime\Core\Game.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\Runtime\Core\Main.cpp">
+    <ClCompile Include="src\Application\Main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\Runtime\Core\TimeSystem.cpp">
@@ -195,6 +201,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\Runtime\Core\DisableSystem.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Runtime\Core\BaseGame.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

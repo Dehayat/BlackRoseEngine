@@ -35,6 +35,7 @@
     <ClInclude Include="src\Runtime\Components\SendEventsToParentComponent.h" />
     <ClInclude Include="src\Runtime\Components\SpriteComponent.h" />
     <ClInclude Include="src\Runtime\Components\TransformComponent.h" />
+    <ClInclude Include="src\Runtime\Core\BaseGame.h" />
     <ClInclude Include="src\Runtime\Core\DisableSystem.h" />
     <ClInclude Include="src\Runtime\Core\Entity.h" />
     <ClInclude Include="src\Runtime\Core\Game.h" />
@@ -44,6 +45,7 @@
     <ClInclude Include="src\Runtime\Events\Event.h" />
     <ClInclude Include="src\Runtime\Events\EventBus.h" />
     <ClInclude Include="src\Runtime\Events\KeyPressedEvent.h" />
+    <ClInclude Include="src\Application\Application.h" />
     <ClInclude Include="src\Runtime\Levels\LevelLoader.h" />
     <ClInclude Include="src\Runtime\Core\TimeSystem.h" />
     <ClInclude Include="src\Runtime\Core\Transform.h" />
@@ -64,11 +66,12 @@
     <ClCompile Include="src\Editor\LevelTreeEditor.cpp" />
     <ClCompile Include="src\Runtime\Animation\AnimationSystem.cpp" />
     <ClCompile Include="src\Runtime\Components\TransformComponent.cpp" />
+    <ClCompile Include="src\Runtime\Core\BaseGame.cpp" />
     <ClCompile Include="src\Runtime\Core\DisableSystem.cpp" />
     <ClCompile Include="src\Runtime\Core\Entity.cpp" />
     <ClCompile Include="src\Runtime\Core\EntityEventSystem.cpp" />
     <ClCompile Include="src\Runtime\Core\Game.cpp" />
-    <ClCompile Include="src\Runtime\Core\Main.cpp" />
+    <ClCompile Include="src\Application\Main.cpp" />
     <ClCompile Include="src\Runtime\Core\TimeSystem.cpp" />
     <ClCompile Include="src\Runtime\Core\Transform.cpp" />
     <ClCompile Include="src\Runtime\Input\InputSystem.cpp" />

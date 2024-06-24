@@ -2,6 +2,8 @@
 #include <SDL2/SDL.h>
 #include <imgui.h>
 
+#include "Core/BaseGame.h"
+
 #include "Components/Components.h"
 
 #include "Editor/LevelTree.h"
@@ -26,8 +28,9 @@ enum Gizmos
 	ALL
 };
 
-class Editor
+class Editor:public BaseGame
 {
+	bool isRunning;
 	SDL_Window* window;
 	SDL_Renderer* renderer;
 	LevelTreeEditor levelTreeEditor;
@@ -51,8 +54,10 @@ class Editor
 public:
 	Editor();
 	~Editor();
+	virtual void Run() override;
 	void Reset();
 	void Update();
+	void Render();
 	bool ProcessEvents();
 	void RenderGizmos();
 	void RenderEditor();

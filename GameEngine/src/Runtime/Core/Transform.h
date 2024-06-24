@@ -33,7 +33,5 @@ public:
 	static void MoveTransformToWorldSpace(TransformComponent& trx);
 	static void MoveTransformToParentSpace(TransformComponent& trx, TransformComponent& source);
 	static glm::mat3 CalcMatrix(TransformComponent& trx);
-#ifdef _DEBUG
 	DebugDrawTransform& GetDebugRenderer();
-#endif // _DEBUG
 };

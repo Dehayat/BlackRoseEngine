@@ -12,7 +12,8 @@
 
 using namespace glm;
 
-struct SpriteComponent {
+struct SpriteComponent
+{
 	std::string sprite;
 	int layer;
 	glm::vec4 color;
@@ -20,7 +21,8 @@ struct SpriteComponent {
 	SDL_Rect* sourceRect;
 	SDL_FRect destRect;
 
-	SpriteComponent(std::string sprite = "block", int layer = 0, vec4 color = vec4(1, 1, 1, 1)) {
+	SpriteComponent(std::string sprite = "block", int layer = 0, vec4 color = vec4(1, 1, 1, 1))
+	{
 		this->sprite = sprite;
 		this->layer = layer;
 		this->color = color;
@@ -34,14 +36,18 @@ struct SpriteComponent {
 		this->layer = 0;
 		sourceRect = nullptr;
 		destRect = SDL_FRect();
-		if (node.is_map()) {
-			if (node.has_child("sprite")) {
+		if(node.is_map())
+		{
+			if(node.has_child("sprite"))
+			{
 				node["sprite"] >> this->sprite;
 			}
-			if (node.has_child("layer")) {
+			if(node.has_child("layer"))
+			{
 				node["layer"] >> this->layer;
 			}
-			if (node.has_child("color")) {
+			if(node.has_child("color"))
+			{
 				auto c = vec4();
 				node["color"][0] >> c.r;
 				node["color"][1] >> c.g;
@@ -50,6 +56,14 @@ struct SpriteComponent {
 				this->color = c;
 			}
 		}
+	}
+	SpriteComponent(const SpriteComponent& other)
+	{
+		this->sprite = other.sprite;
+		this->layer = other.layer;
+		this->color = other.color;
+		sourceRect = nullptr;
+		destRect = other.destRect;
 	}
 	void Serialize(ryml::NodeRef node)
 	{

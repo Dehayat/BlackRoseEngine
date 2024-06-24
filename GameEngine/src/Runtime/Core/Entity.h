@@ -31,4 +31,5 @@ public:
 	entt::entity CreateEntity(Guid guid);
 	entt::entity CreateEntityWithoutGuidComponent(Guid guid);
 	void DestroyEntity(entt::entity entity);
+	entt::entity Copy(entt::entity entity);
 };

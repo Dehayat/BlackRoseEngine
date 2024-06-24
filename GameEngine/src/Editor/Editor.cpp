@@ -240,6 +240,13 @@ void Editor::UpdateGlobalControls()
 				levelLoader.SaveLevel(levelLoader.GetCurrentLevelFile());
 			}
 		}
+		if(input.GetKey(InputKey::D).justPressed)
+		{
+			if(GetSelectedEntity() != NoEntity())
+			{
+				levelTreeEditor.SelectEntity(ROSE_GETSYSTEM(Entities).Copy(GetSelectedEntity()));
+			}
+		}
 		return;
 	}
 

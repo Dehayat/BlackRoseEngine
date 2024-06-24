@@ -20,10 +20,11 @@ entt::registry& Entities::GetRegistry()
 
 entt::entity Entities::GetEntity(Guid guid)
 {
-	if (allEntities.find(guid) != allEntities.end()) {
+	if(allEntities.find(guid) != allEntities.end())
+	{
 		return allEntities[guid];
-	}
-	else {
+	} else
+	{
 		return NoEntity();
 	}
 }
@@ -35,15 +36,17 @@ Guid Entities::GetEntityGuid(entt::entity entity)
 
 bool Entities::EntityExists(Guid guid)
 {
-	if (allEntities.find(guid) == allEntities.end()) {
+	if(allEntities.find(guid) == allEntities.end())
+	{
 		return false;
-	}
-	else {
+	} else
+	{
 		auto& regsitry = GetRegistry();
-		if (regsitry.valid(allEntities[guid])) {
+		if(regsitry.valid(allEntities[guid]))
+		{
 			return true;
-		}
-		else {
+		} else
+		{
 			return false;
 		}
 	}
@@ -56,9 +59,10 @@ bool Entities::EntityExists(entt::entity entity)
 void Entities::DestroyAllEntities()
 {
 	auto& registry = GetRegistry();
-	for (auto& it : allEntities)
+	for(auto& it : allEntities)
 	{
-		if (registry.valid(it.second)) {
+		if(registry.valid(it.second))
+		{
 			registry.destroy(it.second);
 		}
 	}
@@ -85,6 +89,23 @@ entt::entity Entities::CreateEntity(Guid guid)
 	AddEntity(guid, entity);
 	return entity;
 }
+entt::entity Entities::Copy(entt::entity src)
+{
+	auto& registry = GetRegistry();
+	auto dst = registry.create();
+	for(auto [id, storage] : registry.storage())
+	{
+		if(storage.contains(src))
+		{
+			storage.emplace(dst, storage.get(src));
+		}
+	}
+	auto& guidComp = registry.get_or_emplace<GUIDComponent>(dst);
+	auto guid = GuidGenerator::New();
+	guidComp.id = guid;
+	AddEntity(guid, dst);
+	return dst;
+}
 entt::entity Entities::CreateEntityWithoutGuidComponent(Guid guid)
 {
 	auto& registry = GetRegistry();
@@ -97,14 +118,17 @@ void Entities::DestroyEntity(entt::entity entity)
 {
 	auto& registry = GetRegistry();
 	Guid guid = -1;
-	if (registry.valid(entity)) {
+	if(registry.valid(entity))
+	{
 		guid = registry.get<GUIDComponent>(entity).id;
 		registry.destroy(entity);
 	}
-	if (guid != -1 && allEntities.find(guid) != allEntities.end()) {
+	if(guid != -1 && allEntities.find(guid) != allEntities.end())
+	{
 		allEntities.erase(guid);
 	}
-	if (allEntityGuids.find(entity) != allEntityGuids.end()) {
+	if(allEntityGuids.find(entity) != allEntityGuids.end())
+	{
 		allEntityGuids.erase(entity);
 	}
 }

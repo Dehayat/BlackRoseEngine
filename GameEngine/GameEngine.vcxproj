@@ -29,6 +29,7 @@
     <ClInclude Include="src\Runtime\Components\AnimationComponent.h" />
     <ClInclude Include="src\Runtime\Components\CameraComponent.h" />
     <ClInclude Include="src\Runtime\Components\Components.h" />
+    <ClInclude Include="src\Runtime\Components\DisableComponent.h" />
     <ClInclude Include="src\Runtime\Components\GUIDComponent.h" />
     <ClInclude Include="src\Runtime\Components\PhysicsBodyComponent.h" />
     <ClInclude Include="src\Runtime\Components\ScriptComponent.h" />

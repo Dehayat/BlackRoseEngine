@@ -15,6 +15,7 @@
 #include "Components/ScriptComponent.h"
 #include "Components/AnimationComponent.h"
 #include "Components/GUIDComponent.h"
+#include "Components/DisableComponent.h"
 
 ScriptSystem::ScriptSystem()
 {
@@ -53,13 +54,11 @@ static void FaceDir(entt::entity entity, int dir)
 }
 static void DisableEntity(entt::entity entity)
 {
-	auto& guid = ROSE_GETSYSTEM(Entities).GetRegistry().get<GUIDComponent>(entity);
-	guid.enabled = false;
+	ROSE_GETSYSTEM(DisableSystem).Disable(entity);
 }
 static void EnableEntity(entt::entity entity)
 {
-	auto& guid = ROSE_GETSYSTEM(Entities).GetRegistry().get<GUIDComponent>(entity);
-	guid.enabled = true;
+	ROSE_GETSYSTEM(DisableSystem).Enable(entity);
 }
 static std::set<entt::entity> destroyCalls;
 static void DestroyEntity(entt::entity entity)
@@ -116,15 +115,11 @@ void ScriptSystem::Update()
 		}
 	}
 	setupNextFrame.clear();
-	auto view = registry.view<ScriptComponent>();
+	auto view = registry.view<ScriptComponent>(entt::exclude<DisableComponent>);
 	auto dt = ROSE_GETSYSTEM(TimeSystem).GetdeltaTime();
 	for(auto entity : view)
 	{
 		if(destroyCalls.find(entity) != destroyCalls.end())
-		{
-			continue;
-		}
-		if(ROSE_GETSYSTEM(DisableSystem).IsDisabled(entity))
 		{
 			continue;
 		}

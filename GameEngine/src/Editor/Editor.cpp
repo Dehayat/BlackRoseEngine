@@ -17,6 +17,7 @@
 #include "Animation/AnimationSystem.h"
 #include "Events/EntityEventSystem.h"
 #include "Scripting/ScriptSystem.h"
+#include "Core/DisableSystem.h"
 
 #include "Core/Systems.h"
 
@@ -113,7 +114,6 @@ void Editor::Update()
 	}
 	bool isGameRunning = IsGameRunning();
 	ROSE_GETSYSTEM(TimeSystem).Update();
-	ROSE_GETSYSTEM(DisableSystem).Update();
 	ROSE_GETSYSTEM(TransformSystem).Update();
 	ROSE_GETSYSTEM(InputSystem).Update();
 	if(isGameRunning)
@@ -284,6 +284,7 @@ Gizmos Editor::GetGizmos()
 {
 	return gizmosSetting;
 }
+
 
 static bool IsPointInsideRect(vec2 point, SDL_FRect rect)
 {
@@ -512,6 +513,7 @@ void Editor::EntityEditor()
 	auto selectedEntity = levelTreeEditor.GetSelectedEntity();
 	if(levelTreeEditor.GetSelectedEntity() != entt::entity(-1))
 	{
+		RenderEntityEditor(selectedEntity);
 		ROSE_DEFAULT_COMP_EDITOR(GUIDComponent, false);
 		ROSE_DEFAULT_COMP_EDITOR(TransformComponent, false);
 		RenderComponent<PhysicsBodyComponent, PhysicsEditor>(true, "Physics Body Component", selectedEntity);
@@ -520,6 +522,30 @@ void Editor::EntityEditor()
 		ROSE_DEFAULT_COMP_EDITOR(AnimationComponent, true);
 		RenderComponent<ScriptComponent, ScriptEditor>(true, "Script Component", selectedEntity);
 		ROSE_DEFAULT_COMP_EDITOR(SendEventsToParentComponent, true);
+	}
+}
+void Editor::RenderEntityEditor(entt::entity entity)
+{
+	static bool enabled = true;
+	auto& entities = ROSE_GETSYSTEM(Entities);
+	auto& registry = entities.GetRegistry();
+	if(registry.any_of<DisableComponent>(entity))
+	{
+		enabled = !registry.get<DisableComponent>(entity).selfDisabled;
+	} else
+	{
+		enabled = true;
+	}
+	ImGui::SeparatorText("Entity");
+	if(ImGui::Checkbox("Enabled", &enabled))
+	{
+		if(enabled)
+		{
+			ROSE_GETSYSTEM(DisableSystem).Enable(entity);
+		} else
+		{
+			ROSE_GETSYSTEM(DisableSystem).Disable(entity);
+		}
 	}
 }
 

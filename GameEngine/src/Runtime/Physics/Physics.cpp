@@ -4,11 +4,12 @@
 
 #include "Core/SdlContainer.h"
 #include "Core/TimeSystem.h"
-#include "Core/DisableSystem.h"
 
 #include "Core/Systems.h"
 
 #include "Physics/CollisionListener.h"
+
+#include "Components/DisableComponent.h"
 
 #include "Core/Log.h"
 
@@ -24,6 +25,8 @@ PhysicsSystem::PhysicsSystem(float gravityX, float gravityY)
 	entt::registry& registry = ROSE_GETSYSTEM(Entities).GetRegistry();
 	registry.on_construct<PhysicsBodyComponent>().connect<&PhysicsSystem::PhysicsBodyCreated>(this);
 	registry.on_destroy<PhysicsBodyComponent>().connect<&PhysicsSystem::PhysicsBodyDestroyed>(this);
+	registry.on_construct<DisableComponent>().connect<&PhysicsSystem::EntityDisabled>(this);
+	registry.on_destroy<DisableComponent>().connect<&PhysicsSystem::EntityEnabled>(this);
 }
 PhysicsSystem::~PhysicsSystem()
 {
@@ -81,6 +84,20 @@ void PhysicsSystem::PhysicsBodyDestroyed(entt::registry& registry, entt::entity 
 {
 	auto& phys = registry.get<PhysicsBodyComponent>(entity);
 	GetWorld().DestroyBody(phys.body);
+}
+void PhysicsSystem::EntityDisabled(entt::registry& registry, entt::entity entity)
+{
+	if(registry.any_of<PhysicsBodyComponent>(entity))
+	{
+		PhysicsBodyDestroyed(registry, entity);
+	}
+}
+void PhysicsSystem::EntityEnabled(entt::registry& registry, entt::entity entity)
+{
+	if(registry.any_of<PhysicsBodyComponent>(entity))
+	{
+		PhysicsBodyCreated(registry, entity);
+	}
 }
 void PhysicsSystem::CopyTransformToBody(PhysicsBodyComponent& phys, TransformComponent& trx)
 {
@@ -161,23 +178,11 @@ void PhysicsSystem::Update()
 {
 	Entities& entities = ROSE_GETSYSTEM(Entities);
 	entt::registry& registry = entities.GetRegistry();
-	auto phView = registry.view<PhysicsBodyComponent, TransformComponent>();
+	auto phView = registry.view<PhysicsBodyComponent, TransformComponent>(entt::exclude<DisableComponent>);
 	for(auto entity : phView)
 	{
 		auto& pos = phView.get<TransformComponent>(entity);
 		auto& body = phView.get<PhysicsBodyComponent>(entity);
-		if(!ROSE_GETSYSTEM(DisableSystem).IsEnabled(entity) && body.body != nullptr)
-		{
-			RemoveBody(body);
-		}
-		if(!ROSE_GETSYSTEM(DisableSystem).IsEnabled(entity))
-		{
-			continue;
-		}
-		if(ROSE_GETSYSTEM(DisableSystem).IsEnabled(entity) && body.body == nullptr)
-		{
-			AddBody(entity, body);
-		}
 		CopyTransformToBody(body, pos);
 	}
 
@@ -190,10 +195,6 @@ void PhysicsSystem::Update()
 
 	for(auto entity : phView)
 	{
-		if(!ROSE_GETSYSTEM(DisableSystem).IsEnabled(entity))
-		{
-			continue;
-		}
 		auto& pos = phView.get<TransformComponent>(entity);
 		auto& body = phView.get<PhysicsBodyComponent>(entity);
 		CopyBodyToTransform(body, pos);

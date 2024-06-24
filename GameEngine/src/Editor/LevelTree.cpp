@@ -222,6 +222,14 @@ entt::entity LevelTree::GetChild(entt::entity entity, const std::string& name)
 	}
 	return NoEntity();
 }
+Node<entt::entity>* LevelTree::GetNode(entt::entity entity)
+{
+	if(nodesMap.find(entity) == nodesMap.end())
+	{
+		return nullptr;
+	}
+	return nodesMap[entity];
+}
 Node<entt::entity>* LevelTree::AddEntity(entt::entity entity, Node<entt::entity>* parent)
 {
 	if(parent == nullptr)

@@ -64,6 +64,7 @@ public:
 	entt::entity GetSelectedEntity();
 	bool IsGameRunning();
 	Gizmos GetGizmos();
+	void RenderEntityEditor(entt::entity entity);
 
 
 	template<typename TComponent, typename TEditor>

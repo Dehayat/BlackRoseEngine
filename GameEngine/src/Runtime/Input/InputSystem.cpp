@@ -6,9 +6,9 @@
 #include "Core/Entity.h"
 
 #include "Events/EntityEventSystem.h"
-#include "Core/DisableSystem.h"
 
 #include "Components/ScriptComponent.h"
+#include "Components/DisableComponent.h"
 
 #include "Core/Systems.h"
 
@@ -113,13 +113,9 @@ void InputSystem::Update()
 
 	entt::registry& registry = ROSE_GETSYSTEM(Entities).GetRegistry();
 	auto& eventSystem = ROSE_GETSYSTEM(EntityEventSystem);
-	auto view = registry.view<ScriptComponent>();
+	auto view = registry.view<ScriptComponent>(entt::exclude<DisableComponent>);
 	for(auto entity : view)
 	{
-		if(!ROSE_GETSYSTEM(DisableSystem).IsEnabled(entity))
-		{
-			continue;
-		}
 		for(int i = 0; i < keyCount; i++)
 		{
 			if(input.keys[i].justPressed)

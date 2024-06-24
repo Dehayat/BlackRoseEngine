@@ -1,23 +1,14 @@
 #pragma once
-#include <unordered_map>
-
-#include "Entity.h"
-
-enum class stateChange
-{
-	NOTHING,
-	JUST_ENABLED,
-	JUST_DISABLED,
-};
+#include <entt/entt.hpp>
 
 class DisableSystem
 {
-	std::unordered_map<entt::entity, bool> isEnabled;
-	std::unordered_map<entt::entity, stateChange> enableChange;
+	void DisableCreated(entt::registry& registry, entt::entity);
+	void DisableDestroyed(entt::registry& registry, entt::entity);
+	void DisableChildren(entt::entity entity);
+	void EnableChildren(entt::entity entity);
 public:
-	void Update();
-	bool IsEnabled(entt::entity entity);
-	bool IsDisabled(entt::entity entity);
-	bool JustEnabled(entt::entity entity);
-	bool JustDisabled(entt::entity entity);
+	DisableSystem();
+	void Enable(entt::entity entity);
+	void Disable(entt::entity entity);
 };

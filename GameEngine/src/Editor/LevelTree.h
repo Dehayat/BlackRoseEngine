@@ -11,7 +11,8 @@
 
 #include "Core/Systems.h"
 
-class LevelTree {
+class LevelTree
+{
 	Node<entt::entity>* root;
 	std::unordered_map<entt::entity, Node<entt::entity>*> nodesMap;
 	std::unordered_map < Guid, std::vector<Node<entt::entity>*> > waitingForParent;
@@ -33,4 +34,5 @@ public:
 	Node<entt::entity>* GetRoot();
 	void CleanTree();
 	entt::entity GetChild(entt::entity entity, const std::string& name);
+	Node<entt::entity>* GetNode(entt::entity entity);
 };

@@ -5,11 +5,11 @@
 #include "Core/SdlContainer.h"
 #include "AssetPipline/AssetStore.h"
 #include "Core/Systems.h"
-#include "Core/DisableSystem.h"
 
 #include "Components/TransformComponent.h"
 #include "Components/SpriteComponent.h"
 #include "Components/CameraComponent.h"
+#include "Components/DisableComponent.h"
 
 
 #include "Core/Log.h"
@@ -107,13 +107,9 @@ void RendererSystem::Render()
 
 
 
-	auto view2 = registry.view<SpriteComponent, const TransformComponent>().use<SpriteComponent>();
+	auto view2 = registry.view<SpriteComponent, const TransformComponent>(entt::exclude<DisableComponent>).use<SpriteComponent>();
 	for(auto entity : view2)
 	{
-		if(!ROSE_GETSYSTEM(DisableSystem).IsEnabled(entity))
-		{
-			continue;
-		}
 		int x = view2.size_hint();
 		const auto& pos = view2.get<TransformComponent>(entity);
 		auto& sp = view2.get<SpriteComponent>(entity);

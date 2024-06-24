@@ -43,7 +43,6 @@ void Game::Update()
 		isRunning = false;
 	}
 	ROSE_GETSYSTEM(TimeSystem).Update();
-	ROSE_GETSYSTEM(DisableSystem).Update();
 	ROSE_GETSYSTEM(TransformSystem).Update();
 	ROSE_GETSYSTEM(InputSystem).Update();
 	ROSE_GETSYSTEM(PhysicsSystem).Update();

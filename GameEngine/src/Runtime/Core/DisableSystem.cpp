@@ -1,90 +1,70 @@
 #include "DisableSystem.h"
 
-#include <entt/entt.hpp>
-
 #include "Core/Systems.h"
 #include "Core/Log.h"
 
-#include "Components/GUIDComponent.h"
-#include "Components/TransformComponent.h"
+#include "Editor/LevelTree.h"
 
-void DisableSystem::Update()
+#include "Components/DisableComponent.h"
+
+
+DisableSystem::DisableSystem()
 {
 	entt::registry& registry = ROSE_GETSYSTEM(Entities).GetRegistry();
-
-	registry.sort<TransformComponent>([](const auto& lhs, const auto& rhs)
-		{
-			return lhs.level < rhs.level;
-		});
-	auto view3 = registry.view<GUIDComponent, TransformComponent>().use<TransformComponent>();
-	for(auto entity : view3)
+	registry.on_construct<DisableComponent>().connect<&DisableSystem::DisableCreated>(this);
+	registry.on_destroy<DisableComponent>().connect<&DisableSystem::DisableDestroyed>(this);
+}
+void DisableSystem::Enable(entt::entity entity)
+{
+	entt::registry& registry = ROSE_GETSYSTEM(Entities).GetRegistry();
+	if(registry.any_of<DisableComponent>(entity))
 	{
-		bool wasEnabled = IsEnabled(entity);
-		auto& guid = view3.get<GUIDComponent>(entity);
-		auto& trx = view3.get<TransformComponent>(entity);
-		if(guid.enabled)
+		auto& disable = registry.get<DisableComponent>(entity);
+		disable.selfDisabled = false;
+		if(!disable.parentDisabled)
 		{
-			isEnabled[entity] = true;
-		} else
-		{
-			isEnabled[entity] = false;
-		}
-		if(trx.hasParent)
-		{
-			if(isEnabled[trx.parent] == false)
-			{
-				isEnabled[entity] = false;
-			}
-		}
-		bool isNowEnabled = IsEnabled(entity);
-		if(isNowEnabled == wasEnabled)
-		{
-			enableChange[entity] = stateChange::NOTHING;
-		} else
-		{
-			if(isNowEnabled)
-			{
-
-				enableChange[entity] = stateChange::JUST_ENABLED;
-			} else
-			{
-				enableChange[entity] = stateChange::JUST_DISABLED;
-			}
+			registry.remove<DisableComponent>(entity);
 		}
 	}
 }
-
-bool DisableSystem::IsEnabled(entt::entity entity)
+void DisableSystem::Disable(entt::entity entity)
 {
-	if(isEnabled.find(entity) != isEnabled.end())
-	{
-		return isEnabled[entity];
-	}
-	return false;
+	entt::registry& registry = ROSE_GETSYSTEM(Entities).GetRegistry();
+	auto& disable = registry.get_or_emplace<DisableComponent>(entity);
+	disable.selfDisabled = true;
 }
-bool DisableSystem::IsDisabled(entt::entity entity)
+void DisableSystem::DisableCreated(entt::registry& registry, entt::entity entity)
 {
-	if(isEnabled.find(entity) != isEnabled.end())
-	{
-		return !isEnabled[entity];
-	}
-	return false;
+	DisableChildren(entity);
 }
 
-bool DisableSystem::JustEnabled(entt::entity entity)
+void DisableSystem::DisableDestroyed(entt::registry& registry, entt::entity entity)
 {
-	if(enableChange.find(entity) != enableChange.end())
-	{
-		return enableChange[entity] == stateChange::JUST_ENABLED;
-	}
-	return false;
+	EnableChildren(entity);
 }
 
-bool DisableSystem::JustDisabled(entt::entity entity)
+void DisableSystem::DisableChildren(entt::entity entity)
 {
-	if(enableChange.find(entity) != enableChange.end())
+	entt::registry& registry = ROSE_GETSYSTEM(Entities).GetRegistry();
+	auto& levelTree = ROSE_GETSYSTEM(LevelTree);
+	for(const auto& child : levelTree.GetNode(entity)->children)
 	{
-		return enableChange[entity] == stateChange::JUST_DISABLED;
+		ROSE_LOG("1-%d", registry.valid(child->element));
+		ROSE_LOG("2-%d", registry.any_of<DisableComponent>(child->element));
+		auto& childDisable = registry.get_or_emplace<DisableComponent>(child->element, false, false);
+		childDisable.parentDisabled = true;
 	}
-	return false;
+}
+void DisableSystem::EnableChildren(entt::entity entity)
+{
+	entt::registry& registry = ROSE_GETSYSTEM(Entities).GetRegistry();
+	auto& levelTree = ROSE_GETSYSTEM(LevelTree);
+	for(auto child : levelTree.GetNode(entity)->children)
+	{
+		auto& childDisable = registry.get<DisableComponent>(child->element);
+		if(!childDisable.selfDisabled)
+		{
+			registry.remove<DisableComponent>(child->element);
+		}
+	}
 }

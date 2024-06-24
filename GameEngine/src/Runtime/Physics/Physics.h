@@ -32,11 +32,13 @@ class PhysicsSystem
 	bool drawDebug;
 	std::unique_ptr<b2World> physicsWorld;
 	std::unique_ptr<b2ContactListener> contactListener;
+	void PhysicsBodyCreated(entt::registry& registry, entt::entity entity);
+	void PhysicsBodyDestroyed(entt::registry& registry, entt::entity entity);
+	void EntityDisabled(entt::registry& registry, entt::entity entity);
+	void EntityEnabled(entt::registry& registry, entt::entity entity);
 public:
 	PhysicsSystem(float gravityX, float gravityY);
 	~PhysicsSystem();
-	void PhysicsBodyCreated(entt::registry& registry, entt::entity entity);
-	void PhysicsBodyDestroyed(entt::registry& registry, entt::entity entity);
 	void CopyTransformToBody(PhysicsBodyComponent& phys, TransformComponent& trx);
 	void CopyBodyToTransform(PhysicsBodyComponent& phys, TransformComponent& trx);
 	void RemoveBody(PhysicsBodyComponent& phys);

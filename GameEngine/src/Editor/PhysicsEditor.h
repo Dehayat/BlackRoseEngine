@@ -18,11 +18,11 @@ public:
 		auto& trx = registry.get<TransformComponent>(entity);
 		auto& phys = registry.get<PhysicsBodyComponent>(entity);
 		auto disabled = registry.any_of<DisableComponent>(entity);
-		if(!disabled && phys.body != nullptr)
+		if(disabled && phys.body != nullptr)
 		{
 			physics.RemoveBody(phys);
 		}
-		if(disabled && phys.body == nullptr)
+		if(!disabled && phys.body == nullptr)
 		{
 			physics.AddBody(entity, phys);
 		}

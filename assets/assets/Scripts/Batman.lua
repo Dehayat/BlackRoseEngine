@@ -8,4 +8,7 @@ function on_event(me,event)
             Is_dead = true
         end
     end
+    if Is_dead and event.name=="AnimationFinished" then
+        destroy(me)
+    end
 end

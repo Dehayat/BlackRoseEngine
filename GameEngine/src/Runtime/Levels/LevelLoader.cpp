@@ -19,6 +19,7 @@
 #include "Components/AnimationComponent.h"
 #include "Components/ScriptComponent.h"
 #include "Components/SendEventsToParentComponent.h"
+#include "Components/DisableComponent.h"
 
 #include "Core/Log.h"
 
@@ -82,6 +83,7 @@ entt::entity LevelLoader::DeserializeEntity(entt::registry& registry, ryml::Node
 	{
 		entity = entities.CreateEntity();
 	}
+	DeserializeComponent<DisableComponent>(registry, "Disabled", entity, node);
 	DeserializeComponent<TransformComponent>(registry, "Transform", entity, node);
 	DeserializeComponent<PhysicsBodyComponent>(registry, "PhysicsBody", entity, node);
 	DeserializeComponent<CameraComponent>(registry, "Camera", entity, node);
@@ -98,6 +100,7 @@ void LevelLoader::SerializeEntity(entt::registry& registry, ryml::NodeRef& paren
 	node["Type"] << "Entity";
 
 	SerializeComponent<GUIDComponent>(registry, "Guid", entity, node);
+	SerializeComponent<DisableComponent>(registry, "Disabled", entity, node);
 	SerializeComponent<TransformComponent>(registry, "Transform", entity, node);
 	SerializeComponent<SpriteComponent>(registry, "Sprite", entity, node);
 	SerializeComponent<CameraComponent>(registry, "Camera", entity, node);

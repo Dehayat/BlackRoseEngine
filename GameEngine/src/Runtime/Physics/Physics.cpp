@@ -37,6 +37,14 @@ PhysicsSystem::~PhysicsSystem()
 }
 void PhysicsSystem::PhysicsBodyCreated(entt::registry& registry, entt::entity entity)
 {
+	if(registry.any_of<DisableComponent>(entity))
+	{
+		return;
+	}
+	CreateBody(registry, entity);
+}
+void PhysicsSystem::CreateBody(entt::registry& registry, entt::entity entity)
+{
 	auto& phys = registry.get<PhysicsBodyComponent>(entity);
 	auto& trx = registry.get<TransformComponent>(entity);
 	if(phys.isStatic)
@@ -82,21 +90,28 @@ void PhysicsSystem::PhysicsBodyCreated(entt::registry& registry, entt::entity en
 }
 void PhysicsSystem::PhysicsBodyDestroyed(entt::registry& registry, entt::entity entity)
 {
+	DestroyBody(registry, entity);
+}
+void PhysicsSystem::DestroyBody(entt::registry& registry, entt::entity entity)
+{
 	auto& phys = registry.get<PhysicsBodyComponent>(entity);
-	GetWorld().DestroyBody(phys.body);
+	if(phys.body != nullptr)
+	{
+		GetWorld().DestroyBody(phys.body);
+	}
 }
 void PhysicsSystem::EntityDisabled(entt::registry& registry, entt::entity entity)
 {
 	if(registry.any_of<PhysicsBodyComponent>(entity))
 	{
-		PhysicsBodyDestroyed(registry, entity);
+		DestroyBody(registry, entity);
 	}
 }
 void PhysicsSystem::EntityEnabled(entt::registry& registry, entt::entity entity)
 {
 	if(registry.any_of<PhysicsBodyComponent>(entity))
 	{
-		PhysicsBodyCreated(registry, entity);
+		CreateBody(registry, entity);
 	}
 }
 void PhysicsSystem::CopyTransformToBody(PhysicsBodyComponent& phys, TransformComponent& trx)

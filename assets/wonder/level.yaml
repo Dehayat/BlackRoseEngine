@@ -2,7 +2,6 @@
   Guid:
     name: Orb
     id: 18421696202881871243
-    enabled: 1
   Transform:
     position:
       - 0.087729454
@@ -35,7 +34,6 @@
   Guid:
     name: Player
     id: 7080749886744442335
-    enabled: 1
   Transform:
     position:
       - -3.4019287
@@ -58,7 +56,6 @@
   Guid:
     name: Ground
     id: 478155528516082714
-    enabled: 1
   Transform:
     position:
       - 0.00076293945
@@ -78,7 +75,6 @@
   Guid:
     name: Camera
     id: 11455113823770256278
-    enabled: 1
   Transform:
     position:
       - 0
@@ -94,7 +90,6 @@
   Guid:
     name: Fence
     id: 7701378215136539364
-    enabled: 1
   Transform:
     position:
       - -0.9210129
@@ -115,7 +110,6 @@
   Guid:
     name: Sky
     id: 17755008135140164245
-    enabled: 1
   Transform:
     position:
       - -1.5357747
@@ -136,7 +130,8 @@
   Guid:
     name: box
     id: 5346231925711097807
-    enabled: 1
+  Disabled:
+    selfDisabled: 1
   Transform:
     position:
       - -0.78377867
@@ -167,7 +162,6 @@
   Guid:
     name: hitBox
     id: 1948778227449772205
-    enabled: 0
   Transform:
     position:
       - 1.0585613
@@ -189,7 +183,6 @@
   Guid:
     name: ''
     id: 7471548560990152175
-    enabled: 1
   Transform:
     position:
       - 0
@@ -211,7 +204,6 @@
   Guid:
     name: sprite
     id: 13877881093963810337
-    enabled: 1
   Transform:
     position:
       - 0

@@ -47,24 +47,28 @@ void DisableSystem::DisableChildren(entt::entity entity)
 {
 	entt::registry& registry = ROSE_GETSYSTEM(Entities).GetRegistry();
 	auto& levelTree = ROSE_GETSYSTEM(LevelTree);
-	for(const auto& child : levelTree.GetNode(entity)->children)
+	if(levelTree.GetNode(entity) != nullptr)
 	{
-		ROSE_LOG("1-%d", registry.valid(child->element));
-		ROSE_LOG("2-%d", registry.any_of<DisableComponent>(child->element));
-		auto& childDisable = registry.get_or_emplace<DisableComponent>(child->element, false, false);
-		childDisable.parentDisabled = true;
+		for(const auto& child : levelTree.GetNode(entity)->children)
+		{
+			auto& childDisable = registry.get_or_emplace<DisableComponent>(child->element, false, false);
+			childDisable.parentDisabled = true;
+		}
 	}
 }
 void DisableSystem::EnableChildren(entt::entity entity)
 {
 	entt::registry& registry = ROSE_GETSYSTEM(Entities).GetRegistry();
 	auto& levelTree = ROSE_GETSYSTEM(LevelTree);
-	for(auto child : levelTree.GetNode(entity)->children)
+	if(levelTree.GetNode(entity) != nullptr)
 	{
-		auto& childDisable = registry.get<DisableComponent>(child->element);
-		if(!childDisable.selfDisabled)
+		for(auto child : levelTree.GetNode(entity)->children)
 		{
-			registry.remove<DisableComponent>(child->element);
+			auto& childDisable = registry.get<DisableComponent>(child->element);
+			if(!childDisable.selfDisabled)
+			{
+				registry.remove<DisableComponent>(child->element);
+			}
 		}
 	}
 }

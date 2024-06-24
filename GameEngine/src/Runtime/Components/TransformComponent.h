@@ -42,5 +42,5 @@ struct TransformComponent :IComponent {
 	void UpdateGlobals();
 	void UpdateLocals();
 
-	ROSE_EXPOSE_VARS(TransformComponent,(position)(scale)(rotation))
+	ROSE_EXPOSE_VARS(TransformComponent,(position)(scale)(rotation)(parentGUID))
 };

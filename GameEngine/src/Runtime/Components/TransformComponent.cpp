@@ -1,4 +1,5 @@
 #include "Components/TransformComponent.h"
+#include "Reflection/Serialize.h"
 
 #include <entt/entt.hpp>
 
@@ -13,15 +14,16 @@ TransformComponent::TransformComponent(vec2 position, vec2 scale, float rotation
 	this->position = position;
 	this->scale = scale;
 	this->rotation = rotation;
-	this->parent = parent;
+	this->parentGUID = -1;
 
 	this->level = 0;
+	this->parent = parent;
+	this->scaleSign = vec2(1,1);
 	this->matrixL2W = mat3(0);
 	globalPosition = vec2();
 	globalScale = vec2();
 	globalRotation = 0;
 	this->hasParent = false;
-	this->parentGUID = -1;
 }
 
 TransformComponent::TransformComponent(ryml::NodeRef& node)
@@ -29,50 +31,23 @@ TransformComponent::TransformComponent(ryml::NodeRef& node)
 	this->position = vec2(0, 0);
 	this->scale = vec2(1, 1);
 	this->rotation = 0;
-	this->parent = NoEntity();
+	this->parentGUID = -1;
 
+	this->scaleSign = vec2(1, 1);
+	this->parent = NoEntity();
 	this->matrixL2W = mat3(0);
 	this->level = 0;
 	globalPosition = vec2();
 	globalScale = vec2();
 	globalRotation = 0;
 	this->hasParent = false;
-	this->parentGUID = -1;
 
-	if (node.has_child("position"))
-	{
-		node["position"][0] >> position.x;
-		node["position"][1] >> position.y;
-	}
-	if (node.has_child("scale"))
-	{
-		node["scale"][0] >> scale.x;
-		node["scale"][1] >> scale.y;
-	}
-	if (node.has_child("rotation"))
-	{
-		node["rotation"] >> rotation;
-	}
-	if (node.has_child("parent"))
-	{
-		node["parent"] >> parentGUID;
-	}
+	ROSE_DESER(TransformComponent);
 }
 
 void TransformComponent::Serialize(ryml::NodeRef node)
 {
-	node |= ryml::MAP;
-	node["position"] |= ryml::SEQ;
-	node["position"].append_child() << position.x;
-	node["position"].append_child() << position.y;
-	node["scale"] |= ryml::SEQ;
-	node["scale"].append_child() << scale.x;
-	node["scale"].append_child() << scale.y;
-	node["rotation"] << rotation;
-	if (hasParent)
-	{
-		node["parent"] << parentGUID;
-	}
+	ROSE_SER(TransformComponent);
 }
 
 void TransformComponent::CalcMatrix()
@@ -96,7 +71,7 @@ void TransformComponent::CalcMatrix()
 		0, 0, 1
 	);
 	matrixL2W = matS * matR * matT;
-	if (hasParent)
+	if(hasParent)
 	{
 		entt::registry& registry = ROSE_GETSYSTEM(Entities).GetRegistry();
 		auto matrixP2W = registry.get<TransformComponent>(parent).matrixL2W;
@@ -112,7 +87,8 @@ void TransformComponent::UpdateGlobals()
 	globalRotation = GetRotation(matrixL2W);
 	globalRotation = glm::mod(globalRotation + 360, 360.0f);
 	scaleSign = vec2(sign(scale.x), sign(scale.y));
-	if (hasParent) {
+	if(hasParent)
+	{
 		auto& pTrx = ROSE_GETSYSTEM(Entities).GetRegistry().get<TransformComponent>(parent);
 		scaleSign = pTrx.scaleSign * scaleSign;
 	}
@@ -121,7 +97,7 @@ void TransformComponent::UpdateGlobals()
 void TransformComponent::UpdateLocals()
 {
 	globalRotation = glm::mod(globalRotation + 360, 360.0f);
-	if (hasParent)
+	if(hasParent)
 	{
 		auto& pTrx = ROSE_GETSYSTEM(Entities).GetRegistry().get<TransformComponent>(parent);
 		auto matW2P = inverse(pTrx.matrixL2W);
@@ -136,8 +112,7 @@ void TransformComponent::UpdateLocals()
 		auto oldGlobalScale = GetScale(matrixL2W);
 		auto scaleChange = globalScale / oldGlobalScale;
 		scale = scale * scaleChange;
-	}
-	else
+	} else
 	{
 		position = globalPosition;
 

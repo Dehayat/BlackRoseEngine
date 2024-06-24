@@ -3,6 +3,7 @@
 #include "ryml/ryml.hpp"
 #include "ryml/ryml_std.hpp"
 #include "Core/Systems.h"
+#include "Core/Log.h"
 
 #include "Reflection/Reflection.h"
 
@@ -42,6 +43,9 @@ inline void DefaultSerialize(InfoBase* info, void* data, ryml::NodeRef node)
 			break;
 		case InfoTypes::VEC2:
 			WriteVector(info, data, field, node);
+			break;
+		case InfoTypes::GUID:
+			WriteField<uint64_t>(info, data, field, node);
 			break;
 		default:
 			break;
@@ -90,6 +94,9 @@ inline void DefaultDeserialize(InfoBase* info, void* data, ryml::NodeRef node)
 			break;
 		case InfoTypes::VEC2:
 			ReadVector(info, data, field, node);
+			break;
+		case InfoTypes::GUID:
+			ReadField<uint64_t>(info, data, field, node);
 			break;
 		default:
 			break;

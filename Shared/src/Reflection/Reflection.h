@@ -13,6 +13,7 @@ enum class InfoTypes {
 	COLOR,
 	FLOAT,
 	VEC2,
+	GUID,
 
 	UNKNOWN
 };

@@ -1,5 +1,139 @@
 - Type: Entity
   Guid:
+    name: box
+    id: 5346231925711097807
+  Disabled:
+    selfDisabled: 1
+  Transform:
+    position:
+      - -0.78377867
+      - -0.5163357
+    scale:
+      - 1
+      - 1
+    rotation: 0
+    parentGUID: 18446744073709551615
+  Sprite:
+    sprite: blockWhite
+    layer: 0
+    color:
+      - 0.83425415
+      - 0.47935048
+      - 0.47935048
+      - 1
+  PhysicsBody:
+    size:
+      - 1
+      - 1
+    isStatic: 0
+    isSensor: 0
+    useGravity: 0
+  Script:
+    scripts:
+      - hittableScript
+- Type: Entity
+  Guid:
+    name: Sky
+    id: 17755008135140164245
+  Transform:
+    position:
+      - -1.5357747
+      - 2.2412677
+    scale:
+      - 20
+      - 7.2
+    rotation: 0
+    parentGUID: 18446744073709551615
+  Sprite:
+    sprite: blockWhite
+    layer: -5
+    color:
+      - 0.54943377
+      - 0.73438346
+      - 0.7955801
+      - 1
+- Type: Entity
+  Guid:
+    name: Fence
+    id: 7701378215136539364
+  Transform:
+    position:
+      - -0.9210129
+      - 0.09
+    scale:
+      - 15.2
+      - 2.4
+    rotation: 0
+    parentGUID: 18446744073709551615
+  Sprite:
+    sprite: blockWhite
+    layer: -3
+    color:
+      - 0.488874
+      - 0.5907928
+      - 0.61878455
+      - 1
+- Type: Entity
+  Guid:
+    name: Camera
+    id: 11455113823770256278
+  Transform:
+    position:
+      - 0
+      - 0
+    scale:
+      - 1
+      - 1
+    rotation: 0.024536133
+    parentGUID: 18446744073709551615
+  Camera:
+    height: 5.4
+    startCamera: 1
+- Type: Entity
+  Guid:
+    name: Ground
+    id: 478155528516082714
+  Transform:
+    position:
+      - 0.00076293945
+      - -2
+    scale:
+      - 1
+      - 1
+    rotation: 0
+    parentGUID: 18446744073709551615
+  PhysicsBody:
+    size:
+      - 50
+      - 1
+    isStatic: 1
+    isSensor: 0
+    useGravity: 0
+- Type: Entity
+  Guid:
+    name: Player
+    id: 7080749886744442335
+  Transform:
+    position:
+      - -3.4019287
+      - -0.4849744
+    scale:
+      - 1
+      - 1
+    rotation: 0.0029296875
+    parentGUID: 18446744073709551615
+  PhysicsBody:
+    size:
+      - 1
+      - 2
+    isStatic: 0
+    isSensor: 0
+    useGravity: 1
+  Script:
+    scripts:
+      - playerScript
+- Type: Entity
+  Guid:
     name: Orb
     id: 18421696202881871243
   Transform:
@@ -10,6 +144,7 @@
       - 3
       - 3
     rotation: 0
+    parentGUID: 18446744073709551615
   Sprite:
     sprite: OrbIdle
     layer: 0
@@ -32,153 +167,27 @@
       - batmanScript
 - Type: Entity
   Guid:
-    name: Player
-    id: 7080749886744442335
-  Transform:
-    position:
-      - -3.4019287
-      - -0.4849744
-    scale:
-      - 1
-      - 1
-    rotation: 0.0029296875
-  PhysicsBody:
-    size:
-      - 1
-      - 2
-    isStatic: 0
-    isSensor: 0
-    useGravity: 1
-  Script:
-    scripts:
-      - playerScript
-- Type: Entity
-  Guid:
-    name: Ground
-    id: 478155528516082714
-  Transform:
-    position:
-      - 0.00076293945
-      - -2
-    scale:
-      - 1
-      - 1
-    rotation: 0
-  PhysicsBody:
-    size:
-      - 50
-      - 1
-    isStatic: 1
-    isSensor: 0
-    useGravity: 0
-- Type: Entity
-  Guid:
-    name: Camera
-    id: 11455113823770256278
+    name: sprite
+    id: 13877881093963810337
   Transform:
     position:
       - 0
-      - 0
+      - -0.2
     scale:
       - 1
       - 1
-    rotation: 0.024536133
-  Camera:
-    height: 5.4
-    startCamera: 1
-- Type: Entity
-  Guid:
-    name: Fence
-    id: 7701378215136539364
-  Transform:
-    position:
-      - -0.9210129
-      - 0.09
-    scale:
-      - 15.2
-      - 2.4
-    rotation: 0
+    rotation: 359.99316
+    parentGUID: 7080749886744442335
   Sprite:
-    sprite: blockWhite
-    layer: -3
-    color:
-      - 0.488874
-      - 0.5907928
-      - 0.61878455
-      - 1
-- Type: Entity
-  Guid:
-    name: Sky
-    id: 17755008135140164245
-  Transform:
-    position:
-      - -1.5357747
-      - 2.2412677
-    scale:
-      - 20
-      - 7.2
-    rotation: 0
-  Sprite:
-    sprite: blockWhite
-    layer: -5
-    color:
-      - 0.54943377
-      - 0.73438346
-      - 0.7955801
-      - 1
-- Type: Entity
-  Guid:
-    name: box
-    id: 5346231925711097807
-  Disabled:
-    selfDisabled: 1
-  Transform:
-    position:
-      - -0.78377867
-      - -0.5163357
-    scale:
-      - 1
-      - 1
-    rotation: 0
-  Sprite:
-    sprite: blockWhite
+    sprite: IdleAnimSprite
     layer: 0
     color:
-      - 0.83425415
-      - 0.47935048
-      - 0.47935048
-      - 1
-  PhysicsBody:
-    size:
       - 1
       - 1
-    isStatic: 0
-    isSensor: 0
-    useGravity: 0
-  Script:
-    scripts:
-      - hittableScript
-- Type: Entity
-  Guid:
-    name: hitBox
-    id: 1948778227449772205
-  Transform:
-    position:
-      - 1.0585613
-      - 0.19991305
-    scale:
       - 1
       - 1
-    rotation: 359.99707
-    parent: 7080749886744442335
-  PhysicsBody:
-    size:
-      - 1
-      - 1
-    isStatic: 0
-    isSensor: 1
-    useGravity: 0
-  SendEventsToParent: []
+  Animation:
+    animation: IdleAnim
 - Type: Entity
   Guid:
     name: ''
@@ -191,7 +200,7 @@
       - 50
       - 3.8
     rotation: 0
-    parent: 478155528516082714
+    parentGUID: 478155528516082714
   Sprite:
     sprite: blockWhite
     layer: -2
@@ -202,25 +211,21 @@
       - 1
 - Type: Entity
   Guid:
-    name: sprite
-    id: 13877881093963810337
+    name: hitBox
+    id: 1948778227449772205
   Transform:
     position:
-      - 0
-      - -0.2
+      - 1.0585613
+      - 0.19991305
     scale:
       - 1
       - 1
-    rotation: 359.99316
-    parent: 7080749886744442335
-  Sprite:
-    sprite: IdleAnimSprite
-    layer: 0
-    color:
+    rotation: 359.99707
+    parentGUID: 7080749886744442335
+  PhysicsBody:
+    size:
       - 1
       - 1
-      - 1
-      - 1
-  Animation:
-    animation: IdleAnim
-  SendEventsToParent: []
+    isStatic: 0
+    isSensor: 1
+    useGravity: 0

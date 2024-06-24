@@ -1,7 +1,7 @@
 #include "Game.h"
+#include "BaseGame.h"
 
 #include "Core/SdlContainer.h"
-#include "Core/Log.h"
 #include "Core/Systems.h"
 
 #include "Core/Transform.h"
@@ -16,7 +16,7 @@
 
 Game::Game():BaseGame()
 {
-	ROSE_LOG("Game constructed");
+	isRunning = false;
 }
 
 Game::~Game()

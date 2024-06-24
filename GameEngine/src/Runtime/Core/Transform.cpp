@@ -23,7 +23,8 @@ TransformSystem::TransformSystem()
 }
 TransformSystem::~TransformSystem()
 {
-	if (debugDrawer != nullptr) {
+	if(debugDrawer != nullptr)
+	{
 
 		delete debugDrawer;
 	}
@@ -64,11 +65,13 @@ void TransformSystem::Update()
 {
 	entt::registry& registry = ROSE_GETSYSTEM(Entities).GetRegistry();
 
-	registry.sort<TransformComponent>([](const auto& lhs, const auto& rhs) {
-		return lhs.level < rhs.level;
+	registry.sort<TransformComponent>([](const auto& lhs, const auto& rhs)
+		{
+			return lhs.level < rhs.level;
 		});
 	auto view3 = registry.view<TransformComponent>();
-	for (auto entity : view3) {
+	for(auto entity : view3)
+	{
 		auto& trx = view3.get<TransformComponent>(entity);
 		trx.CalcMatrix();
 		trx.UpdateGlobals();
@@ -91,10 +94,11 @@ void TransformSystem::InitDebugDrawer()
 }
 void TransformSystem::EnableDebug(bool enable)
 {
-	if (debugDrawer == nullptr) {
+	if(debugDrawer == nullptr)
+	{
 		ROSE_ERR("No Transform Debug Drawer attached");
-	}
-	else {
+	} else
+	{
 		drawDebug = enable;
 	}
 }
@@ -103,9 +107,11 @@ void TransformSystem::DebugRender(glm::mat3 viewMatrix, entt::entity selectedEnt
 	Entities& entities = entt::locator<Entities>::value();
 	entt::registry& registry = entities.GetRegistry();
 	debugDrawer->SetMatrix(viewMatrix);
-	if (drawDebug) {
+	if(drawDebug)
+	{
 		auto view3 = registry.view<const TransformComponent>();
-		for (auto entity : view3) {
+		for(auto entity : view3)
+		{
 			const auto& pos = view3.get<TransformComponent>(entity);
 			debugDrawer->DrawTransform(pos, selectedEntity == entity);
 		}
@@ -117,7 +123,8 @@ void TransformSystem::SetParent(entt::entity entity, entt::entity parent)
 	entt::registry& registry = entities.GetRegistry();
 	auto& child = registry.get<TransformComponent>(entity);
 	auto oldParent = NoEntity();
-	if (child.hasParent) {
+	if(child.hasParent)
+	{
 		oldParent = child.parent;
 		ROSE_GETSYSTEM(LevelTree).RemoveParent(entity);
 		child.hasParent = false;
@@ -125,16 +132,19 @@ void TransformSystem::SetParent(entt::entity entity, entt::entity parent)
 		child.level = 0;
 	}
 
-	if (parent != NoEntity()) {
-		if (ROSE_GETSYSTEM(LevelTree).TrySetParent(entity, parent)) {
+	if(parent != NoEntity())
+	{
+		if(ROSE_GETSYSTEM(LevelTree).TrySetParent(entity, parent))
+		{
 			child.parent = parent;
 			auto& parentTrx = registry.get<TransformComponent>(parent);
 			child.level = parentTrx.level + 1;
 			child.hasParent = true;
 			child.parentGUID = entities.GetEntityGuid(parent);
-		}
-		else {
-			if (oldParent != NoEntity()) {
+		} else
+		{
+			if(oldParent != NoEntity())
+			{
 				ROSE_GETSYSTEM(LevelTree).TrySetParent(entity, oldParent);
 			}
 		}
@@ -148,7 +158,7 @@ DebugDrawTransform& TransformSystem::GetDebugRenderer()
 	return *debugDrawer;
 }
 
-DebugDrawTransform::DebugDrawTransform() :matrix(1)
+DebugDrawTransform::DebugDrawTransform():matrix(1)
 {
 	SdlContainer& sdlRenderer = entt::locator<SdlContainer>::value();
 	this->renderer = sdlRenderer.GetRenderer();
@@ -164,11 +174,12 @@ void DebugDrawTransform::DrawTransform(const TransformComponent& t, bool selecte
 	auto dir = TransformComponent::GetDir(t.matrixL2W * matrix, vec2(0, 1));
 	dir = normalize(dir) * 100.0f;
 	auto dest = orig + dir * scale;
-	if (selected) {
+	if(selected)
+	{
 		filledCircleRGBA(renderer, orig.x, orig.y, 14 * scale, 255, 255, 255, 255);
 		thickLineRGBA(renderer, orig.x, orig.y, dest.x, dest.y, 10 * scale, 255, 255, 255, 255);
-	}
-	else {
+	} else
+	{
 		filledCircleRGBA(renderer, orig.x, orig.y, 14 * scale, 20, 100, 30, 200);
 		thickLineRGBA(renderer, orig.x, orig.y, dest.x, dest.y, 10 * scale, 20, 100, 30, 200);
 	}

@@ -1,27 +1,5 @@
 - Type: Entity
   Guid:
-    name: hitBox
-    id: 1948778227449772205
-    enabled: 0
-  Transform:
-    position:
-      - 1.0585613
-      - 0.19991305
-    scale:
-      - 1
-      - 1
-    rotation: 359.99707
-    parent: 7080749886744442335
-  PhysicsBody:
-    size:
-      - 1
-      - 1
-    isStatic: 0
-    isSensor: 1
-    useGravity: 0
-  SendEventsToParent: []
-- Type: Entity
-  Guid:
     name: Orb
     id: 18421696202881871243
     enabled: 1
@@ -98,28 +76,6 @@
     useGravity: 0
 - Type: Entity
   Guid:
-    name: ''
-    id: 7471548560990152175
-    enabled: 1
-  Transform:
-    position:
-      - 0
-      - -0.6
-    scale:
-      - 50
-      - 3.8
-    rotation: 0
-    parent: 478155528516082714
-  Sprite:
-    sprite: blockWhite
-    layer: -2
-    color:
-      - 0.37569058
-      - 0.37569058
-      - 0.37569058
-      - 1
-- Type: Entity
-  Guid:
     name: Camera
     id: 11455113823770256278
     enabled: 1
@@ -178,31 +134,6 @@
       - 1
 - Type: Entity
   Guid:
-    name: sprite
-    id: 13877881093963810337
-    enabled: 1
-  Transform:
-    position:
-      - 0
-      - -0.2
-    scale:
-      - 1
-      - 1
-    rotation: 359.99316
-    parent: 7080749886744442335
-  Sprite:
-    sprite: IdleAnimSprite
-    layer: 0
-    color:
-      - 1
-      - 1
-      - 1
-      - 1
-  Animation:
-    animation: IdleAnim
-  SendEventsToParent: []
-- Type: Entity
-  Guid:
     name: box
     id: 5346231925711097807
     enabled: 1
@@ -232,3 +163,72 @@
   Script:
     scripts:
       - hittableScript
+- Type: Entity
+  Guid:
+    name: hitBox
+    id: 1948778227449772205
+    enabled: 0
+  Transform:
+    position:
+      - 1.0585613
+      - 0.19991305
+    scale:
+      - 1
+      - 1
+    rotation: 359.99707
+    parent: 7080749886744442335
+  PhysicsBody:
+    size:
+      - 1
+      - 1
+    isStatic: 0
+    isSensor: 1
+    useGravity: 0
+  SendEventsToParent: []
+- Type: Entity
+  Guid:
+    name: ''
+    id: 7471548560990152175
+    enabled: 1
+  Transform:
+    position:
+      - 0
+      - -0.6
+    scale:
+      - 50
+      - 3.8
+    rotation: 0
+    parent: 478155528516082714
+  Sprite:
+    sprite: blockWhite
+    layer: -2
+    color:
+      - 0.37569058
+      - 0.37569058
+      - 0.37569058
+      - 1
+- Type: Entity
+  Guid:
+    name: sprite
+    id: 13877881093963810337
+    enabled: 1
+  Transform:
+    position:
+      - 0
+      - -0.2
+    scale:
+      - 1
+      - 1
+    rotation: 359.99316
+    parent: 7080749886744442335
+  Sprite:
+    sprite: IdleAnimSprite
+    layer: 0
+    color:
+      - 1
+      - 1
+      - 1
+      - 1
+  Animation:
+    animation: IdleAnim
+  SendEventsToParent: []

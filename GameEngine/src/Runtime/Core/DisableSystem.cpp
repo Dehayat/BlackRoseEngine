@@ -16,7 +16,7 @@ void DisableSystem::Update()
 		{
 			return lhs.level < rhs.level;
 		});
-	auto view3 = registry.view<GUIDComponent, TransformComponent>();
+	auto view3 = registry.view<GUIDComponent, TransformComponent>().use<TransformComponent>();
 	for(auto entity : view3)
 	{
 		bool wasEnabled = IsEnabled(entity);

@@ -107,7 +107,7 @@ void RendererSystem::Render()
 
 
 
-	auto view2 = registry.view<SpriteComponent, const TransformComponent>();
+	auto view2 = registry.view<SpriteComponent, const TransformComponent>().use<SpriteComponent>();
 	for(auto entity : view2)
 	{
 		if(!ROSE_GETSYSTEM(DisableSystem).IsEnabled(entity))

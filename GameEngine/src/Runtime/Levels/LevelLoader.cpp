@@ -135,9 +135,14 @@ const std::string& LevelLoader::GetCurrentLevelFile()
 void LevelLoader::SerializeLevel(entt::registry& registry, ryml::NodeRef& node)
 {
 	node |= ryml::SEQ;
-	auto view = registry.view<GUIDComponent>();
+	registry.sort<TransformComponent>([](const auto& lhs, const auto& rhs)
+		{
+			return lhs.level < rhs.level;
+		});
+	auto view = registry.view<GUIDComponent, TransformComponent>().use<TransformComponent>();
 	for(auto entity : view)
 	{
+		auto& trx = view.get<TransformComponent>(entity);
 		SerializeEntity(registry, node, entity);
 	}
 }

@@ -67,7 +67,6 @@
     <ClCompile Include="src\Editor\LevelTree.cpp" />
     <ClCompile Include="src\Editor\LevelTreeEditor.cpp" />
     <ClCompile Include="src\Runtime\Animation\AnimationSystem.cpp" />
-    <ClCompile Include="src\Runtime\Components\AnimationComponent.cpp" />
     <ClCompile Include="src\Runtime\Components\TransformComponent.cpp" />
     <ClCompile Include="src\Runtime\Core\BaseGame.cpp" />
     <ClCompile Include="src\Runtime\Core\DisableSystem.cpp" />

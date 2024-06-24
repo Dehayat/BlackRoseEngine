@@ -188,6 +188,7 @@
       - 1
   Animation:
     animation: IdleAnim
+  SendEventsToParent: []
 - Type: Entity
   Guid:
     name: ''
@@ -213,6 +214,8 @@
   Guid:
     name: hitBox
     id: 1948778227449772205
+  Disabled:
+    selfDisabled: 1
   Transform:
     position:
       - 1.0585613
@@ -229,3 +232,4 @@
     isStatic: 0
     isSensor: 1
     useGravity: 0
+  SendEventsToParent: []

@@ -53,6 +53,7 @@
     <ClInclude Include="src\Runtime\Input\InputSystem.h" />
     <ClInclude Include="src\Runtime\Physics\CollisionListener.h" />
     <ClInclude Include="src\Runtime\Physics\Physics.h" />
+    <ClInclude Include="src\Runtime\Reflection\Serialize.h" />
     <ClInclude Include="src\Runtime\Renderer\Renderer.h" />
     <ClInclude Include="src\Runtime\Scripting\OrbScript.h" />
     <ClInclude Include="src\Runtime\Scripting\Script.h" />
@@ -66,6 +67,7 @@
     <ClCompile Include="src\Editor\LevelTree.cpp" />
     <ClCompile Include="src\Editor\LevelTreeEditor.cpp" />
     <ClCompile Include="src\Runtime\Animation\AnimationSystem.cpp" />
+    <ClCompile Include="src\Runtime\Components\AnimationComponent.cpp" />
     <ClCompile Include="src\Runtime\Components\TransformComponent.cpp" />
     <ClCompile Include="src\Runtime\Core\BaseGame.cpp" />
     <ClCompile Include="src\Runtime\Core\DisableSystem.cpp" />

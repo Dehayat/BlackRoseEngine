@@ -147,6 +147,9 @@
     <ClInclude Include="src\Runtime\Components\DisableComponent.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="src\Runtime\Reflection\Serialize.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Editor\Editor.cpp">
@@ -207,6 +210,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\Runtime\Core\BaseGame.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Runtime\Components\AnimationComponent.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

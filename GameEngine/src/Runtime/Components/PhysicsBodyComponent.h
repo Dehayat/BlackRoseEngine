@@ -5,10 +5,12 @@
 #include <ryml/ryml.hpp>
 
 #include "Reflection/Reflection.h"
+#include "Reflection/Serialize.h"
 
 using namespace glm;
 
-struct PhysicsBodyComponent {
+struct PhysicsBodyComponent
+{
 	vec2 size;
 	bool isStatic;
 	bool isSensor;
@@ -20,7 +22,8 @@ struct PhysicsBodyComponent {
 	b2FixtureDef fixture;
 	b2BodyDef bodyDef;
 
-	PhysicsBodyComponent(vec2 size = vec2(1.f, 1.f), bool isStatic = false, bool isSensor = false, bool useGravity = true) {
+	PhysicsBodyComponent(vec2 size = vec2(1.f, 1.f), bool isStatic = false, bool isSensor = false, bool useGravity = true)
+	{
 		this->size = size;
 		this->isStatic = isStatic;
 		this->isSensor = isSensor;
@@ -31,37 +34,20 @@ struct PhysicsBodyComponent {
 	}
 	PhysicsBodyComponent(ryml::NodeRef node)
 	{
-		size = { 1.f,1.f };
+		size = {1.f,1.f};
 		this->isStatic = false;
 		this->isSensor = false;
 		this->useGravity = true;
-		if (node.is_map() && node.has_child("size")) {
-			node["size"][0] >> size.x;
-			node["size"][1] >> size.y;
-		}
-		if (node.has_child("isStatic")) {
-			node["isStatic"] >> isStatic;
-		}
-		if (node.has_child("isSensor")) {
-			node["isSensor"] >> isSensor;
-		}
-		if (node.has_child("useGravity")) {
-			node["useGravity"] >> useGravity;
-		}
 
 		globalSize = vec2();
 		this->body = nullptr;
+
+		ROSE_DESER(PhysicsBodyComponent);
 	}
 	void Serialize(ryml::NodeRef node)
 	{
-		node |= ryml::MAP;
-		node["size"] |= ryml::SEQ;
-		node["size"].append_child() << size.x;
-		node["size"].append_child() << size.y;
-		node["isStatic"] << isStatic;
-		node["isSensor"] << isSensor;
-		node["useGravity"] << useGravity;
+		ROSE_SER(PhysicsBodyComponent);
 	}
 
-	ROSE_EXPOSE_VARS(PhysicsBodyComponent,(size)(isStatic)(isSensor)(useGravity))
+	ROSE_EXPOSE_VARS(PhysicsBodyComponent, (size)(isStatic)(isSensor)(useGravity))
 };

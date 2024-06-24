@@ -46,7 +46,20 @@ struct AnimationComponent
 	{
 		Reset();
 		this->animation = "";
-		ROSE_DESER(AnimationComponent);
+		if(node.is_map())
+		{
+			if(node.has_child("animation"))
+			{
+				node["animation"] >> this->animation;
+			}
+		}
+	}
+	void Serialize(ryml::NodeRef node)
+	{
+		//ROSE_INIT_VARS(AnimationComponent);
+		node |= ryml::MAP;
+		//auto info = ROSE_GETSYSTEM(ReflectionSystem).GetInfo<AnimationComponent>();
+		//DefaultSerialize(info, this, node);
 	}
 
 	void Update(float dt)
@@ -129,10 +142,6 @@ struct AnimationComponent
 		this->animation = animation;
 		Reset();
 	}
-	void Serialize(ryml::NodeRef node)
-	{
-		ROSE_SER(AnimationComponent);
-	}
 
-	ROSE_EXPOSE_VARS(AnimationComponent, (animation))
+	//ROSE_EXPOSE_VARS(AnimationComponent, (animation))
 };

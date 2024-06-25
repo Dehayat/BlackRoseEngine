@@ -33,9 +33,9 @@ class PhysicsSystem
 	std::unique_ptr<b2World> physicsWorld;
 	std::unique_ptr<b2ContactListener> contactListener;
 	void PhysicsBodyCreated(entt::registry& registry, entt::entity entity);
-	void CreateBody(entt::registry& registry, entt::entity entity);
+	void CreateEntityBody(entt::registry& registry, entt::entity entity);
 	void PhysicsBodyDestroyed(entt::registry& registry, entt::entity entity);
-	void DestroyBody(entt::registry& registry, entt::entity entity);
+	void DestroyEntityBody(entt::registry& registry, entt::entity entity);
 	void EntityDisabled(entt::registry& registry, entt::entity entity);
 	void EntityEnabled(entt::registry& registry, entt::entity entity);
 public:

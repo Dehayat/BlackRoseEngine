@@ -2,6 +2,10 @@
 
 #include <string>
 
+#include <entt/entity/registry.hpp>
+
+#include "Components/GUIDComponent.h"
+
 #include "Editor/TransformEditor.h"
 
 LevelTreeEditor::LevelTreeEditor()

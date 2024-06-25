@@ -1,8 +1,6 @@
 #pragma once
 
-#include <entt/entt.hpp>
-
-#include "Components/Components.h"
+#include <entt/entity/entity.hpp>
 
 class IComponentEditor {
 public:

@@ -1,6 +1,6 @@
 #pragma once
 #include <SDL2/SDL.h>
-#include <entt/entt.hpp>
+#include <entt/entity/entity.hpp>
 #include <glm/glm.hpp>
 
 

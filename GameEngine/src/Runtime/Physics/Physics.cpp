@@ -37,62 +37,66 @@ PhysicsSystem::~PhysicsSystem()
 }
 void PhysicsSystem::PhysicsBodyCreated(entt::registry& registry, entt::entity entity)
 {
-	if(registry.any_of<DisableComponent>(entity))
+	auto& phys = registry.get<PhysicsBodyComponent>(entity);
+	phys.body = nullptr;
+	if(!registry.any_of<DisableComponent>(entity))
 	{
-		return;
+		CreateEntityBody(registry, entity);
 	}
-	CreateBody(registry, entity);
 }
-void PhysicsSystem::CreateBody(entt::registry& registry, entt::entity entity)
+void PhysicsSystem::CreateEntityBody(entt::registry& registry, entt::entity entity)
 {
 	auto& phys = registry.get<PhysicsBodyComponent>(entity);
-	auto& trx = registry.get<TransformComponent>(entity);
-	if(phys.isStatic)
+	if(phys.body != nullptr)
 	{
-		phys.bodyDef.type = b2_staticBody;
-	} else if(phys.isSensor)
-	{
-		phys.bodyDef.type = b2_dynamicBody;
-	} else
-	{
-		phys.bodyDef.type = b2_dynamicBody;
-	}
-	phys.bodyDef.position.Set(trx.globalPosition.x, trx.globalPosition.y);
+		auto& trx = registry.get<TransformComponent>(entity);
+		if(phys.isStatic)
+		{
+			phys.bodyDef.type = b2_staticBody;
+		} else if(phys.isSensor)
+		{
+			phys.bodyDef.type = b2_dynamicBody;
+		} else
+		{
+			phys.bodyDef.type = b2_dynamicBody;
+		}
+		phys.bodyDef.position.Set(trx.globalPosition.x, trx.globalPosition.y);
 
-	b2Body* body = GetWorld().CreateBody(&phys.bodyDef);
-	auto globalScale = glm::abs(trx.globalScale);
-	if(globalScale.x < 0.01)
-	{
-		globalScale.x = 0.01;
-	}
-	if(globalScale.y < 0.01)
-	{
-		globalScale.y = 0.01;
-	}
-	phys.globalSize = vec2(phys.size.x * globalScale.x, phys.size.y * globalScale.y);
-	phys.shape.SetAsBox(phys.globalSize.x / 2, phys.globalSize.y / 2);
+		b2Body* body = GetWorld().CreateBody(&phys.bodyDef);
+		auto globalScale = glm::abs(trx.globalScale);
+		if(globalScale.x < 0.01)
+		{
+			globalScale.x = 0.01;
+		}
+		if(globalScale.y < 0.01)
+		{
+			globalScale.y = 0.01;
+		}
+		phys.globalSize = vec2(phys.size.x * globalScale.x, phys.size.y * globalScale.y);
+		phys.shape.SetAsBox(phys.globalSize.x / 2, phys.globalSize.y / 2);
 
-	phys.fixture.shape = &phys.shape;
-	phys.fixture.density = 1.0f;
-	phys.fixture.friction = 0.3f;
-	phys.fixture.isSensor = phys.isSensor;
-	body->CreateFixture(&phys.fixture);
-	phys.body = body;
-	phys.body->GetUserData().pointer = (uintptr_t)entity;
-	phys.body->SetTransform(b2Vec2(trx.globalPosition.x, trx.globalPosition.y), glm::radians(trx.globalRotation));
-	if(phys.useGravity)
-	{
-		phys.body->SetGravityScale(1.0f);
-	} else
-	{
-		phys.body->SetGravityScale(0.0f);
+		phys.fixture.shape = &phys.shape;
+		phys.fixture.density = 1.0f;
+		phys.fixture.friction = 0.3f;
+		phys.fixture.isSensor = phys.isSensor;
+		body->CreateFixture(&phys.fixture);
+		phys.body = body;
+		phys.body->GetUserData().pointer = (uintptr_t)entity;
+		phys.body->SetTransform(b2Vec2(trx.globalPosition.x, trx.globalPosition.y), glm::radians(trx.globalRotation));
+		if(phys.useGravity)
+		{
+			phys.body->SetGravityScale(1.0f);
+		} else
+		{
+			phys.body->SetGravityScale(0.0f);
+		}
 	}
 }
 void PhysicsSystem::PhysicsBodyDestroyed(entt::registry& registry, entt::entity entity)
 {
-	DestroyBody(registry, entity);
+	DestroyEntityBody(registry, entity);
 }
-void PhysicsSystem::DestroyBody(entt::registry& registry, entt::entity entity)
+void PhysicsSystem::DestroyEntityBody(entt::registry& registry, entt::entity entity)
 {
 	auto& phys = registry.get<PhysicsBodyComponent>(entity);
 	if(phys.body != nullptr)
@@ -104,14 +108,14 @@ void PhysicsSystem::EntityDisabled(entt::registry& registry, entt::entity entity
 {
 	if(registry.any_of<PhysicsBodyComponent>(entity))
 	{
-		DestroyBody(registry, entity);
+		DestroyEntityBody(registry, entity);
 	}
 }
 void PhysicsSystem::EntityEnabled(entt::registry& registry, entt::entity entity)
 {
 	if(registry.any_of<PhysicsBodyComponent>(entity))
 	{
-		CreateBody(registry, entity);
+		CreateEntityBody(registry, entity);
 	}
 }
 void PhysicsSystem::CopyTransformToBody(PhysicsBodyComponent& phys, TransformComponent& trx)

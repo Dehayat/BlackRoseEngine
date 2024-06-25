@@ -6,24 +6,19 @@
 
 #include "Core/Entity.h"
 
-#include "Components/GUIDComponent.h"
 #include "Components/TransformComponent.h"
-
-#include "Core/Systems.h"
 
 class LevelTree
 {
 	Node<entt::entity>* root;
 	std::unordered_map<entt::entity, Node<entt::entity>*> nodesMap;
-	std::unordered_map < Guid, std::vector<Node<entt::entity>*> > waitingForParent;
 
 	void UpdateChildrenRecursive(entt::registry& registry, Node<entt::entity>* parent);
-	Node<entt::entity>* TryGetParent(TransformComponent& trx);
-	void ConnectWaitingChildren(Node<entt::entity>*, Guid guid);
+	Node<entt::entity>* GetParent(TransformComponent& trx);
 
 public:
 	Node<entt::entity>* AddEntity(entt::entity entity, Node<entt::entity>* parent = nullptr);
-	LevelTree();
+	LevelTree(entt::entity rootEntity = NoEntity());
 	~LevelTree();
 	void InsertEntity(entt::entity antity);
 	void TransformDestroyed(entt::registry& registry, entt::entity entity);

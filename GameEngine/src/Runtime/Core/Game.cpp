@@ -46,7 +46,7 @@ void Game::Update()
 	ROSE_GETSYSTEM(TransformSystem).Update();
 	ROSE_GETSYSTEM(InputSystem).Update();
 	ROSE_GETSYSTEM(PhysicsSystem).Update();
-	ROSE_GETSYSTEM(AnimationPlayer).Update();
+	ROSE_GETSYSTEM(AnimationSystem).Update();
 	ROSE_GETSYSTEM(EntityEventSystem).Update();
 	ROSE_GETSYSTEM(ScriptSystem).Update();
 }

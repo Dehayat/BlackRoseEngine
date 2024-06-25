@@ -19,8 +19,6 @@
 #include "Scripting/ScriptSystem.h"
 #include "Core/DisableSystem.h"
 
-#include "Core/Systems.h"
-
 #include "Components/GUIDComponent.h"
 #include "Components/PhysicsBodyComponent.h"
 #include "Components/TransformComponent.h"
@@ -30,6 +28,7 @@
 #include "Components/ScriptComponent.h"
 #include "Components/SendEventsToParentComponent.h"
 
+#include "Editor/LevelTree.h"
 #include "Editor/PhysicsEditor.h"
 #include "Editor/ScriptEditor.h"
 
@@ -95,7 +94,7 @@ Editor::~Editor()
 
 void Editor::Reset()
 {
-	createdEntity = entt::entity(-1);
+	createdEntity = NoEntity();
 }
 
 void Editor::CloseImgui()
@@ -120,7 +119,7 @@ void Editor::Update()
 	{
 		ROSE_GETSYSTEM(PhysicsSystem).Update();
 	}
-	ROSE_GETSYSTEM(AnimationPlayer).Update();
+	ROSE_GETSYSTEM(AnimationSystem).Update();
 	if(isGameRunning)
 	{
 		ROSE_GETSYSTEM(ScriptSystem).Update();

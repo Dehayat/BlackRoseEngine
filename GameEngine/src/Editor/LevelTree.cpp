@@ -2,18 +2,26 @@
 
 #include <entt/entity/registry.hpp>
 
+#include "Core/Systems.h"
 #include "Core/Transform.h"
 
-#include "Core/Log.h"
+#include "Components/GUIDComponent.h"
 
-LevelTree::LevelTree()
+#include "Core/Log.h"
+#include <Core/Assert.h>
+
+LevelTree::LevelTree(entt::entity rootEntity)
 {
-	root = new Node<entt::entity>(NoEntity());
-	nodesMap[entt::entity(-1)] = root;
+	root = new Node<entt::entity>(rootEntity);
+	nodesMap[root->element] = root;
 }
 LevelTree::~LevelTree()
 {
-	delete root;
+	if(root != nullptr && root->element == NoEntity())
+	{
+		delete root;
+		root = nullptr;
+	}
 }
 void LevelTree::InsertEntity(entt::entity entity)
 {
@@ -26,66 +34,37 @@ void LevelTree::InsertEntity(entt::entity entity)
 	auto& registry = entities.GetRegistry();
 	auto& trx = registry.get<TransformComponent>(entity);
 	trx.level = 0;
-	auto parent = TryGetParent(trx);
-	auto node = AddEntity(entity, parent);
-	if(parent != nullptr)
+	Node<entt::entity>* node = nullptr;
+	if(trx.parentGUID != -1)
 	{
+		auto parentNode = GetParent(trx);
+		node = AddEntity(entity, parentNode);
 		auto& childTrx = registry.get<TransformComponent>(node->element);
 		childTrx.hasParent = true;
+		childTrx.parent = parentNode->element;
 		auto& parentTrx = registry.get<TransformComponent>(childTrx.parent);
 		childTrx.level = parentTrx.level + 1;
-	} else if(trx.parentGUID != -1)
+	} else
 	{
-		waitingForParent[trx.parentGUID].push_back(node);
+		node = AddEntity(entity);
 	}
 
 	auto& transformSystem = ROSE_GETSYSTEM(TransformSystem);
 	trx.CalcMatrix();
 
 	auto guid = ROSE_GETSYSTEM(Entities).GetEntityGuid(entity);
-	ConnectWaitingChildren(node, guid);
 }
-Node<entt::entity>* LevelTree::TryGetParent(TransformComponent& trx)
+Node<entt::entity>* LevelTree::GetParent(TransformComponent& trx)
 {
 	auto& entities = ROSE_GETSYSTEM(Entities);
-	if(entities.EntityExists(trx.parent))
+	trx.parent = entities.GetEntity(trx.parentGUID);
+	Node<entt::entity>* parentNode = nullptr;
+	if(nodesMap.find(trx.parent) != nodesMap.end())
 	{
-		trx.parentGUID = entities.GetEntityGuid(trx.parent);
+		parentNode = nodesMap[trx.parent];
 	}
-	if(entities.EntityExists(trx.parentGUID))
-	{
-		trx.parent = entities.GetEntity(trx.parentGUID);
-	}
-	if(entities.EntityExists(trx.parent))
-	{
-		if(nodesMap.find(trx.parent) != nodesMap.end())
-		{
-			return nodesMap[trx.parent];
-		}
-	}
-	if(trx.parentGUID != -1)
-	{
-		ROSE_LOG("parent of new entity not found in levelTree");
-	}
-	return nullptr;
-}
-void LevelTree::ConnectWaitingChildren(Node<entt::entity>* parentNode, Guid parentGuid)
-{
-	auto& entities = ROSE_GETSYSTEM(Entities);
-	auto& registry = entities.GetRegistry();
-	if(waitingForParent.find(parentGuid) != waitingForParent.end())
-	{
-		for(auto child : waitingForParent[parentGuid])
-		{
-			ROSE_LOG("found parent");
-			parentNode->AddChild(child);
-			auto& childTrx = registry.get<TransformComponent>(child->element);
-			childTrx.parent = parentNode->element;
-			childTrx.hasParent = true;
-		}
-		waitingForParent.erase(parentGuid);
-		UpdateChildrenRecursive(registry, parentNode);
-	}
+	ROSE_ASSERT(parentNode != nullptr);
+	return parentNode;
 }
 void LevelTree::UpdateChildrenRecursive(entt::registry& registry, Node<entt::entity>* parent)
 {

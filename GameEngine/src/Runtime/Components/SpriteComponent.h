@@ -12,12 +12,15 @@
 
 using namespace glm;
 
+const SDL_Rect DEFAULT_RECT = SDL_Rect{-1};
+
 struct SpriteComponent
 {
 	std::string sprite;
 	int layer;
 	glm::vec4 color;
 
+	SDL_Rect sourceRectData;
 	SDL_Rect* sourceRect;
 	SDL_FRect destRect;
 
@@ -26,6 +29,7 @@ struct SpriteComponent
 		this->sprite = sprite;
 		this->layer = layer;
 		this->color = color;
+		sourceRectData = DEFAULT_RECT;
 		sourceRect = nullptr;
 		destRect = SDL_FRect();
 	}
@@ -34,6 +38,7 @@ struct SpriteComponent
 		this->sprite = "";
 		this->color = vec4(1, 1, 1, 1);
 		this->layer = 0;
+		sourceRectData = DEFAULT_RECT;
 		sourceRect = nullptr;
 		destRect = SDL_FRect();
 		if(node.is_map())
@@ -57,17 +62,20 @@ struct SpriteComponent
 			}
 		}
 	}
-	SpriteComponent(const SpriteComponent& other)
-	{
-		this->sprite = other.sprite;
-		this->layer = other.layer;
-		this->color = other.color;
-		sourceRect = nullptr;
-		destRect = other.destRect;
-	}
+	//SpriteComponent(const SpriteComponent& other)
+	//{
+	//	this->sprite = other.sprite;
+	//	this->layer = other.layer;
+	//	this->color = other.color;
+	//	sourceRectData = DEFAULT_RECT;
+	//	destRect = other.destRect;
+	//	sourceRect = nullptr;
+	//}
 	void Serialize(ryml::NodeRef node)
 	{
+		sourceRectData = DEFAULT_RECT;
 		destRect = SDL_FRect();
+		sourceRect = nullptr;
 		node |= ryml::MAP;
 		node["sprite"] << sprite;
 		node["layer"] << layer;

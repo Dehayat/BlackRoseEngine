@@ -3,6 +3,7 @@
 #include "Core/Guid.h"
 
 #include <entt/entity/entity.hpp>
+#include <entt/entity/registry.hpp>
 
 typedef std::unordered_map <Guid, entt::entity> EntityMap;
 typedef std::unordered_map <entt::entity, Guid> GuidMap;
@@ -17,6 +18,7 @@ class Entities
 private:
 	EntityMap allEntities;
 	GuidMap allEntityGuids;
+	entt::registry mainRegistry;
 
 public:
 	Entities();

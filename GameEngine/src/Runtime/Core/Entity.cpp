@@ -4,18 +4,14 @@
 
 #include "Components/GUIDComponent.h"
 
-#include "Core/Systems.h"
-
-#include "Core/Log.h"
-
 Entities::Entities()
 {
-	ROSE_CREATESYSTEM(entt::registry);
+	mainRegistry = entt::registry();
 }
 
 entt::registry& Entities::GetRegistry()
 {
-	return ROSE_GETSYSTEM(entt::registry);
+	return mainRegistry;
 }
 
 entt::entity Entities::GetEntity(Guid guid)

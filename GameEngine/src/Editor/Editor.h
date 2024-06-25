@@ -4,9 +4,8 @@
 
 #include "Core/BaseGame.h"
 
-#include "Components/Components.h"
+#include "Core/Systems.h"
 
-#include "Editor/LevelTree.h"
 #include "Editor/LevelTreeEditor.h"
 #include "Editor/ComponentEditor.h"
 

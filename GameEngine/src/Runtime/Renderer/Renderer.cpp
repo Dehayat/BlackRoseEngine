@@ -1,6 +1,6 @@
 #include "Renderer/Renderer.h"
 
-#include <entt/entt.hpp>
+#include <entt/entity/registry.hpp>
 
 #include "Core/SdlContainer.h"
 #include "AssetPipline/AssetStore.h"
@@ -16,9 +16,9 @@
 
 RendererSystem::RendererSystem()
 {
-	SdlContainer& sdlRenderer = entt::locator<SdlContainer>::value();
+	SdlContainer& sdlRenderer = ROSE_GETSYSTEM(SdlContainer);
 	this->sdlRenderer = sdlRenderer.GetRenderer();
-	camera = entt::entity(-1);
+	camera = NoEntity();
 	this->worldToScreenMatrix = glm::mat3(1);
 }
 RendererSystem::~RendererSystem()

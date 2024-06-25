@@ -10,10 +10,10 @@
 
 #include "Components/AnimationComponent.h"
 
-class AnimationPlayer {
+class AnimationSystem {
 
 public:
-	AnimationPlayer();
+	AnimationSystem();
 	void Update();
 	void AnimationDestroyed(entt::registry& registry, entt::entity entity);
 };

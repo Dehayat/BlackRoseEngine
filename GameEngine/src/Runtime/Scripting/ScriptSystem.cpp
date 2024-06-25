@@ -183,7 +183,6 @@ void ScriptSystem::AddScript(entt::entity entity, const std::string scriptName, 
 	state.set_function("destroy", DestroyEntity);
 	state["no_entity"] = NoEntity();
 	state.script(script);
-
 }
 
 void ScriptSystem::RefreshScript(entt::entity entity)

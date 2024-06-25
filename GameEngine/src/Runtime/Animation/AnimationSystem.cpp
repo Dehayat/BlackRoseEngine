@@ -7,19 +7,20 @@
 #include "Events/EntityEventSystem.h"
 
 #include "Core/Systems.h"
+#include "Core/Assert.h"
 
 
 #include "Components/AnimationComponent.h"
 #include "Components/SpriteComponent.h"
 #include "Components/DisableComponent.h"
 
-AnimationPlayer::AnimationPlayer()
+AnimationSystem::AnimationSystem()
 {
 	entt::registry& registry = ROSE_GETSYSTEM(Entities).GetRegistry();
-	registry.on_destroy<AnimationComponent>().connect<&AnimationPlayer::AnimationDestroyed>(this);
+	registry.on_destroy<AnimationComponent>().connect<&AnimationSystem::AnimationDestroyed>(this);
 }
 
-void AnimationPlayer::Update()
+void AnimationSystem::Update()
 {
 	float dt = ROSE_GETSYSTEM(TimeSystem).GetdeltaTime();
 	Entities& entities = ROSE_GETSYSTEM(Entities);
@@ -31,24 +32,20 @@ void AnimationPlayer::Update()
 	{
 		auto& animationComponent = view.get<AnimationComponent>(entity);
 		auto& spriteComponent = view.get<SpriteComponent>(entity);
-		if(spriteComponent.sourceRect != nullptr)
-		{
-			delete spriteComponent.sourceRect;
-			spriteComponent.sourceRect = nullptr;
-		}
 		animationComponent.Update(dt);
 		auto animationHandle = assetStore.GetAsset(animationComponent.animation);
 		if(animationHandle.type != AssetType::Animation)
 		{
 			continue;
 		}
-		auto animation = static_cast<Animation*>(animationHandle.asset);
+		auto animation = (Animation*)(animationHandle.asset);
 		if(animation == nullptr)
 		{
 			continue;
 		}
 		spriteComponent.sprite = animation->texture;
-		spriteComponent.sourceRect = new SDL_Rect(animation->GetSourceRect(animationComponent.currentFrame));
+		spriteComponent.sourceRectData = animation->GetSourceRect(animationComponent.currentFrame);
+		spriteComponent.sourceRect = &spriteComponent.sourceRectData;
 		while(animationComponent.IsEventQueued())
 		{
 			std::string eventName = animationComponent.PopEvent();
@@ -61,15 +58,11 @@ void AnimationPlayer::Update()
 	}
 }
 
-void AnimationPlayer::AnimationDestroyed(entt::registry& registry, entt::entity entity)
+void AnimationSystem::AnimationDestroyed(entt::registry& registry, entt::entity entity)
 {
 	if(registry.any_of<SpriteComponent>(entity))
 	{
 		auto& spriteComponent = registry.get<SpriteComponent>(entity);
-		if(spriteComponent.sourceRect != nullptr)
-		{
-			delete spriteComponent.sourceRect;
-			spriteComponent.sourceRect = nullptr;
-		}
+		spriteComponent.sourceRect = nullptr;
 	}
 }

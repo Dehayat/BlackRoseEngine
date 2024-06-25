@@ -35,7 +35,7 @@ BaseGame::~BaseGame()
 	ROSE_DESTROYSYSTEM(TransformSystem);
 	ROSE_DESTROYSYSTEM(ScriptSystem);
 	ROSE_DESTROYSYSTEM(EntityEventSystem);
-	ROSE_DESTROYSYSTEM(AnimationPlayer);
+	ROSE_DESTROYSYSTEM(AnimationSystem);
 	ROSE_DESTROYSYSTEM(RendererSystem);
 	ROSE_DESTROYSYSTEM(InputSystem);
 	ROSE_DESTROYSYSTEM(TimeSystem);
@@ -66,12 +66,12 @@ void BaseGame::SetupBaseSystems()
 
 void BaseGame::SetupLowLevelSystems()
 {
-	ROSE_CREATESYSTEM(DisableSystem);
 	ROSE_CREATESYSTEM(LevelTree);
+	ROSE_CREATESYSTEM(DisableSystem);
 	ROSE_CREATESYSTEM(TimeSystem);
 	ROSE_CREATESYSTEM(InputSystem);
 	ROSE_CREATESYSTEM(RendererSystem);
-	ROSE_CREATESYSTEM(AnimationPlayer);
+	ROSE_CREATESYSTEM(AnimationSystem);
 	ROSE_CREATESYSTEM(EntityEventSystem);
 	ROSE_CREATESYSTEM(ScriptSystem);
 	ROSE_CREATESYSTEM(TransformSystem);

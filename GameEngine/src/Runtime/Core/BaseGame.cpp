@@ -80,23 +80,23 @@ void BaseGame::SetupLowLevelSystems()
 
 void BaseGame::Setup()
 {
-	LoadProject();
+	LoadProject("p.pro");
 	ROSE_GETSYSTEM(RendererSystem).InitLoaded();
 }
 
-void BaseGame::LoadProject()
+void BaseGame::LoadProject(const std::string& projectName)
 {
-	auto project = ROSE_GETSYSTEM(ProjectLoader).LoadProject("p.pro");
+	LevelLoader& levelLoader = ROSE_GETSYSTEM(LevelLoader);
+	levelLoader.UnloadLevel();
+	auto project = ROSE_GETSYSTEM(ProjectLoader).LoadProject(projectName);
 	if(project != nullptr)
 	{
 		auto startLevelIndex = project->GetStartLevel();
 		if(startLevelIndex != -1)
 		{
-			LevelLoader& levelLoader = ROSE_GETSYSTEM(LevelLoader);
 			levelLoader.LoadLevel(project->GetLevelFile(startLevelIndex));
 		}
-	}
-	else
+	} else
 	{
 		ROSE_ERR("Couldn't open project");
 	}

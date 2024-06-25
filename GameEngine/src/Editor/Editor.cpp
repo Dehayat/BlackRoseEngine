@@ -342,11 +342,8 @@ bool Editor::ProcessEvents()
 		case SDL_QUIT:
 			exit = true;
 			break;
-		case SDL_KEYDOWN:
-			if(sdlEvent.key.keysym.sym == SDLK_ESCAPE)
-			{
-				exit = true;
-			}
+		case SDL_DROPFILE:
+			HandleDropFile(sdlEvent);
 			break;
 		default:
 			break;
@@ -354,6 +351,22 @@ bool Editor::ProcessEvents()
 		ImGui_ImplSDL2_ProcessEvent(&sdlEvent);
 	}
 	return exit;
+}
+
+void Editor::HandleDropFile(SDL_Event& sdlEvent)
+{
+	auto fileType = ROSE_GETSYSTEM(FileDialog).GetFileExtension(sdlEvent.drop.file);
+	if(fileType == ".pro")
+	{
+		LoadProject(sdlEvent.drop.file);
+	} else if(fileType == ".pkg")
+	{
+		ROSE_GETSYSTEM(AssetStore).LoadPackage(sdlEvent.drop.file);
+	} else if(fileType == ".yaml")
+	{
+		ROSE_GETSYSTEM(LevelLoader).UnloadLevel();
+		ROSE_GETSYSTEM(LevelLoader).LoadLevel(sdlEvent.drop.file);
+	}
 }
 
 void Editor::RenderGizmos()

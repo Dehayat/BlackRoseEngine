@@ -125,7 +125,7 @@ void LevelLoader::SaveLevel(const std::string& fileName)
 }
 void LevelLoader::UnloadLevel()
 {
-	Entities& entities = entt::locator<Entities>::value();
+	Entities& entities = ROSE_GETSYSTEM(Entities);
 	entities.DestroyAllEntities();
 }
 const std::string& LevelLoader::GetCurrentLevelFile()

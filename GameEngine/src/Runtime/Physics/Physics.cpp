@@ -102,6 +102,7 @@ void PhysicsSystem::DestroyEntityBody(entt::registry& registry, entt::entity ent
 	if(phys.body != nullptr)
 	{
 		GetWorld().DestroyBody(phys.body);
+		phys.body = nullptr;
 	}
 }
 void PhysicsSystem::EntityDisabled(entt::registry& registry, entt::entity entity)
@@ -168,8 +169,8 @@ void PhysicsSystem::RemoveBody(PhysicsBodyComponent& phys)
 	if(phys.body != nullptr)
 	{
 		GetWorld().DestroyBody(phys.body);
+		phys.body = nullptr;
 	}
-	phys.body = nullptr;
 }
 void PhysicsSystem::AddBody(entt::entity entity, PhysicsBodyComponent& phys)
 {

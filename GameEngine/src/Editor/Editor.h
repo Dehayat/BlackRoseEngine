@@ -58,6 +58,7 @@ public:
 	void Update();
 	void Render();
 	bool ProcessEvents();
+	void HandleDropFile(SDL_Event& sdlEvent);
 	void RenderGizmos();
 	void RenderEditor();
 	entt::entity GetSelectedEntity();

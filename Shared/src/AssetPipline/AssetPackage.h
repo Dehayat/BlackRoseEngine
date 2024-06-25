@@ -27,7 +27,8 @@
 //	return 0;
 //}
 
-struct AssetMetaData {
+struct AssetMetaData
+{
 	std::string name;
 	//virtual void Editor() {
 	//	if (name.capacity() < FILE_PATH_SIZE) {
@@ -39,40 +40,48 @@ struct AssetMetaData {
 	{
 		node["name"] << name;
 	}
-	AssetMetaData() {
+	AssetMetaData()
+	{
 		name = "";
 	}
-	AssetMetaData(ryml::NodeRef& node) {
+	AssetMetaData(ryml::NodeRef& node)
+	{
 		node["name"] >> name;
 	}
 };
 
-struct TextureMetaData :AssetMetaData {
+struct TextureMetaData:AssetMetaData
+{
 	int ppu;
 	//void Editor() {
 	//	AssetMetaData::Editor();
 	//	ImGui::InputInt("Pixels Per Unit", &ppu);
 	//}
-	void Serialize(ryml::NodeRef& node) {
+	void Serialize(ryml::NodeRef& node)
+	{
 		AssetMetaData::Serialize(node);
 		node["ppu"] << ppu;
 	}
-	TextureMetaData() {
+	TextureMetaData()
+	{
 		name = "";
 		ppu = 100;
 	}
-	TextureMetaData(ryml::NodeRef& node) :AssetMetaData(node) {
+	TextureMetaData(ryml::NodeRef& node):AssetMetaData(node)
+	{
 		node["ppu"] >> ppu;
 	}
 };
 
-struct AssetFile {
+struct AssetFile
+{
 	Guid guid;
-	AssetFile(AssetType assetType = AssetType::Empty) {
+	AssetFile(AssetType assetType = AssetType::Empty)
+	{
 		guid = GuidGenerator::New();
 		filePath = "";
 		this->assetType = assetType;
-		switch (assetType)
+		switch(assetType)
 		{
 		case AssetType::Texture:
 			metaData = new TextureMetaData();
@@ -82,19 +91,22 @@ struct AssetFile {
 			break;
 		}
 	}
-	~AssetFile() {
-		if (metaData != nullptr) {
+	~AssetFile()
+	{
+		if(metaData != nullptr)
+		{
 			delete metaData;
 		}
 	}
-	AssetFile(ryml::NodeRef& node) {
+	AssetFile(ryml::NodeRef& node)
+	{
 		node |= ryml::MAP;
 		node["Guid"] >> guid;
 		int assetTypeTemp;
 		node["AssetType"] >> assetTypeTemp;
 		this->assetType = (AssetType)assetTypeTemp;
 		node["FilePath"] >> filePath;
-		switch (assetType)
+		switch(assetType)
 		{
 		case AssetType::Texture:
 			metaData = new TextureMetaData(node);
@@ -114,7 +126,8 @@ struct AssetFile {
 	//		metaData->Editor();
 	//	}
 	//}
-	void Serialize(ryml::NodeRef& parent) {
+	void Serialize(ryml::NodeRef& parent)
+	{
 		auto node = parent.append_child();
 		node |= ryml::MAP;
 		node["Guid"] << guid;
@@ -127,39 +140,50 @@ struct AssetFile {
 	AssetType assetType;
 };
 
-struct AssetPackage {
+struct AssetPackage
+{
 	std::vector<AssetFile*> assets;
 	std::string filePath;
 	Guid guid;
-	AssetPackage() {
+	AssetPackage()
+	{
 		guid = GuidGenerator::New();
 		filePath = "";
 	}
-	~AssetPackage() {
-		for (auto asset : assets) {
-			if (asset != nullptr) {
+	~AssetPackage()
+	{
+		for(auto asset : assets)
+		{
+			if(asset != nullptr)
+			{
 				delete asset;
 			}
 		}
 	}
-	AssetFile* AddAsset(AssetType assetType) {
+	AssetFile* AddAsset(AssetType assetType)
+	{
 		AssetFile* assetFile = new AssetFile(assetType);
 		assets.push_back(assetFile);
 		return assetFile;
 	}
-	void RemoveAsset(AssetFile* assetFile) {
-		if (assetFile != nullptr) {
+	void RemoveAsset(AssetFile* assetFile)
+	{
+		if(assetFile != nullptr)
+		{
 			assets.erase(std::find(assets.begin(), assets.end(), assetFile));
 			delete assetFile;
 		}
 	}
-	bool ContainsAsset(AssetFile* assetFile) {
+	bool ContainsAsset(AssetFile* assetFile)
+	{
 		return std::find(assets.begin(), assets.end(), assetFile) != assets.end();
 	}
-	void Save() {
+	void Save()
+	{
 		ROSE_LOG("Saving asset package");
 		auto fileHandle = FileResource(filePath, "w+");
-		if (fileHandle.file == nullptr) {
+		if(fileHandle.file == nullptr)
+		{
 			ROSE_ERR("Couldnt save asset package");
 			return;
 		}
@@ -169,29 +193,35 @@ struct AssetPackage {
 		std::string buffer = ryml::emitrs_yaml<std::string>(tree);
 		SDL_RWwrite(fileHandle.file, buffer.data(), 1, buffer.size());
 	}
-	void Serialize(ryml::NodeRef& node) {
+	void Serialize(ryml::NodeRef& node)
+	{
 		node |= ryml::MAP;
 		node["Guid"] << guid;
 		auto assetsNode = node.append_child();
 		assetsNode.set_key("Assets");
 		assetsNode |= ryml::SEQ;
-		for (auto asset : assets) {
+		for(auto asset : assets)
+		{
 			asset->Serialize(assetsNode);
 		}
 	}
-	bool Load(const std::string& filePath) {
+	bool Load(const std::string& filePath)
+	{
 		auto fileHandle = FileResource(filePath);
-		if (fileHandle.file == nullptr) {
+		if(fileHandle.file != nullptr)
+		{
+			std::string fileString = std::string("\0", SDL_RWsize(fileHandle.file));
+			SDL_RWread(fileHandle.file, &fileString[0], sizeof(fileString[0]), fileString.size());
+			auto tree = ryml::parse_in_arena(ryml::to_csubstr(fileString));
+			auto root = tree.rootref();
+			Deserialize(root);
+			this->filePath = filePath;
+			return true;
+		} else
+		{
 			ROSE_ERR("Couldn't load package");
 			return false;
 		}
-		std::string fileString = std::string("\0", SDL_RWsize(fileHandle.file));
-		SDL_RWread(fileHandle.file, &fileString[0], sizeof(fileString[0]), fileString.size());
-		auto tree = ryml::parse_in_arena(ryml::to_csubstr(fileString));
-		auto root = tree.rootref();
-		Deserialize(root);
-		this->filePath = filePath;
-		return true;
 	}
 
 	void Deserialize(ryml::NodeRef& node)
@@ -200,7 +230,8 @@ struct AssetPackage {
 		node["Guid"] >> guid;
 		auto assets = node.find_child("Assets");
 		auto child = assets.first_child();
-		for (int i = 0; i < assets.num_children(); i++) {
+		for(int i = 0; i < assets.num_children(); i++)
+		{
 			this->assets.push_back(new AssetFile(child));
 			child = child.next_sibling();
 		}

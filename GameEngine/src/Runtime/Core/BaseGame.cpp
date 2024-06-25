@@ -87,10 +87,17 @@ void BaseGame::Setup()
 void BaseGame::LoadProject()
 {
 	auto project = ROSE_GETSYSTEM(ProjectLoader).LoadProject("p.pro");
-	auto startLevelIndex = project->GetStartLevel();
-	if(startLevelIndex != -1)
+	if(project != nullptr)
 	{
-		LevelLoader& levelLoader = ROSE_GETSYSTEM(LevelLoader);
-		levelLoader.LoadLevel(project->GetLevelFile(startLevelIndex));
+		auto startLevelIndex = project->GetStartLevel();
+		if(startLevelIndex != -1)
+		{
+			LevelLoader& levelLoader = ROSE_GETSYSTEM(LevelLoader);
+			levelLoader.LoadLevel(project->GetLevelFile(startLevelIndex));
+		}
+	}
+	else
+	{
+		ROSE_ERR("Couldn't open project");
 	}
 }

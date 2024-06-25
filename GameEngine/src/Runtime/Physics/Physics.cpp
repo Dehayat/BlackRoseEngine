@@ -254,7 +254,7 @@ void PhysicsSystem::DebugRender(glm::mat3 viewMatrix)
 
 DebugDraw::DebugDraw():matrix(1)
 {
-	SdlContainer& sdlRenderer = entt::locator<SdlContainer>::value();
+	SdlContainer& sdlRenderer = ROSE_GETSYSTEM(SdlContainer);
 	this->renderer = sdlRenderer.GetRenderer();
 	SetFlags(31);
 }

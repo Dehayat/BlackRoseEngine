@@ -63,22 +63,19 @@ void LevelLoader::DeserializeLevel(entt::registry& registry, ryml::NodeRef& node
 }
 entt::entity LevelLoader::DeserializeEntity(entt::registry& registry, ryml::NodeRef& node)
 {
-	entt::entity entity;
+	entt::entity entity = NoEntity();
 	auto& entities = ROSE_GETSYSTEM(Entities);
 	auto guid = GuidGenerator::New();
 	if(node.has_child("Guid"))
 	{
-		if(node["Guid"].is_map())
+		auto guidNode = node["Guid"];
+		if(guidNode.has_child("id"))
 		{
-			auto guidNode = node["Guid"];
 			guidNode["id"] >> guid;
-			entity = entities.CreateEntityWithoutGuidComponent(guid);
-			ComponentSer<GUIDComponent>::Deserialize(registry, guidNode, entity);
-		} else
-		{
-			node["Guid"] >> guid;
-			entity = entities.CreateEntity(guid);
 		}
+		entity = entities.CreateEntityWithoutGuidComponent(guid);
+		ComponentSer<GUIDComponent>::Deserialize(registry, guidNode, entity);
+
 	} else
 	{
 		entity = entities.CreateEntity();

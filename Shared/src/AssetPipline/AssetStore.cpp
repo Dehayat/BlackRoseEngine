@@ -41,11 +41,12 @@ void AssetStore::AddTexture(const std::string& assetId, const std::string& fileP
 		delete assets[assetId].asset;
 		assets[assetId].type = AssetType::Texture;
 		assets[assetId].asset = textureAsset;
+		ROSE_LOG("Reloaded Texture Asset %s", assetId.c_str());
 	}
 	else {
 		assets[assetId] = AssetHandle(AssetType::Texture, textureAsset);
+		ROSE_LOG("Loaded New Texture Asset %s", assetId.c_str());
 	}
-	ROSE_LOG("Loaded Texture Asset %s", assetId.c_str());
 }
 
 void AssetStore::LoadAnimation(const std::string& assetId, const std::string& filePath)
@@ -55,11 +56,12 @@ void AssetStore::LoadAnimation(const std::string& assetId, const std::string& fi
 		delete assets[assetId].asset;
 		assets[assetId].type = AssetType::Animation;
 		assets[assetId].asset = animation;
+		ROSE_LOG("Reloaded Animation Asset %s", assetId.c_str());
 	}
 	else {
 		assets[assetId] = AssetHandle(AssetType::Animation, animation);
+		ROSE_LOG("Loaded New Animation Asset %s", assetId.c_str());
 	}
-	ROSE_LOG("Loaded Animation Asset %s", assetId.c_str());
 }
 
 void AssetStore::LoadScript(const std::string& assetId, const std::string& filePath)
@@ -73,11 +75,12 @@ void AssetStore::LoadScript(const std::string& assetId, const std::string& fileP
 		delete assets[assetId].asset;
 		assets[assetId].type = AssetType::Script;
 		assets[assetId].asset = script;
+		ROSE_LOG("Reloaded Script Asset %s", assetId.c_str());
 	}
 	else {
 		assets[assetId] = AssetHandle(AssetType::Script, script);
+		ROSE_LOG("Loaded New Script Asset %s", assetId.c_str());
 	}
-	ROSE_LOG("Loaded Script Asset %s", assetId.c_str());
 }
 
 AssetHandle AssetStore::GetAsset(const std::string& assetId) const

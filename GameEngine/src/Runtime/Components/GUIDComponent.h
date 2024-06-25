@@ -16,12 +16,12 @@ struct GUIDComponent :IComponent {
 	}
 	GUIDComponent(Guid id) {
 		this->id = id;
-		name = "";
+		name = "New Entity";
 	}
 	GUIDComponent(ryml::NodeRef& node)
 	{
 		this->id = GuidGenerator::New();
-		name = "";
+		name = "New Entity";
 		if (node.has_child("id"))
 		{
 			node["id"] >> id;

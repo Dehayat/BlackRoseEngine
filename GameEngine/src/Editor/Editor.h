@@ -77,18 +77,22 @@ public:
 		{
 			TEditor editor = TEditor();
 			IComponentEditor* compEditor = (IComponentEditor*)&editor;
+			bool removeComponent = false;
 			if(ImGui::CollapsingHeader(componentName.c_str()))
 			{
 				ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.5, 0.2, 0.2, 1));
 				auto contentSize = ImGui::GetContentRegionAvail();
 				if(removable && ImGui::Button("Remove Component", {contentSize.x,0}))
 				{
-					registry.remove<TComponent>(entity);
-					return;
+					removeComponent = true;
 				}
 				ImGui::Separator();
 				ImGui::PopStyleColor();
 				compEditor->Editor(entity);
+			}
+			if(removeComponent)
+			{
+				registry.remove<TComponent>(entity);
 			}
 		} else
 		{

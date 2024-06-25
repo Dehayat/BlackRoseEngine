@@ -47,7 +47,7 @@ void PhysicsSystem::PhysicsBodyCreated(entt::registry& registry, entt::entity en
 void PhysicsSystem::CreateEntityBody(entt::registry& registry, entt::entity entity)
 {
 	auto& phys = registry.get<PhysicsBodyComponent>(entity);
-	if(phys.body != nullptr)
+	if(phys.body == nullptr)
 	{
 		auto& trx = registry.get<TransformComponent>(entity);
 		if(phys.isStatic)

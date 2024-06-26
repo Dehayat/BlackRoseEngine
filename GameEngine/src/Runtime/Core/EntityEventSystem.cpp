@@ -15,7 +15,7 @@
 
 void EntityEventSystem::Update()
 {
-	auto& registry = ROSE_GETSYSTEM(Entities).GetRegistry();
+	auto& registry = ROSE_GETSYSTEM(EntitySystem).GetRegistry();
 	auto& scriptSystem = ROSE_GETSYSTEM(ScriptSystem);
 
 	while(!eventQueue.empty())
@@ -32,7 +32,7 @@ void EntityEventSystem::Update()
 				if(registry.any_of<SendEventsToParentComponent>(entityEvent.entity))
 				{
 					auto& trx = registry.get<TransformComponent>(entityEvent.entity);
-					if(trx.hasParent)
+					if(trx.parent!=NoEntity())
 					{
 						auto parentScript = registry.try_get<ScriptComponent>(trx.parent);
 						if(parentScript != nullptr)

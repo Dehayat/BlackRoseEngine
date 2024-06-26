@@ -1,29 +1,25 @@
 #include "Components/TransformComponent.h"
 #include "Reflection/Serialize.h"
 
-#include <entt/entt.hpp>
-
 #include "Core/Systems.h"
 
 #include "Core/Log.h"
 
 using namespace glm;
 
-TransformComponent::TransformComponent(vec2 position, vec2 scale, float rotation, entt::entity parent)
+TransformComponent::TransformComponent(vec2 position, vec2 scale, float rotation)
 {
 	this->position = position;
 	this->scale = scale;
 	this->rotation = rotation;
-	this->parentGUID = -1;
 
-	this->level = 0;
-	this->parent = parent;
+	this->parent = NoEntity();
 	this->scaleSign = vec2(1,1);
 	this->matrixL2W = mat3(0);
 	globalPosition = vec2();
 	globalScale = vec2();
 	globalRotation = 0;
-	this->hasParent = false;
+	level = 0;
 }
 
 TransformComponent::TransformComponent(ryml::NodeRef& node)
@@ -31,16 +27,14 @@ TransformComponent::TransformComponent(ryml::NodeRef& node)
 	this->position = vec2(0, 0);
 	this->scale = vec2(1, 1);
 	this->rotation = 0;
-	this->parentGUID = -1;
 
 	this->scaleSign = vec2(1, 1);
 	this->parent = NoEntity();
 	this->matrixL2W = mat3(0);
-	this->level = 0;
 	globalPosition = vec2();
 	globalScale = vec2();
 	globalRotation = 0;
-	this->hasParent = false;
+	level = 0;
 
 	ROSE_DESER(TransformComponent);
 }
@@ -71,9 +65,9 @@ void TransformComponent::CalcMatrix()
 		0, 0, 1
 	);
 	matrixL2W = matS * matR * matT;
-	if(hasParent)
+	if(parent!=NoEntity())
 	{
-		entt::registry& registry = ROSE_GETSYSTEM(Entities).GetRegistry();
+		entt::registry& registry = ROSE_GETSYSTEM(EntitySystem).GetRegistry();
 		auto matrixP2W = registry.get<TransformComponent>(parent).matrixL2W;
 		matrixL2W = matrixL2W * matrixP2W;
 	}
@@ -87,9 +81,9 @@ void TransformComponent::UpdateGlobals()
 	globalRotation = GetRotation(matrixL2W);
 	globalRotation = glm::mod(globalRotation + 360, 360.0f);
 	scaleSign = vec2(sign(scale.x), sign(scale.y));
-	if(hasParent)
+	if(parent!=NoEntity())
 	{
-		auto& pTrx = ROSE_GETSYSTEM(Entities).GetRegistry().get<TransformComponent>(parent);
+		auto& pTrx = ROSE_GETSYSTEM(EntitySystem).GetRegistry().get<TransformComponent>(parent);
 		scaleSign = pTrx.scaleSign * scaleSign;
 	}
 }
@@ -97,9 +91,9 @@ void TransformComponent::UpdateGlobals()
 void TransformComponent::UpdateLocals()
 {
 	globalRotation = glm::mod(globalRotation + 360, 360.0f);
-	if(hasParent)
+	if(parent!=NoEntity())
 	{
-		auto& pTrx = ROSE_GETSYSTEM(Entities).GetRegistry().get<TransformComponent>(parent);
+		auto& pTrx = ROSE_GETSYSTEM(EntitySystem).GetRegistry().get<TransformComponent>(parent);
 		auto matW2P = inverse(pTrx.matrixL2W);
 
 		position = GetPosition(matW2P, globalPosition);

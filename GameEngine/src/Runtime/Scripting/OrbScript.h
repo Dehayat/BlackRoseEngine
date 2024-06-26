@@ -17,7 +17,7 @@ public:
 	virtual void OnEvent(entt::entity owner, const EntityEvent& entityEvent) override {
 
 		if (entityEvent.name == "SensorEntered") {
-			auto& registry = ROSE_GETSYSTEM(Entities).GetRegistry();
+			auto& registry = ROSE_GETSYSTEM(EntitySystem).GetRegistry();
 			if (registry.all_of<AnimationComponent>(owner)) {
 				auto& anim = registry.get<AnimationComponent>(owner);
 				anim.Play("OrbExplodeAnim");

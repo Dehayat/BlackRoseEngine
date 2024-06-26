@@ -80,7 +80,7 @@ void LevelTreeEditor::EditorChildren(entt::registry& registry, Node<entt::entity
 
 void LevelTreeEditor::Editor()
 {
-	auto& registry = ROSE_GETSYSTEM(Entities).GetRegistry();
+	auto& registry = ROSE_GETSYSTEM(EntitySystem).GetRegistry();
 	ShowEntity(registry);
 	auto& levelTree = ROSE_GETSYSTEM(LevelTree);
 	auto& transform = ROSE_GETSYSTEM(TransformSystem);
@@ -88,7 +88,8 @@ void LevelTreeEditor::Editor()
 		EditorChildren(registry, node);
 	}
 	if (currentCommand.child != entt::entity(-1)) {
-		transform.SetParent(currentCommand.child, currentCommand.newParent);
+		//transform.SetParent(currentCommand.child, currentCommand.newParent);
+		levelTree.TrySetParent(currentCommand.child, currentCommand.newParent);
 		//nodesMap[currentCommand.child]->SetParent(nodesMap[currentCommand.newParent]);
 		//TransformEditor::SetParent(registry, registry.get<TransformComponent>(currentCommand.child), currentCommand.newParent);
 		currentCommand.Reset();

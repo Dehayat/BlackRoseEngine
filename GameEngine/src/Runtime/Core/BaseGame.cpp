@@ -20,7 +20,7 @@
 #include "Animation/AnimationSystem.h"
 #include "Events/EntityEventSystem.h"
 #include "Scripting/ScriptSystem.h"
-#include "Editor/LevelTree.h"
+#include "Core/LevelTree.h"
 
 BaseGame::BaseGame()
 {
@@ -45,7 +45,7 @@ BaseGame::~BaseGame()
 	ROSE_DESTROYSYSTEM(ProjectLoader);
 	ROSE_DESTROYSYSTEM(AssetStore);
 	ROSE_DESTROYSYSTEM(LevelLoader);
-	ROSE_DESTROYSYSTEM(Entities);
+	ROSE_DESTROYSYSTEM(EntitySystem);
 	ROSE_DESTROYSYSTEM(ReflectionSystem);
 	ROSE_DESTROYSYSTEM(FileDialog);
 	ROSE_DESTROYSYSTEM(SdlContainer);
@@ -58,7 +58,7 @@ void BaseGame::SetupBaseSystems()
 	ROSE_CREATESYSTEM(SdlContainer, 1200, (float)1200 * 9 / 16);
 	ROSE_CREATESYSTEM(FileDialog);
 	ROSE_CREATESYSTEM(ReflectionSystem);
-	ROSE_CREATESYSTEM(Entities);
+	ROSE_CREATESYSTEM(EntitySystem);
 	ROSE_CREATESYSTEM(LevelLoader);
 	ROSE_CREATESYSTEM(AssetStore);
 	ROSE_CREATESYSTEM(ProjectLoader);

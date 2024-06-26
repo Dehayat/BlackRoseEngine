@@ -2,19 +2,23 @@
 
 #include <entt/entity/registry.hpp>
 
+#include "LevelTree.h"
+#include "Core/Systems.h"
+#include "EntitySerializer.h"
 #include "Components/GUIDComponent.h"
 
-Entities::Entities()
+EntitySystem::EntitySystem()
 {
 	mainRegistry = entt::registry();
+	ROSE_CREATESYSTEM(LevelTree);
 }
 
-entt::registry& Entities::GetRegistry()
+entt::registry& EntitySystem::GetRegistry()
 {
 	return mainRegistry;
 }
 
-entt::entity Entities::GetEntity(Guid guid)
+entt::entity EntitySystem::GetEntity(Guid guid)
 {
 	if(allEntities.find(guid) != allEntities.end())
 	{
@@ -25,12 +29,12 @@ entt::entity Entities::GetEntity(Guid guid)
 	}
 }
 
-Guid Entities::GetEntityGuid(entt::entity entity)
+Guid EntitySystem::GetEntityGuid(entt::entity entity)
 {
 	return allEntityGuids[entity];
 }
 
-bool Entities::EntityExists(Guid guid)
+bool EntitySystem::EntityExists(Guid guid)
 {
 	if(allEntities.find(guid) == allEntities.end())
 	{
@@ -47,12 +51,12 @@ bool Entities::EntityExists(Guid guid)
 		}
 	}
 }
-bool Entities::EntityExists(entt::entity entity)
+bool EntitySystem::EntityExists(entt::entity entity)
 {
 	return GetRegistry().valid(entity);
 }
 
-void Entities::DestroyAllEntities()
+void EntitySystem::DestroyAllEntities()
 {
 	auto& registry = GetRegistry();
 	for(auto& it : allEntities)
@@ -65,52 +69,71 @@ void Entities::DestroyAllEntities()
 	allEntities.clear();
 	allEntityGuids.clear();
 }
-
-void Entities::AddEntity(Guid guid, entt::entity entity)
-{
-	allEntities.emplace(guid, entity);
-	allEntityGuids.emplace(entity, guid);
-}
-
-entt::entity Entities::CreateEntity()
-{
-	auto guid = GuidGenerator::New();
-	return CreateEntity(guid);
-}
-entt::entity Entities::CreateEntity(Guid guid)
+entt::entity EntitySystem::CreateEntity()
 {
 	auto& registry = GetRegistry();
 	auto entity = registry.create();
-	registry.emplace<GUIDComponent>(entity, guid);
-	AddEntity(guid, entity);
+	auto& guidComp = registry.emplace<GUIDComponent>(entity);
+	auto guid = guidComp.id;
+	allEntities.emplace(guid, entity);
+	allEntityGuids.emplace(entity, guid);
+	ROSE_GETSYSTEM(LevelTree).AddEntity(entity);
 	return entity;
 }
-entt::entity Entities::Copy(entt::entity src)
+entt::entity EntitySystem::DeserializeEntity(ryml::NodeRef& node)
 {
 	auto& registry = GetRegistry();
-	auto dst = registry.create();
+	auto entity = registry.create();
+	if(node.has_child("Guid"))
+	{
+		auto guid = GuidGenerator::New();
+		auto guidNode = node["Guid"];
+		if(guidNode.has_child("id"))
+		{
+			guidNode["id"] >> guid;
+		}
+		ComponentSer<GUIDComponent>::Deserialize(registry, guidNode, entity);
+		auto& guidComp = registry.get<GUIDComponent>(entity);
+		guidComp.id = guid;
+		allEntities.emplace(guid, entity);
+		allEntityGuids.emplace(entity, guid);
+		ROSE_GETSYSTEM(LevelTree).AddEntity(entity);
+
+	} else
+	{
+		entity = CreateEntity();
+	}
+
+	auto& guidComp = registry.get<GUIDComponent>(entity);
+	if(EntityExists(guidComp.parentId))
+	{
+		ROSE_GETSYSTEM(LevelTree).TrySetParent(entity, GetEntity(guidComp.parentId));
+	}
+	EntitySerializer::DeserializeEntity(node, registry, entity);
+	return entity;
+}
+
+entt::entity EntitySystem::Copy(entt::entity src)
+{
+	auto& registry = GetRegistry();
+	auto entity = registry.create();
 	for(auto [id, storage] : registry.storage())
 	{
 		if(storage.contains(src))
 		{
-			storage.emplace(dst, storage.get(src));
+			storage.emplace(entity, storage.get(src));
 		}
 	}
-	auto& guidComp = registry.get_or_emplace<GUIDComponent>(dst);
+	auto& guidComp = registry.get_or_emplace<GUIDComponent>(entity);
 	auto guid = GuidGenerator::New();
 	guidComp.id = guid;
-	AddEntity(guid, dst);
-	return dst;
-}
-entt::entity Entities::CreateEntityWithoutGuidComponent(Guid guid)
-{
-	auto& registry = GetRegistry();
-	auto entity = registry.create();
-	AddEntity(guid, entity);
+	allEntities.emplace(guid, entity);
+	allEntityGuids.emplace(entity, guid);
+	ROSE_GETSYSTEM(LevelTree).AddEntity(entity);
 	return entity;
 }
 
-void Entities::DestroyEntity(entt::entity entity)
+void EntitySystem::DestroyEntity(entt::entity entity)
 {
 	auto& registry = GetRegistry();
 	Guid guid = -1;

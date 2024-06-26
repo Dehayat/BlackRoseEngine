@@ -16,7 +16,7 @@
 class ScriptEditor :public IComponentEditor {
 public:
 	void Editor(entt::entity entity) {
-		auto& registry = ROSE_GETSYSTEM(Entities).GetRegistry();
+		auto& registry = ROSE_GETSYSTEM(EntitySystem).GetRegistry();
 		auto& scriptComp = registry.get<ScriptComponent>(entity);
 		ImGui::Text("Scripts");
 		std::string removeScript = "";

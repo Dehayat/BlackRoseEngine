@@ -25,7 +25,7 @@ public:
 		currentTime += timeSystem.GetdeltaTime();
 		if (currentTime > spawnDelay) {
 			currentTime = 0;
-			auto& entities = ROSE_GETSYSTEM(Entities);
+			auto& entities = ROSE_GETSYSTEM(EntitySystem);
 			auto entity = entities.CreateEntity();
 			entities.GetRegistry().emplace<TransformComponent>(entity);
 			entities.GetRegistry().emplace<PhysicsBodyComponent>(entity);

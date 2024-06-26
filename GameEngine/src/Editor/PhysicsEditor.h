@@ -13,7 +13,7 @@ class PhysicsEditor:public IComponentEditor
 public:
 	void Editor(entt::entity entity)
 	{
-		auto& registry = ROSE_GETSYSTEM(Entities).GetRegistry();
+		auto& registry = ROSE_GETSYSTEM(EntitySystem).GetRegistry();
 		auto& physics = ROSE_GETSYSTEM(PhysicsSystem);
 		auto& trx = registry.get<TransformComponent>(entity);
 		auto& phys = registry.get<PhysicsBodyComponent>(entity);

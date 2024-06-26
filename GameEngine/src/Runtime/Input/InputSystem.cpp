@@ -111,7 +111,7 @@ void InputSystem::Update()
 	}
 	input.mousePosition = mousePos;
 
-	entt::registry& registry = ROSE_GETSYSTEM(Entities).GetRegistry();
+	entt::registry& registry = ROSE_GETSYSTEM(EntitySystem).GetRegistry();
 	auto& eventSystem = ROSE_GETSYSTEM(EntityEventSystem);
 	auto view = registry.view<ScriptComponent>(entt::exclude<DisableComponent>);
 	for(auto entity : view)

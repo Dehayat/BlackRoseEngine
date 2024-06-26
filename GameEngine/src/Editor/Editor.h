@@ -68,7 +68,7 @@ public:
 	template<typename TComponent, typename TEditor>
 	void RenderComponent(bool removable, const std::string& componentName, entt::entity entity)
 	{
-		auto& entities = ROSE_GETSYSTEM(Entities);
+		auto& entities = ROSE_GETSYSTEM(EntitySystem);
 		auto& registry = entities.GetRegistry();
 
 		if(registry.any_of<TComponent>(entity))

@@ -24,7 +24,7 @@
     <ClInclude Include="src\Editor\ImguiSystem.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\Editor\LevelTree.h">
+    <ClInclude Include="src\Runtime\Core\LevelTree.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\Editor\LevelTreeEditor.h">
@@ -150,6 +150,9 @@
     <ClInclude Include="src\Runtime\Reflection\Serialize.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="src\Runtime\Core\EntitySerializer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Editor\Editor.cpp">
@@ -158,7 +161,7 @@
     <ClCompile Include="src\Editor\ImguiSystem.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\Editor\LevelTree.cpp">
+    <ClCompile Include="src\Runtime\Core\LevelTree.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\Editor\LevelTreeEditor.cpp">
@@ -210,6 +213,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\Runtime\Core\BaseGame.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Runtime\Core\EntitySerializer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

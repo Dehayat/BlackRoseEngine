@@ -22,7 +22,7 @@ PhysicsSystem::PhysicsSystem(float gravityX, float gravityY)
 	physicsWorld->SetContactListener(contactListener.get());
 	drawDebug = false;
 	debugDrawer = nullptr;
-	entt::registry& registry = ROSE_GETSYSTEM(Entities).GetRegistry();
+	entt::registry& registry = ROSE_GETSYSTEM(EntitySystem).GetRegistry();
 	registry.on_construct<PhysicsBodyComponent>().connect<&PhysicsSystem::PhysicsBodyCreated>(this);
 	registry.on_destroy<PhysicsBodyComponent>().connect<&PhysicsSystem::PhysicsBodyDestroyed>(this);
 	registry.on_construct<DisableComponent>().connect<&PhysicsSystem::EntityDisabled>(this);
@@ -178,7 +178,7 @@ void PhysicsSystem::AddBody(entt::entity entity, PhysicsBodyComponent& phys)
 	{
 		return;
 	}
-	entt::registry& registry = ROSE_GETSYSTEM(Entities).GetRegistry();
+	entt::registry& registry = ROSE_GETSYSTEM(EntitySystem).GetRegistry();
 	auto& trx = registry.get<TransformComponent>(entity);
 	b2Body* body = GetWorld().CreateBody(&phys.bodyDef);
 	phys.shape.SetAsBox(phys.globalSize.x / 2, phys.globalSize.y / 2);
@@ -196,7 +196,7 @@ void PhysicsSystem::AddBody(entt::entity entity, PhysicsBodyComponent& phys)
 }
 void PhysicsSystem::Update()
 {
-	Entities& entities = ROSE_GETSYSTEM(Entities);
+	EntitySystem& entities = ROSE_GETSYSTEM(EntitySystem);
 	entt::registry& registry = entities.GetRegistry();
 	auto phView = registry.view<PhysicsBodyComponent, TransformComponent>(entt::exclude<DisableComponent>);
 	for(auto entity : phView)

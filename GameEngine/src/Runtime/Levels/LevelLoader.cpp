@@ -32,7 +32,7 @@ LevelLoader::~LevelLoader()
 }
 void LevelLoader::LoadLevel(const std::string& fileName)
 {
-	auto& registry = ROSE_GETSYSTEM(Entities).GetRegistry();
+	auto& registry = ROSE_GETSYSTEM(EntitySystem).GetRegistry();
 	auto fileHandle = FileResource(fileName);
 	if(fileHandle.file == nullptr)
 	{
@@ -63,32 +63,7 @@ void LevelLoader::DeserializeLevel(entt::registry& registry, ryml::NodeRef& node
 }
 entt::entity LevelLoader::DeserializeEntity(entt::registry& registry, ryml::NodeRef& node)
 {
-	entt::entity entity = NoEntity();
-	auto& entities = ROSE_GETSYSTEM(Entities);
-	auto guid = GuidGenerator::New();
-	if(node.has_child("Guid"))
-	{
-		auto guidNode = node["Guid"];
-		if(guidNode.has_child("id"))
-		{
-			guidNode["id"] >> guid;
-		}
-		entity = entities.CreateEntityWithoutGuidComponent(guid);
-		ComponentSer<GUIDComponent>::Deserialize(registry, guidNode, entity);
-
-	} else
-	{
-		entity = entities.CreateEntity();
-	}
-	DeserializeComponent<DisableComponent>(registry, "Disabled", entity, node);
-	DeserializeComponent<TransformComponent>(registry, "Transform", entity, node);
-	DeserializeComponent<PhysicsBodyComponent>(registry, "PhysicsBody", entity, node);
-	DeserializeComponent<CameraComponent>(registry, "Camera", entity, node);
-	DeserializeComponent<AnimationComponent>(registry, "Animation", entity, node);
-	DeserializeComponent<SpriteComponent>(registry, "Sprite", entity, node);
-	DeserializeComponent<ScriptComponent>(registry, "Script", entity, node);
-	DeserializeComponent<SendEventsToParentComponent>(registry, "SendEventsToParent", entity, node);
-	return entity;
+	return ROSE_GETSYSTEM(EntitySystem).DeserializeEntity(node);
 }
 void LevelLoader::SerializeEntity(entt::registry& registry, ryml::NodeRef& parent, entt::entity entity)
 {
@@ -109,7 +84,7 @@ void LevelLoader::SerializeEntity(entt::registry& registry, ryml::NodeRef& paren
 
 void LevelLoader::SaveLevel(const std::string& fileName)
 {
-	Entities& entities = entt::locator<Entities>::value();
+	EntitySystem& entities = entt::locator<EntitySystem>::value();
 	entt::registry& registry = entities.GetRegistry();
 	auto fileHandle = FileResource(fileName, "w+");
 	if(fileHandle.file == nullptr)
@@ -125,7 +100,7 @@ void LevelLoader::SaveLevel(const std::string& fileName)
 }
 void LevelLoader::UnloadLevel()
 {
-	Entities& entities = ROSE_GETSYSTEM(Entities);
+	EntitySystem& entities = ROSE_GETSYSTEM(EntitySystem);
 	entities.DestroyAllEntities();
 }
 const std::string& LevelLoader::GetCurrentLevelFile()

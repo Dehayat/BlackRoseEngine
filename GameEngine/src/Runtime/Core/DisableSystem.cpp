@@ -3,20 +3,20 @@
 #include "Core/Systems.h"
 #include "Core/Log.h"
 
-#include "Editor/LevelTree.h"
+#include "Core/LevelTree.h"
 
 #include "Components/DisableComponent.h"
 
 
 DisableSystem::DisableSystem()
 {
-	entt::registry& registry = ROSE_GETSYSTEM(Entities).GetRegistry();
+	entt::registry& registry = ROSE_GETSYSTEM(EntitySystem).GetRegistry();
 	registry.on_construct<DisableComponent>().connect<&DisableSystem::DisableCreated>(this);
 	registry.on_destroy<DisableComponent>().connect<&DisableSystem::DisableDestroyed>(this);
 }
 void DisableSystem::Enable(entt::entity entity)
 {
-	entt::registry& registry = ROSE_GETSYSTEM(Entities).GetRegistry();
+	entt::registry& registry = ROSE_GETSYSTEM(EntitySystem).GetRegistry();
 	if(registry.any_of<DisableComponent>(entity))
 	{
 		auto& disable = registry.get<DisableComponent>(entity);
@@ -29,7 +29,7 @@ void DisableSystem::Enable(entt::entity entity)
 }
 void DisableSystem::Disable(entt::entity entity)
 {
-	entt::registry& registry = ROSE_GETSYSTEM(Entities).GetRegistry();
+	entt::registry& registry = ROSE_GETSYSTEM(EntitySystem).GetRegistry();
 	auto& disable = registry.get_or_emplace<DisableComponent>(entity);
 	disable.selfDisabled = true;
 }
@@ -45,7 +45,7 @@ void DisableSystem::DisableDestroyed(entt::registry& registry, entt::entity enti
 
 void DisableSystem::DisableChildren(entt::entity entity)
 {
-	entt::registry& registry = ROSE_GETSYSTEM(Entities).GetRegistry();
+	entt::registry& registry = ROSE_GETSYSTEM(EntitySystem).GetRegistry();
 	auto& levelTree = ROSE_GETSYSTEM(LevelTree);
 	if(levelTree.GetNode(entity) != nullptr)
 	{
@@ -58,7 +58,7 @@ void DisableSystem::DisableChildren(entt::entity entity)
 }
 void DisableSystem::EnableChildren(entt::entity entity)
 {
-	entt::registry& registry = ROSE_GETSYSTEM(Entities).GetRegistry();
+	entt::registry& registry = ROSE_GETSYSTEM(EntitySystem).GetRegistry();
 	auto& levelTree = ROSE_GETSYSTEM(LevelTree);
 	if(levelTree.GetNode(entity) != nullptr)
 	{

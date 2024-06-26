@@ -17,6 +17,9 @@ public:
 
 class TransformSystem
 {
+	void TransformCreated(entt::registry& registry, entt::entity);
+	void TransformDestroyed(entt::registry& registry, entt::entity);
+	void ParentUpdated(entt::registry& registry, entt::entity);
 	DebugDrawTransform* debugDrawer;
 	bool drawDebug;
 public:
@@ -26,9 +29,6 @@ public:
 	void InitDebugDrawer();
 	void EnableDebug(bool enable);
 	void DebugRender(glm::mat3 viewMatrix, entt::entity selectedEntity);
-	void SetParent(entt::entity entity, entt::entity parent);
-	void TransformCreated(entt::registry& registry, entt::entity);
-	void TransformDestroyed(entt::registry& registry, entt::entity);
 	entt::entity GetChild(entt::entity entity, const std::string& name);
 	static void MoveTransformToWorldSpace(TransformComponent& trx);
 	static void MoveTransformToParentSpace(TransformComponent& trx, TransformComponent& source);

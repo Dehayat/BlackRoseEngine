@@ -26,7 +26,7 @@ RendererSystem::~RendererSystem()
 }
 void RendererSystem::Render()
 {
-	Entities& entities = entt::locator<Entities>::value();
+	EntitySystem& entities = entt::locator<EntitySystem>::value();
 	entt::registry& registry = entities.GetRegistry();
 	AssetStore& assetStore = entt::locator<AssetStore>::value();
 	SDL_SetRenderDrawColor(sdlRenderer, 94, 35, 35, SDL_ALPHA_OPAQUE);
@@ -185,7 +185,7 @@ const glm::mat3 RendererSystem::GetScreenToWorldMatrix() const
 }
 void RendererSystem::InitLoaded()
 {
-	Entities& entities = entt::locator<Entities>::value();
+	EntitySystem& entities = entt::locator<EntitySystem>::value();
 	entt::registry& registry = entities.GetRegistry();
 	auto view = registry.view<CameraComponent, TransformComponent>();
 	for(auto entity : view)

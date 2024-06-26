@@ -11,19 +11,18 @@
 
 using namespace glm;
 
-struct TransformComponent :IComponent {
+struct TransformComponent:IComponent
+{
 	vec2 position;
 	vec2 scale;
 	float rotation;
-	Guid parentGUID;
 
-	bool hasParent;
-	int level;
 	entt::entity parent;
 	mat3 matrixL2W;
 	vec2 globalPosition;
 	vec2 globalScale;
 	vec2 scaleSign;
+	int level;
 	float globalRotation;
 
 	static vec2 GetScale(mat3 matrix);
@@ -34,7 +33,7 @@ struct TransformComponent :IComponent {
 	static mat3 MakeRotMatrix(float angle);
 	mat3 MakeScaleMatrix(vec2 scale);
 
-	TransformComponent(vec2 position = vec2(0, 0), vec2 scale = vec2(1, 1), float rotation = 0, entt::entity parent = NoEntity());
+	TransformComponent(vec2 position = vec2(0, 0), vec2 scale = vec2(1, 1), float rotation = 0);
 	TransformComponent(ryml::NodeRef& node);
 
 	void Serialize(ryml::NodeRef node);
@@ -42,5 +41,5 @@ struct TransformComponent :IComponent {
 	void UpdateGlobals();
 	void UpdateLocals();
 
-	ROSE_EXPOSE_VARS(TransformComponent,(position)(scale)(rotation)(parentGUID))
+	ROSE_EXPOSE_VARS(TransformComponent, (position)(scale)(rotation))
 };

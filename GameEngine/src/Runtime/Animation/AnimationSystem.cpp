@@ -16,14 +16,14 @@
 
 AnimationSystem::AnimationSystem()
 {
-	entt::registry& registry = ROSE_GETSYSTEM(Entities).GetRegistry();
+	entt::registry& registry = ROSE_GETSYSTEM(EntitySystem).GetRegistry();
 	registry.on_destroy<AnimationComponent>().connect<&AnimationSystem::AnimationDestroyed>(this);
 }
 
 void AnimationSystem::Update()
 {
 	float dt = ROSE_GETSYSTEM(TimeSystem).GetdeltaTime();
-	Entities& entities = ROSE_GETSYSTEM(Entities);
+	EntitySystem& entities = ROSE_GETSYSTEM(EntitySystem);
 	AssetStore& assetStore = ROSE_GETSYSTEM(AssetStore);
 	EntityEventSystem& eventSystem = ROSE_GETSYSTEM(EntityEventSystem);
 	entt::registry& registry = entities.GetRegistry();

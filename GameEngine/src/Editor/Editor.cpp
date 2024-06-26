@@ -1,9 +1,6 @@
 #include "Editor.h"
 
 #include <imgui.h>
-#include <imgui_impl_sdlrenderer2.h>
-
-#include <imgui_impl_sdl2.h>
 
 #include <FileDialog.h>
 
@@ -29,7 +26,7 @@
 #include "Components/ScriptComponent.h"
 #include "Components/SendEventsToParentComponent.h"
 
-#include "Editor/LevelTree.h"
+#include "Core/LevelTree.h"
 #include "Editor/PhysicsEditor.h"
 #include "Editor/ScriptEditor.h"
 
@@ -113,7 +110,7 @@ void Editor::Update()
 		ROSE_GETSYSTEM(EntityEventSystem).Update();
 	}
 
-	if(mouseInViewport)
+	if(!ROSE_GETSYSTEM(ImguiSystem).IsMouseCaptured())
 	{
 		UpdateViewportControls();
 	}
@@ -144,7 +141,7 @@ void Editor::Render()
 
 void Editor::UpdateViewportControls()
 {
-	auto& entities = ROSE_GETSYSTEM(Entities);
+	auto& entities = ROSE_GETSYSTEM(EntitySystem);
 	auto& registry = entities.GetRegistry();
 	auto& input = ROSE_GETSYSTEM(InputSystem);
 	auto& gameRenderer = ROSE_GETSYSTEM(RendererSystem);
@@ -191,7 +188,7 @@ void Editor::UpdateViewportControls()
 
 void Editor::UpdateGlobalControls()
 {
-	auto& entities = ROSE_GETSYSTEM(Entities);
+	auto& entities = ROSE_GETSYSTEM(EntitySystem);
 	auto& input = ROSE_GETSYSTEM(InputSystem);
 	auto& levelLoader = ROSE_GETSYSTEM(LevelLoader);
 	if(input.GetKey(InputKey::LCTRL).isPressed || input.GetKey(InputKey::RCTRL).isPressed)
@@ -230,7 +227,7 @@ void Editor::UpdateGlobalControls()
 		{
 			if(GetSelectedEntity() != NoEntity())
 			{
-				levelTreeEditor.SelectEntity(ROSE_GETSYSTEM(Entities).Copy(GetSelectedEntity()));
+				levelTreeEditor.SelectEntity(ROSE_GETSYSTEM(EntitySystem).Copy(GetSelectedEntity()));
 			}
 		}
 		return;
@@ -294,7 +291,7 @@ static bool IsPointInsideRect(vec2 point, SDL_FRect rect)
 
 void Editor::UpdateSelectTool()
 {
-	auto& entities = ROSE_GETSYSTEM(Entities);
+	auto& entities = ROSE_GETSYSTEM(EntitySystem);
 	auto& registry = entities.GetRegistry();
 	auto& input = ROSE_GETSYSTEM(InputSystem);
 	if(input.GetMouseButton(LEFT_BUTTON).justPressed)
@@ -402,7 +399,7 @@ bool Editor::IsGameRunning()
 
 void Editor::RenderTools()
 {
-	auto& entities = ROSE_GETSYSTEM(Entities);
+	auto& entities = ROSE_GETSYSTEM(EntitySystem);
 	auto& registry = entities.GetRegistry();
 	auto& input = ROSE_GETSYSTEM(InputSystem);
 	auto& gameRenderer = ROSE_GETSYSTEM(RendererSystem);
@@ -514,7 +511,7 @@ void Editor::RenderToolButton(std::string name, Tools tool)
 
 void Editor::EntityEditor()
 {
-	auto& entities = ROSE_GETSYSTEM(Entities);
+	auto& entities = ROSE_GETSYSTEM(EntitySystem);
 	auto& registry = entities.GetRegistry();
 	auto selectedEntity = levelTreeEditor.GetSelectedEntity();
 	if(levelTreeEditor.GetSelectedEntity() != entt::entity(-1))
@@ -533,7 +530,7 @@ void Editor::EntityEditor()
 void Editor::RenderEntityEditor(entt::entity entity)
 {
 	static bool enabled = true;
-	auto& entities = ROSE_GETSYSTEM(Entities);
+	auto& entities = ROSE_GETSYSTEM(EntitySystem);
 	auto& registry = entities.GetRegistry();
 	if(registry.any_of<DisableComponent>(entity))
 	{

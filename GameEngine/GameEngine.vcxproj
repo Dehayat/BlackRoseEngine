@@ -19,7 +19,8 @@
     <ClInclude Include="src\Editor\DefaultEditor.h" />
     <ClInclude Include="src\Editor\Editor.h" />
     <ClInclude Include="src\Editor\ImguiSystem.h" />
-    <ClInclude Include="src\Editor\LevelTree.h" />
+    <ClInclude Include="src\Runtime\Core\EntitySerializer.h" />
+    <ClInclude Include="src\Runtime\Core\LevelTree.h" />
     <ClInclude Include="src\Editor\LevelTreeEditor.h" />
     <ClInclude Include="src\Editor\PhysicsEditor.h" />
     <ClInclude Include="src\Editor\RenderEditor.h" />
@@ -64,7 +65,8 @@
   <ItemGroup>
     <ClCompile Include="src\Editor\Editor.cpp" />
     <ClCompile Include="src\Editor\ImguiSystem.cpp" />
-    <ClCompile Include="src\Editor\LevelTree.cpp" />
+    <ClCompile Include="src\Runtime\Core\EntitySerializer.cpp" />
+    <ClCompile Include="src\Runtime\Core\LevelTree.cpp" />
     <ClCompile Include="src\Editor\LevelTreeEditor.cpp" />
     <ClCompile Include="src\Runtime\Animation\AnimationSystem.cpp" />
     <ClCompile Include="src\Runtime\Components\TransformComponent.cpp" />

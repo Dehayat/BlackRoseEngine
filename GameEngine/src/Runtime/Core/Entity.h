@@ -32,5 +32,5 @@ public:
 	bool EntityExists(entt::entity);
 	void DestroyAllEntities();
 	void DestroyEntity(entt::entity entity);
-	entt::entity Copy(entt::entity entity);
+	entt::entity CopyEntity(entt::entity entity, entt::entity parent = NoEntity());
 };

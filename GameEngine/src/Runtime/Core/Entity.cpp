@@ -20,17 +20,19 @@ entt::registry& EntitySystem::GetRegistry()
 
 entt::entity EntitySystem::GetEntity(Guid guid)
 {
-	if(allEntities.find(guid) != allEntities.end())
-	{
-		return allEntities[guid];
-	} else
+	if(guid == -1)
 	{
 		return NoEntity();
 	}
+	return allEntities[guid];
 }
 
 Guid EntitySystem::GetEntityGuid(entt::entity entity)
 {
+	if(entity == NoEntity())
+	{
+		return -1;
+	}
 	return allEntityGuids[entity];
 }
 
@@ -106,19 +108,27 @@ entt::entity EntitySystem::DeserializeEntity(ryml::NodeRef& node)
 	return entity;
 }
 
-entt::entity EntitySystem::Copy(entt::entity src)
+entt::entity EntitySystem::CopyEntity(entt::entity src, entt::entity parent)
 {
 	auto& registry = GetRegistry();
 	auto entity = CreateEntity();
 	auto& guidComp = registry.get<GUIDComponent>(entity);
 	auto& srcGuidComp = registry.get<GUIDComponent>(src);
-	guidComp.name = srcGuidComp.name + " Copy";
+	guidComp.name = srcGuidComp.name;
+	if(parent != NoEntity())
+	{
+		ROSE_GETSYSTEM(LevelTree).TrySetParent(entity, parent);
+	}
 	for(auto [id, storage] : registry.storage())
 	{
 		if(storage.contains(src) && !storage.contains(entity))
 		{
 			storage.emplace(entity, storage.get(src));
 		}
+	}
+	for(auto child : ROSE_GETSYSTEM(LevelTree).GetNode(src)->children)
+	{
+		auto childEntity = CopyEntity(child->element, entity);
 	}
 	return entity;
 }

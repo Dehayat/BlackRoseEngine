@@ -227,7 +227,7 @@ void Editor::UpdateGlobalControls()
 		{
 			if(GetSelectedEntity() != NoEntity())
 			{
-				levelTreeEditor.SelectEntity(ROSE_GETSYSTEM(EntitySystem).Copy(GetSelectedEntity()));
+				levelTreeEditor.SelectEntity(ROSE_GETSYSTEM(EntitySystem).CopyEntity(GetSelectedEntity()));
 			}
 		}
 		return;

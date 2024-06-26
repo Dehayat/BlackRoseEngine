@@ -30,8 +30,6 @@ enum Gizmos
 class Editor:public BaseGame
 {
 	bool isRunning;
-	SDL_Window* window;
-	SDL_Renderer* renderer;
 	LevelTreeEditor levelTreeEditor;
 	entt::entity createdEntity;
 	bool mouseInViewport;

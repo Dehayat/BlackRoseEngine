@@ -18,6 +18,7 @@
 #include "Events/EntityEventSystem.h"
 #include "Scripting/ScriptSystem.h"
 #include "Core/DisableSystem.h"
+#include "ImguiSystem.h"
 
 #include "Components/GUIDComponent.h"
 #include "Components/PhysicsBodyComponent.h"
@@ -72,19 +73,7 @@ Editor::Editor():BaseGame()
 
 void Editor::SetupImgui()
 {
-	auto& sdl = ROSE_GETSYSTEM(SdlContainer);
-	SDL_RenderSetVSync(sdl.GetRenderer(), 1);
-
-	window = sdl.GetWindow();
-	renderer = sdl.GetRenderer();
-	SDL_SetHint(SDL_HINT_IME_SHOW_UI, "1");
-	IMGUI_CHECKVERSION();
-	auto imguiContext = ImGui::CreateContext();
-	ImGui::SetCurrentContext(imguiContext);
-	ImGuiIO& io = ImGui::GetIO(); (void)io;
-	ImGui::StyleColorsDark();
-	ImGui_ImplSDL2_InitForSDLRenderer(window, renderer);
-	ImGui_ImplSDLRenderer2_Init(renderer);
+	ROSE_CREATESYSTEM(ImguiSystem);
 }
 
 Editor::~Editor()
@@ -99,9 +88,7 @@ void Editor::Reset()
 
 void Editor::CloseImgui()
 {
-	ImGui_ImplSDLRenderer2_Shutdown();
-	ImGui_ImplSDL2_Shutdown();
-	ImGui::DestroyContext();
+	ROSE_DESTROYSYSTEM(ImguiSystem);
 }
 
 void Editor::Update()
@@ -348,7 +335,7 @@ bool Editor::ProcessEvents()
 		default:
 			break;
 		}
-		ImGui_ImplSDL2_ProcessEvent(&sdlEvent);
+		ROSE_GETSYSTEM(ImguiSystem).HandleEvent(sdlEvent);
 	}
 	return exit;
 }
@@ -379,7 +366,7 @@ void Editor::RenderEditor()
 	RenderImgui();
 
 	int w, h;
-	SDL_GetWindowSize(window, &w, &h);
+	SDL_GetWindowSize(ROSE_GETSYSTEM(SdlContainer).GetWindow(), &w, &h);
 
 	ImGuiWindowFlags windowFlags = ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoTitleBar;
 	ImGui::Begin("ToolBar", nullptr, windowFlags);
@@ -571,18 +558,10 @@ void Editor::RenderEntityEditor(entt::entity entity)
 
 void Editor::PresentImGui()
 {
-	ImGui::Render();
-	ImGui_ImplSDLRenderer2_RenderDrawData(ImGui::GetDrawData());
+	ROSE_GETSYSTEM(ImguiSystem).Present();
 }
 
 void Editor::RenderImgui()
 {
-	ImGuiIO& io = ImGui::GetIO();
-	mouseInViewport = !io.WantCaptureMouse;
-	int w, h;
-	SDL_GetWindowSize(window, &w, &h);
-	io.DisplaySize = ImVec2((float)w, (float)h);
-	ImGui_ImplSDLRenderer2_NewFrame();
-	ImGui_ImplSDL2_NewFrame();
-	ImGui::NewFrame();
+	ROSE_GETSYSTEM(ImguiSystem).Render();
 }

@@ -41,14 +41,7 @@ bool EntitySystem::EntityExists(Guid guid)
 		return false;
 	} else
 	{
-		auto& regsitry = GetRegistry();
-		if(regsitry.valid(allEntities[guid]))
-		{
-			return true;
-		} else
-		{
-			return false;
-		}
+		return EntityExists(allEntities[guid]);
 	}
 }
 bool EntitySystem::EntityExists(entt::entity entity)
@@ -116,38 +109,28 @@ entt::entity EntitySystem::DeserializeEntity(ryml::NodeRef& node)
 entt::entity EntitySystem::Copy(entt::entity src)
 {
 	auto& registry = GetRegistry();
-	auto entity = registry.create();
+	auto entity = CreateEntity();
+	auto& guidComp = registry.get<GUIDComponent>(entity);
+	auto& srcGuidComp = registry.get<GUIDComponent>(src);
+	guidComp.name = srcGuidComp.name + " Copy";
 	for(auto [id, storage] : registry.storage())
 	{
-		if(storage.contains(src))
+		if(storage.contains(src) && !storage.contains(entity))
 		{
 			storage.emplace(entity, storage.get(src));
 		}
 	}
-	auto& guidComp = registry.get_or_emplace<GUIDComponent>(entity);
-	auto guid = GuidGenerator::New();
-	guidComp.id = guid;
-	allEntities.emplace(guid, entity);
-	allEntityGuids.emplace(entity, guid);
-	ROSE_GETSYSTEM(LevelTree).AddEntity(entity);
 	return entity;
 }
 
 void EntitySystem::DestroyEntity(entt::entity entity)
 {
 	auto& registry = GetRegistry();
-	Guid guid = -1;
-	if(registry.valid(entity))
+	if(EntityExists(entity))
 	{
-		guid = registry.get<GUIDComponent>(entity).id;
+		auto guid = allEntityGuids[entity];
 		registry.destroy(entity);
-	}
-	if(guid != -1 && allEntities.find(guid) != allEntities.end())
-	{
 		allEntities.erase(guid);
-	}
-	if(allEntityGuids.find(entity) != allEntityGuids.end())
-	{
 		allEntityGuids.erase(entity);
 	}
 }

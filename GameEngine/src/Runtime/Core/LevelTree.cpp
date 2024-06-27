@@ -52,6 +52,12 @@ bool LevelTree::TrySetParent(entt::entity child, entt::entity parent)
 	}
 	entt::registry& registry = ROSE_GETSYSTEM(EntitySystem).GetRegistry();
 	auto& childGuid = registry.get<GUIDComponent>(child);
+
+	if(childGuid.parent != NoEntity())
+	{
+		RemoveParent(child);
+	}
+
 	childGuid.parent = parent;
 	childGuid.parentId = ROSE_GETSYSTEM(EntitySystem).GetEntityGuid(parent);
 	auto node = nodesMap[child];

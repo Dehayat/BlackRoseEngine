@@ -58,9 +58,10 @@ void TransformSystem::ParentUpdated(entt::registry& registry, entt::entity entit
 	{
 		auto& trx = registry.get<TransformComponent>(entity);
 		auto& guidComp = registry.get<GUIDComponent>(entity);
+		trx.parent = NoEntity();
+		trx.level = 0;
 		MoveTransformToWorldSpace(trx);
 		trx.parent = guidComp.parent;
-		trx.level = 0;
 		if(trx.parent != NoEntity())
 		{
 			auto& parentTrx = registry.get<TransformComponent>(trx.parent);

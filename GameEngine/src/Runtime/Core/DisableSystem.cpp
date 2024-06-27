@@ -6,6 +6,7 @@
 #include "Core/LevelTree.h"
 
 #include "Components/DisableComponent.h"
+#include "Components/GUIDComponent.h"
 
 
 DisableSystem::DisableSystem()
@@ -13,6 +14,7 @@ DisableSystem::DisableSystem()
 	entt::registry& registry = ROSE_GETSYSTEM(EntitySystem).GetRegistry();
 	registry.on_construct<DisableComponent>().connect<&DisableSystem::DisableCreated>(this);
 	registry.on_destroy<DisableComponent>().connect<&DisableSystem::DisableDestroyed>(this);
+	registry.on_update<GUIDComponent>().connect<&DisableSystem::ParentUpdated>(this);
 }
 void DisableSystem::Enable(entt::entity entity)
 {
@@ -43,6 +45,31 @@ void DisableSystem::DisableDestroyed(entt::registry& registry, entt::entity enti
 	EnableChildren(entity);
 }
 
+void DisableSystem::ParentUpdated(entt::registry& registry, entt::entity entity)
+{
+	auto& guidComp = registry.get<GUIDComponent>(entity);
+	if(guidComp.parent != NoEntity() && registry.any_of<DisableComponent>(guidComp.parent))
+	{
+		DisableChild(entity);
+
+	} else
+	{
+		auto disable = registry.try_get<DisableComponent>(entity);
+		if(disable != nullptr && !disable->selfDisabled)
+		{
+			EnableChild(entity);
+		}
+	}
+}
+
+void DisableSystem::EnableChild(entt::entity entity)
+{
+	entt::registry& registry = ROSE_GETSYSTEM(EntitySystem).GetRegistry();
+	auto disable = registry.try_get<DisableComponent>(entity);
+	disable->parentDisabled = false;
+	Enable(entity);
+}
+
 void DisableSystem::DisableChildren(entt::entity entity)
 {
 	entt::registry& registry = ROSE_GETSYSTEM(EntitySystem).GetRegistry();
@@ -51,10 +78,16 @@ void DisableSystem::DisableChildren(entt::entity entity)
 	{
 		for(const auto& child : levelTree.GetNode(entity)->children)
 		{
-			auto& childDisable = registry.get_or_emplace<DisableComponent>(child->element, false, false);
+			auto& childDisable = registry.get_or_emplace<DisableComponent>(child->element, false, true);
 			childDisable.parentDisabled = true;
 		}
 	}
+}
+void DisableSystem::DisableChild(entt::entity child)
+{
+	entt::registry& registry = ROSE_GETSYSTEM(EntitySystem).GetRegistry();
+	auto& childDisable = registry.get_or_emplace<DisableComponent>(child, false, true);
+	childDisable.parentDisabled = true;
 }
 void DisableSystem::EnableChildren(entt::entity entity)
 {

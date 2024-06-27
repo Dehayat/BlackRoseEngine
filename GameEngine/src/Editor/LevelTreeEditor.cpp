@@ -5,6 +5,7 @@
 #include <entt/entity/registry.hpp>
 
 #include "Components/GUIDComponent.h"
+#include "Components/DisableComponent.h"
 
 #include "Editor/TransformEditor.h"
 
@@ -16,19 +17,20 @@ LevelTreeEditor::LevelTreeEditor()
 void LevelTreeEditor::ShowEntity(entt::registry& registry)
 {
 	ImGui::Text("Level");
-	if (ImGui::BeginDragDropTarget())
+	if(ImGui::BeginDragDropTarget())
 	{
-		if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("Node<entt::entity>"))
+		if(const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("Node<entt::entity>"))
 		{
 			auto entity = (entt::entity*)(payload->Data);
 			currentCommand.child = *entity;
-			currentCommand.newParent = entt::entity(-1);
+			currentCommand.newParent = NoEntity();
 		}
 		ImGui::EndDragDropTarget();
 	}
 
-	if (ImGui::IsItemClicked()) {
-		selectedEntity = entt::entity(-1);
+	if(ImGui::IsItemClicked())
+	{
+		selectedEntity = NoEntity();
 	}
 }
 
@@ -36,28 +38,42 @@ void LevelTreeEditor::EditorChildren(entt::registry& registry, Node<entt::entity
 {
 	const auto& guid = registry.get<GUIDComponent>(node->element);
 	const auto& trx = registry.get<TransformComponent>(node->element);
+	auto disabled = registry.try_get<DisableComponent>(node->element);
 	ImGuiTreeNodeFlags flags = ImGuiTreeNodeFlags_OpenOnArrow
 		| ImGuiTreeNodeFlags_OpenOnDoubleClick
 		| (node->element == selectedEntity ? ImGuiTreeNodeFlags_Selected : 0)
 		| (node->children.size() == 0 ? ImGuiTreeNodeFlags_Leaf : 0);
 
 	bool open = false;
-	if (guid.name == "") {
-		open = ImGui::TreeNodeEx(std::to_string(guid.id).c_str(), flags);
+
+	if(disabled != nullptr)
+	{
+		ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.75, 0.75, 0.75, 0.75));
 	}
-	else {
+
+	if(guid.name == "")
+	{
+		open = ImGui::TreeNodeEx(std::to_string(guid.id).c_str(), flags);
+	} else
+	{
 		open = ImGui::TreeNodeEx((guid.name + "##" + std::to_string(guid.id)).c_str(), flags);
 	}
 
-	if (ImGui::BeginDragDropSource())
+	if(disabled != nullptr)
+	{
+		ImGui::PopStyleColor();
+	}
+
+
+	if(ImGui::BeginDragDropSource())
 	{
 		ImGui::SetDragDropPayload("Node<entt::entity>", &(node->element), sizeof(node->element));
 		ImGui::Text(std::to_string(guid.id).c_str());
 		ImGui::EndDragDropSource();
 	}
-	if (ImGui::BeginDragDropTarget())
+	if(ImGui::BeginDragDropTarget())
 	{
-		if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("Node<entt::entity>"))
+		if(const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("Node<entt::entity>"))
 		{
 			auto entity = (entt::entity*)(payload->Data);
 			currentCommand.child = *entity;
@@ -66,12 +82,14 @@ void LevelTreeEditor::EditorChildren(entt::registry& registry, Node<entt::entity
 		ImGui::EndDragDropTarget();
 	}
 
-	if (ImGui::IsItemClicked()) {
+	if(ImGui::IsItemClicked())
+	{
 		selectedEntity = node->element;
 	}
-	if (open)
+	if(open)
 	{
-		for (auto node : node->children) {
+		for(auto node : node->children)
+		{
 			EditorChildren(registry, node);
 		}
 		ImGui::TreePop();
@@ -83,15 +101,13 @@ void LevelTreeEditor::Editor()
 	auto& registry = ROSE_GETSYSTEM(EntitySystem).GetRegistry();
 	ShowEntity(registry);
 	auto& levelTree = ROSE_GETSYSTEM(LevelTree);
-	auto& transform = ROSE_GETSYSTEM(TransformSystem);
-	for (auto node : levelTree.GetRoot()->children) {
+	for(auto node : levelTree.GetRoot()->children)
+	{
 		EditorChildren(registry, node);
 	}
-	if (currentCommand.child != entt::entity(-1)) {
-		//transform.SetParent(currentCommand.child, currentCommand.newParent);
+	if(currentCommand.child != entt::entity(-1))
+	{
 		levelTree.TrySetParent(currentCommand.child, currentCommand.newParent);
-		//nodesMap[currentCommand.child]->SetParent(nodesMap[currentCommand.newParent]);
-		//TransformEditor::SetParent(registry, registry.get<TransformComponent>(currentCommand.child), currentCommand.newParent);
 		currentCommand.Reset();
 	}
 }

@@ -6,7 +6,10 @@ class DisableSystem
 {
 	void DisableCreated(entt::registry& registry, entt::entity);
 	void DisableDestroyed(entt::registry& registry, entt::entity);
+	void ParentUpdated(entt::registry& registry, entt::entity);
+	void EnableChild(entt::entity entity);
 	void DisableChildren(entt::entity entity);
+	void DisableChild(entt::entity entity);
 	void EnableChildren(entt::entity entity);
 public:
 	DisableSystem();

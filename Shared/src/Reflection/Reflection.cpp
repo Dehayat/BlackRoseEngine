@@ -37,7 +37,16 @@ InfoTypes InfoBase::GetInfoType(const type_info& type)
 	return InfoTypes::UNKNOWN;
 }
 
-void* InfoBase::GetVar(void* object, std::string name) const
+int InfoBase::GetInfoProps()
+{
+	return InfoProps::ALL;
+}
+int InfoBase::GetInfoProps(int props)
+{
+	return props;
+}
+
+void* InfoBase::GetVar(void* object, const std::string& name) const
 {
 	uint8_t* res = (uint8_t*)object;
 	if(varOffset.find(name) != varOffset.end())
@@ -47,13 +56,22 @@ void* InfoBase::GetVar(void* object, std::string name) const
 	return nullptr;
 }
 
-InfoTypes InfoBase::GetType(std::string name) const
+InfoTypes InfoBase::GetType(const std::string& name) const
 {
 	if(varTypes.find(name) != varTypes.end())
 	{
 		return varTypes.at(name);
 	}
-	return InfoTypes::INT;
+	return InfoTypes::UNKNOWN;
+}
+
+int InfoBase::GetProps(const std::string& name) const
+{
+	if(varProps.find(name) != varProps.end())
+	{
+		return varProps.at(name);
+	}
+	return InfoProps::NONE;
 }
 
 const std::vector<std::string>& InfoBase::GetVarNames() const

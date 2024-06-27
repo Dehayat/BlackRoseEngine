@@ -9,7 +9,7 @@
 #include "Editor/LevelTreeEditor.h"
 #include "Editor/ComponentEditor.h"
 
-enum Tools
+enum class Tools
 {
 	//Entity Tools
 	SelectEntity,
@@ -19,13 +19,16 @@ enum Tools
 	NoTool,
 };
 
-enum Gizmos
+namespace Gizmos
 {
-	NONE = 0,
-	TRANSFORM,
-	PHYSICS,
-	ALL
-};
+	enum
+	{
+		NONE = 0,
+		TRANSFORM,
+		PHYSICS,
+		ALL
+	};
+}
 
 class Editor:public BaseGame
 {
@@ -34,7 +37,7 @@ class Editor:public BaseGame
 	entt::entity createdEntity;
 	bool mouseInViewport;
 	Tools selectedTool;
-	Gizmos gizmosSetting;
+	int gizmosSetting;
 	bool isGameRunning;
 	bool renameEntity;
 
@@ -61,7 +64,7 @@ public:
 	void RenderEditor();
 	entt::entity GetSelectedEntity();
 	bool IsGameRunning();
-	Gizmos GetGizmos();
+	int GetGizmos();
 	void RenderEntityEditor(entt::entity entity);
 
 
@@ -80,7 +83,7 @@ public:
 			{
 				ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.5, 0.2, 0.2, 1));
 				auto contentSize = ImGui::GetContentRegionAvail();
-				if(removable && ImGui::Button("Remove Component", {contentSize.x,0}))
+				if(removable && ImGui::Button(("Remove Component##" + componentName).c_str(), {contentSize.x,0}))
 				{
 					removeComponent = true;
 				}

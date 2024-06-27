@@ -3,6 +3,7 @@
 
 #include "Core/Guid.h"
 #include "Reflection/Reflection.h"
+#include "Reflection/Serialize.h"
 
 #include "Components/Components.h"
 
@@ -35,27 +36,13 @@ struct GUIDComponent:IComponent
 		parentId = -1;
 		name = "New Entity";
 		parent = NoEntity();
-		if(node.has_child("id"))
-		{
-			node["id"] >> id;
-		}
-		if(node.has_child("name"))
-		{
-			node["name"] >> name;
-		}
-		if(node.has_child("parentId"))
-		{
-			node["parentId"] >> parentId;
-		}
+		ROSE_DESER(GUIDComponent);
 	}
 
 	void Serialize(ryml::NodeRef node) override
 	{
-		node |= ryml::MAP;
-		node["name"] << this->name;
-		node["id"] << this->id;
-		node["parentId"] << this->parentId;
+		ROSE_SER(GUIDComponent);
 	}
 
-	ROSE_EXPOSE_VARS(GUIDComponent, (name))
+	ROSE_EXPOSE_VARS(GUIDComponent, (name)(id, InfoProps::SER)(parentId, InfoProps::SER))
 };

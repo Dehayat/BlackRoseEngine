@@ -21,6 +21,10 @@ public:
 		ImGui::PushID(entity);
 		for(auto& varName : m.GetVarNames())
 		{
+			if((m.GetProps(varName) & InfoProps::EDITOR) == 0)
+			{
+				continue;
+			}
 			if(m.GetType(varName) == InfoTypes::INT)
 			{
 				ImGui::InputInt(varName.c_str(), (int*)m.GetVar(object, varName));

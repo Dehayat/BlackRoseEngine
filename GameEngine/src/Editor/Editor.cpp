@@ -260,14 +260,14 @@ void Editor::UpdateGlobalControls()
 	}
 	if(input.GetKey(InputKey::G).justPressed)
 	{
-		gizmosSetting = (Gizmos)(gizmosSetting + 1);
+		gizmosSetting = gizmosSetting + 1;
 		if(gizmosSetting > Gizmos::ALL)
 		{
 			gizmosSetting = Gizmos::NONE;
 		}
 	}
 }
-Gizmos Editor::GetGizmos()
+int Editor::GetGizmos()
 {
 	return gizmosSetting;
 }

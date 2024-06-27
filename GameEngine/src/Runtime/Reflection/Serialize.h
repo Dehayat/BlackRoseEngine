@@ -27,6 +27,10 @@ inline void DefaultSerialize(InfoBase* info, void* data, ryml::NodeRef node)
 	node |= ryml::MAP;
 	for(auto& field : info->GetVarNames())
 	{
+		if((info->GetProps(field) & InfoProps::SER) == 0)
+		{
+			continue;
+		}
 		switch(info->GetType(field))
 		{
 		case InfoTypes::STRING:
@@ -78,6 +82,10 @@ inline void DefaultDeserialize(InfoBase* info, void* data, ryml::NodeRef node)
 	node |= ryml::MAP;
 	for(auto& field : info->GetVarNames())
 	{
+		if((info->GetProps(field) & InfoProps::SER) == 0)
+		{
+			continue;
+		}
 		switch(info->GetType(field))
 		{
 		case InfoTypes::STRING:

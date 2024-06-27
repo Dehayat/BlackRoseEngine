@@ -32,5 +32,17 @@ public:
 	bool EntityExists(entt::entity);
 	void DestroyAllEntities();
 	void DestroyEntity(entt::entity entity);
+	void EnableEntity(entt::entity entity);
+	void DisableEntity(entt::entity entity);
 	entt::entity CopyEntity(entt::entity entity, entt::entity parent = NoEntity());
+	template<typename TComponent>
+	TComponent& GetComponent(entt::entity entity)
+	{
+		return GetRegistry().get<TComponent>(entity);
+	}
+	template<typename TComponent>
+	void RemoveComponent(entt::entity entity)
+	{
+		return GetRegistry().remove<TComponent>(entity);
+	}
 };

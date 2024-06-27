@@ -105,8 +105,3 @@ void LevelTreeEditor::SelectEntity(entt::entity entity)
 {
 	selectedEntity = entity;
 }
-
-void LevelTreeEditor::CleanTree()
-{
-	ROSE_GETSYSTEM(LevelTree).CleanTree();
-}

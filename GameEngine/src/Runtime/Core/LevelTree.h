@@ -17,15 +17,14 @@ class LevelTree
 
 public:
 	Node<entt::entity>* AddEntity(entt::entity entity, Node<entt::entity>* parent = nullptr);
+	void RemoveEntity(entt::entity entity);
 	LevelTree(entt::entity rootEntity = NoEntity());
 	~LevelTree();
-	void TransformDestroyed(entt::registry& registry, entt::entity entity);
 	void RemoveParent(entt::entity);
 	bool TrySetParent(entt::entity child, entt::entity parent);
 	bool IsChildOf(entt::entity entity, entt::entity child);
 	void Clear();
 	Node<entt::entity>* GetRoot();
-	void CleanTree();
 	entt::entity GetChild(entt::entity entity, const std::string& name);
 	Node<entt::entity>* GetNode(entt::entity entity);
 };

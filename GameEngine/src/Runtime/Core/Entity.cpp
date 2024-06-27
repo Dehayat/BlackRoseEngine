@@ -5,6 +5,8 @@
 #include "LevelTree.h"
 #include "Core/Systems.h"
 #include "EntitySerializer.h"
+#include "DisableSystem.h"
+
 #include "Components/GUIDComponent.h"
 
 EntitySystem::EntitySystem()
@@ -133,14 +135,30 @@ entt::entity EntitySystem::CopyEntity(entt::entity src, entt::entity parent)
 	return entity;
 }
 
+void EntitySystem::EnableEntity(entt::entity entity)
+{
+	ROSE_GETSYSTEM(DisableSystem).Enable(entity);
+}
+
+void EntitySystem::DisableEntity(entt::entity entity)
+{
+	ROSE_GETSYSTEM(DisableSystem).Disable(entity);
+}
+
+
 void EntitySystem::DestroyEntity(entt::entity entity)
 {
 	auto& registry = GetRegistry();
 	if(EntityExists(entity))
 	{
+		for(auto child : ROSE_GETSYSTEM(LevelTree).GetNode(entity)->children)
+		{
+			DestroyEntity(child->element);
+		}
+		ROSE_GETSYSTEM(LevelTree).RemoveEntity(entity);
 		auto guid = allEntityGuids[entity];
-		registry.destroy(entity);
 		allEntities.erase(guid);
 		allEntityGuids.erase(entity);
+		registry.destroy(entity);
 	}
 }

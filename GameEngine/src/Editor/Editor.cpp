@@ -196,7 +196,6 @@ void Editor::UpdateGlobalControls()
 		if(input.GetKey(InputKey::N).justPressed)
 		{
 			levelLoader.UnloadLevel();
-			levelTreeEditor.CleanTree();
 		}
 		if(input.GetKey(InputKey::O).justPressed)
 		{
@@ -204,7 +203,6 @@ void Editor::UpdateGlobalControls()
 			if(fileName != "")
 			{
 				levelLoader.UnloadLevel();
-				levelTreeEditor.CleanTree();
 				levelLoader.LoadLevel(fileName);
 				ROSE_GETSYSTEM(RendererSystem).InitLoaded();
 			}
@@ -240,7 +238,6 @@ void Editor::UpdateGlobalControls()
 			if(levelTreeEditor.GetSelectedEntity() != NoEntity())
 			{
 				entities.DestroyEntity(levelTreeEditor.GetSelectedEntity());
-				levelTreeEditor.CleanTree();
 			}
 		}
 	}
@@ -359,7 +356,6 @@ void Editor::RenderGizmos()
 
 void Editor::RenderEditor()
 {
-	levelTreeEditor.CleanTree();
 	RenderImgui();
 
 	int w, h;
@@ -417,7 +413,6 @@ void Editor::RenderTools()
 		if(levelTreeEditor.GetSelectedEntity() != NoEntity())
 		{
 			entities.DestroyEntity(levelTreeEditor.GetSelectedEntity());
-			levelTreeEditor.CleanTree();
 		}
 	}
 
@@ -461,7 +456,6 @@ void Editor::RenderTools()
 			if(fileName != "")
 			{
 				levelLoader.UnloadLevel();
-				levelTreeEditor.CleanTree();
 				levelLoader.LoadLevel(fileName);
 				ROSE_GETSYSTEM(RendererSystem).InitLoaded();
 			}

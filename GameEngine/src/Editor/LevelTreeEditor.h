@@ -22,5 +22,4 @@ public:
 	void Editor();
 	entt::entity GetSelectedEntity();
 	void SelectEntity(entt::entity entity);
-	void CleanTree();
 };

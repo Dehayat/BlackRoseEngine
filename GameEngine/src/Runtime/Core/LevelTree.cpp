@@ -29,22 +29,6 @@ Node<entt::entity>* LevelTree::GetParentNode(entt::entity entity)
 	auto guidComp = entities.GetRegistry().get<GUIDComponent>(entity);
 	return nodesMap[guidComp.parent];
 }
-void LevelTree::TransformDestroyed(entt::registry& registry, entt::entity entity)
-{
-	if(nodesMap.find(entity) == nodesMap.end())
-	{
-		ROSE_ERR("trying to delete entity that doesnt exist in levelTree");
-		return;
-	}
-	auto node = nodesMap[entity];
-	auto& entities = ROSE_GETSYSTEM(EntitySystem);
-	for(auto child : node->children)
-	{
-		entities.DestroyEntity(child->element);
-	}
-	node->children.clear();
-	nodesMap.erase(entity);
-}
 void LevelTree::RemoveParent(entt::entity entity)
 {
 	entt::registry& registry = ROSE_GETSYSTEM(EntitySystem).GetRegistry();
@@ -105,25 +89,6 @@ Node<entt::entity>* LevelTree::GetRoot()
 {
 	return root;
 }
-void LevelTree::CleanTree()
-{
-	auto& entities = ROSE_GETSYSTEM(EntitySystem);
-	for(auto& node : nodesMap)
-	{
-		std::vector<Node<entt::entity>*> remove;
-		for(auto child : node.second->children)
-		{
-			if(!entities.EntityExists(child->element))
-			{
-				remove.push_back(child);
-			}
-		}
-		for(auto child : remove)
-		{
-			node.second->children.erase(child);
-		}
-	}
-}
 entt::entity LevelTree::GetChild(entt::entity entity, const std::string& name)
 {
 	auto& registry = ROSE_GETSYSTEM(EntitySystem).GetRegistry();
@@ -166,4 +131,11 @@ Node<entt::entity>* LevelTree::AddEntity(entt::entity entity, Node<entt::entity>
 	auto node = new Node<entt::entity>(entity, parent);
 	nodesMap[entity] = node;
 	return node;
+}
+
+void LevelTree::RemoveEntity(entt::entity entity)
+{
+	root->RemoveChild(nodesMap[entity]);
+	delete nodesMap[entity];
+	nodesMap.erase(entity);
 }

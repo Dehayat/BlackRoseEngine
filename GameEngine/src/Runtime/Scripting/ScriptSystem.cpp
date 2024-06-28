@@ -171,7 +171,8 @@ void ScriptSystem::AddScript(entt::entity entity, const std::string scriptName, 
 	state.new_usertype<EntityEvent>("EntityEvent",
 		"name", &EntityEvent::name,
 		"entity", &EntityEvent::entity,
-		"target", &EntityEvent::target
+		"target", &EntityEvent::target,
+		"input_key", &EntityEvent::inputKey
 	);
 	state.set_function("get_child", GetChild);
 	state.set_function("move", Translate);

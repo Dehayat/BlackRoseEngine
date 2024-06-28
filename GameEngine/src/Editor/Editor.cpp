@@ -25,10 +25,12 @@
 #include "Components/AnimationComponent.h"
 #include "Components/ScriptComponent.h"
 #include "Components/SendEventsToParentComponent.h"
+#include "Components/InputComponent.h"
 
 #include "Core/LevelTree.h"
 #include "Editor/PhysicsEditor.h"
 #include "Editor/ScriptEditor.h"
+#include "Editor/InputEditor.h"
 
 #include "DefaultEditor.h"
 
@@ -519,6 +521,7 @@ void Editor::EntityEditor()
 		ROSE_DEFAULT_COMP_EDITOR(AnimationComponent, true);
 		RenderComponent<ScriptComponent, ScriptEditor>(true, "Script Component", selectedEntity);
 		ROSE_DEFAULT_COMP_EDITOR(SendEventsToParentComponent, true);
+		RenderComponent<InputComponent, InputEditor>(true, "Input Component", selectedEntity);
 	}
 }
 void Editor::RenderEntityEditor(entt::entity entity)

@@ -20,6 +20,7 @@
 #include "Components/ScriptComponent.h"
 #include "Components/SendEventsToParentComponent.h"
 #include "Components/DisableComponent.h"
+#include "Components/InputComponent.h"
 
 #include "Core/Log.h"
 
@@ -80,6 +81,7 @@ void LevelLoader::SerializeEntity(entt::registry& registry, ryml::NodeRef& paren
 	SerializeComponent<AnimationComponent>(registry, "Animation", entity, node);
 	SerializeComponent<ScriptComponent>(registry, "Script", entity, node);
 	SerializeComponent<SendEventsToParentComponent>(registry, "SendEventsToParent", entity, node);
+	SerializeComponent<InputComponent>(registry, "Input", entity, node);
 }
 
 void LevelLoader::SaveLevel(const std::string& fileName)

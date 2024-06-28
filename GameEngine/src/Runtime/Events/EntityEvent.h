@@ -12,6 +12,7 @@ struct EntityEvent: public Event
 	const std::string name;
 
 	entt::entity target;
+	std::string inputKey;
 
 	EntityEvent(entt::entity entity, const std::string& eventName):entity(entity), name(eventName)
 	{

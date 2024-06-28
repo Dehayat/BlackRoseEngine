@@ -7,7 +7,7 @@
 
 #include "Events/EntityEventSystem.h"
 
-#include "Components/ScriptComponent.h"
+#include "Components/InputComponent.h"
 #include "Components/DisableComponent.h"
 
 #include "Core/Systems.h"
@@ -113,41 +113,40 @@ void InputSystem::Update()
 
 	entt::registry& registry = ROSE_GETSYSTEM(EntitySystem).GetRegistry();
 	auto& eventSystem = ROSE_GETSYSTEM(EntityEventSystem);
-	auto view = registry.view<ScriptComponent>(entt::exclude<DisableComponent>);
+	auto view = registry.view<InputComponent>(entt::exclude<DisableComponent>);
 	for(auto entity : view)
 	{
-		for(int i = 0; i < keyCount; i++)
+		auto& inputComp = view.get<InputComponent>(entity);
+		for(auto key : inputComp.inputKeys)
 		{
+			int i = key;
 			if(input.keys[i].justPressed)
 			{
-				if(i == InputKey::A || i == InputKey::LEFT)
-				{
-					eventSystem.QueueEvent(EntityEvent(entity, "LeftKeyPressed"));
-				}
-				if(i == InputKey::D || i == InputKey::RIGHT)
-				{
-					eventSystem.QueueEvent(EntityEvent(entity, "RightKeyPressed"));
-				}
+				auto inputEvent = EntityEvent(entity, "KeyPressed");
+				inputEvent.inputKey = GetKeyName(key);
+				eventSystem.QueueEvent(inputEvent);
 			}
 			if(input.keys[i].justReleased)
 			{
-				if(i == InputKey::A || i == InputKey::LEFT)
-				{
-					eventSystem.QueueEvent(EntityEvent(entity, "LeftKeyReleased"));
-				}
-				if(i == InputKey::D || i == InputKey::RIGHT)
-				{
-					eventSystem.QueueEvent(EntityEvent(entity, "RightKeyReleased"));
-				}
+				auto inputEvent = EntityEvent(entity, "KeyReleased");
+				inputEvent.inputKey = GetKeyName(key);
+				eventSystem.QueueEvent(inputEvent);
 			}
 		}
-		if(GetMouseButton(InputMouse::LEFT_BUTTON).justPressed)
+		for(auto mouseButton : inputComp.inputMouseButtons)
 		{
-			eventSystem.QueueEvent(EntityEvent(entity, "LeftMousePressed"));
-		}
-		if(GetMouseButton(InputMouse::LEFT_BUTTON).justReleased)
-		{
-			eventSystem.QueueEvent(EntityEvent(entity, "LeftMouseReleased"));
+			if(GetMouseButton(mouseButton).justPressed)
+			{
+				auto inputEvent = EntityEvent(entity, "MousePressed");
+				inputEvent.inputKey = GetMouseButtonName(mouseButton);
+				eventSystem.QueueEvent(inputEvent);
+			}
+			if(GetMouseButton(mouseButton).justReleased)
+			{
+				auto inputEvent = EntityEvent(entity, "MouseReleased");
+				inputEvent.inputKey = GetMouseButtonName(mouseButton);
+				eventSystem.QueueEvent(inputEvent);
+			}
 		}
 	}
 

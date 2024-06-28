@@ -80,7 +80,7 @@ void BaseGame::SetupLowLevelSystems()
 
 void BaseGame::Setup()
 {
-	LoadProject("p.pro");
+	LoadProject("Sekiro.pro");
 	ROSE_GETSYSTEM(RendererSystem).InitLoaded();
 }
 

@@ -65,6 +65,7 @@ void EntitySystem::DestroyAllEntities()
 	}
 	allEntities.clear();
 	allEntityGuids.clear();
+	ROSE_GETSYSTEM(LevelTree).Clear();
 }
 entt::entity EntitySystem::CreateEntity()
 {

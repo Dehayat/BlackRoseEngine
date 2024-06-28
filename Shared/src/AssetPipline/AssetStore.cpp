@@ -23,7 +23,8 @@ AssetStore::~AssetStore()
 
 void AssetStore::UnloadAllAssets()
 {
-	for (auto& asset : assets) {
+	for(auto& asset : assets)
+	{
 		delete asset.second.asset;
 		asset.second.asset = nullptr;
 	}
@@ -37,13 +38,14 @@ void AssetStore::AddTexture(const std::string& assetId, const std::string& fileP
 	SDL_Texture* texture = SDL_CreateTextureFromSurface(renderer, surface);
 	SDL_FreeSurface(surface);
 	auto textureAsset = new TextureAsset(texture, ppu);
-	if (assets.find(assetId) != assets.end()) {
+	if(assets.find(assetId) != assets.end())
+	{
 		delete assets[assetId].asset;
 		assets[assetId].type = AssetType::Texture;
 		assets[assetId].asset = textureAsset;
 		ROSE_LOG("Reloaded Texture Asset %s", assetId.c_str());
-	}
-	else {
+	} else
+	{
 		assets[assetId] = AssetHandle(AssetType::Texture, textureAsset);
 		ROSE_LOG("Loaded New Texture Asset %s", assetId.c_str());
 	}
@@ -52,13 +54,14 @@ void AssetStore::AddTexture(const std::string& assetId, const std::string& fileP
 void AssetStore::LoadAnimation(const std::string& assetId, const std::string& filePath)
 {
 	auto animation = AnimationImporter::LoadAnimation(filePath);
-	if (assets.find(assetId) != assets.end()) {
+	if(assets.find(assetId) != assets.end())
+	{
 		delete assets[assetId].asset;
 		assets[assetId].type = AssetType::Animation;
 		assets[assetId].asset = animation;
 		ROSE_LOG("Reloaded Animation Asset %s", assetId.c_str());
-	}
-	else {
+	} else
+	{
 		assets[assetId] = AssetHandle(AssetType::Animation, animation);
 		ROSE_LOG("Loaded New Animation Asset %s", assetId.c_str());
 	}
@@ -71,13 +74,14 @@ void AssetStore::LoadScript(const std::string& assetId, const std::string& fileP
 	SDL_RWread(fileHandle.file, &fileString[0], sizeof(fileString[0]), fileString.size());
 
 	auto script = new ScriptAsset(fileString);
-	if (assets.find(assetId) != assets.end()) {
+	if(assets.find(assetId) != assets.end())
+	{
 		delete assets[assetId].asset;
 		assets[assetId].type = AssetType::Script;
 		assets[assetId].asset = script;
 		ROSE_LOG("Reloaded Script Asset %s", assetId.c_str());
-	}
-	else {
+	} else
+	{
 		assets[assetId] = AssetHandle(AssetType::Script, script);
 		ROSE_LOG("Loaded New Script Asset %s", assetId.c_str());
 	}
@@ -85,18 +89,34 @@ void AssetStore::LoadScript(const std::string& assetId, const std::string& fileP
 
 AssetHandle AssetStore::GetAsset(const std::string& assetId) const
 {
-	if (assets.find(assetId) == assets.end()) {
+	if(assets.find(assetId) == assets.end())
+	{
 		return AssetHandle();
 	}
 	return assets.at(assetId);
 }
 
+std::vector<std::pair<std::string, AssetHandle>> AssetStore::GetAssetOfType(AssetType assetType) const
+{
+	std::vector<std::pair<std::string, AssetHandle>> list;
+	for(auto& asset : assets)
+	{
+		if(asset.second.type == assetType)
+		{
+			list.push_back(asset);
+		}
+	}
+	return list;
+}
+
 void AssetStore::LoadPackage(const std::string& filePath)
 {
 	auto pkg = new AssetPackage();
-	if (pkg->Load(filePath)) {
-		for (auto assetFile : pkg->assets) {
-			switch (assetFile->assetType)
+	if(pkg->Load(filePath))
+	{
+		for(auto assetFile : pkg->assets)
+		{
+			switch(assetFile->assetType)
 			{
 			case AssetType::Texture:
 			{
@@ -121,8 +141,8 @@ void AssetStore::LoadPackage(const std::string& filePath)
 			}
 		}
 		delete pkg;
-	}
-	else {
+	} else
+	{
 		ROSE_ERR("Failed to load asset package %s", filePath.c_str());
 	}
 }
@@ -131,12 +151,13 @@ void AssetStore::LoadPackage(const std::string& filePath)
 AssetHandle AssetStore::NewAnimation(const std::string& assetId)
 {
 	auto animation = new Animation(32, 32, "", false);
-	if (assets.find(assetId) != assets.end()) {
+	if(assets.find(assetId) != assets.end())
+	{
 		delete assets[assetId].asset;
 		assets[assetId].type = AssetType::Animation;
 		assets[assetId].asset = animation;
-	}
-	else {
+	} else
+	{
 		assets[assetId] = AssetHandle(AssetType::Animation, animation);
 	}
 	ROSE_LOG("Created new Animation Asset %s", assetId.c_str());
@@ -146,7 +167,8 @@ AssetHandle AssetStore::NewAnimation(const std::string& assetId)
 void AssetStore::SaveAnimation(const std::string& assetId, const std::string& filePath)
 {
 	auto animation = (Animation*)GetAsset(assetId).asset;
-	if (animation != nullptr) {
+	if(animation != nullptr)
+	{
 		bool saved = AnimationImporter::SaveAnimation(animation, filePath);
 	}
 }

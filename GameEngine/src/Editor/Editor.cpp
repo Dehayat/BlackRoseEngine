@@ -1,4 +1,6 @@
 #include "Editor.h"
+#include <set>
+#include <map>
 
 #include <imgui.h>
 #include <SDL2/SDL2_gfxPrimitives.h>
@@ -15,6 +17,7 @@
 #include "Animation/AnimationSystem.h"
 #include "Events/EntityEventSystem.h"
 #include "Scripting/ScriptSystem.h"
+#include "Core/TimeSystem.h"
 #include "Core/DisableSystem.h"
 #include "ImguiSystem.h"
 
@@ -316,12 +319,20 @@ static bool IsPointInsideRect(vec2 point, SDL_FRect rect)
 	}
 	return true;
 }
+static bool IsPointInsideCircle(vec2 point, vec2 center, float radius)
+{
+	return distance(point, center) < radius;
+}
 
+std::set<entt::entity> skipSelect;
+std::map<entt::entity, float> skipTimer;
 void Editor::UpdateSelectTool()
 {
 	auto& entities = ROSE_GETSYSTEM(EntitySystem);
+	auto& renderer = ROSE_GETSYSTEM(RendererSystem);
 	auto& registry = entities.GetRegistry();
 	auto& input = ROSE_GETSYSTEM(InputSystem);
+	auto& timeSys = ROSE_GETSYSTEM(TimeSystem);
 	if(input.GetMouseButton(LEFT_BUTTON).justPressed)
 	{
 		auto mousePos = input.GetMousePosition();
@@ -329,6 +340,10 @@ void Editor::UpdateSelectTool()
 		bool selected = false;
 		for(auto entity : view)
 		{
+			if(skipSelect.find(entity) != skipSelect.end())
+			{
+				continue;
+			}
 			auto& sprite = registry.get<SpriteComponent>(entity);
 			if(IsPointInsideRect(mousePos, sprite.destRect))
 			{
@@ -336,10 +351,46 @@ void Editor::UpdateSelectTool()
 				selected = true;
 			}
 		}
+		auto view2 = registry.view<const TransformComponent>();
+		for(auto entity : view2)
+		{
+			if(skipSelect.find(entity) != skipSelect.end())
+			{
+				continue;
+			}
+			auto& trx = registry.get<TransformComponent>(entity);
+			auto matrix = renderer.GetWorldToScreenMatrix();
+			auto center = TransformComponent::GetPosition(matrix, trx.globalPosition);
+			if(IsPointInsideCircle(mousePos, center, 30))
+			{
+				levelTreeEditor.SelectEntity(entity);
+				selected = true;
+			}
+		}
+		float t = timeSys.GetTime();
 		if(!selected)
 		{
 			levelTreeEditor.SelectEntity(NoEntity());
+		} else
+		{
+			auto selectedEntity = levelTreeEditor.GetSelectedEntity();
+			skipSelect.insert(selectedEntity);
+			skipTimer[selectedEntity] = t + 0.3f;
 		}
+		std::vector<entt::entity> remove;
+		for(auto entity : skipTimer)
+		{
+			if(entity.second < t)
+			{
+				skipSelect.erase(entity.first);
+				remove.push_back(entity.first);
+			}
+		}
+		for(auto entity : remove)
+		{
+			skipTimer.erase(entity);
+		}
+		remove.clear();
 	}
 }
 

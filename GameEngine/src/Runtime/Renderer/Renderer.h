@@ -3,13 +3,14 @@
 #include <entt/entity/entity.hpp>
 #include <glm/glm.hpp>
 
-
 class RendererSystem
 {
 	SDL_Renderer* sdlRenderer;
 	entt::entity camera;
 	glm::mat3 worldToScreenMatrix;
 public:
+	glm::vec2 editorViewPos;
+	float editorViewHeight;
 	RendererSystem();
 	~RendererSystem();
 	void Render();
@@ -20,4 +21,3 @@ public:
 	const glm::mat3 GetScreenToWorldMatrix() const;
 	void InitLoaded();
 };
-

@@ -24,6 +24,8 @@ enum InputKey
 	F2,
 	LSHIFT,
 	RSHIFT,
+	LALT,
+	RALT,
 
 	COUNT
 };
@@ -49,6 +51,8 @@ static int keys[] = {
 	SDL_SCANCODE_F2,
 	SDL_SCANCODE_LSHIFT,
 	SDL_SCANCODE_RSHIFT,
+	SDL_SCANCODE_LALT,
+	SDL_SCANCODE_RALT,
 };
 
 static std::string keyNames[] = {
@@ -72,6 +76,8 @@ static std::string keyNames[] = {
 	"F2",
 	"Left Shift",
 	"Right Shift",
+	"Left Alt",
+	"Right Alt",
 };
 
 const int keyCount = InputKey::COUNT;
@@ -79,13 +85,15 @@ const int keyCount = InputKey::COUNT;
 enum InputMouse
 {
 	LEFT_BUTTON,
+	RIGHT_BUTTON,
 	MIDDLE_BUTTON
 };
 static std::string mouseButtonNames[] = {
 	"Left Button",
-	"Right Button"
+	"Right Button",
+	"Middle Button"
 };
-const int mouseButtonCount = 2;
+const int mouseButtonCount = 3;
 
 inline const std::string& GetKeyName(InputKey key)
 {

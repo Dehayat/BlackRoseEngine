@@ -3,7 +3,6 @@
 #include <SDL2/SDL2_gfxPrimitives.h>
 
 #include "Core/Entity.h"
-#include "Core/SdlContainer.h"
 #include "Renderer/Renderer.h"
 #include "Input/InputSystem.h"
 #include "Core/Systems.h"

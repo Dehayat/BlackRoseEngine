@@ -20,6 +20,10 @@ RendererSystem::RendererSystem()
 	this->sdlRenderer = sdlRenderer.GetRenderer();
 	camera = NoEntity();
 	this->worldToScreenMatrix = glm::mat3(1);
+#ifdef _EDITOR
+	editorViewHeight = 10;
+	editorViewPos = {0,0};
+#endif
 }
 RendererSystem::~RendererSystem()
 {
@@ -75,11 +79,21 @@ void RendererSystem::Render()
 		ROSE_ERR("No Camera Found");
 		return;
 	}
+#ifdef _EDITOR
 	auto camToWorldMatrix = glm::mat3(
-		glm::cos(glm::radians(camPos->rotation)), -glm::sin(glm::radians(camPos->rotation)), camPos->position.x,
-		glm::sin(glm::radians(camPos->rotation)), glm::cos(glm::radians(camPos->rotation)), camPos->position.y,
+		1, 0, editorViewPos.x,
+		0, 1, editorViewPos.y,
 		0, 0, 1
 	);
+	editorViewHeight = clamp(editorViewHeight, 0.01f, 50.f);
+	camHeight = editorViewHeight;
+#else
+	auto camToWorldMatrix = glm::mat3(
+		glm::cos(glm::radians(camPos->globalRotation)), -glm::sin(glm::radians(camPos->globalRotation)), camPos->globalPosition.x,
+		glm::sin(glm::radians(camPos->globalRotation)), glm::cos(glm::radians(camPos->globalRotation)), camPos->globalPosition.y,
+		0, 0, 1
+	);
+#endif
 	/*if (camPos->hasParent) {
 		auto& parentPos = registry.get<TransformComponent>(camPos->parent.value());
 		camToWorldMatrix = camToWorldMatrix;
@@ -195,6 +209,10 @@ void RendererSystem::InitLoaded()
 		if(body.startCamera)
 		{
 			SetCamera(entity);
+#ifdef _EDITOR
+			editorViewHeight = body.height;
+			editorViewPos = pos.globalPosition;
+#endif _EDITOR
 			break;
 		}
 	}

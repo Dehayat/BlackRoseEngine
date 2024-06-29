@@ -86,7 +86,7 @@ void InputSystem::Update()
 		}
 	}
 
-	if(buttonMask & SDL_BUTTON(2))
+	if(buttonMask & SDL_BUTTON(3))
 	{
 		if(input.mouse[1].isPressed)
 		{
@@ -109,7 +109,32 @@ void InputSystem::Update()
 			input.mouse[1].justReleased = false;
 		}
 	}
+	if(buttonMask & SDL_BUTTON(2))
+	{
+		if(input.mouse[2].isPressed)
+		{
+			input.mouse[2].justPressed = false;
+		} else
+		{
+			input.mouse[2].isPressed = true;
+			input.mouse[2].justPressed = true;
+			input.mouse[2].justReleased = false;
+		}
+	} else
+	{
+		if(input.mouse[2].isPressed)
+		{
+			input.mouse[2].isPressed = false;
+			input.mouse[2].justReleased = true;
+			input.mouse[2].justPressed = false;
+		} else
+		{
+			input.mouse[2].justReleased = false;
+		}
+	}
 	input.mousePosition = mousePos;
+
+	
 
 	entt::registry& registry = ROSE_GETSYSTEM(EntitySystem).GetRegistry();
 	auto& eventSystem = ROSE_GETSYSTEM(EntityEventSystem);

@@ -1,6 +1,7 @@
 #include "Editor.h"
 
 #include <imgui.h>
+#include <SDL2/SDL2_gfxPrimitives.h>
 
 #include <FileDialog.h>
 
@@ -68,6 +69,7 @@ Editor::Editor():BaseGame()
 	isGameRunning = false;
 	selectedTool = Tools::SelectEntity;
 	gizmosSetting = Gizmos::ALL;
+	moveTool = MoveTool(ROSE_GETSYSTEM(SdlContainer).GetRenderer());
 }
 
 void Editor::SetupImgui()
@@ -115,6 +117,7 @@ void Editor::Update()
 	if(!ROSE_GETSYSTEM(ImguiSystem).IsMouseCaptured())
 	{
 		UpdateViewportControls();
+		moveTool.Update();
 	}
 	if(!ImGui::IsAnyItemActive())
 	{
@@ -167,18 +170,6 @@ void Editor::UpdateViewportControls()
 			{
 				registry.get<TransformComponent>(createdEntity).globalPosition = glm::vec2(mousePos.x, mousePos.y);
 				registry.get<TransformComponent>(createdEntity).UpdateLocals();
-			}
-		}
-	}
-	if(selectedTool == Tools::MoveEntity)
-	{
-		auto mousePos = glm::vec3(input.GetMousePosition(), 1) * gameRenderer.GetScreenToWorldMatrix();
-		if(levelTreeEditor.GetSelectedEntity() != entt::entity(-1))
-		{
-			if(input.GetMouseButton(LEFT_BUTTON).isPressed)
-			{
-				registry.get<TransformComponent>(levelTreeEditor.GetSelectedEntity()).globalPosition = glm::vec2(mousePos.x, mousePos.y);
-				registry.get<TransformComponent>(levelTreeEditor.GetSelectedEntity()).UpdateLocals();
 			}
 		}
 	}
@@ -351,9 +342,13 @@ void Editor::HandleDropFile(SDL_Event& sdlEvent)
 		ROSE_GETSYSTEM(LevelLoader).LoadLevel(sdlEvent.drop.file);
 	}
 }
-
 void Editor::RenderGizmos()
 {
+	if(selectedTool == Tools::MoveEntity)
+	{
+		moveTool.SetSelectedEntity(levelTreeEditor.GetSelectedEntity());
+		moveTool.RenderGizmos();
+	}
 }
 
 void Editor::RenderEditor()

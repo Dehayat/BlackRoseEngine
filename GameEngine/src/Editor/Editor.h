@@ -8,6 +8,7 @@
 
 #include "Editor/LevelTreeEditor.h"
 #include "Editor/ComponentEditor.h"
+#include "MoveTool.h"
 
 enum class Tools
 {
@@ -40,6 +41,7 @@ class Editor:public BaseGame
 	int gizmosSetting;
 	bool isGameRunning;
 	bool renameEntity;
+	MoveTool moveTool;
 
 	void SetupImgui();
 	void CloseImgui();

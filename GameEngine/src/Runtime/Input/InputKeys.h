@@ -26,6 +26,8 @@ enum InputKey
 	RSHIFT,
 	LALT,
 	RALT,
+	P,
+	ESC,
 
 	COUNT
 };
@@ -53,6 +55,8 @@ static int keys[] = {
 	SDL_SCANCODE_RSHIFT,
 	SDL_SCANCODE_LALT,
 	SDL_SCANCODE_RALT,
+	SDL_SCANCODE_P,
+	SDL_SCANCODE_ESCAPE,
 };
 
 static std::string keyNames[] = {
@@ -78,6 +82,8 @@ static std::string keyNames[] = {
 	"Right Shift",
 	"Left Alt",
 	"Right Alt",
+	"P",
+	"Escape",
 };
 
 const int keyCount = InputKey::COUNT;

@@ -20,6 +20,8 @@ enum class Tools
 	DeleteEntity,
 	NoTool,
 	RotateEntity,
+	ParentEntity,
+	UnParentEntity,
 };
 
 namespace Gizmos
@@ -45,6 +47,8 @@ class Editor:public BaseGame
 	bool renameEntity;
 	MoveTool moveTool;
 	RotateTool rotateTool;
+	Tools lastTool;
+	entt::entity childEntity;
 
 	void SetupImgui();
 	void CloseImgui();
@@ -56,6 +60,7 @@ class Editor:public BaseGame
 	void UpdateViewportControls();
 	void UpdateGlobalControls();
 	void UpdateSelectTool();
+	void UpdateParentTool();
 public:
 	Editor();
 	~Editor();

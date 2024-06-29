@@ -71,6 +71,7 @@ Editor::Editor():BaseGame()
 	Reset();
 	isGameRunning = false;
 	selectedTool = Tools::SelectEntity;
+	lastTool = selectedTool;
 	gizmosSetting = Gizmos::ALL;
 	moveTool = MoveTool(ROSE_GETSYSTEM(SdlContainer).GetRenderer());
 	rotateTool = RotateTool(ROSE_GETSYSTEM(SdlContainer).GetRenderer());
@@ -187,6 +188,11 @@ void Editor::UpdateViewportControls()
 	{
 		UpdateSelectTool();
 	}
+	if(selectedTool == Tools::ParentEntity)
+	{
+		UpdateSelectTool();
+		UpdateParentTool();
+	}
 }
 
 void Editor::UpdateGlobalControls()
@@ -284,13 +290,34 @@ void Editor::UpdateGlobalControls()
 	{
 		selectedTool = Tools::RotateEntity;
 	}
-	if(input.GetKey(InputKey::S).justPressed)
+	if(input.GetKey(InputKey::Q).justPressed)
 	{
 		selectedTool = Tools::SelectEntity;
 	}
 	if(input.GetKey(InputKey::X).justPressed)
 	{
 		selectedTool = Tools::NoTool;
+	}
+	if(input.GetKey(InputKey::P).justPressed)
+	{
+		if(input.GetKey(RSHIFT).isPressed || input.GetKey(LSHIFT).isPressed)
+		{
+			if(input.GetKey(RSHIFT).isPressed || input.GetKey(LSHIFT).isPressed)
+			{
+				if(GetSelectedEntity() != NoEntity())
+				{
+					ROSE_GETSYSTEM(LevelTree).RemoveParent(GetSelectedEntity());
+				}
+			}
+		} else
+		{
+			if(GetSelectedEntity() != NoEntity())
+			{
+				lastTool = selectedTool;
+				selectedTool = Tools::ParentEntity;
+				childEntity = GetSelectedEntity();
+			}
+		}
 	}
 	if(input.GetKey(InputKey::G).justPressed)
 	{
@@ -299,6 +326,11 @@ void Editor::UpdateGlobalControls()
 		{
 			gizmosSetting = Gizmos::NONE;
 		}
+	}
+
+	if(selectedTool == Tools::ParentEntity)
+	{
+		UpdateParentTool();
 	}
 }
 int Editor::GetGizmos()
@@ -394,6 +426,38 @@ void Editor::UpdateSelectTool()
 	}
 }
 
+void Editor::UpdateParentTool()
+{
+	auto& input = ROSE_GETSYSTEM(InputSystem);
+	if(input.GetKey(InputKey::ESC).justPressed)
+	{
+		childEntity = NoEntity();
+	}
+	static auto panCursor = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_CROSSHAIR);
+	if(SDL_GetCursor() != panCursor)
+	{
+		SDL_SetCursor(panCursor);
+	}
+
+	if(childEntity != NoEntity() && childEntity != GetSelectedEntity())
+	{
+		if(GetSelectedEntity() != NoEntity())
+		{
+			ROSE_GETSYSTEM(LevelTree).TrySetParent(childEntity, GetSelectedEntity());
+			childEntity = NoEntity();
+		}
+	}
+	if(childEntity == NoEntity() || GetSelectedEntity() == NoEntity())
+	{
+		SDL_SetCursor(SDL_GetDefaultCursor());
+		selectedTool = lastTool;
+		if(selectedTool == Tools::ParentEntity)
+		{
+			selectedTool = Tools::SelectEntity;
+		}
+	}
+}
+
 bool Editor::ProcessEvents()
 {
 	bool exit = false;
@@ -462,23 +526,33 @@ void Editor::RenderGizmos()
 		auto width = rendererSystem.GetAspectRatio() * height;
 		auto& trx = camView.get<TransformComponent>(entity);
 		auto matrix = rendererSystem.GetWorldToScreenMatrix();
+		auto rotateMatrix = TransformComponent::MakeRotMatrix(trx.globalRotation);
 		auto center = TransformComponent::GetPosition(matrix, trx.globalPosition);
 		auto scalledSize = TransformComponent::GetDir(matrix, {width,height});
 		auto size = abs(scalledSize);
 
 
 		static int16_t polygon[2][4];
-		polygon[0][0] = center.x - size.x / 2;
-		polygon[1][0] = center.y - size.y / 2;
+		auto localCamToScreenMatrix = rotateMatrix * matrix;
+		auto edge = trx.globalPosition + vec2(-width / 2, height / 2);
+		edge = TransformComponent::GetPosition(localCamToScreenMatrix, edge);
+		polygon[0][0] = edge.x;
+		polygon[1][0] = edge.y;
 
-		polygon[0][1] = center.x + size.x / 2;
-		polygon[1][1] = center.y - size.y / 2;
+		edge = trx.globalPosition + vec2(width / 2, height / 2);
+		edge = TransformComponent::GetPosition(localCamToScreenMatrix, edge);
+		polygon[0][1] = edge.x;
+		polygon[1][1] = edge.y;
 
-		polygon[0][2] = center.x + size.x / 2;
-		polygon[1][2] = center.y + size.y / 2;
+		edge = trx.globalPosition + vec2(width / 2, -height / 2);
+		edge = TransformComponent::GetPosition(localCamToScreenMatrix, edge);
+		polygon[0][2] = edge.x;
+		polygon[1][2] = edge.y;
 
-		polygon[0][3] = center.x - size.x / 2;
-		polygon[1][3] = center.y + size.y / 2;
+		edge = trx.globalPosition + vec2(-width / 2, -height / 2);
+		edge = TransformComponent::GetPosition(localCamToScreenMatrix, edge);
+		polygon[0][3] = edge.x;
+		polygon[1][3] = edge.y;
 
 
 		if(levelTreeEditor.GetSelectedEntity() == entity)
@@ -487,10 +561,12 @@ void Editor::RenderGizmos()
 			polygonRGBA(renderer, polygon[0], polygon[1], 4, 200, 200, 0, 200);
 			filledPolygonRGBA(renderer, polygon[0], polygon[1], 4, 200, 200, 200, 100);
 			circleRGBA(renderer, center.x, center.y, size.y / 10, 200, 200, 0, 150);
+			circleRGBA(renderer, center.x, center.y, size.y / 20, 200, 200, 0, 150);
 		} else
 		{
 			filledCircleRGBA(renderer, center.x, center.y, size.y / 10, 200, 200, 200, 30);
 			circleRGBA(renderer, center.x, center.y, size.y / 10, 200, 200, 200, 150);
+			circleRGBA(renderer, center.x, center.y, size.y / 20, 200, 200, 200, 150);
 			polygonRGBA(renderer, polygon[0], polygon[1], 4, 200, 200, 200, 150);
 		}
 

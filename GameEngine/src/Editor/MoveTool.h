@@ -26,17 +26,7 @@ class MoveTool
 
 	bool IsInsideRect(glm::vec2& mousePos, SDL_FRect rect)
 	{
-		ROSE_LOG("%f %f - %f %f %f %f", mousePos.x, mousePos.y, rect.x, rect.y, rect.w, rect.h);
 		if(mousePos.x > rect.x && mousePos.x<rect.x + rect.w && mousePos.y>rect.y && mousePos.y < rect.y + rect.h)
-		{
-			return true;
-		}
-		return false;
-	}
-
-	bool IsOverBox(vec2 mousePos)
-	{
-		if(IsInsideRect(mousePos, bothAxisGizmos))
 		{
 			return true;
 		}
@@ -54,9 +44,12 @@ public:
 	}
 	void RenderGizmos()
 	{
-
+		if(entity == NoEntity())
+		{
+			return;
+		}
 		auto& renderSystem = ROSE_GETSYSTEM(RendererSystem);
-		auto matrix = renderSystem.GetWorldToScreenMatrix(), GetSelectedEntity();
+		auto matrix = renderSystem.GetWorldToScreenMatrix();
 		auto& trx = ROSE_GETSYSTEM(EntitySystem).GetComponent<TransformComponent>(entity);
 		auto orig = TransformComponent::GetPosition(trx.matrixL2W * matrix, vec2(0, 0));
 		auto xAxis = orig + vec2(100, 0);
@@ -131,9 +124,13 @@ public:
 				{
 					translate.y = 0;
 				}
+				if(input.GetKey(LSHIFT).isPressed)
+				{
+					translate.x = (int)(translate.x * 2) / 2.f;
+					translate.y = (int)(translate.y * 2) / 2.f;
+				}
 				trx.globalPosition = entityStartPos + translate;
 				trx.UpdateLocals();
-				ROSE_LOG("Mouse moving by: %f,%f", translate.x, translate.y);
 			} else
 			{
 				isMovingX = false;

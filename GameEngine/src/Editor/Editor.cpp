@@ -70,6 +70,7 @@ Editor::Editor():BaseGame()
 	selectedTool = Tools::SelectEntity;
 	gizmosSetting = Gizmos::ALL;
 	moveTool = MoveTool(ROSE_GETSYSTEM(SdlContainer).GetRenderer());
+	rotateTool = RotateTool(ROSE_GETSYSTEM(SdlContainer).GetRenderer());
 }
 
 void Editor::SetupImgui()
@@ -117,7 +118,13 @@ void Editor::Update()
 	if(!ROSE_GETSYSTEM(ImguiSystem).IsMouseCaptured())
 	{
 		UpdateViewportControls();
-		moveTool.Update();
+		if(selectedTool == Tools::MoveEntity)
+		{
+			moveTool.Update();
+		} else if(selectedTool == Tools::RotateEntity)
+		{
+			rotateTool.Update();
+		}
 	}
 	if(!ImGui::IsAnyItemActive())
 	{
@@ -239,9 +246,13 @@ void Editor::UpdateGlobalControls()
 	{
 		selectedTool = Tools::CreateEntity;
 	}
-	if(input.GetKey(InputKey::M).justPressed)
+	if(input.GetKey(InputKey::W).justPressed)
 	{
 		selectedTool = Tools::MoveEntity;
+	}
+	if(input.GetKey(InputKey::E).justPressed)
+	{
+		selectedTool = Tools::RotateEntity;
 	}
 	if(input.GetKey(InputKey::S).justPressed)
 	{
@@ -349,6 +360,11 @@ void Editor::RenderGizmos()
 		moveTool.SetSelectedEntity(levelTreeEditor.GetSelectedEntity());
 		moveTool.RenderGizmos();
 	}
+	if(selectedTool == Tools::RotateEntity)
+	{
+		rotateTool.SetSelectedEntity(levelTreeEditor.GetSelectedEntity());
+		rotateTool.RenderGizmos();
+	}
 }
 
 void Editor::RenderEditor()
@@ -402,6 +418,8 @@ void Editor::RenderTools()
 	ImGui::BeginTable("Tools", 3, ImGuiTableFlags_BordersInnerV);
 	ImGui::TableNextColumn();
 	RenderToolButton("Move", Tools::MoveEntity);
+	ImGui::SameLine();
+	RenderToolButton("Rotate", Tools::RotateEntity);
 	RenderToolButton("Select", Tools::SelectEntity);
 	RenderToolButton("Create", Tools::CreateEntity);
 	ImGui::TableNextColumn();

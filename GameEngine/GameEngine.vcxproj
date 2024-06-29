@@ -21,6 +21,7 @@
     <ClInclude Include="src\Editor\ImguiSystem.h" />
     <ClInclude Include="src\Editor\InputEditor.h" />
     <ClInclude Include="src\Editor\MoveTool.h" />
+    <ClInclude Include="src\Editor\RotateTool.h" />
     <ClInclude Include="src\Runtime\Components\InputComponent.h" />
     <ClInclude Include="src\Runtime\Core\EntitySerializer.h" />
     <ClInclude Include="src\Runtime\Core\LevelTree.h" />

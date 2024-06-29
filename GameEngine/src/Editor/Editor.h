@@ -9,6 +9,7 @@
 #include "Editor/LevelTreeEditor.h"
 #include "Editor/ComponentEditor.h"
 #include "MoveTool.h"
+#include "RotateTool.h"
 
 enum class Tools
 {
@@ -18,6 +19,7 @@ enum class Tools
 	MoveEntity,
 	DeleteEntity,
 	NoTool,
+	RotateEntity,
 };
 
 namespace Gizmos
@@ -42,6 +44,7 @@ class Editor:public BaseGame
 	bool isGameRunning;
 	bool renameEntity;
 	MoveTool moveTool;
+	RotateTool rotateTool;
 
 	void SetupImgui();
 	void CloseImgui();

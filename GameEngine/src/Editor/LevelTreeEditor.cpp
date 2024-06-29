@@ -114,6 +114,10 @@ void LevelTreeEditor::Editor()
 
 entt::entity LevelTreeEditor::GetSelectedEntity()
 {
+	if(!ROSE_GETSYSTEM(EntitySystem).EntityExists(selectedEntity))
+	{
+		selectedEntity = NoEntity();
+	}
 	return selectedEntity;
 }
 

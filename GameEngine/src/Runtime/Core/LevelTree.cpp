@@ -154,7 +154,7 @@ Node<entt::entity>* LevelTree::AddEntity(entt::entity entity, Node<entt::entity>
 
 void LevelTree::RemoveEntity(entt::entity entity)
 {
-	root->RemoveChild(nodesMap[entity]);
+	nodesMap[entity]->parent->RemoveChild(nodesMap[entity]);
 	delete nodesMap[entity];
 	nodesMap.erase(entity);
 }

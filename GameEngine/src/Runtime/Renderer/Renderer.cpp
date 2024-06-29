@@ -106,6 +106,7 @@ void RendererSystem::Render()
 	float camWidth = windowAspectRatio * camHeight;
 	float camToScreenScaleX = windowSize.x / (camWidth);
 	float camToScreenScaleY = windowSize.y / (camHeight);
+	aspectRatio = windowAspectRatio;
 
 	auto camToScreenTranslationMatrix = glm::mat3(
 		1, 0, camWidth / 2,
@@ -216,4 +217,9 @@ void RendererSystem::InitLoaded()
 			break;
 		}
 	}
+}
+
+float RendererSystem::GetAspectRatio()
+{
+	return aspectRatio;
 }

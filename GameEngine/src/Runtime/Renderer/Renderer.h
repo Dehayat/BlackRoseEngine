@@ -8,6 +8,7 @@ class RendererSystem
 	SDL_Renderer* sdlRenderer;
 	entt::entity camera;
 	glm::mat3 worldToScreenMatrix;
+	float aspectRatio;
 public:
 	glm::vec2 editorViewPos;
 	float editorViewHeight;
@@ -20,4 +21,5 @@ public:
 	const glm::mat3 GetWorldToScreenMatrix() const;
 	const glm::mat3 GetScreenToWorldMatrix() const;
 	void InitLoaded();
+	float GetAspectRatio();
 };

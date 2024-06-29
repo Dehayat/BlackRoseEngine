@@ -39,9 +39,6 @@
     <ClInclude Include="src\Editor\ScriptEditor.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\Editor\TransformEditor.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="src\Runtime\Animation\AnimationSystem.h">
       <Filter>Header Files</Filter>
     </ClInclude>

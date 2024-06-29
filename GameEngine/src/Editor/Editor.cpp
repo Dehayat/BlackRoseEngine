@@ -401,6 +401,50 @@ void Editor::HandleDropFile(SDL_Event& sdlEvent)
 }
 void Editor::RenderGizmos()
 {
+	auto& regsitry = ROSE_GETSYSTEM(EntitySystem).GetRegistry();
+	auto& rendererSystem = ROSE_GETSYSTEM(RendererSystem);
+	auto renderer = ROSE_GETSYSTEM(SdlContainer).GetRenderer();
+	auto camView = regsitry.view<CameraComponent, TransformComponent>();
+	for(auto entity : camView)
+	{
+		auto height = camView.get<CameraComponent>(entity).height;
+		auto width = rendererSystem.GetAspectRatio() * height;
+		auto& trx = camView.get<TransformComponent>(entity);
+		auto matrix = rendererSystem.GetWorldToScreenMatrix();
+		auto center = TransformComponent::GetPosition(matrix, trx.globalPosition);
+		auto scalledSize = TransformComponent::GetDir(matrix, {width,height});
+		auto size = abs(scalledSize);
+
+
+		static int16_t polygon[2][4];
+		polygon[0][0] = center.x - size.x / 2;
+		polygon[1][0] = center.y - size.y / 2;
+
+		polygon[0][1] = center.x + size.x / 2;
+		polygon[1][1] = center.y - size.y / 2;
+
+		polygon[0][2] = center.x + size.x / 2;
+		polygon[1][2] = center.y + size.y / 2;
+
+		polygon[0][3] = center.x - size.x / 2;
+		polygon[1][3] = center.y + size.y / 2;
+
+
+		if(levelTreeEditor.GetSelectedEntity() == entity)
+		{
+			filledCircleRGBA(renderer, center.x, center.y, size.y / 10, 200, 200, 0, 30);
+			polygonRGBA(renderer, polygon[0], polygon[1], 4, 200, 200, 0, 200);
+			filledPolygonRGBA(renderer, polygon[0], polygon[1], 4, 200, 200, 200, 100);
+			circleRGBA(renderer, center.x, center.y, size.y / 10, 200, 200, 0, 150);
+		} else
+		{
+			filledCircleRGBA(renderer, center.x, center.y, size.y / 10, 200, 200, 200, 30);
+			circleRGBA(renderer, center.x, center.y, size.y / 10, 200, 200, 200, 150);
+			polygonRGBA(renderer, polygon[0], polygon[1], 4, 200, 200, 200, 150);
+		}
+
+	}
+
 	if(selectedTool == Tools::MoveEntity)
 	{
 		moveTool.SetSelectedEntity(levelTreeEditor.GetSelectedEntity());

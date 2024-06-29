@@ -29,7 +29,6 @@
     <ClInclude Include="src\Editor\PhysicsEditor.h" />
     <ClInclude Include="src\Editor\RenderEditor.h" />
     <ClInclude Include="src\Editor\ScriptEditor.h" />
-    <ClInclude Include="src\Editor\TransformEditor.h" />
     <ClInclude Include="src\Runtime\Animation\AnimationSystem.h" />
     <ClInclude Include="src\Runtime\Components\AnimationComponent.h" />
     <ClInclude Include="src\Runtime\Components\CameraComponent.h" />

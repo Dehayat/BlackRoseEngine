@@ -26,5 +26,6 @@ public:
 	void Clear();
 	Node<entt::entity>* GetRoot();
 	entt::entity GetChild(entt::entity entity, const std::string& name);
+	entt::entity FindEntity(const std::string& name);
 	Node<entt::entity>* GetNode(entt::entity entity);
 };

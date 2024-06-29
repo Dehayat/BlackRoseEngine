@@ -120,6 +120,19 @@ entt::entity LevelTree::GetChild(entt::entity entity, const std::string& name)
 	}
 	return NoEntity();
 }
+entt::entity LevelTree::FindEntity(const std::string& name)
+{
+	auto& registry = ROSE_GETSYSTEM(EntitySystem).GetRegistry();
+	auto node = root;
+	for(auto child : node->children)
+	{
+		if(registry.get<GUIDComponent>(child->element).name == name)
+		{
+			return child->element;
+		}
+	}
+	return NoEntity();
+}
 Node<entt::entity>* LevelTree::GetNode(entt::entity entity)
 {
 	if(nodesMap.find(entity) == nodesMap.end())

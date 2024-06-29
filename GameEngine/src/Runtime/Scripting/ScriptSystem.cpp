@@ -9,6 +9,7 @@
 #include "Core/Transform.h"
 #include "Core/TimeSystem.h"
 #include "Core/DisableSystem.h"
+#include "Core/LevelTree.h"
 
 #include "Core/Systems.h"
 
@@ -32,11 +33,15 @@ static std::string GetEntityName(entt::entity entity)
 {
 	return ROSE_GETSYSTEM(EntitySystem).GetRegistry().get<GUIDComponent>(entity).name;
 }
-static void Translate(entt::entity entity, float x, float y)
+static void Translate(entt::entity entity, glm::vec2 translation)
 {
 	auto& transform = ROSE_GETSYSTEM(EntitySystem).GetRegistry().get<TransformComponent>(entity);
-	transform.globalPosition += glm::vec2(x, y);
+	transform.globalPosition += translation;
 	transform.UpdateLocals();
+}
+static void Translate(entt::entity entity, float x, float y)
+{
+	Translate(entity, vec2(x, y));
 }
 static void PlayAnimation(entt::entity entity, const std::string& animName)
 {
@@ -64,6 +69,15 @@ static std::set<entt::entity> destroyCalls;
 static void DestroyEntity(entt::entity entity)
 {
 	destroyCalls.insert(entity);
+}
+static entt::entity FindEntity(std::string entityName)
+{
+	return ROSE_GETSYSTEM(LevelTree).FindEntity(entityName);
+}
+static glm::vec2 GetPos(entt::entity entity)
+{
+	auto& transform = ROSE_GETSYSTEM(EntitySystem).GetRegistry().get<TransformComponent>(entity);
+	return transform.globalPosition;
 }
 
 void ScriptSystem::ScriptComponentCreated(entt::registry& registry, entt::entity entity)
@@ -174,14 +188,27 @@ void ScriptSystem::AddScript(entt::entity entity, const std::string scriptName, 
 		"target", &EntityEvent::target,
 		"input_key", &EntityEvent::inputKey
 	);
+	state.new_usertype<glm::vec2>("vec2",
+		"x", &glm::vec2::x,
+		"y", &glm::vec2::y,
+		sol::meta_function::addition,
+		sol::resolve<glm::vec2(const glm::vec2&, const glm::vec2&)>(operator+),
+		sol::meta_function::subtraction,
+		sol::resolve<glm::vec2(const glm::vec2&, const glm::vec2&)>(operator-)
+	);
 	state.set_function("get_child", GetChild);
-	state.set_function("move", Translate);
+	state.set_function("move", sol::overload(
+		sol::resolve<void(entt::entity, float, float)>(Translate),
+		sol::resolve<void(entt::entity, glm::vec2)>(Translate)
+	));
 	state.set_function("face", FaceDir);
 	state.set_function("play_anim", PlayAnimation);
 	state.set_function("disable", DisableEntity);
 	state.set_function("enable", EnableEntity);
 	state.set_function("get_name", GetEntityName);
 	state.set_function("destroy", DestroyEntity);
+	state.set_function("find", FindEntity);
+	state.set_function("get_position", GetPos);
 	state["no_entity"] = NoEntity();
 	state.script(script);
 }

@@ -1,102 +1,23 @@
 - Type: Entity
   Guid:
-    name: Orb
-    id: 7767130489756248684
+    name: Ground
+    id: 12124773303379382744
     parentId: 18446744073709551615
   Transform:
     position:
-      - -0.07407427
-      - -0.60370374
-    scale:
-      - 2
-      - 2
-    rotation: 0
-  Sprite:
-    sprite: OrbIdle
-    layer: 0
-    color:
-      - 1
-      - 1
-      - 1
-      - 1
-  PhysicsBody:
-    size:
-      - 0.5
-      - 0.5
-    isStatic: 0
-    isSensor: 1
-    useGravity: 0
-  Animation:
-    animation: OrbIdleAnim
-  Script:
-    scripts:
-      - batmanScript
-- Type: Entity
-  Guid:
-    name: MainCamera
-    id: 17946886613371204791
-    parentId: 18446744073709551615
-  Transform:
-    position:
-      - 0
-      - 0
-    scale:
-      - 1
-      - 1
-    rotation: 0
-  Camera:
-    height: 5
-    startCamera: 1
-- Type: Entity
-  Guid:
-    name: BG
-    id: 14892085796424782591
-    parentId: 18446744073709551615
-  Transform:
-    position:
-      - 0.6074071
-      - 0.3148148
-    scale:
-      - 1
-      - 1
-    rotation: 0
-  Sprite:
-    sprite: BG
-    layer: -3
-    color:
-      - 1
-      - 1
-      - 1
-      - 1
-- Type: Entity
-  Guid:
-    name: Player
-    id: 17808781694586794585
-    parentId: 18446744073709551615
-  Transform:
-    position:
-      - -2.361704
-      - -0.8932678
+      - 0.11111069
+      - -2.4111109
     scale:
       - 1
       - 1
     rotation: 0
   PhysicsBody:
     size:
+      - 10
       - 1
-      - 2
-    isStatic: 0
+    isStatic: 1
     isSensor: 0
-    useGravity: 1
-  Script:
-    scripts:
-      - playerScript
-  Input:
-    inputKeys:
-      - 0
-      - 1
-    inputMouseButtons:
-      - 0
+    useGravity: 0
 - Type: Entity
   Guid:
     name: Orb
@@ -132,24 +53,129 @@
       - batmanScript
 - Type: Entity
   Guid:
-    name: Ground
-    id: 12124773303379382744
+    name: Player
+    id: 17808781694586794585
     parentId: 18446744073709551615
   Transform:
     position:
-      - 0.11111069
-      - -2.4111109
+      - -2.361704
+      - -0.8932678
     scale:
       - 1
       - 1
     rotation: 0
   PhysicsBody:
     size:
-      - 10
       - 1
-    isStatic: 1
+      - 2
+    isStatic: 0
     isSensor: 0
+    useGravity: 1
+  Script:
+    scripts:
+      - playerScript
+  Input:
+    inputKeys:
+      - 0
+      - 1
+    inputMouseButtons:
+      - 0
+- Type: Entity
+  Guid:
+    name: BG
+    id: 14892085796424782591
+    parentId: 18446744073709551615
+  Transform:
+    position:
+      - 0.6074071
+      - 0.3148148
+    scale:
+      - 1
+      - 1
+    rotation: 0
+  Sprite:
+    sprite: BG
+    layer: -3
+    color:
+      - 1
+      - 1
+      - 1
+      - 1
+- Type: Entity
+  Guid:
+    name: MainCamera
+    id: 17946886613371204791
+    parentId: 18446744073709551615
+  Transform:
+    position:
+      - 0
+      - 0
+    scale:
+      - 1
+      - 1
+    rotation: 0
+  Camera:
+    height: 5
+    startCamera: 1
+  Script:
+    scripts:
+      - followScript
+- Type: Entity
+  Guid:
+    name: Orb
+    id: 7767130489756248684
+    parentId: 18446744073709551615
+  Transform:
+    position:
+      - -0.07407427
+      - -0.60370374
+    scale:
+      - 2
+      - 2
+    rotation: 0
+  Sprite:
+    sprite: OrbIdle
+    layer: 0
+    color:
+      - 1
+      - 1
+      - 1
+      - 1
+  PhysicsBody:
+    size:
+      - 0.5
+      - 0.5
+    isStatic: 0
+    isSensor: 1
     useGravity: 0
+  Animation:
+    animation: OrbIdleAnim
+  Script:
+    scripts:
+      - batmanScript
+- Type: Entity
+  Guid:
+    name: hitBox
+    id: 8535629131640160658
+    parentId: 17808781694586794585
+  Disabled:
+    selfDisabled: 1
+  Transform:
+    position:
+      - 1.0814815
+      - 0.044444084
+    scale:
+      - 1
+      - 1
+    rotation: 0
+  PhysicsBody:
+    size:
+      - 1
+      - 1
+    isStatic: 0
+    isSensor: 1
+    useGravity: 0
+  SendEventsToParent: []
 - Type: Entity
   Guid:
     name: sprite
@@ -173,27 +199,4 @@
       - 1
   Animation:
     animation: sekiroIdleAnim
-  SendEventsToParent: []
-- Type: Entity
-  Guid:
-    name: hitBox
-    id: 8535629131640160658
-    parentId: 17808781694586794585
-  Disabled:
-    selfDisabled: 1
-  Transform:
-    position:
-      - 1.0814815
-      - 0.044444084
-    scale:
-      - 1
-      - 1
-    rotation: 0
-  PhysicsBody:
-    size:
-      - 1
-      - 1
-    isStatic: 0
-    isSensor: 1
-    useGravity: 0
   SendEventsToParent: []

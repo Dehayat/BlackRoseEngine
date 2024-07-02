@@ -242,31 +242,26 @@ void Editor::UpdateGlobalControls()
 	static vec2 lastPos;
 	static auto panCursor = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_SIZEALL);
 	static bool isPanning = false;
-	if(input.GetKey(InputKey::LALT).isPressed || input.GetKey(InputKey::RALT).isPressed)
+	if(input.GetMouseButton(InputMouse::MIDDLE_BUTTON).justPressed)
 	{
-		if(input.GetMouseButton(InputMouse::MIDDLE_BUTTON).justPressed)
-		{
-			isPanning = true;
-			lastPos = input.GetMousePosition();
-		}
-		if(input.GetMouseButton(InputMouse::MIDDLE_BUTTON).isPressed)
-		{
-			SDL_SetCursor(panCursor);
-			auto offset = lastPos - input.GetMousePosition();
-			auto& renderSystem = ROSE_GETSYSTEM(RendererSystem);
-			renderSystem.editorViewPos += TransformComponent::GetDir(renderSystem.GetScreenToWorldMatrix(), offset);
-			lastPos = input.GetMousePosition();
-		} else
-		{
-			if(isPanning)
-			{
-				SDL_SetCursor(SDL_GetDefaultCursor());
-				isPanning = false;
-			}
-		}
-		return;
+		isPanning = true;
+		lastPos = input.GetMousePosition();
 	}
-
+	if(input.GetMouseButton(InputMouse::MIDDLE_BUTTON).isPressed)
+	{
+		SDL_SetCursor(panCursor);
+		auto offset = lastPos - input.GetMousePosition();
+		auto& renderSystem = ROSE_GETSYSTEM(RendererSystem);
+		renderSystem.editorViewPos += TransformComponent::GetDir(renderSystem.GetScreenToWorldMatrix(), offset);
+		lastPos = input.GetMousePosition();
+	} else
+	{
+		if(isPanning)
+		{
+			SDL_SetCursor(SDL_GetDefaultCursor());
+			isPanning = false;
+		}
+	}
 	if(GetSelectedEntity() != NoEntity())
 	{
 		if(input.GetKey(InputKey::DELETE).justReleased)
@@ -485,17 +480,18 @@ bool Editor::ProcessEvents()
 
 void Editor::UpdateScrollWheel(SDL_Event& sdlEvent)
 {
-	auto& input = ROSE_GETSYSTEM(InputSystem);
-	if(input.GetKey(InputKey::LALT).isPressed || input.GetKey(InputKey::RALT).isPressed)
+	if(ROSE_GETSYSTEM(ImguiSystem).IsMouseCaptured())
 	{
-		auto& renderSystem = ROSE_GETSYSTEM(RendererSystem);
-		if(input.GetKey(InputKey::LSHIFT).isPressed)
-		{
-			renderSystem.editorViewHeight -= sdlEvent.wheel.preciseY * 2;
-		} else
-		{
-			renderSystem.editorViewHeight -= sdlEvent.wheel.preciseY * 0.5;
-		}
+		return;
+	}
+	auto& input = ROSE_GETSYSTEM(InputSystem);
+	auto& renderSystem = ROSE_GETSYSTEM(RendererSystem);
+	if(input.GetKey(InputKey::LSHIFT).isPressed)
+	{
+		renderSystem.editorViewHeight -= sdlEvent.wheel.preciseY * 2;
+	} else
+	{
+		renderSystem.editorViewHeight -= sdlEvent.wheel.preciseY * 0.5;
 	}
 }
 

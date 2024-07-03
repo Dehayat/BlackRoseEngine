@@ -5,15 +5,20 @@
 
 #include "Core/Entity.h"
 
+#include "Events/EventBus.h"
 #include "Events/EntityEventSystem.h"
+#include "Events/PhysicsEvent.h"
 
 #include "Core/Systems.h"
 
-void ContactListener::BeginContact(b2Contact* contact) {
+void ContactListener::BeginContact(b2Contact* contact)
+{
+	ROSE_GETSYSTEM(EventBus).EmitEvent<PhysicsEvent>(contact, true);
 	auto entityA = entt::entity(contact->GetFixtureA()->GetBody()->GetUserData().pointer);
 	auto entityB = entt::entity(contact->GetFixtureB()->GetBody()->GetUserData().pointer);
 	auto& events = ROSE_GETSYSTEM(EntityEventSystem);
-	if (contact->GetFixtureB()->IsSensor()) {
+	if(contact->GetFixtureB()->IsSensor())
+	{
 		auto entityEvent = EntityEvent(entityA, "EnteringSensor");
 		entityEvent.target = entityB;
 		events.QueueEvent(entityEvent);
@@ -21,7 +26,8 @@ void ContactListener::BeginContact(b2Contact* contact) {
 		entityEvent2.target = entityA;
 		events.QueueEvent(entityEvent2);
 	}
-	if (contact->GetFixtureA()->IsSensor()) {
+	if(contact->GetFixtureA()->IsSensor())
+	{
 		auto entityEvent = EntityEvent(entityB, "EnteringSensor");
 		entityEvent.target = entityA;
 		events.QueueEvent(entityEvent);
@@ -31,7 +37,9 @@ void ContactListener::BeginContact(b2Contact* contact) {
 	}
 }
 
-void ContactListener::EndContact(b2Contact* contact) {
+void ContactListener::EndContact(b2Contact* contact)
+{
+	ROSE_GETSYSTEM(EventBus).EmitEvent<PhysicsEvent>(contact, false);
 	auto entityA = entt::entity(contact->GetFixtureA()->GetBody()->GetUserData().pointer);
 	auto entityB = entt::entity(contact->GetFixtureB()->GetBody()->GetUserData().pointer);
 	auto& events = ROSE_GETSYSTEM(EntityEventSystem);

@@ -30,6 +30,8 @@
 #include "Components/ScriptComponent.h"
 #include "Components/SendEventsToParentComponent.h"
 #include "Components/InputComponent.h"
+#include "Components/HitBoxComponent.h"
+#include "Components/HurtBoxComponent.h"
 
 #include "Core/LevelTree.h"
 #include "Editor/PhysicsEditor.h"
@@ -748,6 +750,8 @@ void Editor::EntityEditor()
 		RenderComponent<ScriptComponent, ScriptEditor>(true, "Script Component", selectedEntity);
 		ROSE_DEFAULT_COMP_EDITOR(SendEventsToParentComponent, true);
 		RenderComponent<InputComponent, InputEditor>(true, "Input Component", selectedEntity);
+		ROSE_DEFAULT_COMP_EDITOR(HitBoxComponent, true);
+		ROSE_DEFAULT_COMP_EDITOR(HurtBoxComponent, true);
 	}
 }
 void Editor::RenderEntityEditor(entt::entity entity)

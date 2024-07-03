@@ -22,6 +22,8 @@
     <ClInclude Include="src\Editor\InputEditor.h" />
     <ClInclude Include="src\Editor\MoveTool.h" />
     <ClInclude Include="src\Editor\RotateTool.h" />
+    <ClInclude Include="src\Runtime\Components\HitBoxComponent.h" />
+    <ClInclude Include="src\Runtime\Components\HurtBoxComponent.h" />
     <ClInclude Include="src\Runtime\Components\InputComponent.h" />
     <ClInclude Include="src\Runtime\Core\EntitySerializer.h" />
     <ClInclude Include="src\Runtime\Core\LevelTree.h" />
@@ -51,6 +53,8 @@
     <ClInclude Include="src\Runtime\Events\EventBus.h" />
     <ClInclude Include="src\Runtime\Events\KeyPressedEvent.h" />
     <ClInclude Include="src\Application\Application.h" />
+    <ClInclude Include="src\Runtime\Events\PhysicsEvent.h" />
+    <ClInclude Include="src\Runtime\Gameplay\CombatSystem.h" />
     <ClInclude Include="src\Runtime\Input\InputKeys.h" />
     <ClInclude Include="src\Runtime\Levels\LevelLoader.h" />
     <ClInclude Include="src\Runtime\Core\TimeSystem.h" />
@@ -82,6 +86,7 @@
     <ClCompile Include="src\Application\Main.cpp" />
     <ClCompile Include="src\Runtime\Core\TimeSystem.cpp" />
     <ClCompile Include="src\Runtime\Core\Transform.cpp" />
+    <ClCompile Include="src\Runtime\Gameplay\CombatSystem.cpp" />
     <ClCompile Include="src\Runtime\Input\InputSystem.cpp" />
     <ClCompile Include="src\Runtime\Levels\LevelLoader.cpp" />
     <ClCompile Include="src\Runtime\Physics\CollisionListener.cpp" />

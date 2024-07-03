@@ -1,6 +1,6 @@
 #pragma once
 #include <sdl2/SDL_keycode.h>
-#include "EventSystem/Event.h"
+#include "Event.h"
 
 class KeyPressedEvent :public Event {
 public:

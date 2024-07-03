@@ -1,13 +1,18 @@
--- This is a lua comment
-
 Vars = {
-    speed = 2;
+    speed = 2
 }
 
-Sprite_entity = no_entity
-Is_attacking = false
-WalkDir = 0
-HitBox_entity = no_entity
+States = {
+    Idle = 0,
+    Walking = 1,
+    Attacking = 2,
+}
+
+local Sprite_entity = no_entity
+local WalkDir = 0
+local HitBox_entity = no_entity
+local state = States.Idle
+
 
 function setup(me)
     Sprite_entity = get_child(me, "sprite")
@@ -16,48 +21,97 @@ function setup(me)
 end
 
 function update(me, dt)
-    if not Is_attacking then
+    if state == States.Walking then
         if WalkDir ~= 0 then
-            move(me, WalkDir*Vars.speed * dt, 0)
+            move(me, WalkDir * Vars.speed * dt, 0)
         end
     end
 end
 
+local function PlayAnim(entity, anim)
+    if Sprite_entity ~= no_entity then
+        play_anim(Sprite_entity, anim)
+    end
+end
+
+local function Walk(me, dir)
+    WalkDir = dir
+    face(me, WalkDir)
+    if state == States.Idle then
+        PlayAnim(Sprite_entity, "sekiroRunAnim")
+        state = States.Walking
+    end
+end
+
+local function StopWalking(me)
+    WalkDir = 0
+    if state == States.Walking then
+        PlayAnim(Sprite_entity, "sekiroIdleAnim")
+        state = States.Idle
+    end
+end
+local function Attack(me)
+    if state ~= States.Attacking then
+        PlayAnim(Sprite_entity, "sekiroAttackAnim")
+        state = States.Attacking
+    end
+end
+
+local function key_pressed(me, event)
+    if event.input_key == "D" then
+        Walk(me, 1)
+    elseif event.input_key == "A" then
+        Walk(me, -1)
+    elseif event.input_key == "Left Button" then
+        Attack(me)
+    end
+end
+
+local function key_released(me, event)
+    if event.input_key == "D" then
+        if WalkDir == 1 then
+            StopWalking(me)
+        end
+    elseif event.input_key == "A" then
+        if WalkDir == -1 then
+            StopWalking(me)
+        end
+    end
+end
+
+local function FinishAttack(me)
+    if WalkDir == 0 then
+        PlayAnim(Sprite_entity, "sekiroIdleAnim")
+        state = States.Idle
+    else
+        face(me, WalkDir)
+        PlayAnim(Sprite_entity, "sekiroRunAnim")
+        state = States.Walking
+    end
+end
+
+local function animation_finished(me, event)
+    if state == States.Attacking then
+        FinishAttack(me)
+    end
+end
+
 function on_event(me, event)
-    if event.name == "disableHitBox" then
-        disable(HitBox_entity)
-    end
-    if event.name == "enableHitBox" then
-        enable(HitBox_entity)
-    end
-    if event.name == "KeyReleased"then
-        if event.input_key=="D" or event.input_key=="A" then
-            WalkDir = 0
+    if event.name == "KeyPressed" then
+        key_pressed(me, event)
+    elseif event.name == "KeyReleased" then
+        key_released(me, event)
+    elseif event.name == "MousePressed" then
+        key_pressed(me, event)
+    elseif event.name == "disableHitBox" then
+        if HitBox_entity ~= no_entity then
+            disable(HitBox_entity)
         end
-    end
-    if Is_attacking and event.name=="AnimationFinished" then
-        play_anim(Sprite_entity,"sekrioIdleAnim")
-        Is_attacking = false
-    end
-    if not Is_attacking then
-        if event.name == "KeyPressed" and event.input_key=="D" then
-            WalkDir = 1
-            play_anim(Sprite_entity,"sekiroRunAnim")
-            face(me,WalkDir)
-        elseif event.name == "KeyPressed" and event.input_key=="A" then
-            WalkDir = -1
-            play_anim(Sprite_entity,"sekiroRunAnim")
-            face(me,WalkDir)
+    elseif event.name == "enableHitBox" then
+        if HitBox_entity ~= no_entity then
+            enable(HitBox_entity)
         end
-        if Sprite_entity ~=no_entity then
-            if WalkDir==0 then
-                play_anim(Sprite_entity,"sekiroIdleAnim")
-            end
-        end
-        
-        if event.name == "MousePressed" and event.input_key=="Left Button" and Sprite_entity~=no_entity then
-            play_anim(Sprite_entity,"sekiroAttackAnim")
-            Is_attacking = true;
-        end
+    elseif event.name == "AnimationFinished" then
+        animation_finished(me, event)
     end
 end

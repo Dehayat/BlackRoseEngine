@@ -21,6 +21,9 @@
 #include "Events/EntityEventSystem.h"
 #include "Scripting/ScriptSystem.h"
 #include "Core/LevelTree.h"
+#include "Events/EventBus.h"
+
+#include "Gameplay/CombatSystem.h"
 
 BaseGame::BaseGame()
 {
@@ -31,6 +34,8 @@ BaseGame::BaseGame()
 
 BaseGame::~BaseGame()
 {
+	ROSE_DESTROYSYSTEM(CombatSystem);
+
 	ROSE_DESTROYSYSTEM(PhysicsSystem);
 	ROSE_DESTROYSYSTEM(TransformSystem);
 	ROSE_DESTROYSYSTEM(ScriptSystem);
@@ -39,6 +44,7 @@ BaseGame::~BaseGame()
 	ROSE_DESTROYSYSTEM(RendererSystem);
 	ROSE_DESTROYSYSTEM(InputSystem);
 	ROSE_DESTROYSYSTEM(TimeSystem);
+	ROSE_DESTROYSYSTEM(EventBus);
 	ROSE_DESTROYSYSTEM(LevelTree);
 	ROSE_DESTROYSYSTEM(DisableSystem);
 
@@ -66,8 +72,9 @@ void BaseGame::SetupBaseSystems()
 
 void BaseGame::SetupLowLevelSystems()
 {
-	ROSE_CREATESYSTEM(LevelTree);
 	ROSE_CREATESYSTEM(DisableSystem);
+	ROSE_CREATESYSTEM(LevelTree);
+	ROSE_CREATESYSTEM(EventBus);
 	ROSE_CREATESYSTEM(TimeSystem);
 	ROSE_CREATESYSTEM(InputSystem);
 	ROSE_CREATESYSTEM(RendererSystem);
@@ -76,6 +83,8 @@ void BaseGame::SetupLowLevelSystems()
 	ROSE_CREATESYSTEM(ScriptSystem);
 	ROSE_CREATESYSTEM(TransformSystem);
 	ROSE_CREATESYSTEM(PhysicsSystem, 0, -10);
+
+	ROSE_CREATESYSTEM(CombatSystem);
 }
 
 void BaseGame::Setup()

@@ -10,6 +10,8 @@
 #include "Components/SendEventsToParentComponent.h"
 #include "Components/DisableComponent.h"
 #include "Components/InputComponent.h"
+#include "Components/HitBoxComponent.h"
+#include "Components/HurtBoxComponent.h"
 
 entt::entity EntitySerializer::DeserializeEntity(ryml::NodeRef& node, entt::registry& registry, entt::entity entity)
 {
@@ -22,5 +24,7 @@ entt::entity EntitySerializer::DeserializeEntity(ryml::NodeRef& node, entt::regi
 	DeserializeComponent<ScriptComponent>(registry, "Script", entity, node);
 	DeserializeComponent<SendEventsToParentComponent>(registry, "SendEventsToParent", entity, node);
 	DeserializeComponent<InputComponent>(registry, "Input", entity, node);
+	DeserializeComponent<HitBoxComponent>(registry, "HitBox", entity, node);
+	DeserializeComponent<HurtBoxComponent>(registry, "HurtBox", entity, node);
 	return entity;
 }

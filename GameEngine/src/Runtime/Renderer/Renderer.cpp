@@ -149,33 +149,55 @@ void RendererSystem::Render()
 			SDL_QueryTexture(texture->texture, nullptr, nullptr, &texW, &texH);
 		}
 		auto viewMatrix = pos.matrixL2W * worldToScreenMatrix;
-		auto position = TransformComponent::GetPosition(viewMatrix);
-		auto rotation = TransformComponent::GetRotation(viewMatrix);
-		auto scale = TransformComponent::GetScale(viewMatrix);
-		int spriteSizeX = scale.x * ((float)texW / texture->ppu);
-		int spriteSizeY = scale.y * ((float)texH / texture->ppu);
-		SDL_FRect player = SDL_FRect{
-			(position.x - spriteSizeX / 2),
-			(position.y - spriteSizeY / 2),
-			(float)spriteSizeX,
-			(float)spriteSizeY,
-		};
-		sp.destRect = player;
-		SDL_SetTextureColorMod(texture->texture, sp.color.r * 255, sp.color.g * 255, sp.color.b * 255);
-		SDL_SetTextureBlendMode(texture->texture, SDL_BLENDMODE_BLEND);
-		SDL_SetTextureAlphaMod(texture->texture, sp.color.a * 255);
-		SDL_RendererFlip flip = SDL_FLIP_NONE;
-		if(pos.scaleSign.x < 0 && pos.scaleSign.y < 0)
-		{
-		} else if(pos.scaleSign.x < 0)
-		{
-			flip = SDL_FLIP_VERTICAL;
-		} else if(pos.scaleSign.y < 0)
-		{
-			flip = SDL_FLIP_VERTICAL;
-		}
-		SDL_RenderCopyExF(sdlRenderer, texture->texture, sourceRect, &player, rotation, nullptr, flip);
 
+		SDL_SetTextureBlendMode(texture->texture, SDL_BLENDMODE_BLEND);
+
+		vec2 spriteExtents = vec2(texW, texH) / (float)texture->ppu / 2.0f;
+		vec2 v1 = TransformComponent::GetPosition(viewMatrix, {-spriteExtents.x,spriteExtents.y});
+		vec2 v2 = TransformComponent::GetPosition(viewMatrix, {spriteExtents.x,spriteExtents.y});
+		vec2 v3 = TransformComponent::GetPosition(viewMatrix, {spriteExtents.x,-spriteExtents.y});
+		vec2 v4 = TransformComponent::GetPosition(viewMatrix, {-spriteExtents.x,-spriteExtents.y});
+
+
+		SDL_Color color = {sp.color.r * 255, sp.color.g * 255, sp.color.b * 255, sp.color.a * 255};
+		SDL_Vertex vertex_1 = {{v1.x,v1.y}, color, {0, 0}};
+		SDL_Vertex vertex_2 = {{v2.x,v2.y}, color, {1, 0}};
+		SDL_Vertex vertex_3 = {{v3.x,v3.y}, color, {1, 1}};
+		SDL_Vertex vertex_4 = {{v4.x,v4.y}, color, {0, 1}};
+
+		if(sp.sourceRect != nullptr)
+		{
+			int texW;
+			int texH;
+			SDL_QueryTexture(texture->texture, nullptr, nullptr, &texW, &texH);
+			vec2 pos = {sp.sourceRect->x,sp.sourceRect->y};
+			vec2 size = {sp.sourceRect->w,sp.sourceRect->h};
+			pos.x /= texW;
+			pos.y /= texH;
+			size.x /= texW;
+			size.y /= texH;
+			vertex_1.tex_coord = {pos.x,pos.y};
+			vertex_2.tex_coord = {pos.x + size.x,pos.y};
+			vertex_3.tex_coord = {pos.x + size.x,pos.y + size.y};
+			vertex_4.tex_coord = {pos.x,pos.y + size.y};
+		}
+		SDL_Vertex vertices[] = {
+			vertex_1,
+			vertex_2,
+			vertex_3,
+			vertex_4,
+		};
+
+		int indecies[] = {
+			0,
+			1,
+			2,
+			0,
+			2,
+			3
+		};
+
+		SDL_RenderGeometry(sdlRenderer, texture->texture, vertices, 4, indecies, 6);
 	}
 }
 void RendererSystem::Present()

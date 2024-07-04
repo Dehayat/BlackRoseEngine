@@ -1,17 +1,25 @@
-# GameEngine
-
-Game engine with the goal of making a super simple and portable 2d platformer game engine inc c++.
-
-## Setup
-
-On Windows Just open is visual studio and build
-but make sure you have vcpkg in your visual studio installation
-On other platforms it should compile but you have to run vcpkg and configurations are only on the visual studio solution. 
-but you should still be able to run release and debug no problem. and to run in editor config just define _EDITOR
-
-## Usage
-
-Level.yaml file has en example of loading everything supported.
-loading textures happens in the setup function in Game.cpp along with loading the level.
-
-#
+# Rose Game Engine
+A 2d Game Engine with the following features:
+- 2d Sprites and Animation.
+	- Animation editor.
+- Physics
+- Camera.
+- Input.
+- Logging/Asserts.
+- Entities Component System.
+	- Entity hierarchy.
+	- Disable Entities.
+- Levels.
+	- Level editor.
+- Asset Management.
+	- project with levels and asset packages.
+	- project asset/package manager.
+- Scripting in lua.
+- Event system.
+	- Entity event.
+	- System wide events.
+- Combat system
+	- hitbox, hurtbox, and factions.
+- Reflection.
+	- Editor.
+	- Serialization.
